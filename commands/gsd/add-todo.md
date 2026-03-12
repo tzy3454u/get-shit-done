@@ -1,6 +1,6 @@
 ---
 name: gsd:add-todo
-description: Capture idea or task as todo from current conversation context
+description: 現在の会話コンテキストからアイデアやタスクをTodoとしてキャプチャする
 argument-hint: [optional description]
 allowed-tools:
   - Read
@@ -10,16 +10,16 @@ allowed-tools:
 ---
 
 <objective>
-Capture an idea, task, or issue that surfaces during a GSD session as a structured todo for later work.
+GSDセッション中に浮上したアイデア、タスク、または問題を、後で作業するための構造化されたTodoとしてキャプチャする。
 
-Routes to the add-todo workflow which handles:
-- Directory structure creation
-- Content extraction from arguments or conversation
-- Area inference from file paths
-- Duplicate detection and resolution
-- Todo file creation with frontmatter
-- STATE.md updates
-- Git commits
+add-todoワークフローにルーティングし、以下を処理する:
+- ディレクトリ構造の作成
+- 引数または会話からのコンテンツ抽出
+- ファイルパスからのエリア推論
+- 重複検出と解決
+- フロントマター付きTodoファイルの作成
+- STATE.mdの更新
+- Gitコミット
 </objective>
 
 <execution_context>
@@ -27,21 +27,22 @@ Routes to the add-todo workflow which handles:
 </execution_context>
 
 <context>
-Arguments: $ARGUMENTS (optional todo description)
+引数: $ARGUMENTS (省略可能なTodoの説明)
 
-State is resolved in-workflow via `init todos` and targeted reads.
+状態はワークフロー内で `init todos` と対象を絞った読み取りを通じて解決される。
 </context>
 
 <process>
-**Follow the add-todo workflow** from `@~/.claude/get-shit-done/workflows/add-todo.md`.
+`@~/.claude/get-shit-done/workflows/add-todo.md` の **add-todoワークフローに従う**。
 
-The workflow handles all logic including:
-1. Directory ensuring
-2. Existing area checking
-3. Content extraction (arguments or conversation)
-4. Area inference
-5. Duplicate checking
-6. File creation with slug generation
-7. STATE.md updates
-8. Git commits
+ワークフローは以下を含むすべてのロジックを処理する:
+1. ディレクトリの確認
+2. 既存エリアの確認
+3. コンテンツの抽出（引数または会話から）
+4. エリアの推論
+5. 重複チェック
+6. スラグ生成によるファイル作成
+7. STATE.mdの更新
+8. Gitコミット
 </process>
+</output>

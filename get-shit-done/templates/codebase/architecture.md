@@ -1,255 +1,255 @@
-# Architecture Template
+# アーキテクチャテンプレート
 
-Template for `.planning/codebase/ARCHITECTURE.md` - captures conceptual code organization.
+`.planning/codebase/ARCHITECTURE.md` 用テンプレート - 概念的なコード構成を記録します。
 
-**Purpose:** Document how the code is organized at a conceptual level. Complements STRUCTURE.md (which shows physical file locations).
+**目的:** コードが概念レベルでどのように構成されているかを文書化します。STRUCTURE.md（物理的なファイル配置を示す）を補完します。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
-# Architecture
+# アーキテクチャ
 
-**Analysis Date:** [YYYY-MM-DD]
+**分析日:** [YYYY-MM-DD]
 
-## Pattern Overview
+## パターン概要
 
-**Overall:** [Pattern name: e.g., "Monolithic CLI", "Serverless API", "Full-stack MVC"]
+**全体:** [パターン名: 例: "Monolithic CLI", "Serverless API", "Full-stack MVC"]
 
-**Key Characteristics:**
-- [Characteristic 1: e.g., "Single executable"]
-- [Characteristic 2: e.g., "Stateless request handling"]
-- [Characteristic 3: e.g., "Event-driven"]
+**主な特徴:**
+- [特徴1: 例: "単一実行ファイル"]
+- [特徴2: 例: "ステートレスなリクエスト処理"]
+- [特徴3: 例: "イベント駆動"]
 
-## Layers
+## レイヤー
 
-[Describe the conceptual layers and their responsibilities]
+[概念的なレイヤーとその責務を記述]
 
-**[Layer Name]:**
-- Purpose: [What this layer does]
-- Contains: [Types of code: e.g., "route handlers", "business logic"]
-- Depends on: [What it uses: e.g., "data layer only"]
-- Used by: [What uses it: e.g., "API routes"]
+**[レイヤー名]:**
+- Purpose: [このレイヤーの役割]
+- Contains: [コードの種類: 例: "ルートハンドラー", "ビジネスロジック"]
+- Depends on: [依存先: 例: "データレイヤーのみ"]
+- Used by: [利用元: 例: "APIルート"]
 
-**[Layer Name]:**
-- Purpose: [What this layer does]
-- Contains: [Types of code]
-- Depends on: [What it uses]
-- Used by: [What uses it]
+**[レイヤー名]:**
+- Purpose: [このレイヤーの役割]
+- Contains: [コードの種類]
+- Depends on: [依存先]
+- Used by: [利用元]
 
-## Data Flow
+## データフロー
 
-[Describe the typical request/execution lifecycle]
+[典型的なリクエスト/実行ライフサイクルを記述]
 
-**[Flow Name] (e.g., "HTTP Request", "CLI Command", "Event Processing"):**
+**[フロー名] (例: "HTTPリクエスト", "CLIコマンド", "イベント処理"):**
 
-1. [Entry point: e.g., "User runs command"]
-2. [Processing step: e.g., "Router matches path"]
-3. [Processing step: e.g., "Controller validates input"]
-4. [Processing step: e.g., "Service executes logic"]
-5. [Output: e.g., "Response returned"]
+1. [エントリポイント: 例: "ユーザーがコマンドを実行"]
+2. [処理ステップ: 例: "ルーターがパスをマッチング"]
+3. [処理ステップ: 例: "コントローラーが入力を検証"]
+4. [処理ステップ: 例: "サービスがロジックを実行"]
+5. [出力: 例: "レスポンスを返却"]
 
-**State Management:**
-- [How state is handled: e.g., "Stateless - no persistent state", "Database per request", "In-memory cache"]
+**状態管理:**
+- [状態の扱い方: 例: "ステートレス - 永続的な状態なし", "リクエストごとのデータベース", "インメモリキャッシュ"]
 
-## Key Abstractions
+## 主要な抽象化
 
-[Core concepts/patterns used throughout the codebase]
+[コードベース全体で使用されるコアコンセプト/パターン]
 
-**[Abstraction Name]:**
-- Purpose: [What it represents]
-- Examples: [e.g., "UserService, ProjectService"]
-- Pattern: [e.g., "Singleton", "Factory", "Repository"]
+**[抽象化名]:**
+- Purpose: [何を表現するか]
+- Examples: [例: "UserService, ProjectService"]
+- Pattern: [例: "Singleton", "Factory", "Repository"]
 
-**[Abstraction Name]:**
-- Purpose: [What it represents]
-- Examples: [Concrete examples]
-- Pattern: [Pattern used]
+**[抽象化名]:**
+- Purpose: [何を表現するか]
+- Examples: [具体例]
+- Pattern: [使用パターン]
 
-## Entry Points
+## エントリポイント
 
-[Where execution begins]
+[実行が開始される場所]
 
-**[Entry Point]:**
-- Location: [Brief: e.g., "src/index.ts", "API Gateway triggers"]
-- Triggers: [What invokes it: e.g., "CLI invocation", "HTTP request"]
-- Responsibilities: [What it does: e.g., "Parse args, route to command"]
+**[エントリポイント]:**
+- Location: [概要: 例: "src/index.ts", "API Gatewayトリガー"]
+- Triggers: [呼び出し元: 例: "CLI呼び出し", "HTTPリクエスト"]
+- Responsibilities: [役割: 例: "引数の解析、コマンドへのルーティング"]
 
-## Error Handling
+## エラーハンドリング
 
-**Strategy:** [How errors are handled: e.g., "Exception bubbling to top-level handler", "Per-route error middleware"]
+**戦略:** [エラーの処理方法: 例: "最上位ハンドラーへの例外バブリング", "ルートごとのエラーミドルウェア"]
 
-**Patterns:**
-- [Pattern: e.g., "try/catch at controller level"]
-- [Pattern: e.g., "Error codes returned to user"]
+**パターン:**
+- [パターン: 例: "コントローラーレベルでのtry/catch"]
+- [パターン: 例: "ユーザーへのエラーコード返却"]
 
-## Cross-Cutting Concerns
+## 横断的関心事
 
-[Aspects that affect multiple layers]
+[複数レイヤーに影響する側面]
 
-**Logging:**
-- [Approach: e.g., "Winston logger, injected per-request"]
+**ロギング:**
+- [アプローチ: 例: "Winstonロガー、リクエストごとに注入"]
 
-**Validation:**
-- [Approach: e.g., "Zod schemas at API boundary"]
+**バリデーション:**
+- [アプローチ: 例: "API境界でのZodスキーマ"]
 
-**Authentication:**
-- [Approach: e.g., "JWT middleware on protected routes"]
+**認証:**
+- [アプローチ: 例: "保護されたルートでのJWTミドルウェア"]
 
 ---
 
-*Architecture analysis: [date]*
-*Update when major patterns change*
+*アーキテクチャ分析: [日付]*
+*主要なパターンが変更された際に更新*
 ```
 
 <good_examples>
 ```markdown
-# Architecture
+# アーキテクチャ
 
-**Analysis Date:** 2025-01-20
+**分析日:** 2025-01-20
 
-## Pattern Overview
+## パターン概要
 
-**Overall:** CLI Application with Plugin System
+**全体:** プラグインシステム付きCLIアプリケーション
 
-**Key Characteristics:**
-- Single executable with subcommands
-- Plugin-based extensibility
-- File-based state (no database)
-- Synchronous execution model
+**主な特徴:**
+- サブコマンド付き単一実行ファイル
+- プラグインベースの拡張性
+- ファイルベースの状態（データベースなし）
+- 同期実行モデル
 
-## Layers
+## レイヤー
 
-**Command Layer:**
-- Purpose: Parse user input and route to appropriate handler
-- Contains: Command definitions, argument parsing, help text
+**コマンドレイヤー:**
+- Purpose: ユーザー入力を解析し、適切なハンドラーにルーティング
+- Contains: コマンド定義、引数解析、ヘルプテキスト
 - Location: `src/commands/*.ts`
-- Depends on: Service layer for business logic
-- Used by: CLI entry point (`src/index.ts`)
+- Depends on: ビジネスロジック用のサービスレイヤー
+- Used by: CLIエントリポイント (`src/index.ts`)
 
-**Service Layer:**
-- Purpose: Core business logic
+**サービスレイヤー:**
+- Purpose: コアビジネスロジック
 - Contains: FileService, TemplateService, InstallService
 - Location: `src/services/*.ts`
-- Depends on: File system utilities, external tools
-- Used by: Command handlers
+- Depends on: ファイルシステムユーティリティ、外部ツール
+- Used by: コマンドハンドラー
 
-**Utility Layer:**
-- Purpose: Shared helpers and abstractions
-- Contains: File I/O wrappers, path resolution, string formatting
+**ユーティリティレイヤー:**
+- Purpose: 共有ヘルパーと抽象化
+- Contains: ファイルI/Oラッパー、パス解決、文字列フォーマット
 - Location: `src/utils/*.ts`
-- Depends on: Node.js built-ins only
-- Used by: Service layer
+- Depends on: Node.js組み込みモジュールのみ
+- Used by: サービスレイヤー
 
-## Data Flow
+## データフロー
 
-**CLI Command Execution:**
+**CLIコマンド実行:**
 
-1. User runs: `gsd new-project`
-2. Commander parses args and flags
-3. Command handler invoked (`src/commands/new-project.ts`)
-4. Handler calls service methods (`src/services/project.ts` → `create()`)
-5. Service reads templates, processes files, writes output
-6. Results logged to console
-7. Process exits with status code
+1. ユーザーが実行: `gsd new-project`
+2. Commanderが引数とフラグを解析
+3. コマンドハンドラーが呼び出される (`src/commands/new-project.ts`)
+4. ハンドラーがサービスメソッドを呼び出す (`src/services/project.ts` → `create()`)
+5. サービスがテンプレートを読み込み、ファイルを処理し、出力を書き込む
+6. 結果がコンソールにログ出力される
+7. ステータスコードでプロセスが終了
 
-**State Management:**
-- File-based: All state lives in `.planning/` directory
-- No persistent in-memory state
-- Each command execution is independent
+**状態管理:**
+- ファイルベース: すべての状態は `.planning/` ディレクトリに存在
+- 永続的なインメモリ状態なし
+- 各コマンド実行は独立
 
-## Key Abstractions
+## 主要な抽象化
 
 **Service:**
-- Purpose: Encapsulate business logic for a domain
+- Purpose: ドメインのビジネスロジックをカプセル化
 - Examples: `src/services/file.ts`, `src/services/template.ts`, `src/services/project.ts`
-- Pattern: Singleton-like (imported as modules, not instantiated)
+- Pattern: シングルトン的（モジュールとしてインポート、インスタンス化しない）
 
 **Command:**
-- Purpose: CLI command definition
+- Purpose: CLIコマンド定義
 - Examples: `src/commands/new-project.ts`, `src/commands/plan-phase.ts`
-- Pattern: Commander.js command registration
+- Pattern: Commander.jsコマンド登録
 
 **Template:**
-- Purpose: Reusable document structures
-- Examples: PROJECT.md, PLAN.md templates
-- Pattern: Markdown files with substitution variables
+- Purpose: 再利用可能なドキュメント構造
+- Examples: PROJECT.md, PLAN.mdテンプレート
+- Pattern: 置換変数を含むMarkdownファイル
 
-## Entry Points
+## エントリポイント
 
-**CLI Entry:**
+**CLIエントリ:**
 - Location: `src/index.ts`
-- Triggers: User runs `gsd <command>`
-- Responsibilities: Register commands, parse args, display help
+- Triggers: ユーザーが `gsd <command>` を実行
+- Responsibilities: コマンド登録、引数解析、ヘルプ表示
 
-**Commands:**
+**コマンド:**
 - Location: `src/commands/*.ts`
-- Triggers: Matched command from CLI
-- Responsibilities: Validate input, call services, format output
+- Triggers: CLIからのマッチしたコマンド
+- Responsibilities: 入力検証、サービス呼び出し、出力フォーマット
 
-## Error Handling
+## エラーハンドリング
 
-**Strategy:** Throw exceptions, catch at command level, log and exit
+**戦略:** 例外をスローし、コマンドレベルでキャッチし、ログ出力して終了
 
-**Patterns:**
-- Services throw Error with descriptive messages
-- Command handlers catch, log error to stderr, exit(1)
-- Validation errors shown before execution (fail fast)
+**パターン:**
+- サービスは説明的なメッセージ付きErrorをスロー
+- コマンドハンドラーがキャッチし、stderrにエラーをログ出力、exit(1)
+- 実行前にバリデーションエラーを表示（フェイルファスト）
 
-## Cross-Cutting Concerns
+## 横断的関心事
 
-**Logging:**
-- Console.log for normal output
-- Console.error for errors
-- Chalk for colored output
+**ロギング:**
+- 通常出力にConsole.log
+- エラーにConsole.error
+- 色付き出力にChalk
 
-**Validation:**
-- Zod schemas for config file parsing
-- Manual validation in command handlers
-- Fail fast on invalid input
+**バリデーション:**
+- 設定ファイル解析にZodスキーマ
+- コマンドハンドラーでの手動バリデーション
+- 無効な入力時のフェイルファスト
 
-**File Operations:**
-- FileService abstraction over fs-extra
-- All paths validated before operations
-- Atomic writes (temp file + rename)
+**ファイル操作:**
+- fs-extra上のFileService抽象化
+- 操作前にすべてのパスを検証
+- アトミック書き込み（一時ファイル + リネーム）
 
 ---
 
-*Architecture analysis: 2025-01-20*
-*Update when major patterns change*
+*アーキテクチャ分析: 2025-01-20*
+*主要なパターンが変更された際に更新*
 ```
 </good_examples>
 
 <guidelines>
-**What belongs in ARCHITECTURE.md:**
-- Overall architectural pattern (monolith, microservices, layered, etc.)
-- Conceptual layers and their relationships
-- Data flow / request lifecycle
-- Key abstractions and patterns
-- Entry points
-- Error handling strategy
-- Cross-cutting concerns (logging, auth, validation)
+**ARCHITECTURE.mdに含めるもの:**
+- 全体的なアーキテクチャパターン（モノリス、マイクロサービス、レイヤード等）
+- 概念的なレイヤーとその関係
+- データフロー / リクエストライフサイクル
+- 主要な抽象化とパターン
+- エントリポイント
+- エラーハンドリング戦略
+- 横断的関心事（ロギング、認証、バリデーション）
 
-**What does NOT belong here:**
-- Exhaustive file listings (that's STRUCTURE.md)
-- Technology choices (that's STACK.md)
-- Line-by-line code walkthrough (defer to code reading)
-- Implementation details of specific features
+**ここに含めないもの:**
+- 網羅的なファイルリスト（STRUCTURE.mdの範囲）
+- 技術選定（STACK.mdの範囲）
+- 1行ごとのコードウォークスルー（コードリーディングに委ねる）
+- 特定機能の実装詳細
 
-**File paths ARE welcome:**
-Include file paths as concrete examples of abstractions. Use backtick formatting: `src/services/user.ts`. This makes the architecture document actionable for Claude when planning.
+**ファイルパスは歓迎:**
+抽象化の具体例としてファイルパスを含めてください。バッククォートフォーマットを使用: `src/services/user.ts`。これにより、アーキテクチャドキュメントがClaudeの計画時に実用的になります。
 
-**When filling this template:**
-- Read main entry points (index, server, main)
-- Identify layers by reading imports/dependencies
-- Trace a typical request/command execution
-- Note recurring patterns (services, controllers, repositories)
-- Keep descriptions conceptual, not mechanical
+**このテンプレートを記入する際:**
+- メインのエントリポイント（index, server, main）を読む
+- インポート/依存関係を読んでレイヤーを特定する
+- 典型的なリクエスト/コマンド実行をトレースする
+- 繰り返し現れるパターンに注目する（services, controllers, repositories）
+- 記述は概念的に保ち、機械的にしない
 
-**Useful for phase planning when:**
-- Adding new features (where does it fit in the layers?)
-- Refactoring (understanding current patterns)
-- Identifying where to add code (which layer handles X?)
-- Understanding dependencies between components
+**フェーズ計画で役立つ場面:**
+- 新機能の追加（レイヤーのどこに適合するか？）
+- リファクタリング（現在のパターンの理解）
+- コードの追加場所の特定（どのレイヤーがXを処理するか？）
+- コンポーネント間の依存関係の理解
 </guidelines>

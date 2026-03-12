@@ -1,18 +1,18 @@
 ---
 name: gsd:join-discord
-description: Join the GSD Discord community
+description: GSD Discordコミュニティに参加する
 ---
 
 <objective>
-Display the Discord invite link for the GSD community server.
+GSDコミュニティサーバーのDiscord招待リンクを表示します。
 </objective>
 
 <output>
-# Join the GSD Discord
+# GSD Discordに参加する
 
-Connect with other GSD users, get help, share what you're building, and stay updated.
+他のGSDユーザーとつながり、ヘルプを受け、作っているものを共有し、最新情報を入手しましょう。
 
-**Invite link:** https://discord.gg/gsd
+**招待リンク:** https://discord.gg/gsd
 
-Click the link or paste it into your browser to join.
+リンクをクリックするか、ブラウザに貼り付けて参加してください。
 </output>

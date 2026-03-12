@@ -1,19 +1,19 @@
 <purpose>
-Research how to implement a phase. Spawns gsd-phase-researcher with phase context.
+フェーズの実装方法を調査する。フェーズコンテキストを持つgsd-phase-researcherを生成する。
 
-Standalone research command. For most workflows, use `/gsd:plan-phase` which integrates research automatically.
+独立した調査コマンド。ほとんどのワークフローでは、調査を自動的に統合する`/gsd:plan-phase`を使用してください。
 </purpose>
 
 <process>
 
-## Step 0: Resolve Model Profile
+## Step 0: モデルプロファイルの解決
 
 @~/.claude/get-shit-done/references/model-profile-resolution.md
 
-Resolve model for:
+以下のモデルを解決する:
 - `gsd-phase-researcher`
 
-## Step 1: Normalize and Validate Phase
+## Step 1: フェーズの正規化と検証
 
 @~/.claude/get-shit-done/references/phase-argument-parsing.md
 
@@ -21,25 +21,25 @@ Resolve model for:
 PHASE_INFO=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap get-phase "${PHASE}")
 ```
 
-If `found` is false: Error and exit.
+`found`がfalseの場合: エラーを表示して終了。
 
-## Step 2: Check Existing Research
+## Step 2: 既存の調査を確認
 
 ```bash
 ls .planning/phases/${PHASE}-*/RESEARCH.md 2>/dev/null
 ```
 
-If exists: Offer update/view/skip options.
+存在する場合: 更新/表示/スキップのオプションを提示する。
 
-## Step 3: Gather Phase Context
+## Step 3: フェーズコンテキストの収集
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init phase-op "${PHASE}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
-# Extract: phase_dir, padded_phase, phase_number, state_path, requirements_path, context_path
+# 抽出: phase_dir, padded_phase, phase_number, state_path, requirements_path, context_path
 ```
 
-## Step 4: Spawn Researcher
+## Step 4: リサーチャーの生成
 
 ```
 Task(
@@ -48,9 +48,9 @@ Research implementation approach for Phase {phase}: {name}
 </objective>
 
 <files_to_read>
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
-- {requirements_path} (Project requirements)
-- {state_path} (Project decisions and history)
+- {context_path} (/gsd:discuss-phaseからのユーザー決定)
+- {requirements_path} (プロジェクト要件)
+- {state_path} (プロジェクトの決定と履歴)
 </files_to_read>
 
 <additional_context>
@@ -65,10 +65,11 @@ Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
 )
 ```
 
-## Step 5: Handle Return
+## Step 5: 戻り値の処理
 
-- `## RESEARCH COMPLETE` — Display summary, offer: Plan/Dig deeper/Review/Done
-- `## CHECKPOINT REACHED` — Present to user, spawn continuation
-- `## RESEARCH INCONCLUSIVE` — Show attempts, offer: Add context/Try different mode/Manual
+- `## RESEARCH COMPLETE` — サマリーを表示し、次のオプションを提示: 計画/深掘り/レビュー/完了
+- `## CHECKPOINT REACHED` — ユーザーに提示し、続行を生成
+- `## RESEARCH INCONCLUSIVE` — 試行内容を表示し、次のオプションを提示: コンテキスト追加/別モードで試行/手動
 
 </process>
+</output>

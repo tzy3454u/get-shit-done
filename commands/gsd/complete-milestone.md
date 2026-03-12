@@ -1,7 +1,7 @@
 ---
 type: prompt
 name: gsd:complete-milestone
-description: Archive completed milestone and prepare for next version
+description: 完了したマイルストーンをアーカイブし、次のバージョンを準備する
 argument-hint: <version>
 allowed-tools:
   - Read
@@ -10,127 +10,127 @@ allowed-tools:
 ---
 
 <objective>
-Mark milestone {{version}} complete, archive to milestones/, and update ROADMAP.md and REQUIREMENTS.md.
+マイルストーン {{version}} を完了としてマークし、milestones/ にアーカイブし、ROADMAP.md と REQUIREMENTS.md を更新します。
 
-Purpose: Create historical record of shipped version, archive milestone artifacts (roadmap + requirements), and prepare for next milestone.
-Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tagged.
+目的: リリース済みバージョンの履歴記録を作成し、マイルストーン成果物（ロードマップ＋要件）をアーカイブし、次のマイルストーンを準備します。
+出力: マイルストーンアーカイブ（ロードマップ＋要件）、PROJECT.md の更新、git タグの作成。
 </objective>
 
 <execution_context>
-**Load these files NOW (before proceeding):**
+**以下のファイルを今すぐ読み込んでください（作業開始前に）:**
 
-- @~/.claude/get-shit-done/workflows/complete-milestone.md (main workflow)
-- @~/.claude/get-shit-done/templates/milestone-archive.md (archive template)
+- @~/.claude/get-shit-done/workflows/complete-milestone.md （メインワークフロー）
+- @~/.claude/get-shit-done/templates/milestone-archive.md （アーカイブテンプレート）
   </execution_context>
 
 <context>
-**Project files:**
+**プロジェクトファイル:**
 - `.planning/ROADMAP.md`
 - `.planning/REQUIREMENTS.md`
 - `.planning/STATE.md`
 - `.planning/PROJECT.md`
 
-**User input:**
+**ユーザー入力:**
 
-- Version: {{version}} (e.g., "1.0", "1.1", "2.0")
+- バージョン: {{version}}（例: "1.0", "1.1", "2.0"）
   </context>
 
 <process>
 
-**Follow complete-milestone.md workflow:**
+**complete-milestone.md ワークフローに従う:**
 
-0. **Check for audit:**
+0. **監査の確認:**
 
-   - Look for `.planning/v{{version}}-MILESTONE-AUDIT.md`
-   - If missing or stale: recommend `/gsd:audit-milestone` first
-   - If audit status is `gaps_found`: recommend `/gsd:plan-milestone-gaps` first
-   - If audit status is `passed`: proceed to step 1
+   - `.planning/v{{version}}-MILESTONE-AUDIT.md` を確認する
+   - 存在しないか古い場合: まず `/gsd:audit-milestone` の実行を推奨
+   - 監査ステータスが `gaps_found` の場合: まず `/gsd:plan-milestone-gaps` の実行を推奨
+   - 監査ステータスが `passed` の場合: ステップ1に進む
 
    ```markdown
-   ## Pre-flight Check
+   ## 事前チェック
 
-   {If no v{{version}}-MILESTONE-AUDIT.md:}
-   ⚠ No milestone audit found. Run `/gsd:audit-milestone` first to verify
-   requirements coverage, cross-phase integration, and E2E flows.
+   {v{{version}}-MILESTONE-AUDIT.md が存在しない場合:}
+   ⚠ マイルストーン監査が見つかりません。まず `/gsd:audit-milestone` を実行して
+   要件カバレッジ、フェーズ間統合、E2Eフローを検証してください。
 
-   {If audit has gaps:}
-   ⚠ Milestone audit found gaps. Run `/gsd:plan-milestone-gaps` to create
-   phases that close the gaps, or proceed anyway to accept as tech debt.
+   {監査にギャップがある場合:}
+   ⚠ マイルストーン監査でギャップが見つかりました。`/gsd:plan-milestone-gaps` を実行して
+   ギャップを埋めるフェーズを作成するか、技術的負債として受け入れて続行してください。
 
-   {If audit passed:}
-   ✓ Milestone audit passed. Proceeding with completion.
+   {監査が合格の場合:}
+   ✓ マイルストーン監査に合格しました。完了処理を続行します。
    ```
 
-1. **Verify readiness:**
+1. **準備状況の確認:**
 
-   - Check all phases in milestone have completed plans (SUMMARY.md exists)
-   - Present milestone scope and stats
-   - Wait for confirmation
+   - マイルストーン内のすべてのフェーズに完了した計画（SUMMARY.md が存在）があることを確認
+   - マイルストーンのスコープと統計を提示
+   - 確認を待つ
 
-2. **Gather stats:**
+2. **統計の収集:**
 
-   - Count phases, plans, tasks
-   - Calculate git range, file changes, LOC
-   - Extract timeline from git log
-   - Present summary, confirm
+   - フェーズ数、計画数、タスク数をカウント
+   - git の範囲、ファイル変更数、LOC を計算
+   - git ログからタイムラインを抽出
+   - サマリーを提示し、確認
 
-3. **Extract accomplishments:**
+3. **達成事項の抽出:**
 
-   - Read all phase SUMMARY.md files in milestone range
-   - Extract 4-6 key accomplishments
-   - Present for approval
+   - マイルストーン範囲内のすべてのフェーズの SUMMARY.md ファイルを読み込む
+   - 4〜6個の主要な達成事項を抽出
+   - 承認を求める
 
-4. **Archive milestone:**
+4. **マイルストーンのアーカイブ:**
 
-   - Create `.planning/milestones/v{{version}}-ROADMAP.md`
-   - Extract full phase details from ROADMAP.md
-   - Fill milestone-archive.md template
-   - Update ROADMAP.md to one-line summary with link
+   - `.planning/milestones/v{{version}}-ROADMAP.md` を作成
+   - ROADMAP.md からフェーズの詳細を完全に抽出
+   - milestone-archive.md テンプレートを適用
+   - ROADMAP.md を1行のサマリーとリンクに更新
 
-5. **Archive requirements:**
+5. **要件のアーカイブ:**
 
-   - Create `.planning/milestones/v{{version}}-REQUIREMENTS.md`
-   - Mark all v1 requirements as complete (checkboxes checked)
-   - Note requirement outcomes (validated, adjusted, dropped)
-   - Delete `.planning/REQUIREMENTS.md` (fresh one created for next milestone)
+   - `.planning/milestones/v{{version}}-REQUIREMENTS.md` を作成
+   - すべての v1 要件を完了としてマーク（チェックボックスをオン）
+   - 要件の結果を記録（検証済み、調整済み、取り下げ）
+   - `.planning/REQUIREMENTS.md` を削除（次のマイルストーンで新規作成）
 
-6. **Update PROJECT.md:**
+6. **PROJECT.md の更新:**
 
-   - Add "Current State" section with shipped version
-   - Add "Next Milestone Goals" section
-   - Archive previous content in `<details>` (if v1.1+)
+   - リリース済みバージョンの「現在の状態」セクションを追加
+   - 「次のマイルストーン目標」セクションを追加
+   - 以前のコンテンツを `<details>` にアーカイブ（v1.1以降の場合）
 
-7. **Commit and tag:**
+7. **コミットとタグ:**
 
-   - Stage: MILESTONES.md, PROJECT.md, ROADMAP.md, STATE.md, archive files
-   - Commit: `chore: archive v{{version}} milestone`
-   - Tag: `git tag -a v{{version}} -m "[milestone summary]"`
-   - Ask about pushing tag
+   - ステージ: MILESTONES.md, PROJECT.md, ROADMAP.md, STATE.md, アーカイブファイル
+   - コミット: `chore: archive v{{version}} milestone`
+   - タグ: `git tag -a v{{version}} -m "[milestone summary]"`
+   - タグのプッシュについて確認
 
-8. **Offer next steps:**
-   - `/gsd:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
+8. **次のステップの提案:**
+   - `/gsd:new-milestone` — 次のマイルストーンを開始（質問 → 調査 → 要件 → ロードマップ）
 
 </process>
 
 <success_criteria>
 
-- Milestone archived to `.planning/milestones/v{{version}}-ROADMAP.md`
-- Requirements archived to `.planning/milestones/v{{version}}-REQUIREMENTS.md`
-- `.planning/REQUIREMENTS.md` deleted (fresh for next milestone)
-- ROADMAP.md collapsed to one-line entry
-- PROJECT.md updated with current state
-- Git tag v{{version}} created
-- Commit successful
-- User knows next steps (including need for fresh requirements)
+- マイルストーンが `.planning/milestones/v{{version}}-ROADMAP.md` にアーカイブされている
+- 要件が `.planning/milestones/v{{version}}-REQUIREMENTS.md` にアーカイブされている
+- `.planning/REQUIREMENTS.md` が削除されている（次のマイルストーン用にクリーン）
+- ROADMAP.md が1行のエントリに圧縮されている
+- PROJECT.md が現在の状態で更新されている
+- git タグ v{{version}} が作成されている
+- コミットが成功している
+- ユーザーが次のステップを把握している（新しい要件の必要性を含む）
   </success_criteria>
 
 <critical_rules>
 
-- **Load workflow first:** Read complete-milestone.md before executing
-- **Verify completion:** All phases must have SUMMARY.md files
-- **User confirmation:** Wait for approval at verification gates
-- **Archive before deleting:** Always create archive files before updating/deleting originals
-- **One-line summary:** Collapsed milestone in ROADMAP.md should be single line with link
-- **Context efficiency:** Archive keeps ROADMAP.md and REQUIREMENTS.md constant size per milestone
-- **Fresh requirements:** Next milestone starts with `/gsd:new-milestone` which includes requirements definition
+- **ワークフローを先に読み込む:** 実行前に complete-milestone.md を読み込む
+- **完了の確認:** すべてのフェーズに SUMMARY.md ファイルが存在する必要がある
+- **ユーザー確認:** 検証ゲートで承認を待つ
+- **削除前にアーカイブ:** オリジナルの更新/削除前に必ずアーカイブファイルを作成する
+- **1行サマリー:** ROADMAP.md 内の圧縮されたマイルストーンはリンク付きの1行にする
+- **コンテキスト効率:** アーカイブにより ROADMAP.md と REQUIREMENTS.md のサイズをマイルストーンごとに一定に保つ
+- **新しい要件:** 次のマイルストーンは `/gsd:new-milestone` で開始し、要件定義を含む
   </critical_rules>

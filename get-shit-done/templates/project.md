@@ -1,67 +1,67 @@
-# PROJECT.md Template
+# PROJECT.mdテンプレート
 
-Template for `.planning/PROJECT.md` — the living project context document.
+`.planning/PROJECT.md` 用テンプレート — プロジェクトコンテキストの生きたドキュメント。
 
 <template>
 
 ```markdown
-# [Project Name]
+# [プロジェクト名]
 
-## What This Is
+## これは何か
 
-[Current accurate description — 2-3 sentences. What does this product do and who is it for?
-Use the user's language and framing. Update whenever reality drifts from this description.]
+[現在の正確な説明 — 2〜3文。この製品は何をするもので、誰のためのものか？
+ユーザーの言葉とフレーミングを使用。現実がこの説明から乖離したら更新。]
 
-## Core Value
+## コアバリュー
 
-[The ONE thing that matters most. If everything else fails, this must work.
-One sentence that drives prioritization when tradeoffs arise.]
+[最も重要な唯一のこと。他のすべてが失敗しても、これは動作しなければならない。
+トレードオフが発生したときの優先順位を決める一文。]
 
-## Requirements
+## 要件
 
-### Validated
+### 検証済み
 
-<!-- Shipped and confirmed valuable. -->
+<!-- 出荷され、価値が確認されたもの。 -->
 
-(None yet — ship to validate)
+（まだなし — 検証するには出荷が必要）
 
-### Active
+### アクティブ
 
-<!-- Current scope. Building toward these. -->
+<!-- 現在のスコープ。これらに向けて構築中。 -->
 
-- [ ] [Requirement 1]
-- [ ] [Requirement 2]
-- [ ] [Requirement 3]
+- [ ] [要件1]
+- [ ] [要件2]
+- [ ] [要件3]
 
-### Out of Scope
+### スコープ外
 
-<!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
+<!-- 明示的な境界。再追加を防ぐために理由を含む。 -->
 
-- [Exclusion 1] — [why]
-- [Exclusion 2] — [why]
+- [除外1] — [理由]
+- [除外2] — [理由]
 
-## Context
+## コンテキスト
 
-[Background information that informs implementation:
-- Technical environment or ecosystem
-- Relevant prior work or experience
-- User research or feedback themes
-- Known issues to address]
+[実装に影響する背景情報:
+- 技術環境またはエコシステム
+- 関連する過去の作業や経験
+- ユーザーリサーチまたはフィードバックのテーマ
+- 対処すべき既知の問題]
 
-## Constraints
+## 制約
 
-- **[Type]**: [What] — [Why]
-- **[Type]**: [What] — [Why]
+- **[タイプ]**: [何] — [なぜ]
+- **[タイプ]**: [何] — [なぜ]
 
-Common types: Tech stack, Timeline, Budget, Dependencies, Compatibility, Performance, Security
+一般的なタイプ: 技術スタック、タイムライン、予算、依存関係、互換性、パフォーマンス、セキュリティ
 
-## Key Decisions
+## 主要な判断
 
-<!-- Decisions that constrain future work. Add throughout project lifecycle. -->
+<!-- 将来の作業を制約する判断。プロジェクトライフサイクル全体で追加。 -->
 
-| Decision | Rationale | Outcome |
+| 判断 | 理由 | 結果 |
 |----------|-----------|---------|
-| [Choice] | [Why] | [✓ Good / ⚠️ Revisit / — Pending] |
+| [選択] | [なぜ] | [✓ 良好 / ⚠️ 要再検討 / — 保留中] |
 
 ---
 *Last updated: [date] after [trigger]*
@@ -71,114 +71,115 @@ Common types: Tech stack, Timeline, Budget, Dependencies, Compatibility, Perform
 
 <guidelines>
 
-**What This Is:**
-- Current accurate description of the product
-- 2-3 sentences capturing what it does and who it's for
-- Use the user's words and framing
-- Update when the product evolves beyond this description
+**これは何か:**
+- 製品の現在の正確な説明
+- 何をするもので誰のためかを2〜3文で記述
+- ユーザーの言葉とフレーミングを使用
+- 製品がこの説明を超えて進化したら更新
 
-**Core Value:**
-- The single most important thing
-- Everything else can fail; this cannot
-- Drives prioritization when tradeoffs arise
-- Rarely changes; if it does, it's a significant pivot
+**コアバリュー:**
+- 最も重要な唯一のこと
+- 他のすべてが失敗してもこれは失敗できない
+- トレードオフが発生したときの優先順位を決定
+- めったに変わらない; 変わる場合は重大なピボット
 
-**Requirements — Validated:**
-- Requirements that shipped and proved valuable
-- Format: `- ✓ [Requirement] — [version/phase]`
-- These are locked — changing them requires explicit discussion
+**要件 — 検証済み:**
+- 出荷され価値が証明された要件
+- 形式: `- ✓ [要件] — [バージョン/フェーズ]`
+- これらはロックされている — 変更には明示的な議論が必要
 
-**Requirements — Active:**
-- Current scope being built toward
-- These are hypotheses until shipped and validated
-- Move to Validated when shipped, Out of Scope if invalidated
+**要件 — アクティブ:**
+- 構築に向けて取り組んでいる現在のスコープ
+- これらは出荷され検証されるまで仮説
+- 出荷時に検証済みに、無効化された場合はスコープ外に移動
 
-**Requirements — Out of Scope:**
-- Explicit boundaries on what we're not building
-- Always include reasoning (prevents re-adding later)
-- Includes: considered and rejected, deferred to future, explicitly excluded
+**要件 — スコープ外:**
+- 構築しないことの明示的な境界
+- 常に理由を含む（後での再追加を防止）
+- 含まれるもの: 検討して却下されたもの、将来に先送りされたもの、明示的に除外されたもの
 
-**Context:**
-- Background that informs implementation decisions
-- Technical environment, prior work, user feedback
-- Known issues or technical debt to address
-- Update as new context emerges
+**コンテキスト:**
+- 実装判断に影響する背景
+- 技術環境、過去の作業、ユーザーフィードバック
+- 対処すべき既知の問題や技術的負債
+- 新しいコンテキストが出現したら更新
 
-**Constraints:**
-- Hard limits on implementation choices
-- Tech stack, timeline, budget, compatibility, dependencies
-- Include the "why" — constraints without rationale get questioned
+**制約:**
+- 実装選択に対するハードリミット
+- 技術スタック、タイムライン、予算、互換性、依存関係
+- 「なぜ」を含む — 理由なしの制約は疑問視される
 
-**Key Decisions:**
-- Significant choices that affect future work
-- Add decisions as they're made throughout the project
-- Track outcome when known:
-  - ✓ Good — decision proved correct
-  - ⚠️ Revisit — decision may need reconsideration
-  - — Pending — too early to evaluate
+**主要な判断:**
+- 将来の作業に影響する重要な選択
+- プロジェクト全体を通じて判断が行われたら追加
+- 結果が判明したら追跡:
+  - ✓ 良好 — 判断が正しかったことが証明
+  - ⚠️ 要再検討 — 判断の見直しが必要かもしれない
+  - — 保留中 — 評価するには時期尚早
 
-**Last Updated:**
-- Always note when and why the document was updated
-- Format: `after Phase 2` or `after v1.0 milestone`
-- Triggers review of whether content is still accurate
+**最終更新:**
+- ドキュメントがいつなぜ更新されたかを常に記録
+- 形式: `after Phase 2`または`after v1.0 milestone`
+- コンテンツがまだ正確かどうかのレビューをトリガー
 
 </guidelines>
 
 <evolution>
 
-PROJECT.md evolves throughout the project lifecycle.
+PROJECT.mdはプロジェクトライフサイクル全体で進化します。
 
-**After each phase transition:**
-1. Requirements invalidated? → Move to Out of Scope with reason
-2. Requirements validated? → Move to Validated with phase reference
-3. New requirements emerged? → Add to Active
-4. Decisions to log? → Add to Key Decisions
-5. "What This Is" still accurate? → Update if drifted
+**各フェーズ移行後:**
+1. 無効化された要件？→ 理由付きでスコープ外に移動
+2. 検証された要件？→ フェーズ参照付きで検証済みに移動
+3. 新しい要件が出現？→ アクティブに追加
+4. 記録すべき判断？→ 主要な判断に追加
+5. 「これは何か」はまだ正確？→ 乖離があれば更新
 
-**After each milestone:**
-1. Full review of all sections
-2. Core Value check — still the right priority?
-3. Audit Out of Scope — reasons still valid?
-4. Update Context with current state (users, feedback, metrics)
+**各マイルストーン後:**
+1. すべてのセクションの完全レビュー
+2. コアバリューのチェック — まだ正しい優先順位か？
+3. スコープ外の監査 — 理由はまだ有効か？
+4. 現在の状態でコンテキストを更新（ユーザー、フィードバック、指標）
 
 </evolution>
 
 <brownfield>
 
-For existing codebases:
+既存のコードベースの場合:
 
-1. **Map codebase first** via `/gsd:map-codebase`
+1. まず`/gsd:map-codebase`で**コードベースをマッピング**
 
-2. **Infer Validated requirements** from existing code:
-   - What does the codebase actually do?
-   - What patterns are established?
-   - What's clearly working and relied upon?
+2. 既存のコードから**検証済み要件を推測**:
+   - コードベースは実際に何をしているか？
+   - どんなパターンが確立されているか？
+   - 明らかに動作し依存されているものは？
 
-3. **Gather Active requirements** from user:
-   - Present inferred current state
-   - Ask what they want to build next
+3. ユーザーから**アクティブ要件を収集**:
+   - 推測した現状を提示
+   - 次に何を構築したいか尋ねる
 
-4. **Initialize:**
-   - Validated = inferred from existing code
-   - Active = user's goals for this work
-   - Out of Scope = boundaries user specifies
-   - Context = includes current codebase state
+4. **初期化:**
+   - 検証済み = 既存コードから推測
+   - アクティブ = この作業に対するユーザーの目標
+   - スコープ外 = ユーザーが指定する境界
+   - コンテキスト = 現在のコードベースの状態を含む
 
 </brownfield>
 
 <state_reference>
 
-STATE.md references PROJECT.md:
+STATE.mdがPROJECT.mdを参照:
 
 ```markdown
 ## Project Reference
 
 See: .planning/PROJECT.md (updated [date])
 
-**Core value:** [One-liner from Core Value section]
-**Current focus:** [Current phase name]
+**Core value:** [コアバリューセクションからの一行]
+**Current focus:** [現在のフェーズ名]
 ```
 
-This ensures Claude reads current PROJECT.md context.
+これによりClaudeが現在のPROJECT.mdコンテキストを読むことが保証されます。
 
 </state_reference>
+</output>

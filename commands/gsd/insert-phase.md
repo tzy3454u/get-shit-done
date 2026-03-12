@@ -1,6 +1,6 @@
 ---
 name: gsd:insert-phase
-description: Insert urgent work as decimal phase (e.g., 72.1) between existing phases
+description: 既存フェーズの間に小数フェーズ（例: 72.1）として緊急作業を挿入する
 argument-hint: <after> <description>
 allowed-tools:
   - Read
@@ -9,11 +9,11 @@ allowed-tools:
 ---
 
 <objective>
-Insert a decimal phase for urgent work discovered mid-milestone that must be completed between existing integer phases.
+マイルストーン進行中に発見された緊急作業を、既存の整数フェーズ間で完了させるために小数フェーズとして挿入します。
 
-Uses decimal numbering (72.1, 72.2, etc.) to preserve the logical sequence of planned phases while accommodating urgent insertions.
+小数ナンバリング（72.1、72.2 など）を使用して、計画済みフェーズの論理的な順序を保ちながら緊急の挿入に対応します。
 
-Purpose: Handle urgent work discovered during execution without renumbering entire roadmap.
+目的: ロードマップ全体の番号を振り直すことなく、実行中に発見された緊急作業を処理します。
 </objective>
 
 <execution_context>
@@ -21,12 +21,12 @@ Purpose: Handle urgent work discovered during execution without renumbering enti
 </execution_context>
 
 <context>
-Arguments: $ARGUMENTS (format: <after-phase-number> <description>)
+引数: $ARGUMENTS（形式: <対象フェーズ番号> <説明>）
 
-Roadmap and state are resolved in-workflow via `init phase-op` and targeted tool calls.
+ロードマップと状態はワークフロー内で `init phase-op` と対象ツール呼び出しを通じて解決されます。
 </context>
 
 <process>
-Execute the insert-phase workflow from @~/.claude/get-shit-done/workflows/insert-phase.md end-to-end.
-Preserve all validation gates (argument parsing, phase verification, decimal calculation, roadmap updates).
+@~/.claude/get-shit-done/workflows/insert-phase.md のフェーズ挿入ワークフローをエンドツーエンドで実行します。
+すべてのバリデーションゲート（引数解析、フェーズ検証、小数計算、ロードマップ更新）を維持します。
 </process>

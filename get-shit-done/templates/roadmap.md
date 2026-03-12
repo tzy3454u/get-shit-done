@@ -1,202 +1,202 @@
-# Roadmap Template
+# ロードマップテンプレート
 
-Template for `.planning/ROADMAP.md`.
+`.planning/ROADMAP.md` 用テンプレート。
 
-## Initial Roadmap (v1.0 Greenfield)
+## 初期ロードマップ（v1.0 新規プロジェクト）
 
 ```markdown
-# Roadmap: [Project Name]
+# ロードマップ: [プロジェクト名]
 
-## Overview
+## 概要
 
-[One paragraph describing the journey from start to finish]
+[開始から完了までの道のりを説明する1段落]
 
-## Phases
+## フェーズ
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+**フェーズ番号付け:**
+- 整数フェーズ (1, 2, 3): 計画されたマイルストーン作業
+- 小数フェーズ (2.1, 2.2): 緊急挿入（INSERTEDマーク付き）
 
-Decimal phases appear between their surrounding integers in numeric order.
+小数フェーズは数値順で前後の整数の間に配置されます。
 
-- [ ] **Phase 1: [Name]** - [One-line description]
-- [ ] **Phase 2: [Name]** - [One-line description]
-- [ ] **Phase 3: [Name]** - [One-line description]
-- [ ] **Phase 4: [Name]** - [One-line description]
+- [ ] **Phase 1: [名前]** - [一行の説明]
+- [ ] **Phase 2: [名前]** - [一行の説明]
+- [ ] **Phase 3: [名前]** - [一行の説明]
+- [ ] **Phase 4: [名前]** - [一行の説明]
 
-## Phase Details
+## フェーズ詳細
 
-### Phase 1: [Name]
-**Goal**: [What this phase delivers]
+### Phase 1: [名前]
+**Goal**: [このフェーズで提供するもの]
 **Depends on**: Nothing (first phase)
-**Requirements**: [REQ-01, REQ-02, REQ-03]  <!-- brackets optional, parser handles both formats -->
-**Success Criteria** (what must be TRUE):
-  1. [Observable behavior from user perspective]
-  2. [Observable behavior from user perspective]
-  3. [Observable behavior from user perspective]
-**Plans**: [Number of plans, e.g., "3 plans" or "TBD"]
+**Requirements**: [REQ-01, REQ-02, REQ-03]  <!-- 括弧は任意、パーサーは両方の形式に対応 -->
+**Success Criteria** (TRUEでなければならないこと):
+  1. [ユーザー視点での観察可能な動作]
+  2. [ユーザー視点での観察可能な動作]
+  3. [ユーザー視点での観察可能な動作]
+**Plans**: [プラン数、例: "3 plans" または "TBD"]
 
 Plans:
-- [ ] 01-01: [Brief description of first plan]
-- [ ] 01-02: [Brief description of second plan]
-- [ ] 01-03: [Brief description of third plan]
+- [ ] 01-01: [最初のプランの簡単な説明]
+- [ ] 01-02: [2番目のプランの簡単な説明]
+- [ ] 01-03: [3番目のプランの簡単な説明]
 
-### Phase 2: [Name]
-**Goal**: [What this phase delivers]
+### Phase 2: [名前]
+**Goal**: [このフェーズで提供するもの]
 **Depends on**: Phase 1
 **Requirements**: [REQ-04, REQ-05]
-**Success Criteria** (what must be TRUE):
-  1. [Observable behavior from user perspective]
-  2. [Observable behavior from user perspective]
-**Plans**: [Number of plans]
+**Success Criteria** (TRUEでなければならないこと):
+  1. [ユーザー視点での観察可能な動作]
+  2. [ユーザー視点での観察可能な動作]
+**Plans**: [プラン数]
 
 Plans:
-- [ ] 02-01: [Brief description]
-- [ ] 02-02: [Brief description]
+- [ ] 02-01: [簡単な説明]
+- [ ] 02-02: [簡単な説明]
 
 ### Phase 2.1: Critical Fix (INSERTED)
-**Goal**: [Urgent work inserted between phases]
+**Goal**: [フェーズ間に挿入された緊急作業]
 **Depends on**: Phase 2
-**Success Criteria** (what must be TRUE):
-  1. [What the fix achieves]
+**Success Criteria** (TRUEでなければならないこと):
+  1. [修正で達成されること]
 **Plans**: 1 plan
 
 Plans:
-- [ ] 02.1-01: [Description]
+- [ ] 02.1-01: [説明]
 
-### Phase 3: [Name]
-**Goal**: [What this phase delivers]
+### Phase 3: [名前]
+**Goal**: [このフェーズで提供するもの]
 **Depends on**: Phase 2
 **Requirements**: [REQ-06, REQ-07, REQ-08]
-**Success Criteria** (what must be TRUE):
-  1. [Observable behavior from user perspective]
-  2. [Observable behavior from user perspective]
-  3. [Observable behavior from user perspective]
-**Plans**: [Number of plans]
+**Success Criteria** (TRUEでなければならないこと):
+  1. [ユーザー視点での観察可能な動作]
+  2. [ユーザー視点での観察可能な動作]
+  3. [ユーザー視点での観察可能な動作]
+**Plans**: [プラン数]
 
 Plans:
-- [ ] 03-01: [Brief description]
-- [ ] 03-02: [Brief description]
+- [ ] 03-01: [簡単な説明]
+- [ ] 03-02: [簡単な説明]
 
-### Phase 4: [Name]
-**Goal**: [What this phase delivers]
+### Phase 4: [名前]
+**Goal**: [このフェーズで提供するもの]
 **Depends on**: Phase 3
 **Requirements**: [REQ-09, REQ-10]
-**Success Criteria** (what must be TRUE):
-  1. [Observable behavior from user perspective]
-  2. [Observable behavior from user perspective]
-**Plans**: [Number of plans]
+**Success Criteria** (TRUEでなければならないこと):
+  1. [ユーザー視点での観察可能な動作]
+  2. [ユーザー視点での観察可能な動作]
+**Plans**: [プラン数]
 
 Plans:
-- [ ] 04-01: [Brief description]
+- [ ] 04-01: [簡単な説明]
 
-## Progress
+## 進捗
 
-**Execution Order:**
-Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
+**実行順序:**
+フェーズは数値順に実行: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
-| Phase | Plans Complete | Status | Completed |
+| フェーズ | プラン完了 | ステータス | 完了日 |
 |-------|----------------|--------|-----------|
-| 1. [Name] | 0/3 | Not started | - |
-| 2. [Name] | 0/2 | Not started | - |
-| 3. [Name] | 0/2 | Not started | - |
-| 4. [Name] | 0/1 | Not started | - |
+| 1. [名前] | 0/3 | Not started | - |
+| 2. [名前] | 0/2 | Not started | - |
+| 3. [名前] | 0/2 | Not started | - |
+| 4. [名前] | 0/1 | Not started | - |
 ```
 
 <guidelines>
-**Initial planning (v1.0):**
-- Phase count depends on granularity setting (coarse: 3-5, standard: 5-8, fine: 8-12)
-- Each phase delivers something coherent
-- Phases can have 1+ plans (split if >3 tasks or multiple subsystems)
-- Plans use naming: {phase}-{plan}-PLAN.md (e.g., 01-02-PLAN.md)
-- No time estimates (this isn't enterprise PM)
-- Progress table updated by execute workflow
-- Plan count can be "TBD" initially, refined during planning
+**初期計画 (v1.0):**
+- フェーズ数は粒度設定に依存 (coarse: 3-5, standard: 5-8, fine: 8-12)
+- 各フェーズはまとまりのある成果物を提供
+- フェーズは1つ以上のプランを持てる（3タスク超または複数サブシステムの場合は分割）
+- プランの命名規則: {phase}-{plan}-PLAN.md（例: 01-02-PLAN.md）
+- 時間見積もりなし（エンタープライズPMではない）
+- 進捗テーブルはexecuteワークフローで更新
+- プラン数は最初は "TBD" でもよく、計画時に精緻化
 
-**Success criteria:**
-- 2-5 observable behaviors per phase (from user's perspective)
-- Cross-checked against requirements during roadmap creation
-- Flow downstream to `must_haves` in plan-phase
-- Verified by verify-phase after execution
-- Format: "User can [action]" or "[Thing] works/exists"
+**成功基準:**
+- フェーズごとに2〜5個の観察可能な動作（ユーザー視点）
+- ロードマップ作成時に要件とクロスチェック
+- plan-phaseの `must_haves` に下流展開
+- 実行後にverify-phaseで検証
+- 形式: "ユーザーが[アクション]できる" または "[対象]が動作する/存在する"
 
-**After milestones ship:**
-- Collapse completed milestones in `<details>` tags
-- Add new milestone sections for upcoming work
-- Keep continuous phase numbering (never restart at 01)
+**マイルストーンリリース後:**
+- 完了したマイルストーンを `<details>` タグで折りたたむ
+- 今後の作業用に新しいマイルストーンセクションを追加
+- 連続したフェーズ番号を維持（01からリスタートしない）
 </guidelines>
 
 <status_values>
-- `Not started` - Haven't begun
-- `In progress` - Currently working
-- `Complete` - Done (add completion date)
-- `Deferred` - Pushed to later (with reason)
+- `Not started` - 未着手
+- `In progress` - 作業中
+- `Complete` - 完了（完了日を追加）
+- `Deferred` - 延期（理由付き）
 </status_values>
 
-## Milestone-Grouped Roadmap (After v1.0 Ships)
+## マイルストーン別ロードマップ（v1.0リリース後）
 
-After completing first milestone, reorganize with milestone groupings:
+最初のマイルストーン完了後、マイルストーングループで再編成:
 
 ```markdown
-# Roadmap: [Project Name]
+# ロードマップ: [プロジェクト名]
 
-## Milestones
+## マイルストーン
 
 - ✅ **v1.0 MVP** - Phases 1-4 (shipped YYYY-MM-DD)
-- 🚧 **v1.1 [Name]** - Phases 5-6 (in progress)
-- 📋 **v2.0 [Name]** - Phases 7-10 (planned)
+- 🚧 **v1.1 [名前]** - Phases 5-6 (in progress)
+- 📋 **v2.0 [名前]** - Phases 7-10 (planned)
 
-## Phases
+## フェーズ
 
 <details>
 <summary>✅ v1.0 MVP (Phases 1-4) - SHIPPED YYYY-MM-DD</summary>
 
-### Phase 1: [Name]
-**Goal**: [What this phase delivers]
+### Phase 1: [名前]
+**Goal**: [このフェーズで提供するもの]
 **Plans**: 3 plans
 
 Plans:
-- [x] 01-01: [Brief description]
-- [x] 01-02: [Brief description]
-- [x] 01-03: [Brief description]
+- [x] 01-01: [簡単な説明]
+- [x] 01-02: [簡単な説明]
+- [x] 01-03: [簡単な説明]
 
-[... remaining v1.0 phases ...]
+[... 残りのv1.0フェーズ ...]
 
 </details>
 
-### 🚧 v1.1 [Name] (In Progress)
+### 🚧 v1.1 [名前] (In Progress)
 
-**Milestone Goal:** [What v1.1 delivers]
+**Milestone Goal:** [v1.1で提供するもの]
 
-#### Phase 5: [Name]
-**Goal**: [What this phase delivers]
+#### Phase 5: [名前]
+**Goal**: [このフェーズで提供するもの]
 **Depends on**: Phase 4
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: [Brief description]
-- [ ] 05-02: [Brief description]
+- [ ] 05-01: [簡単な説明]
+- [ ] 05-02: [簡単な説明]
 
-[... remaining v1.1 phases ...]
+[... 残りのv1.1フェーズ ...]
 
-### 📋 v2.0 [Name] (Planned)
+### 📋 v2.0 [名前] (Planned)
 
-**Milestone Goal:** [What v2.0 delivers]
+**Milestone Goal:** [v2.0で提供するもの]
 
-[... v2.0 phases ...]
+[... v2.0フェーズ ...]
 
-## Progress
+## 進捗
 
-| Phase | Milestone | Plans Complete | Status | Completed |
+| フェーズ | マイルストーン | プラン完了 | ステータス | 完了日 |
 |-------|-----------|----------------|--------|-----------|
 | 1. Foundation | v1.0 | 3/3 | Complete | YYYY-MM-DD |
 | 2. Features | v1.0 | 2/2 | Complete | YYYY-MM-DD |
 | 5. Security | v1.1 | 0/2 | Not started | - |
 ```
 
-**Notes:**
-- Milestone emoji: ✅ shipped, 🚧 in progress, 📋 planned
-- Completed milestones collapsed in `<details>` for readability
-- Current/future milestones expanded
-- Continuous phase numbering (01-99)
-- Progress table includes milestone column
+**備考:**
+- マイルストーン絵文字: ✅ リリース済み, 🚧 進行中, 📋 計画済み
+- 完了したマイルストーンは可読性のため `<details>` で折りたたみ
+- 現在/将来のマイルストーンは展開表示
+- 連続フェーズ番号 (01-99)
+- 進捗テーブルにマイルストーン列を含む

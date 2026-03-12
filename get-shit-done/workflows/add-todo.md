@@ -1,51 +1,51 @@
 <purpose>
-Capture an idea, task, or issue that surfaces during a GSD session as a structured todo for later work. Enables "thought → capture → continue" flow without losing context.
+GSDセッション中に浮上したアイデア、タスク、または問題を、後で作業するための構造化されたtodoとしてキャプチャする。コンテキストを失わずに「思いつき → 記録 → 続行」のフローを可能にする。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されるすべてのファイルを読み取ること。
 </required_reading>
 
 <process>
 
 <step name="init_context">
-Load todo context:
+todoコンテキストを読み込む:
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init todos)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `commit_docs`, `date`, `timestamp`, `todo_count`, `todos`, `pending_dir`, `todos_dir_exists`.
+init JSONから抽出: `commit_docs`, `date`, `timestamp`, `todo_count`, `todos`, `pending_dir`, `todos_dir_exists`。
 
-Ensure directories exist:
+ディレクトリの存在を確認:
 ```bash
 mkdir -p .planning/todos/pending .planning/todos/done
 ```
 
-Note existing areas from the todos array for consistency in infer_area step.
+infer_areaステップでの一貫性のために、todos配列から既存のエリアをメモ。
 </step>
 
 <step name="extract_content">
-**With arguments:** Use as the title/focus.
+**引数ありの場合:** タイトル/焦点として使用。
 - `/gsd:add-todo Add auth token refresh` → title = "Add auth token refresh"
 
-**Without arguments:** Analyze recent conversation to extract:
-- The specific problem, idea, or task discussed
-- Relevant file paths mentioned
-- Technical details (error messages, line numbers, constraints)
+**引数なしの場合:** 最近の会話を分析して以下を抽出:
+- 議論された具体的な問題、アイデア、またはタスク
+- 言及された関連ファイルパス
+- 技術的な詳細（エラーメッセージ、行番号、制約）
 
-Formulate:
-- `title`: 3-10 word descriptive title (action verb preferred)
-- `problem`: What's wrong or why this is needed
-- `solution`: Approach hints or "TBD" if just an idea
-- `files`: Relevant paths with line numbers from conversation
+策定:
+- `title`: 3-10語の説明的なタイトル（動詞で始めることを推奨）
+- `problem`: 何が問題か、なぜこれが必要か
+- `solution`: アプローチのヒント、またはアイデア段階なら"TBD"
+- `files`: 会話からの行番号付き関連パス
 </step>
 
 <step name="infer_area">
-Infer area from file paths:
+ファイルパスからエリアを推定:
 
-| Path pattern | Area |
+| パスパターン | エリア |
 |--------------|------|
 | `src/api/*`, `api/*` | `api` |
 | `src/components/*`, `src/ui/*` | `ui` |
@@ -55,39 +55,39 @@ Infer area from file paths:
 | `docs/*` | `docs` |
 | `.planning/*` | `planning` |
 | `scripts/*`, `bin/*` | `tooling` |
-| No files or unclear | `general` |
+| ファイルなしまたは不明 | `general` |
 
-Use existing area from step 2 if similar match exists.
+類似する一致がある場合はステップ2の既存エリアを使用。
 </step>
 
 <step name="check_duplicates">
 ```bash
-# Search for key words from title in existing todos
-grep -l -i "[key words from title]" .planning/todos/pending/*.md 2>/dev/null
+# タイトルのキーワードを既存のtodoで検索
+grep -l -i "[タイトルからのキーワード]" .planning/todos/pending/*.md 2>/dev/null
 ```
 
-If potential duplicate found:
-1. Read the existing todo
-2. Compare scope
+重複の可能性がある場合:
+1. 既存のtodoを読み取る
+2. スコープを比較
 
-If overlapping, use AskUserQuestion:
-- header: "Duplicate?"
-- question: "Similar todo exists: [title]. What would you like to do?"
+重複している場合、AskUserQuestionを使用:
+- header: "重複？"
+- question: "類似するtodoが存在します: [title]。どうしますか？"
 - options:
-  - "Skip" — keep existing todo
-  - "Replace" — update existing with new context
-  - "Add anyway" — create as separate todo
+  - "スキップ" — 既存のtodoを維持
+  - "置き換え" — 新しいコンテキストで既存を更新
+  - "そのまま追加" — 別のtodoとして作成
 </step>
 
 <step name="create_file">
-Use values from init context: `timestamp` and `date` are already available.
+initコンテキストの値を使用: `timestamp`と`date`は既に利用可能。
 
-Generate slug for the title:
+タイトルのスラグを生成:
 ```bash
 slug=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" generate-slug "$title" --raw)
 ```
 
-Write to `.planning/todos/pending/${date}-${slug}.md`:
+`.planning/todos/pending/${date}-${slug}.md`に書き込む:
 
 ```markdown
 ---
@@ -100,59 +100,60 @@ files:
 
 ## Problem
 
-[problem description - enough context for future Claude to understand weeks later]
+[問題の説明 - 数週間後の将来のClaudeが理解できるだけの十分なコンテキスト]
 
 ## Solution
 
-[approach hints or "TBD"]
+[アプローチのヒントまたは"TBD"]
 ```
 </step>
 
 <step name="update_state">
-If `.planning/STATE.md` exists:
+`.planning/STATE.md`が存在する場合:
 
-1. Use `todo_count` from init context (or re-run `init todos` if count changed)
-2. Update "### Pending Todos" under "## Accumulated Context"
+1. initコンテキストの`todo_count`を使用（またはカウントが変わった場合は`init todos`を再実行）
+2. "## Accumulated Context"の下の"### Pending Todos"を更新
 </step>
 
 <step name="git_commit">
-Commit the todo and any updated state:
+todoと更新された状態をコミット:
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: capture todo - [title]" --files .planning/todos/pending/[filename] .planning/STATE.md
 ```
 
-Tool respects `commit_docs` config and gitignore automatically.
+ツールは`commit_docs`設定とgitignoreを自動的に尊重する。
 
-Confirm: "Committed: docs: capture todo - [title]"
+確認: "Committed: docs: capture todo - [title]"
 </step>
 
 <step name="confirm">
 ```
-Todo saved: .planning/todos/pending/[filename]
+Todo保存済み: .planning/todos/pending/[filename]
 
   [title]
-  Area: [area]
-  Files: [count] referenced
+  エリア: [area]
+  ファイル: [count]件の参照
 
 ---
 
-Would you like to:
+次に何をしますか:
 
-1. Continue with current work
-2. Add another todo
-3. View all todos (/gsd:check-todos)
+1. 現在の作業を続行
+2. 別のtodoを追加
+3. すべてのtodoを表示 (/gsd:check-todos)
 ```
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] Directory structure exists
-- [ ] Todo file created with valid frontmatter
-- [ ] Problem section has enough context for future Claude
-- [ ] No duplicates (checked and resolved)
-- [ ] Area consistent with existing todos
-- [ ] STATE.md updated if exists
-- [ ] Todo and state committed to git
+- [ ] ディレクトリ構造が存在
+- [ ] 有効なフロントマターを持つtodoファイルが作成された
+- [ ] Problemセクションに将来のClaudeのための十分なコンテキストがある
+- [ ] 重複なし（確認済みかつ解決済み）
+- [ ] エリアが既存のtodoと一貫している
+- [ ] STATE.mdが存在する場合は更新
+- [ ] todoと状態がgitにコミットされた
 </success_criteria>
+</output>

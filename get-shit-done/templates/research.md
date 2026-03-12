@@ -1,77 +1,77 @@
-# Research Template
+# リサーチテンプレート
 
-Template for `.planning/phases/XX-name/{phase_num}-RESEARCH.md` - comprehensive ecosystem research before planning.
+`.planning/phases/XX-name/{phase_num}-RESEARCH.md` 用テンプレート - 計画前の包括的なエコシステムリサーチ。
 
-**Purpose:** Document what Claude needs to know to implement a phase well - not just "which library" but "how do experts build this."
+**目的:** Claudeがフェーズを適切に実装するために知るべきことを文書化します - 「どのライブラリ」だけでなく「専門家はこれをどう構築するか」。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
 # Phase [X]: [Name] - Research
 
 **Researched:** [date]
-**Domain:** [primary technology/problem domain]
+**Domain:** [主要な技術/問題ドメイン]
 **Confidence:** [HIGH/MEDIUM/LOW]
 
 <user_constraints>
-## User Constraints (from CONTEXT.md)
+## ユーザー制約（CONTEXT.mdから）
 
-**CRITICAL:** If CONTEXT.md exists from /gsd:discuss-phase, copy locked decisions here verbatim. These MUST be honored by the planner.
+**重要:** /gsd:discuss-phaseからCONTEXT.mdが存在する場合、ロックされた判断をここにそのままコピーしてください。これらはプランナーによって必ず遵守される必要があります。
 
-### Locked Decisions
-[Copy from CONTEXT.md `## Decisions` section - these are NON-NEGOTIABLE]
-- [Decision 1]
-- [Decision 2]
+### ロックされた判断
+[CONTEXT.mdの`## Decisions`セクションからコピー - これらは交渉不可]
+- [判断1]
+- [判断2]
 
-### Claude's Discretion
-[Copy from CONTEXT.md - areas where researcher/planner can choose]
-- [Area 1]
-- [Area 2]
+### Claudeの裁量
+[CONTEXT.mdからコピー - リサーチャー/プランナーが選択できる領域]
+- [領域1]
+- [領域2]
 
-### Deferred Ideas (OUT OF SCOPE)
-[Copy from CONTEXT.md - do NOT research or plan these]
-- [Deferred 1]
-- [Deferred 2]
+### 先送りのアイデア（スコープ外）
+[CONTEXT.mdからコピー - これらをリサーチまたは計画しない]
+- [先送り1]
+- [先送り2]
 
-**If no CONTEXT.md exists:** Write "No user constraints - all decisions at Claude's discretion"
+**CONTEXT.mdが存在しない場合:** 「ユーザー制約なし - すべての判断はClaudeの裁量」と記載
 </user_constraints>
 
 <research_summary>
-## Summary
+## サマリー
 
-[2-3 paragraph executive summary]
-- What was researched
-- What the standard approach is
-- Key recommendations
+[2〜3段落のエグゼクティブサマリー]
+- 何を調査したか
+- 標準的なアプローチは何か
+- 主要な推奨事項
 
-**Primary recommendation:** [one-liner actionable guidance]
+**主な推奨事項:** [一行の実行可能なガイダンス]
 </research_summary>
 
 <standard_stack>
-## Standard Stack
+## 標準スタック
 
-The established libraries/tools for this domain:
+このドメインの確立されたライブラリ/ツール:
 
-### Core
-| Library | Version | Purpose | Why Standard |
+### コア
+| ライブラリ | バージョン | 目的 | 標準である理由 |
 |---------|---------|---------|--------------|
-| [name] | [ver] | [what it does] | [why experts use it] |
-| [name] | [ver] | [what it does] | [why experts use it] |
+| [名前] | [バージョン] | [何をするか] | [なぜ専門家が使うか] |
+| [名前] | [バージョン] | [何をするか] | [なぜ専門家が使うか] |
 
-### Supporting
-| Library | Version | Purpose | When to Use |
+### サポート
+| ライブラリ | バージョン | 目的 | 使用場面 |
 |---------|---------|---------|-------------|
-| [name] | [ver] | [what it does] | [use case] |
-| [name] | [ver] | [what it does] | [use case] |
+| [名前] | [バージョン] | [何をするか] | [ユースケース] |
+| [名前] | [バージョン] | [何をするか] | [ユースケース] |
 
-### Alternatives Considered
-| Instead of | Could Use | Tradeoff |
+### 検討した代替案
+| 標準の代わりに | 使用可能 | トレードオフ |
 |------------|-----------|----------|
-| [standard] | [alternative] | [when alternative makes sense] |
+| [標準] | [代替] | [代替が適切な場合] |
 
-**Installation:**
+**インストール:**
 ```bash
 npm install [packages]
 # or
@@ -80,161 +80,161 @@ yarn add [packages]
 </standard_stack>
 
 <architecture_patterns>
-## Architecture Patterns
+## アーキテクチャパターン
 
-### Recommended Project Structure
+### 推奨プロジェクト構造
 ```
 src/
-├── [folder]/        # [purpose]
-├── [folder]/        # [purpose]
-└── [folder]/        # [purpose]
+├── [folder]/        # [目的]
+├── [folder]/        # [目的]
+└── [folder]/        # [目的]
 ```
 
-### Pattern 1: [Pattern Name]
-**What:** [description]
-**When to use:** [conditions]
-**Example:**
+### パターン1: [パターン名]
+**概要:** [説明]
+**使用場面:** [条件]
+**例:**
 ```typescript
-// [code example from Context7/official docs]
+// [Context7/公式ドキュメントからのコード例]
 ```
 
-### Pattern 2: [Pattern Name]
-**What:** [description]
-**When to use:** [conditions]
-**Example:**
+### パターン2: [パターン名]
+**概要:** [説明]
+**使用場面:** [条件]
+**例:**
 ```typescript
-// [code example]
+// [コード例]
 ```
 
-### Anti-Patterns to Avoid
-- **[Anti-pattern]:** [why it's bad, what to do instead]
-- **[Anti-pattern]:** [why it's bad, what to do instead]
+### 避けるべきアンチパターン
+- **[アンチパターン]:** [なぜ悪いか、代わりに何をすべきか]
+- **[アンチパターン]:** [なぜ悪いか、代わりに何をすべきか]
 </architecture_patterns>
 
 <dont_hand_roll>
-## Don't Hand-Roll
+## 自作しない
 
-Problems that look simple but have existing solutions:
+シンプルに見えるが既存のソリューションがある問題:
 
-| Problem | Don't Build | Use Instead | Why |
+| 問題 | 自作しない | 代わりに使う | 理由 |
 |---------|-------------|-------------|-----|
-| [problem] | [what you'd build] | [library] | [edge cases, complexity] |
-| [problem] | [what you'd build] | [library] | [edge cases, complexity] |
-| [problem] | [what you'd build] | [library] | [edge cases, complexity] |
+| [問題] | [自作するもの] | [ライブラリ] | [エッジケース、複雑性] |
+| [問題] | [自作するもの] | [ライブラリ] | [エッジケース、複雑性] |
+| [問題] | [自作するもの] | [ライブラリ] | [エッジケース、複雑性] |
 
-**Key insight:** [why custom solutions are worse in this domain]
+**重要な知見:** [このドメインでカスタムソリューションが劣る理由]
 </dont_hand_roll>
 
 <common_pitfalls>
-## Common Pitfalls
+## よくある落とし穴
 
-### Pitfall 1: [Name]
-**What goes wrong:** [description]
-**Why it happens:** [root cause]
-**How to avoid:** [prevention strategy]
-**Warning signs:** [how to detect early]
+### 落とし穴1: [名前]
+**何がうまくいかないか:** [説明]
+**なぜ起こるか:** [根本原因]
+**避ける方法:** [予防策]
+**警告サイン:** [早期発見方法]
 
-### Pitfall 2: [Name]
-**What goes wrong:** [description]
-**Why it happens:** [root cause]
-**How to avoid:** [prevention strategy]
-**Warning signs:** [how to detect early]
+### 落とし穴2: [名前]
+**何がうまくいかないか:** [説明]
+**なぜ起こるか:** [根本原因]
+**避ける方法:** [予防策]
+**警告サイン:** [早期発見方法]
 
-### Pitfall 3: [Name]
-**What goes wrong:** [description]
-**Why it happens:** [root cause]
-**How to avoid:** [prevention strategy]
-**Warning signs:** [how to detect early]
+### 落とし穴3: [名前]
+**何がうまくいかないか:** [説明]
+**なぜ起こるか:** [根本原因]
+**避ける方法:** [予防策]
+**警告サイン:** [早期発見方法]
 </common_pitfalls>
 
 <code_examples>
-## Code Examples
+## コード例
 
-Verified patterns from official sources:
+公式ソースからの検証済みパターン:
 
-### [Common Operation 1]
+### [一般的な操作1]
 ```typescript
-// Source: [Context7/official docs URL]
+// Source: [Context7/公式ドキュメントURL]
 [code]
 ```
 
-### [Common Operation 2]
+### [一般的な操作2]
 ```typescript
-// Source: [Context7/official docs URL]
+// Source: [Context7/公式ドキュメントURL]
 [code]
 ```
 
-### [Common Operation 3]
+### [一般的な操作3]
 ```typescript
-// Source: [Context7/official docs URL]
+// Source: [Context7/公式ドキュメントURL]
 [code]
 ```
 </code_examples>
 
 <sota_updates>
-## State of the Art (2024-2025)
+## 最新動向（2024-2025）
 
-What's changed recently:
+最近変わったこと:
 
-| Old Approach | Current Approach | When Changed | Impact |
+| 旧アプローチ | 現在のアプローチ | 変更時期 | 影響 |
 |--------------|------------------|--------------|--------|
-| [old] | [new] | [date/version] | [what it means for implementation] |
+| [旧] | [新] | [日付/バージョン] | [実装への意味] |
 
-**New tools/patterns to consider:**
-- [Tool/Pattern]: [what it enables, when to use]
-- [Tool/Pattern]: [what it enables, when to use]
+**検討すべき新しいツール/パターン:**
+- [ツール/パターン]: [何を可能にするか、いつ使うか]
+- [ツール/パターン]: [何を可能にするか、いつ使うか]
 
-**Deprecated/outdated:**
-- [Thing]: [why it's outdated, what replaced it]
+**非推奨/古くなったもの:**
+- [もの]: [なぜ古くなったか、何に置き換えられたか]
 </sota_updates>
 
 <open_questions>
-## Open Questions
+## 未解決の質問
 
-Things that couldn't be fully resolved:
+完全に解決できなかったこと:
 
-1. **[Question]**
-   - What we know: [partial info]
-   - What's unclear: [the gap]
-   - Recommendation: [how to handle during planning/execution]
+1. **[質問]**
+   - わかっていること: [部分的な情報]
+   - 不明なこと: [ギャップ]
+   - 推奨: [計画/実行中の対処方法]
 
-2. **[Question]**
-   - What we know: [partial info]
-   - What's unclear: [the gap]
-   - Recommendation: [how to handle]
+2. **[質問]**
+   - わかっていること: [部分的な情報]
+   - 不明なこと: [ギャップ]
+   - 推奨: [対処方法]
 </open_questions>
 
 <sources>
-## Sources
+## ソース
 
-### Primary (HIGH confidence)
-- [Context7 library ID] - [topics fetched]
-- [Official docs URL] - [what was checked]
+### プライマリ（HIGH信頼度）
+- [Context7 library ID] - [取得したトピック]
+- [公式ドキュメントURL] - [確認した内容]
 
-### Secondary (MEDIUM confidence)
-- [WebSearch verified with official source] - [finding + verification]
+### セカンダリ（MEDIUM信頼度）
+- [公式ソースで検証されたWebSearch] - [発見 + 検証]
 
-### Tertiary (LOW confidence - needs validation)
-- [WebSearch only] - [finding, marked for validation during implementation]
+### ターシャリ（LOW信頼度 - 要検証）
+- [WebSearchのみ] - [発見、実装中の検証対象としてマーク]
 </sources>
 
 <metadata>
-## Metadata
+## メタデータ
 
-**Research scope:**
-- Core technology: [what]
-- Ecosystem: [libraries explored]
-- Patterns: [patterns researched]
-- Pitfalls: [areas checked]
+**リサーチスコープ:**
+- コア技術: [何]
+- エコシステム: [調査したライブラリ]
+- パターン: [調査したパターン]
+- 落とし穴: [確認した領域]
 
-**Confidence breakdown:**
-- Standard stack: [HIGH/MEDIUM/LOW] - [reason]
-- Architecture: [HIGH/MEDIUM/LOW] - [reason]
-- Pitfalls: [HIGH/MEDIUM/LOW] - [reason]
-- Code examples: [HIGH/MEDIUM/LOW] - [reason]
+**信頼度の内訳:**
+- 標準スタック: [HIGH/MEDIUM/LOW] - [理由]
+- アーキテクチャ: [HIGH/MEDIUM/LOW] - [理由]
+- 落とし穴: [HIGH/MEDIUM/LOW] - [理由]
+- コード例: [HIGH/MEDIUM/LOW] - [理由]
 
-**Research date:** [date]
-**Valid until:** [estimate - 30 days for stable tech, 7 days for fast-moving]
+**リサーチ日:** [date]
+**有効期限:** [見積もり - 安定した技術は30日、動きの速いものは7日]
 </metadata>
 
 ---
@@ -246,81 +246,81 @@ Things that couldn't be fully resolved:
 
 ---
 
-## Good Example
+## 良い例
 
 ```markdown
 # Phase 3: 3D City Driving - Research
 
 **Researched:** 2025-01-20
-**Domain:** Three.js 3D web game with driving mechanics
+**Domain:** Three.js 3Dウェブゲームとドライビングメカニクス
 **Confidence:** HIGH
 
 <research_summary>
-## Summary
+## サマリー
 
-Researched the Three.js ecosystem for building a 3D city driving game. The standard approach uses Three.js with React Three Fiber for component architecture, Rapier for physics, and drei for common helpers.
+3D都市ドライビングゲーム構築のためにThree.jsエコシステムを調査しました。標準的なアプローチはコンポーネントアーキテクチャにReact Three Fiberを使用したThree.js、物理演算にRapier、一般的なヘルパーにdreiを使用します。
 
-Key finding: Don't hand-roll physics or collision detection. Rapier (via @react-three/rapier) handles vehicle physics, terrain collision, and city object interactions efficiently. Custom physics code leads to bugs and performance issues.
+重要な発見: 物理演算や衝突検出を自作しないこと。Rapier（@react-three/rapier経由）は車両物理、地形衝突、都市オブジェクトのインタラクションを効率的に処理します。カスタム物理コードはバグやパフォーマンスの問題につながります。
 
-**Primary recommendation:** Use R3F + Rapier + drei stack. Start with vehicle controller from drei, add Rapier vehicle physics, build city with instanced meshes for performance.
+**主な推奨事項:** R3F + Rapier + dreiスタックを使用。dreiの車両コントローラーから始め、Rapierの車両物理を追加し、パフォーマンスのためにインスタンス化メッシュで都市を構築。
 </research_summary>
 
 <standard_stack>
-## Standard Stack
+## 標準スタック
 
-### Core
-| Library | Version | Purpose | Why Standard |
+### コア
+| ライブラリ | バージョン | 目的 | 標準である理由 |
 |---------|---------|---------|--------------|
-| three | 0.160.0 | 3D rendering | The standard for web 3D |
-| @react-three/fiber | 8.15.0 | React renderer for Three.js | Declarative 3D, better DX |
-| @react-three/drei | 9.92.0 | Helpers and abstractions | Solves common problems |
-| @react-three/rapier | 1.2.1 | Physics engine bindings | Best physics for R3F |
+| three | 0.160.0 | 3Dレンダリング | ウェブ3Dの標準 |
+| @react-three/fiber | 8.15.0 | Three.js用Reactレンダラー | 宣言的3D、より良いDX |
+| @react-three/drei | 9.92.0 | ヘルパーと抽象化 | 一般的な問題を解決 |
+| @react-three/rapier | 1.2.1 | 物理エンジンバインディング | R3F向け最良の物理 |
 
-### Supporting
-| Library | Version | Purpose | When to Use |
+### サポート
+| ライブラリ | バージョン | 目的 | 使用場面 |
 |---------|---------|---------|-------------|
-| @react-three/postprocessing | 2.16.0 | Visual effects | Bloom, DOF, motion blur |
-| leva | 0.9.35 | Debug UI | Tweaking parameters |
-| zustand | 4.4.7 | State management | Game state, UI state |
-| use-sound | 4.0.1 | Audio | Engine sounds, ambient |
+| @react-three/postprocessing | 2.16.0 | ビジュアルエフェクト | Bloom、DOF、モーションブラー |
+| leva | 0.9.35 | デバッグUI | パラメータ調整 |
+| zustand | 4.4.7 | 状態管理 | ゲーム状態、UI状態 |
+| use-sound | 4.0.1 | オーディオ | エンジン音、環境音 |
 
-### Alternatives Considered
-| Instead of | Could Use | Tradeoff |
+### 検討した代替案
+| 標準の代わりに | 使用可能 | トレードオフ |
 |------------|-----------|----------|
-| Rapier | Cannon.js | Cannon simpler but less performant for vehicles |
-| R3F | Vanilla Three | Vanilla if no React, but R3F DX is much better |
-| drei | Custom helpers | drei is battle-tested, don't reinvent |
+| Rapier | Cannon.js | Cannonはシンプルだが車両向けのパフォーマンスが劣る |
+| R3F | Vanilla Three | ReactなしならVanilla、ただしR3FのDXがはるかに良い |
+| drei | カスタムヘルパー | dreiは実戦テスト済み、再発明しない |
 
-**Installation:**
+**インストール:**
 ```bash
 npm install three @react-three/fiber @react-three/drei @react-three/rapier zustand
 ```
 </standard_stack>
 
 <architecture_patterns>
-## Architecture Patterns
+## アーキテクチャパターン
 
-### Recommended Project Structure
+### 推奨プロジェクト構造
 ```
 src/
 ├── components/
-│   ├── Vehicle/          # Player car with physics
-│   ├── City/             # City generation and buildings
-│   ├── Road/             # Road network
-│   └── Environment/      # Sky, lighting, fog
+│   ├── Vehicle/          # 物理付きプレイヤーカー
+│   ├── City/             # 都市生成と建物
+│   ├── Road/             # 道路ネットワーク
+│   └── Environment/      # 空、照明、霧
 ├── hooks/
 │   ├── useVehicleControls.ts
 │   └── useGameState.ts
 ├── stores/
-│   └── gameStore.ts      # Zustand state
+│   └── gameStore.ts      # Zustand状態
 └── utils/
-    └── cityGenerator.ts  # Procedural generation helpers
+    └── cityGenerator.ts  # 手続き生成ヘルパー
 ```
 
-### Pattern 1: Vehicle with Rapier Physics
-**What:** Use RigidBody with vehicle-specific settings, not custom physics
-**When to use:** Any ground vehicle
-**Example:**
+### パターン1: Rapier物理による車両
+**概要:** カスタム物理ではなく、車両固有の設定を持つRigidBodyを使用
+**使用場面:** あらゆる地上車両
+**例:**
 ```typescript
 // Source: @react-three/rapier docs
 import { RigidBody, useRapier } from '@react-three/rapier'
@@ -346,10 +346,10 @@ function Vehicle() {
 }
 ```
 
-### Pattern 2: Instanced Meshes for City
-**What:** Use InstancedMesh for repeated objects (buildings, trees, props)
-**When to use:** >100 similar objects
-**Example:**
+### パターン2: 都市向けインスタンス化メッシュ
+**概要:** 繰り返しオブジェクト（建物、木、小道具）にInstancedMeshを使用
+**使用場面:** 類似オブジェクトが100以上の場合
+**例:**
 ```typescript
 // Source: drei docs
 import { Instances, Instance } from '@react-three/drei'
@@ -367,52 +367,52 @@ function Buildings({ positions }) {
 }
 ```
 
-### Anti-Patterns to Avoid
-- **Creating meshes in render loop:** Create once, update transforms only
-- **Not using InstancedMesh:** Individual meshes for buildings kills performance
-- **Custom physics math:** Rapier handles it better, every time
+### 避けるべきアンチパターン
+- **レンダーループ内でのメッシュ作成:** 一度作成し、トランスフォームのみ更新
+- **InstancedMeshを使わない:** 建物に個別メッシュを使うとパフォーマンスが崩壊
+- **カスタム物理演算:** Rapierの方が常に優れている
 </architecture_patterns>
 
 <dont_hand_roll>
-## Don't Hand-Roll
+## 自作しない
 
-| Problem | Don't Build | Use Instead | Why |
+| 問題 | 自作しない | 代わりに使う | 理由 |
 |---------|-------------|-------------|-----|
-| Vehicle physics | Custom velocity/acceleration | Rapier RigidBody | Wheel friction, suspension, collisions are complex |
-| Collision detection | Raycasting everything | Rapier colliders | Performance, edge cases, tunneling |
-| Camera follow | Manual lerp | drei CameraControls or custom with useFrame | Smooth interpolation, bounds |
-| City generation | Pure random placement | Grid-based with noise for variation | Random looks wrong, grid is predictable |
-| LOD | Manual distance checks | drei <Detailed> | Handles transitions, hysteresis |
+| 車両物理 | カスタム速度/加速度 | Rapier RigidBody | ホイール摩擦、サスペンション、衝突は複雑 |
+| 衝突検出 | すべてをレイキャスト | Rapierコライダー | パフォーマンス、エッジケース、トンネリング |
+| カメラ追従 | 手動lerp | drei CameraControlsまたはuseFrameを使ったカスタム | スムーズな補間、境界 |
+| 都市生成 | 完全ランダム配置 | バリエーション用ノイズ付きグリッドベース | ランダムは見た目が悪く、グリッドは予測可能 |
+| LOD | 手動距離チェック | drei <Detailed> | トランジション、ヒステリシスを処理 |
 
-**Key insight:** 3D game development has 40+ years of solved problems. Rapier implements proper physics simulation. drei implements proper 3D helpers. Fighting these leads to bugs that look like "game feel" issues but are actually physics edge cases.
+**重要な知見:** 3Dゲーム開発には40年以上の解決済み問題があります。Rapierは適切な物理シミュレーションを実装しています。dreiは適切な3Dヘルパーを実装しています。これらに逆らうと「ゲームの手触り」の問題に見えるが実際は物理のエッジケースであるバグにつながります。
 </dont_hand_roll>
 
 <common_pitfalls>
-## Common Pitfalls
+## よくある落とし穴
 
-### Pitfall 1: Physics Tunneling
-**What goes wrong:** Fast objects pass through walls
-**Why it happens:** Default physics step too large for velocity
-**How to avoid:** Use CCD (Continuous Collision Detection) in Rapier
-**Warning signs:** Objects randomly appearing outside buildings
+### 落とし穴1: 物理のトンネリング
+**何がうまくいかないか:** 高速オブジェクトが壁を通過する
+**なぜ起こるか:** デフォルトの物理ステップが速度に対して大きすぎる
+**避ける方法:** RapierでCCD（連続衝突検出）を使用
+**警告サイン:** オブジェクトが建物の外にランダムに出現
 
-### Pitfall 2: Performance Death by Draw Calls
-**What goes wrong:** Game stutters with many buildings
-**Why it happens:** Each mesh = 1 draw call, hundreds of buildings = hundreds of calls
-**How to avoid:** InstancedMesh for similar objects, merge static geometry
-**Warning signs:** GPU bound, low FPS despite simple scene
+### 落とし穴2: ドローコールによるパフォーマンス低下
+**何がうまくいかないか:** 多くの建物でゲームがカクつく
+**なぜ起こるか:** 各メッシュ = 1ドローコール、数百の建物 = 数百のコール
+**避ける方法:** 類似オブジェクトにInstancedMesh、静的ジオメトリをマージ
+**警告サイン:** GPUバウンド、シンプルなシーンなのに低FPS
 
-### Pitfall 3: Vehicle "Floaty" Feel
-**What goes wrong:** Car doesn't feel grounded
-**Why it happens:** Missing proper wheel/suspension simulation
-**How to avoid:** Use Rapier vehicle controller or tune mass/damping carefully
-**Warning signs:** Car bounces oddly, doesn't grip corners
+### 落とし穴3: 車両の「浮遊」感
+**何がうまくいかないか:** 車が地面に密着していない
+**なぜ起こるか:** 適切なホイール/サスペンションシミュレーションが欠如
+**避ける方法:** Rapier車両コントローラーを使用するか、質量/ダンピングを慎重に調整
+**警告サイン:** 車が不自然に跳ね、コーナーでグリップしない
 </common_pitfalls>
 
 <code_examples>
-## Code Examples
+## コード例
 
-### Basic R3F + Rapier Setup
+### 基本的なR3F + Rapierセットアップ
 ```typescript
 // Source: @react-three/rapier getting started
 import { Canvas } from '@react-three/fiber'
@@ -431,9 +431,9 @@ function Game() {
 }
 ```
 
-### Vehicle Controls Hook
+### 車両コントロールフック
 ```typescript
-// Source: Community pattern, verified with drei docs
+// Source: コミュニティパターン、dreiドキュメントで検証済み
 import { useFrame } from '@react-three/fiber'
 import { useKeyboardControls } from '@react-three/drei'
 
@@ -459,56 +459,56 @@ function useVehicleControls(rigidBodyRef) {
 </code_examples>
 
 <sota_updates>
-## State of the Art (2024-2025)
+## 最新動向（2024-2025）
 
-| Old Approach | Current Approach | When Changed | Impact |
+| 旧アプローチ | 現在のアプローチ | 変更時期 | 影響 |
 |--------------|------------------|--------------|--------|
-| cannon-es | Rapier | 2023 | Rapier is faster, better maintained |
-| vanilla Three.js | React Three Fiber | 2020+ | R3F is now standard for React apps |
-| Manual InstancedMesh | drei <Instances> | 2022 | Simpler API, handles updates |
+| cannon-es | Rapier | 2023 | Rapierの方が高速で保守が良い |
+| vanilla Three.js | React Three Fiber | 2020+ | R3FがReactアプリの標準に |
+| 手動InstancedMesh | drei <Instances> | 2022 | シンプルなAPI、更新を処理 |
 
-**New tools/patterns to consider:**
-- **WebGPU:** Coming but not production-ready for games yet (2025)
-- **drei Gltf helpers:** <useGLTF.preload> for loading screens
+**検討すべき新しいツール/パターン:**
+- **WebGPU:** 来ているがゲーム向けはまだ本番準備ができていない（2025）
+- **drei Gltfヘルパー:** ローディング画面用の<useGLTF.preload>
 
-**Deprecated/outdated:**
-- **cannon.js (original):** Use cannon-es fork or better, Rapier
-- **Manual raycasting for physics:** Just use Rapier colliders
+**非推奨/古くなったもの:**
+- **cannon.js（オリジナル）:** cannon-esフォークか、より良いRapierを使用
+- **物理用の手動レイキャスト:** Rapierコライダーを使うだけ
 </sota_updates>
 
 <sources>
-## Sources
+## ソース
 
-### Primary (HIGH confidence)
-- /pmndrs/react-three-fiber - getting started, hooks, performance
-- /pmndrs/drei - instances, controls, helpers
-- /dimforge/rapier-js - physics setup, vehicle physics
+### プライマリ（HIGH信頼度）
+- /pmndrs/react-three-fiber - 入門、フック、パフォーマンス
+- /pmndrs/drei - インスタンス、コントロール、ヘルパー
+- /dimforge/rapier-js - 物理セットアップ、車両物理
 
-### Secondary (MEDIUM confidence)
-- Three.js discourse "city driving game" threads - verified patterns against docs
-- R3F examples repository - verified code works
+### セカンダリ（MEDIUM信頼度）
+- Three.js discourse「都市ドライビングゲーム」スレッド - ドキュメントに対してパターンを検証
+- R3F examplesリポジトリ - コードの動作を検証
 
-### Tertiary (LOW confidence - needs validation)
-- None - all findings verified
+### ターシャリ（LOW信頼度 - 要検証）
+- なし - すべての発見を検証済み
 </sources>
 
 <metadata>
-## Metadata
+## メタデータ
 
-**Research scope:**
-- Core technology: Three.js + React Three Fiber
-- Ecosystem: Rapier, drei, zustand
-- Patterns: Vehicle physics, instancing, city generation
-- Pitfalls: Performance, physics, feel
+**リサーチスコープ:**
+- コア技術: Three.js + React Three Fiber
+- エコシステム: Rapier、drei、zustand
+- パターン: 車両物理、インスタンシング、都市生成
+- 落とし穴: パフォーマンス、物理、手触り
 
-**Confidence breakdown:**
-- Standard stack: HIGH - verified with Context7, widely used
-- Architecture: HIGH - from official examples
-- Pitfalls: HIGH - documented in discourse, verified in docs
-- Code examples: HIGH - from Context7/official sources
+**信頼度の内訳:**
+- 標準スタック: HIGH - Context7で検証済み、広く使用
+- アーキテクチャ: HIGH - 公式サンプルから
+- 落とし穴: HIGH - discourseで文書化、ドキュメントで検証
+- コード例: HIGH - Context7/公式ソースから
 
-**Research date:** 2025-01-20
-**Valid until:** 2025-02-20 (30 days - R3F ecosystem stable)
+**リサーチ日:** 2025-01-20
+**有効期限:** 2025-02-20（30日 - R3Fエコシステムは安定）
 </metadata>
 
 ---
@@ -520,33 +520,33 @@ function useVehicleControls(rigidBodyRef) {
 
 ---
 
-## Guidelines
+## ガイドライン
 
-**When to create:**
-- Before planning phases in niche/complex domains
-- When Claude's training data is likely stale or sparse
-- When "how do experts do this" matters more than "which library"
+**作成するタイミング:**
+- ニッチ/複雑なドメインのフェーズ計画前
+- Claudeのトレーニングデータが古いかまばらな可能性がある場合
+- 「どのライブラリ」よりも「専門家はどうやるか」が重要な場合
 
-**Structure:**
-- Use XML tags for section markers (matches GSD templates)
-- Seven core sections: summary, standard_stack, architecture_patterns, dont_hand_roll, common_pitfalls, code_examples, sources
-- All sections required (drives comprehensive research)
+**構造:**
+- セクションマーカーにXMLタグを使用（GSDテンプレートに合わせる）
+- 7つのコアセクション: summary、standard_stack、architecture_patterns、dont_hand_roll、common_pitfalls、code_examples、sources
+- すべてのセクションが必須（包括的なリサーチを推進）
 
-**Content quality:**
-- Standard stack: Specific versions, not just names
-- Architecture: Include actual code examples from authoritative sources
-- Don't hand-roll: Be explicit about what problems to NOT solve yourself
-- Pitfalls: Include warning signs, not just "don't do this"
-- Sources: Mark confidence levels honestly
+**コンテンツの品質:**
+- 標準スタック: 名前だけでなく具体的なバージョン
+- アーキテクチャ: 権威あるソースからの実際のコード例を含める
+- 自作しない: どの問題を自分で解決しないかを明示
+- 落とし穴: 「これをするな」だけでなく警告サインを含める
+- ソース: 信頼度レベルを正直にマーク
 
-**Integration with planning:**
-- RESEARCH.md loaded as @context reference in PLAN.md
-- Standard stack informs library choices
-- Don't hand-roll prevents custom solutions
-- Pitfalls inform verification criteria
-- Code examples can be referenced in task actions
+**計画との統合:**
+- RESEARCH.mdはPLAN.mdの@context参照として読み込まれる
+- 標準スタックがライブラリ選択に情報提供
+- 自作しないがカスタムソリューションを防止
+- 落とし穴が検証基準に情報提供
+- コード例がタスクアクション内で参照可能
 
-**After creation:**
-- File lives in phase directory: `.planning/phases/XX-name/{phase_num}-RESEARCH.md`
-- Referenced during planning workflow
-- plan-phase loads it automatically when present
+**作成後:**
+- ファイルはフェーズディレクトリに配置: `.planning/phases/XX-name/{phase_num}-RESEARCH.md`
+- 計画ワークフロー中に参照
+- plan-phaseが存在する場合に自動的に読み込み

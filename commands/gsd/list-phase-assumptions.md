@@ -1,6 +1,6 @@
 ---
 name: gsd:list-phase-assumptions
-description: Surface Claude's assumptions about a phase approach before planning
+description: 計画開始前にClaudeのフェーズに対する前提を明らかにする
 argument-hint: "[phase]"
 allowed-tools:
   - Read
@@ -10,10 +10,10 @@ allowed-tools:
 ---
 
 <objective>
-Analyze a phase and present Claude's assumptions about technical approach, implementation order, scope boundaries, risk areas, and dependencies.
+フェーズを分析し、技術的アプローチ、実装順序、スコープ境界、リスク領域、依存関係についてClaudeの前提を提示します。
 
-Purpose: Help users see what Claude thinks BEFORE planning begins - enabling course correction early when assumptions are wrong.
-Output: Conversational output only (no file creation) - ends with "What do you think?" prompt
+目的: 計画開始前にClaudeがどう考えているかをユーザーに見せ、前提が間違っている場合に早期に軌道修正できるようにします。
+出力: 会話形式の出力のみ（ファイル作成なし）— 「どう思いますか？」のプロンプトで終了
 </objective>
 
 <execution_context>
@@ -21,26 +21,26 @@ Output: Conversational output only (no file creation) - ends with "What do you t
 </execution_context>
 
 <context>
-Phase number: $ARGUMENTS (required)
+フェーズ番号: $ARGUMENTS（必須）
 
-Project state and roadmap are loaded in-workflow using targeted reads.
+プロジェクトの状態とロードマップはワークフロー内で対象読み込みを使用してロードされます。
 </context>
 
 <process>
-1. Validate phase number argument (error if missing or invalid)
-2. Check if phase exists in roadmap
-3. Follow list-phase-assumptions.md workflow:
-   - Analyze roadmap description
-   - Surface assumptions about: technical approach, implementation order, scope, risks, dependencies
-   - Present assumptions clearly
-   - Prompt "What do you think?"
-4. Gather feedback and offer next steps
+1. フェーズ番号の引数を検証（欠落または無効な場合はエラー）
+2. フェーズがロードマップに存在するか確認
+3. list-phase-assumptions.md ワークフローに従う:
+   - ロードマップの説明を分析
+   - 前提を明らかにする: 技術的アプローチ、実装順序、スコープ、リスク、依存関係
+   - 前提を明確に提示
+   - 「どう思いますか？」とプロンプトを表示
+4. フィードバックを収集し、次のステップを提案
 </process>
 
 <success_criteria>
 
-- Phase validated against roadmap
-- Assumptions surfaced across five areas
-- User prompted for feedback
-- User knows next steps (discuss context, plan phase, or correct assumptions)
+- フェーズがロードマップに対して検証されている
+- 5つの領域にわたる前提が明らかにされている
+- ユーザーにフィードバックが求められている
+- ユーザーが次のステップを把握している（コンテキストの議論、フェーズの計画、または前提の修正）
   </success_criteria>

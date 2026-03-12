@@ -1,170 +1,170 @@
-# Research Summary Template
+# リサーチサマリーテンプレート
 
-Template for `.planning/research/SUMMARY.md` — executive summary of project research with roadmap implications.
+`.planning/research/SUMMARY.md` 用テンプレート — ロードマップへの影響を含むプロジェクトリサーチのエグゼクティブサマリー。
 
 <template>
 
 ```markdown
-# Project Research Summary
+# プロジェクトリサーチサマリー
 
-**Project:** [name from PROJECT.md]
-**Domain:** [inferred domain type]
-**Researched:** [date]
+**Project:** [PROJECT.mdからの名前]
+**Domain:** [推定されたドメインの種類]
+**Researched:** [日付]
 **Confidence:** [HIGH/MEDIUM/LOW]
 
-## Executive Summary
+## エグゼクティブサマリー
 
-[2-3 paragraph overview of research findings]
+[リサーチ結果の2〜3段落の概要]
 
-- What type of product this is and how experts build it
-- The recommended approach based on research
-- Key risks and how to mitigate them
+- このプロダクトがどのような種類で、専門家がどのように構築するか
+- リサーチに基づく推奨アプローチ
+- 主なリスクとその緩和方法
 
-## Key Findings
+## 主要な発見
 
-### Recommended Stack
+### 推奨スタック
 
-[Summary from STACK.md — 1-2 paragraphs]
+[STACK.mdからのサマリー — 1〜2段落]
 
-**Core technologies:**
-- [Technology]: [purpose] — [why recommended]
-- [Technology]: [purpose] — [why recommended]
-- [Technology]: [purpose] — [why recommended]
+**コア技術:**
+- [技術]: [目的] — [推奨理由]
+- [技術]: [目的] — [推奨理由]
+- [技術]: [目的] — [推奨理由]
 
-### Expected Features
+### 期待される機能
 
-[Summary from FEATURES.md]
+[FEATURES.mdからのサマリー]
 
-**Must have (table stakes):**
-- [Feature] — users expect this
-- [Feature] — users expect this
+**必須（テーブルステークス）:**
+- [機能] — ユーザーがこれを期待
+- [機能] — ユーザーがこれを期待
 
-**Should have (competitive):**
-- [Feature] — differentiator
-- [Feature] — differentiator
+**あるべき（競争力）:**
+- [機能] — 差別化要因
+- [機能] — 差別化要因
 
-**Defer (v2+):**
-- [Feature] — not essential for launch
+**延期（v2+）:**
+- [機能] — ローンチに必須ではない
 
-### Architecture Approach
+### アーキテクチャアプローチ
 
-[Summary from ARCHITECTURE.md — 1 paragraph]
+[ARCHITECTURE.mdからのサマリー — 1段落]
 
-**Major components:**
-1. [Component] — [responsibility]
-2. [Component] — [responsibility]
-3. [Component] — [responsibility]
+**主要コンポーネント:**
+1. [コンポーネント] — [責務]
+2. [コンポーネント] — [責務]
+3. [コンポーネント] — [責務]
 
-### Critical Pitfalls
+### 重大な落とし穴
 
-[Top 3-5 from PITFALLS.md]
+[PITFALLS.mdからのトップ3〜5]
 
-1. **[Pitfall]** — [how to avoid]
-2. **[Pitfall]** — [how to avoid]
-3. **[Pitfall]** — [how to avoid]
+1. **[落とし穴]** — [避ける方法]
+2. **[落とし穴]** — [避ける方法]
+3. **[落とし穴]** — [避ける方法]
 
-## Implications for Roadmap
+## ロードマップへの影響
 
-Based on research, suggested phase structure:
+リサーチに基づく推奨フェーズ構成:
 
-### Phase 1: [Name]
-**Rationale:** [why this comes first based on research]
-**Delivers:** [what this phase produces]
-**Addresses:** [features from FEATURES.md]
-**Avoids:** [pitfall from PITFALLS.md]
+### フェーズ1: [名前]
+**根拠:** [リサーチに基づきなぜこれが最初か]
+**成果物:** [このフェーズが生み出すもの]
+**対処する機能:** [FEATURES.mdからの機能]
+**回避する落とし穴:** [PITFALLS.mdからの落とし穴]
 
-### Phase 2: [Name]
-**Rationale:** [why this order]
-**Delivers:** [what this phase produces]
-**Uses:** [stack elements from STACK.md]
-**Implements:** [architecture component]
+### フェーズ2: [名前]
+**根拠:** [なぜこの順序か]
+**成果物:** [このフェーズが生み出すもの]
+**使用技術:** [STACK.mdからのスタック要素]
+**実装するもの:** [アーキテクチャコンポーネント]
 
-### Phase 3: [Name]
-**Rationale:** [why this order]
-**Delivers:** [what this phase produces]
+### フェーズ3: [名前]
+**根拠:** [なぜこの順序か]
+**成果物:** [このフェーズが生み出すもの]
 
-[Continue for suggested phases...]
+[推奨フェーズについて続ける...]
 
-### Phase Ordering Rationale
+### フェーズ順序の根拠
 
-- [Why this order based on dependencies discovered]
-- [Why this grouping based on architecture patterns]
-- [How this avoids pitfalls from research]
+- [発見された依存関係に基づくこの順序の理由]
+- [アーキテクチャパターンに基づくこのグループ分けの理由]
+- [リサーチからの落とし穴をどのように回避するか]
 
-### Research Flags
+### リサーチフラグ
 
-Phases likely needing deeper research during planning:
-- **Phase [X]:** [reason — e.g., "complex integration, needs API research"]
-- **Phase [Y]:** [reason — e.g., "niche domain, sparse documentation"]
+計画中に詳細なリサーチが必要になりそうなフェーズ:
+- **フェーズ [X]:** [理由 — 例: "複雑なインテグレーション、API調査が必要"]
+- **フェーズ [Y]:** [理由 — 例: "ニッチなドメイン、ドキュメントが少ない"]
 
-Phases with standard patterns (skip research-phase):
-- **Phase [X]:** [reason — e.g., "well-documented, established patterns"]
+標準的なパターンを持つフェーズ（research-phaseをスキップ可能）:
+- **フェーズ [X]:** [理由 — 例: "ドキュメントが充実、確立されたパターン"]
 
-## Confidence Assessment
+## 信頼度評価
 
-| Area | Confidence | Notes |
+| 領域 | 信頼度 | 備考 |
 |------|------------|-------|
-| Stack | [HIGH/MEDIUM/LOW] | [reason] |
-| Features | [HIGH/MEDIUM/LOW] | [reason] |
-| Architecture | [HIGH/MEDIUM/LOW] | [reason] |
-| Pitfalls | [HIGH/MEDIUM/LOW] | [reason] |
+| Stack | [HIGH/MEDIUM/LOW] | [理由] |
+| Features | [HIGH/MEDIUM/LOW] | [理由] |
+| Architecture | [HIGH/MEDIUM/LOW] | [理由] |
+| Pitfalls | [HIGH/MEDIUM/LOW] | [理由] |
 
-**Overall confidence:** [HIGH/MEDIUM/LOW]
+**総合信頼度:** [HIGH/MEDIUM/LOW]
 
-### Gaps to Address
+### 対処すべきギャップ
 
-[Any areas where research was inconclusive or needs validation during implementation]
+[リサーチが結論に至らなかった、または実装中に検証が必要な領域]
 
-- [Gap]: [how to handle during planning/execution]
-- [Gap]: [how to handle during planning/execution]
+- [ギャップ]: [計画/実行中の対処方法]
+- [ギャップ]: [計画/実行中の対処方法]
 
-## Sources
+## 情報源
 
-### Primary (HIGH confidence)
-- [Context7 library ID] — [topics]
-- [Official docs URL] — [what was checked]
+### プライマリ（HIGH信頼度）
+- [Context7ライブラリID] — [トピック]
+- [公式ドキュメントURL] — [確認した内容]
 
-### Secondary (MEDIUM confidence)
-- [Source] — [finding]
+### セカンダリ（MEDIUM信頼度）
+- [ソース] — [発見]
 
-### Tertiary (LOW confidence)
-- [Source] — [finding, needs validation]
+### ターシャリ（LOW信頼度）
+- [ソース] — [発見、検証が必要]
 
 ---
-*Research completed: [date]*
-*Ready for roadmap: yes*
+*リサーチ完了: [日付]*
+*ロードマップ作成準備: 完了*
 ```
 
 </template>
 
 <guidelines>
 
-**Executive Summary:**
-- Write for someone who will only read this section
-- Include the key recommendation and main risk
-- 2-3 paragraphs maximum
+**エグゼクティブサマリー:**
+- このセクションだけを読む人のために書く
+- 主要な推奨事項と主なリスクを含める
+- 最大2〜3段落
 
-**Key Findings:**
-- Summarize, don't duplicate full documents
-- Link to detailed docs (STACK.md, FEATURES.md, etc.)
-- Focus on what matters for roadmap decisions
+**主要な発見:**
+- 要約する、完全なドキュメントの複製はしない
+- 詳細ドキュメント（STACK.md、FEATURES.md等）へリンク
+- ロードマップの決定に重要なことに焦点
 
-**Implications for Roadmap:**
-- This is the most important section
-- Directly informs roadmap creation
-- Be explicit about phase suggestions and rationale
-- Include research flags for each suggested phase
+**ロードマップへの影響:**
+- これが最も重要なセクション
+- ロードマップ作成に直接情報を与える
+- フェーズの提案と根拠を明示的に
+- 提案される各フェーズにリサーチフラグを含める
 
-**Confidence Assessment:**
-- Be honest about uncertainty
-- Note gaps that need resolution during planning
-- HIGH = verified with official sources
-- MEDIUM = community consensus, multiple sources agree
-- LOW = single source or inference
+**信頼度評価:**
+- 不確実性について正直に
+- 計画中に解決が必要なギャップを注記
+- HIGH = 公式ソースで検証済み
+- MEDIUM = コミュニティのコンセンサス、複数ソースが一致
+- LOW = 単一ソースまたは推論
 
-**Integration with roadmap creation:**
-- This file is loaded as context during roadmap creation
-- Phase suggestions here become starting point for roadmap
-- Research flags inform phase planning
+**ロードマップ作成との統合:**
+- このファイルはロードマップ作成時にコンテキストとして読み込まれる
+- ここでのフェーズ提案がロードマップの出発点となる
+- リサーチフラグがフェーズ計画に情報を与える
 
 </guidelines>

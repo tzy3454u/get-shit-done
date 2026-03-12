@@ -1,6 +1,6 @@
 ---
 name: gsd:validate-phase
-description: Retroactively audit and fill Nyquist validation gaps for a completed phase
+description: 完了したフェーズのNyquistバリデーションギャップを遡及的に監査・補完する
 argument-hint: "[phase number]"
 allowed-tools:
   - Read
@@ -13,12 +13,12 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Audit Nyquist validation coverage for a completed phase. Three states:
-- (A) VALIDATION.md exists — audit and fill gaps
-- (B) No VALIDATION.md, SUMMARY.md exists — reconstruct from artifacts
-- (C) Phase not executed — exit with guidance
+完了したフェーズのNyquistバリデーションカバレッジを監査する。3つの状態:
+- (A) VALIDATION.mdが存在する — 監査してギャップを補完
+- (B) VALIDATION.mdなし、SUMMARY.mdが存在する — 成果物から再構築
+- (C) フェーズ未実行 — ガイダンスを表示して終了
 
-Output: updated VALIDATION.md + generated test files.
+出力: 更新されたVALIDATION.md + 生成されたテストファイル。
 </objective>
 
 <execution_context>
@@ -26,10 +26,11 @@ Output: updated VALIDATION.md + generated test files.
 </execution_context>
 
 <context>
-Phase: $ARGUMENTS — optional, defaults to last completed phase.
+フェーズ: $ARGUMENTS — 省略可、デフォルトは最後に完了したフェーズ。
 </context>
 
 <process>
-Execute @~/.claude/get-shit-done/workflows/validate-phase.md.
-Preserve all workflow gates.
+@~/.claude/get-shit-done/workflows/validate-phase.md を実行する。
+すべてのワークフローゲートを保持する。
 </process>
+</output>

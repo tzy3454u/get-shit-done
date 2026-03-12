@@ -1,6 +1,6 @@
 ---
 name: gsd:add-tests
-description: Generate tests for a completed phase based on UAT criteria and implementation
+description: UAT基準と実装に基づいて完了したフェーズのテストを生成する
 argument-hint: "<phase> [additional instructions]"
 allowed-tools:
   - Read
@@ -12,16 +12,16 @@ allowed-tools:
   - Task
   - AskUserQuestion
 argument-instructions: |
-  Parse the argument as a phase number (integer, decimal, or letter-suffix), plus optional free-text instructions.
-  Example: /gsd:add-tests 12
-  Example: /gsd:add-tests 12 focus on edge cases in the pricing module
+  引数をフェーズ番号（整数、小数、または文字サフィックス）とオプションのフリーテキスト指示として解析する。
+  例: /gsd:add-tests 12
+  例: /gsd:add-tests 12 focus on edge cases in the pricing module
 ---
 <objective>
-Generate unit and E2E tests for a completed phase, using its SUMMARY.md, CONTEXT.md, and VERIFICATION.md as specifications.
+完了したフェーズのユニットテストとE2Eテストを、SUMMARY.md、CONTEXT.md、VERIFICATION.mdを仕様として使用して生成する。
 
-Analyzes implementation files, classifies them into TDD (unit), E2E (browser), or Skip categories, presents a test plan for user approval, then generates tests following RED-GREEN conventions.
+実装ファイルを分析し、TDD（ユニット）、E2E（ブラウザ）、またはスキップカテゴリに分類し、ユーザー承認のためにテスト計画を提示し、RED-GREEN規約に従ってテストを生成する。
 
-Output: Test files committed with message `test(phase-{N}): add unit and E2E tests from add-tests command`
+出力: `test(phase-{N}): add unit and E2E tests from add-tests command` というメッセージでコミットされたテストファイル
 </objective>
 
 <execution_context>
@@ -29,13 +29,14 @@ Output: Test files committed with message `test(phase-{N}): add unit and E2E tes
 </execution_context>
 
 <context>
-Phase: $ARGUMENTS
+フェーズ: $ARGUMENTS
 
 @.planning/STATE.md
 @.planning/ROADMAP.md
 </context>
 
 <process>
-Execute the add-tests workflow from @~/.claude/get-shit-done/workflows/add-tests.md end-to-end.
-Preserve all workflow gates (classification approval, test plan approval, RED-GREEN verification, gap reporting).
+@~/.claude/get-shit-done/workflows/add-tests.md のadd-testsワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲートを保持する（分類承認、テスト計画承認、RED-GREEN検証、ギャップ報告）。
 </process>
+</output>

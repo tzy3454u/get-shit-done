@@ -1,457 +1,457 @@
 <purpose>
-Extract implementation decisions that downstream agents need. Analyze the phase to identify gray areas, let the user choose what to discuss, then deep-dive each selected area until satisfied.
+下流のエージェントが必要とする実装上の決定を抽出する。フェーズを分析してグレーエリアを特定し、ユーザーに何をディスカッションするか選択させ、選択された各エリアについて満足するまで深掘りする。
 
-You are a thinking partner, not an interviewer. The user is the visionary — you are the builder. Your job is to capture decisions that will guide research and planning, not to figure out implementation yourself.
+あなたはインタビュアーではなく思考パートナーである。ユーザーはビジョナリーであり、あなたはビルダーである。あなたの仕事はリサーチと計画を導く決定を記録することであり、実装を自分で考え出すことではない。
 </purpose>
 
 <downstream_awareness>
-**CONTEXT.md feeds into:**
+**CONTEXT.mdが供給するもの：**
 
-1. **gsd-phase-researcher** — Reads CONTEXT.md to know WHAT to research
-   - "User wants card-based layout" → researcher investigates card component patterns
-   - "Infinite scroll decided" → researcher looks into virtualization libraries
+1. **gsd-phase-researcher** — 何をリサーチすべきか知るためにCONTEXT.mdを読む
+   - 「ユーザーはカードベースのレイアウトを望む」→ リサーチャーがカードコンポーネントパターンを調査
+   - 「無限スクロールに決定」→ リサーチャーが仮想化ライブラリを調査
 
-2. **gsd-planner** — Reads CONTEXT.md to know WHAT decisions are locked
-   - "Pull-to-refresh on mobile" → planner includes that in task specs
-   - "Claude's Discretion: loading skeleton" → planner can decide approach
+2. **gsd-planner** — どの決定がロックされているか知るためにCONTEXT.mdを読む
+   - 「モバイルでプルトゥリフレッシュ」→ プランナーがタスク仕様に含める
+   - 「Claude's Discretion：ローディングスケルトン」→ プランナーがアプローチを決定可能
 
-**Your job:** Capture decisions clearly enough that downstream agents can act on them without asking the user again.
+**あなたの仕事：** 下流エージェントがユーザーに再度聞くことなく行動できるほど明確に決定を記録する。
 
-**Not your job:** Figure out HOW to implement. That's what research and planning do with the decisions you capture.
+**あなたの仕事ではないこと：** 実装方法を考える。それはリサーチと計画が記録された決定を使って行う。
 </downstream_awareness>
 
 <philosophy>
-**User = founder/visionary. Claude = builder.**
+**ユーザー = 創設者/ビジョナリー。Claude = ビルダー。**
 
-The user knows:
-- How they imagine it working
-- What it should look/feel like
-- What's essential vs nice-to-have
-- Specific behaviors or references they have in mind
+ユーザーが知っていること：
+- どのように動作するか想像しているか
+- どのような見た目/感触にすべきか
+- 何が必須で何があれば良いか
+- 特定の動作や参考にしているもの
 
-The user doesn't know (and shouldn't be asked):
-- Codebase patterns (researcher reads the code)
-- Technical risks (researcher identifies these)
-- Implementation approach (planner figures this out)
-- Success metrics (inferred from the work)
+ユーザーに聞くべきでないこと（そして聞かれるべきでないこと）：
+- コードベースパターン（リサーチャーがコードを読む）
+- 技術的リスク（リサーチャーがこれらを特定する）
+- 実装アプローチ（プランナーがこれを考える）
+- 成功指標（作業から推論される）
 
-Ask about vision and implementation choices. Capture decisions for downstream agents.
+ビジョンと実装上の選択について質問する。下流エージェント向けに決定を記録する。
 </philosophy>
 
 <scope_guardrail>
-**CRITICAL: No scope creep.**
+**重要：スコープクリープなし。**
 
-The phase boundary comes from ROADMAP.md and is FIXED. Discussion clarifies HOW to implement what's scoped, never WHETHER to add new capabilities.
+フェーズの境界はROADMAP.mdからのものであり、固定されている。ディスカッションはスコープ内のものをどのように実装するかを明確にするものであり、新しい機能を追加するかどうかではない。
 
-**Allowed (clarifying ambiguity):**
-- "How should posts be displayed?" (layout, density, info shown)
-- "What happens on empty state?" (within the feature)
-- "Pull to refresh or manual?" (behavior choice)
+**許可（曖昧さの明確化）：**
+- 「投稿はどのように表示すべきですか？」（レイアウト、密度、表示情報）
+- 「空の状態ではどうなりますか？」（機能の範囲内）
+- 「プルトゥリフレッシュか手動か？」（動作の選択）
 
-**Not allowed (scope creep):**
-- "Should we also add comments?" (new capability)
-- "What about search/filtering?" (new capability)
-- "Maybe include bookmarking?" (new capability)
+**不許可（スコープクリープ）：**
+- 「コメントも追加すべきですか？」（新しい機能）
+- 「検索/フィルタリングはどうですか？」（新しい機能）
+- 「ブックマークを含めた方がいいかも？」（新しい機能）
 
-**The heuristic:** Does this clarify how we implement what's already in the phase, or does it add a new capability that could be its own phase?
+**ヒューリスティック：** これはフェーズに既にあるものの実装方法を明確にしているか、それとも独自のフェーズになり得る新しい機能を追加しているか？
 
-**When user suggests scope creep:**
+**ユーザーがスコープクリープを提案した場合：**
 ```
-"[Feature X] would be a new capability — that's its own phase.
-Want me to note it for the roadmap backlog?
+「[Feature X]は新しい機能です — 独自のフェーズになります。
+ロードマップのバックログに記録しておきますか？
 
-For now, let's focus on [phase domain]."
+今は[phase domain]に集中しましょう。」
 ```
 
-Capture the idea in a "Deferred Ideas" section. Don't lose it, don't act on it.
+「Deferred Ideas」セクションにアイデアを記録する。失わないこと、行動もしないこと。
 </scope_guardrail>
 
 <gray_area_identification>
-Gray areas are **implementation decisions the user cares about** — things that could go multiple ways and would change the result.
+グレーエリアとは**ユーザーが気にする実装上の決定** — 複数の方向に進む可能性があり、結果が変わるもの。
 
-**How to identify gray areas:**
+**グレーエリアの特定方法：**
 
-1. **Read the phase goal** from ROADMAP.md
-2. **Understand the domain** — What kind of thing is being built?
-   - Something users SEE → visual presentation, interactions, states matter
-   - Something users CALL → interface contracts, responses, errors matter
-   - Something users RUN → invocation, output, behavior modes matter
-   - Something users READ → structure, tone, depth, flow matter
-   - Something being ORGANIZED → criteria, grouping, handling exceptions matter
-3. **Generate phase-specific gray areas** — Not generic categories, but concrete decisions for THIS phase
+1. ROADMAP.mdから**フェーズの目標を読む**
+2. **ドメインを理解する** — どんな種類のものを構築しているか？
+   - ユーザーが見るもの → ビジュアルプレゼンテーション、インタラクション、状態が重要
+   - ユーザーが呼び出すもの → インターフェース契約、レスポンス、エラーが重要
+   - ユーザーが実行するもの → 呼び出し方、出力、動作モードが重要
+   - ユーザーが読むもの → 構造、トーン、深さ、フローが重要
+   - 整理されるもの → 基準、グループ化、例外処理が重要
+3. **フェーズ固有のグレーエリアを生成** — 一般的なカテゴリではなく、このフェーズの具体的な決定
 
-**Don't use generic category labels** (UI, UX, Behavior). Generate specific gray areas:
+**一般的なカテゴリラベルは使わない**（UI、UX、Behavior）。具体的なグレーエリアを生成：
 
 ```
-Phase: "User authentication"
-→ Session handling, Error responses, Multi-device policy, Recovery flow
+フェーズ：「ユーザー認証」
+→ セッション処理、エラーレスポンス、マルチデバイスポリシー、リカバリーフロー
 
-Phase: "Organize photo library"
-→ Grouping criteria, Duplicate handling, Naming convention, Folder structure
+フェーズ：「写真ライブラリの整理」
+→ グループ化基準、重複処理、命名規約、フォルダ構造
 
-Phase: "CLI for database backups"
-→ Output format, Flag design, Progress reporting, Error recovery
+フェーズ：「データベースバックアップ用CLI」
+→ 出力形式、フラグ設計、進捗報告、エラーリカバリー
 
-Phase: "API documentation"
-→ Structure/navigation, Code examples depth, Versioning approach, Interactive elements
+フェーズ：「APIドキュメント」
+→ 構造/ナビゲーション、コード例の深さ、バージョニングアプローチ、インタラクティブ要素
 ```
 
-**The key question:** What decisions would change the outcome that the user should weigh in on?
+**重要な問い：** ユーザーが意見を述べるべき、結果を変える決定は何か？
 
-**Claude handles these (don't ask):**
-- Technical implementation details
-- Architecture patterns
-- Performance optimization
-- Scope (roadmap defines this)
+**Claudeが処理するもの（聞かないこと）：**
+- 技術的な実装の詳細
+- アーキテクチャパターン
+- パフォーマンス最適化
+- スコープ（ロードマップがこれを定義する）
 </gray_area_identification>
 
 <process>
 
-**Express path available:** If you already have a PRD or acceptance criteria document, use `/gsd:plan-phase {phase} --prd path/to/prd.md` to skip this discussion and go straight to planning.
+**エクスプレスパス利用可能：** PRDまたは受け入れ基準ドキュメントが既にある場合、`/gsd:plan-phase {phase} --prd path/to/prd.md`を使用してこのディスカッションをスキップし、直接計画に進むことができる。
 
 <step name="initialize" priority="first">
-Phase number from argument (required).
+引数からフェーズ番号（必須）。
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init phase-op "${PHASE}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Parse JSON for: `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `has_verification`, `plan_count`, `roadmap_exists`, `planning_exists`.
+JSONをパース：`commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `has_verification`, `plan_count`, `roadmap_exists`, `planning_exists`。
 
-**If `phase_found` is false:**
+**`phase_found`がfalseの場合：**
 ```
-Phase [X] not found in roadmap.
+フェーズ[X]がロードマップに見つかりません。
 
-Use /gsd:progress to see available phases.
+利用可能なフェーズを確認するには/gsd:progressを使用してください。
 ```
-Exit workflow.
+ワークフローを終了。
 
-**If `phase_found` is true:** Continue to check_existing.
+**`phase_found`がtrueの場合：** check_existingに続行。
 </step>
 
 <step name="check_existing">
-Check if CONTEXT.md already exists using `has_context` from init.
+initから`has_context`を使用してCONTEXT.mdが既に存在するか確認。
 
 ```bash
 ls ${phase_dir}/*-CONTEXT.md 2>/dev/null
 ```
 
-**If exists:**
-Use AskUserQuestion:
+**存在する場合：**
+AskUserQuestionを使用：
 - header: "Context"
-- question: "Phase [X] already has context. What do you want to do?"
+- question: "フェーズ[X]には既にコンテキストがあります。どうしますか？"
 - options:
-  - "Update it" — Review and revise existing context
-  - "View it" — Show me what's there
-  - "Skip" — Use existing context as-is
+  - "Update it" — 既存のコンテキストをレビューして修正
+  - "View it" — 内容を表示
+  - "Skip" — 既存のコンテキストをそのまま使用
 
-If "Update": Load existing, continue to analyze_phase
-If "View": Display CONTEXT.md, then offer update/skip
-If "Skip": Exit workflow
+"Update"の場合：既存を読み込み、analyze_phaseに続行
+"View"の場合：CONTEXT.mdを表示し、その後update/skipを提案
+"Skip"の場合：ワークフローを終了
 
-**If doesn't exist:**
+**存在しない場合：**
 
-Check `has_plans` and `plan_count` from init. **If `has_plans` is true:**
+initから`has_plans`と`plan_count`を確認。**`has_plans`がtrueの場合：**
 
-Use AskUserQuestion:
+AskUserQuestionを使用：
 - header: "Plans exist"
-- question: "Phase [X] already has {plan_count} plan(s) created without user context. Your decisions here won't affect existing plans unless you replan."
+- question: "フェーズ[X]にはユーザーコンテキストなしで作成された{plan_count}個のプランが既にあります。ここでのあなたの決定は再計画しない限り既存のプランに影響しません。"
 - options:
-  - "Continue and replan after" — Capture context, then run /gsd:plan-phase {X} to replan
-  - "View existing plans" — Show plans before deciding
-  - "Cancel" — Skip discuss-phase
+  - "Continue and replan after" — コンテキストを記録し、その後/gsd:plan-phase {X}で再計画
+  - "View existing plans" — 決定前にプランを表示
+  - "Cancel" — discuss-phaseをスキップ
 
-If "Continue and replan after": Continue to analyze_phase.
-If "View existing plans": Display plan files, then offer "Continue" / "Cancel".
-If "Cancel": Exit workflow.
+"Continue and replan after"の場合：analyze_phaseに続行。
+"View existing plans"の場合：プランファイルを表示し、その後「Continue」/「Cancel」を提案。
+"Cancel"の場合：ワークフローを終了。
 
-**If `has_plans` is false:** Continue to load_prior_context.
+**`has_plans`がfalseの場合：** load_prior_contextに続行。
 </step>
 
 <step name="load_prior_context">
-Read project-level and prior phase context to avoid re-asking decided questions and maintain consistency.
+既に決定された質問を再度聞かず、一貫性を維持するために、プロジェクトレベルと以前のフェーズのコンテキストを読む。
 
-**Step 1: Read project-level files**
+**ステップ1：プロジェクトレベルのファイルを読む**
 ```bash
-# Core project files
+# コアプロジェクトファイル
 cat .planning/PROJECT.md 2>/dev/null
 cat .planning/REQUIREMENTS.md 2>/dev/null
 cat .planning/STATE.md 2>/dev/null
 ```
 
-Extract from these:
-- **PROJECT.md** — Vision, principles, non-negotiables, user preferences
-- **REQUIREMENTS.md** — Acceptance criteria, constraints, must-haves vs nice-to-haves
-- **STATE.md** — Current progress, any flags or session notes
+これらから抽出：
+- **PROJECT.md** — ビジョン、原則、譲れないもの、ユーザーの好み
+- **REQUIREMENTS.md** — 受け入れ基準、制約、必須 vs あれば良い
+- **STATE.md** — 現在の進捗、フラグやセッションメモ
 
-**Step 2: Read all prior CONTEXT.md files**
+**ステップ2：以前のすべてのCONTEXT.mdファイルを読む**
 ```bash
-# Find all CONTEXT.md files from phases before current
+# 現在より前のフェーズからすべてのCONTEXT.mdファイルを見つける
 find .planning/phases -name "*-CONTEXT.md" 2>/dev/null | sort
 ```
 
-For each CONTEXT.md where phase number < current phase:
-- Read the `<decisions>` section — these are locked preferences
-- Read `<specifics>` — particular references or "I want it like X" moments
-- Note any patterns (e.g., "user consistently prefers minimal UI", "user rejected single-key shortcuts")
+現在のフェーズより前のフェーズ番号の各CONTEXT.mdについて：
+- `<decisions>`セクションを読む — これらはロックされた好み
+- `<specifics>`を読む — 特定の参照や「Xのようにしたい」という瞬間
+- パターンを記録（例：「ユーザーは一貫してミニマルなUIを好む」、「ユーザーは単一キーショートカットを拒否した」）
 
-**Step 3: Build internal `<prior_decisions>` context**
+**ステップ3：内部`<prior_decisions>`コンテキストを構築**
 
-Structure the extracted information:
+抽出した情報を構造化：
 ```
 <prior_decisions>
-## Project-Level
-- [Key principle or constraint from PROJECT.md]
-- [Requirement that affects this phase from REQUIREMENTS.md]
+## プロジェクトレベル
+- [PROJECT.mdからのキーとなる原則や制約]
+- [REQUIREMENTS.mdからのこのフェーズに影響する要件]
 
-## From Prior Phases
+## 以前のフェーズから
 ### Phase N: [Name]
-- [Decision that may be relevant to current phase]
-- [Preference that establishes a pattern]
+- [現在のフェーズに関連する可能性のある決定]
+- [パターンを確立する好み]
 
 ### Phase M: [Name]
-- [Another relevant decision]
+- [別の関連する決定]
 </prior_decisions>
 ```
 
-**Usage in subsequent steps:**
-- `analyze_phase`: Skip gray areas already decided in prior phases
-- `present_gray_areas`: Annotate options with prior decisions ("You chose X in Phase 5")
-- `discuss_areas`: Pre-fill answers or flag conflicts ("This contradicts Phase 3 — same here or different?")
+**後続ステップでの使用：**
+- `analyze_phase`: 以前のフェーズで既に決定されたグレーエリアをスキップ
+- `present_gray_areas`: 以前の決定でオプションに注釈を付ける（「Phase 5でXを選択しました」）
+- `discuss_areas`: 回答を事前入力するか、矛盾にフラグを立てる（「これはPhase 3と矛盾します — ここでも同じですか、それとも違いますか？」）
 
-**If no prior context exists:** Continue without — this is expected for early phases.
+**以前のコンテキストが存在しない場合：** なしで続行 — 初期フェーズでは想定される。
 </step>
 
 <step name="scout_codebase">
-Lightweight scan of existing code to inform gray area identification and discussion. Uses ~10% context — acceptable for an interactive session.
+グレーエリアの特定とディスカッションに情報を提供するための、既存コードの軽量スキャン。約10%のコンテキストを使用 — インタラクティブセッションでは許容範囲。
 
-**Step 1: Check for existing codebase maps**
+**ステップ1：既存のコードベースマップを確認**
 ```bash
 ls .planning/codebase/*.md 2>/dev/null
 ```
 
-**If codebase maps exist:** Read the most relevant ones (CONVENTIONS.md, STRUCTURE.md, STACK.md based on phase type). Extract:
-- Reusable components/hooks/utilities
-- Established patterns (state management, styling, data fetching)
-- Integration points (where new code would connect)
+**コードベースマップが存在する場合：** 最も関連性の高いもの（フェーズタイプに基づいてCONVENTIONS.md、STRUCTURE.md、STACK.md）を読む。抽出：
+- 再利用可能なコンポーネント/フック/ユーティリティ
+- 確立されたパターン（状態管理、スタイリング、データフェッチ）
+- 統合ポイント（新しいコードが接続する場所）
 
-Skip to Step 3 below.
+以下のステップ3にスキップ。
 
-**Step 2: If no codebase maps, do targeted grep**
+**ステップ2：コードベースマップがない場合、ターゲットgrepを実行**
 
-Extract key terms from the phase goal (e.g., "feed" → "post", "card", "list"; "auth" → "login", "session", "token").
+フェーズ目標からキーワードを抽出（例：「feed」→「post」「card」「list」、「auth」→「login」「session」「token」）。
 
 ```bash
-# Find files related to phase goal terms
+# フェーズ目標の用語に関連するファイルを検索
 grep -rl "{term1}\|{term2}" src/ app/ --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" 2>/dev/null | head -10
 
-# Find existing components/hooks
+# 既存のコンポーネント/フックを検索
 ls src/components/ 2>/dev/null
 ls src/hooks/ 2>/dev/null
 ls src/lib/ src/utils/ 2>/dev/null
 ```
 
-Read the 3-5 most relevant files to understand existing patterns.
+既存のパターンを理解するために最も関連性の高い3-5ファイルを読む。
 
-**Step 3: Build internal codebase_context**
+**ステップ3：内部codebase_contextを構築**
 
-From the scan, identify:
-- **Reusable assets** — existing components, hooks, utilities that could be used in this phase
-- **Established patterns** — how the codebase does state management, styling, data fetching
-- **Integration points** — where new code would connect (routes, nav, providers)
-- **Creative options** — approaches the existing architecture enables or constrains
+スキャンから以下を特定：
+- **再利用可能なアセット** — このフェーズで使用可能な既存のコンポーネント、フック、ユーティリティ
+- **確立されたパターン** — コードベースが状態管理、スタイリング、データフェッチをどのように行っているか
+- **統合ポイント** — 新しいコードが既存システムに接続する場所（ルート、ナビゲーション、プロバイダー）
+- **クリエイティブオプション** — 既存のアーキテクチャが可能にする、または制約するアプローチ
 
-Store as internal `<codebase_context>` for use in analyze_phase and present_gray_areas. This is NOT written to a file — it's used within this session only.
+analyze_phaseとpresent_gray_areasで使用するための内部`<codebase_context>`として保存。これはファイルに書き込まれない — このセッション内でのみ使用。
 </step>
 
 <step name="analyze_phase">
-Analyze the phase to identify gray areas worth discussing. **Use both `prior_decisions` and `codebase_context` to ground the analysis.**
+ディスカッションに値するグレーエリアを特定するためにフェーズを分析する。**分析を基盤づけるために`prior_decisions`と`codebase_context`の両方を使用する。**
 
-**Read the phase description from ROADMAP.md and determine:**
+**ROADMAP.mdからフェーズの説明を読み、以下を決定：**
 
-1. **Domain boundary** — What capability is this phase delivering? State it clearly.
+1. **ドメイン境界** — このフェーズはどのような機能を提供するか？明確に述べる。
 
-2. **Check prior decisions** — Before generating gray areas, check if any were already decided:
-   - Scan `<prior_decisions>` for relevant choices (e.g., "Ctrl+C only, no single-key shortcuts")
-   - These are **pre-answered** — don't re-ask unless this phase has conflicting needs
-   - Note applicable prior decisions for use in presentation
+2. **以前の決定を確認** — グレーエリアを生成する前に、既に決定されたものがないか確認：
+   - `<prior_decisions>`を関連する選択についてスキャン（例：「Ctrl+Cのみ、単一キーショートカットなし」）
+   - これらは**事前回答済み** — このフェーズで矛盾する必要がない限り再度聞かない
+   - プレゼンテーションで使用するために適用される以前の決定を記録
 
-3. **Gray areas by category** — For each relevant category (UI, UX, Behavior, Empty States, Content), identify 1-2 specific ambiguities that would change implementation. **Annotate with code context where relevant** (e.g., "You already have a Card component" or "No existing pattern for this").
+3. **カテゴリ別のグレーエリア** — 各関連カテゴリ（UI、UX、動作、空の状態、コンテンツ）について、実装を変える1-2の具体的な曖昧さを特定する。**関連する場合はコードコンテキストで注釈を付ける**（例：「既にCardコンポーネントがあります」または「このパターンの既存パターンなし」）。
 
-4. **Skip assessment** — If no meaningful gray areas exist (pure infrastructure, clear-cut implementation, or all already decided in prior phases), the phase may not need discussion.
+4. **スキップ評価** — 意味のあるグレーエリアが存在しない場合（純粋なインフラストラクチャ、明確な実装、またはすべて以前のフェーズで既に決定済み）、このフェーズはディスカッションが不要な可能性がある。
 
-**Output your analysis internally, then present to user.**
+**分析を内部的に出力し、その後ユーザーに提示する。**
 
-Example analysis for "Post Feed" phase (with code and prior context):
+「Post Feed」フェーズの分析例（コードと以前のコンテキスト付き）：
 ```
-Domain: Displaying posts from followed users
-Existing: Card component (src/components/ui/Card.tsx), useInfiniteQuery hook, Tailwind CSS
-Prior decisions: "Minimal UI preferred" (Phase 2), "No pagination — always infinite scroll" (Phase 4)
-Gray areas:
-- UI: Layout style (cards vs timeline vs grid) — Card component exists with shadow/rounded variants
-- UI: Information density (full posts vs previews) — no existing density patterns
-- Behavior: Loading pattern — ALREADY DECIDED: infinite scroll (Phase 4)
-- Empty State: What shows when no posts exist — EmptyState component exists in ui/
-- Content: What metadata displays (time, author, reactions count)
+ドメイン：フォロー中のユーザーからの投稿を表示
+既存：Cardコンポーネント（src/components/ui/Card.tsx）、useInfiniteQueryフック、Tailwind CSS
+以前の決定：「ミニマルなUI優先」（Phase 2）、「ページネーションなし — 常に無限スクロール」（Phase 4）
+グレーエリア：
+- UI：レイアウトスタイル（カード vs タイムライン vs グリッド）— Cardコンポーネントがshadow/roundedバリアント付きで存在
+- UI：情報密度（完全な投稿 vs プレビュー）— 既存の密度パターンなし
+- 動作：ローディングパターン — 既に決定済み：無限スクロール（Phase 4）
+- 空の状態：投稿がない場合の表示 — EmptyStateコンポーネントがui/に存在
+- コンテンツ：表示するメタデータ（時間、著者、リアクション数）
 ```
 </step>
 
 <step name="present_gray_areas">
-Present the domain boundary, prior decisions, and gray areas to user.
+ドメイン境界、以前の決定、グレーエリアをユーザーに提示する。
 
-**First, state the boundary and any prior decisions that apply:**
+**まず、境界と適用される以前の決定を述べる：**
 ```
 Phase [X]: [Name]
-Domain: [What this phase delivers — from your analysis]
+ドメイン: [このフェーズが提供するもの — 分析から]
 
-We'll clarify HOW to implement this.
-(New capabilities belong in other phases.)
+これをどのように実装するか明確にします。
+（新しい機能は他のフェーズに属します。）
 
-[If prior decisions apply:]
-**Carrying forward from earlier phases:**
-- [Decision from Phase N that applies here]
-- [Decision from Phase M that applies here]
+[以前の決定が適用される場合：]
+**以前のフェーズからの引き継ぎ：**
+- [ここに適用されるPhase Nからの決定]
+- [ここに適用されるPhase Mからの決定]
 ```
 
-**Then use AskUserQuestion (multiSelect: true):**
+**その後AskUserQuestion（multiSelect: true）を使用：**
 - header: "Discuss"
-- question: "Which areas do you want to discuss for [phase name]?"
-- options: Generate 3-4 phase-specific gray areas, each with:
-  - "[Specific area]" (label) — concrete, not generic
-  - [1-2 questions this covers + code context annotation] (description)
-  - **Highlight the recommended choice with brief explanation why**
+- question: "[phase name]でどのエリアについてディスカッションしたいですか？"
+- options: 3-4のフェーズ固有のグレーエリアを生成、各々：
+  - "[具体的なエリア]" (label) — 具体的で一般的でない
+  - [これがカバーする1-2の質問 + コードコンテキスト注釈] (description)
+  - **推奨する選択肢を簡単な理由とともにハイライト**
 
-**Prior decision annotations:** When a gray area was already decided in a prior phase, annotate it:
+**以前の決定の注釈：** グレーエリアが以前のフェーズで既に決定されている場合、注釈を付ける：
 ```
-☐ Exit shortcuts — How should users quit?
-  (You decided "Ctrl+C only, no single-key shortcuts" in Phase 5 — revisit or keep?)
-```
-
-**Code context annotations:** When the scout found relevant existing code, annotate the gray area description:
-```
-☐ Layout style — Cards vs list vs timeline?
-  (You already have a Card component with shadow/rounded variants. Reusing it keeps the app consistent.)
+☐ 終了ショートカット — ユーザーはどのように終了すべきか？
+  （Phase 5で「Ctrl+Cのみ、単一キーショートカットなし」と決定しました — 見直しますか、維持しますか？）
 ```
 
-**Combining both:** When both prior decisions and code context apply:
+**コードコンテキスト注釈：** スカウトが関連する既存コードを見つけた場合、グレーエリアの説明に注釈を付ける：
 ```
-☐ Loading behavior — Infinite scroll or pagination?
-  (You chose infinite scroll in Phase 4. useInfiniteQuery hook already set up.)
-```
-
-**Do NOT include a "skip" or "you decide" option.** User ran this command to discuss — give them real choices.
-
-**Examples by domain (with code context):**
-
-For "Post Feed" (visual feature):
-```
-☐ Layout style — Cards vs list vs timeline? (Card component exists with variants)
-☐ Loading behavior — Infinite scroll or pagination? (useInfiniteQuery hook available)
-☐ Content ordering — Chronological, algorithmic, or user choice?
-☐ Post metadata — What info per post? Timestamps, reactions, author?
+☐ レイアウトスタイル — カード vs リスト vs タイムライン？
+  （shadow/roundedバリアント付きのCardコンポーネントが既にあります。再利用するとアプリの一貫性が保たれます。）
 ```
 
-For "Database backup CLI" (command-line tool):
+**両方を組み合わせる場合：** 以前の決定とコードコンテキストの両方が適用される場合：
 ```
-☐ Output format — JSON, table, or plain text? Verbosity levels?
-☐ Flag design — Short flags, long flags, or both? Required vs optional?
-☐ Progress reporting — Silent, progress bar, or verbose logging?
-☐ Error recovery — Fail fast, retry, or prompt for action?
+☐ ローディング動作 — 無限スクロールかページネーションか？
+  （Phase 4で無限スクロールを選択しました。useInfiniteQueryフックが既に設定済み。）
 ```
 
-For "Organize photo library" (organization task):
+**「スキップ」や「お任せ」のオプションを含めない。** ユーザーはディスカッションするためにこのコマンドを実行した — 本当の選択肢を与える。
+
+**ドメイン別の例（コードコンテキスト付き）：**
+
+「Post Feed」の場合（ビジュアル機能）：
 ```
-☐ Grouping criteria — By date, location, faces, or events?
-☐ Duplicate handling — Keep best, keep all, or prompt each time?
-☐ Naming convention — Original names, dates, or descriptive?
-☐ Folder structure — Flat, nested by year, or by category?
+☐ レイアウトスタイル — カード vs リスト vs タイムライン？（バリアント付きCardコンポーネントが存在）
+☐ ローディング動作 — 無限スクロールかページネーションか？（useInfiniteQueryフックが利用可能）
+☐ コンテンツの順序 — 時系列、アルゴリズム、ユーザー選択？
+☐ 投稿メタデータ — 投稿ごとの情報は？タイムスタンプ、リアクション、著者？
 ```
 
-Continue to discuss_areas with selected areas.
+「Database backup CLI」の場合（コマンドラインツール）：
+```
+☐ 出力形式 — JSON、テーブル、プレーンテキスト？冗長レベルは？
+☐ フラグ設計 — ショートフラグ、ロングフラグ、両方？必須 vs 任意？
+☐ 進捗報告 — サイレント、プログレスバー、詳細ログ？
+☐ エラーリカバリー — 即座に失敗、リトライ、アクションを求める？
+```
+
+「Organize photo library」の場合（整理タスク）：
+```
+☐ グループ化基準 — 日付、場所、顔、イベント？
+☐ 重複処理 — ベストを保持、全て保持、毎回確認？
+☐ 命名規約 — 元の名前、日付、説明的？
+☐ フォルダ構造 — フラット、年別ネスト、カテゴリ別？
+```
+
+選択されたエリアでdiscuss_areasに続行。
 </step>
 
 <step name="discuss_areas">
-For each selected area, conduct a focused discussion loop.
+選択された各エリアについて、焦点を絞ったディスカッションループを実施する。
 
-**Philosophy: 4 questions, then check.**
+**フィロソフィー：4つの質問、その後チェック。**
 
-Ask 4 questions per area before offering to continue or move on. Each answer often reveals the next question.
+各エリアについて、続行するか次に進むか提案する前に4つの質問をする。各回答がしばしば次の質問を明らかにする。
 
-**For each area:**
+**各エリアについて：**
 
-1. **Announce the area:**
+1. **エリアを告知：**
    ```
-   Let's talk about [Area].
+   [Area]について話しましょう。
    ```
 
-2. **Ask 4 questions using AskUserQuestion:**
-   - header: "[Area]" (max 12 chars — abbreviate if needed)
-   - question: Specific decision for this area
-   - options: 2-3 concrete choices (AskUserQuestion adds "Other" automatically), with the recommended choice highlighted and brief explanation why
-   - **Annotate options with code context** when relevant:
+2. **AskUserQuestionで4つの質問：**
+   - header: "[Area]" (最大12文字 — 必要に応じて省略)
+   - question: このエリアの具体的な決定
+   - options: 2-3の具体的な選択肢（AskUserQuestionは自動的に「Other」を追加）、推奨する選択肢をハイライトし簡単に理由を説明
+   - **関連する場合はオプションにコードコンテキストで注釈を付ける：**
      ```
-     "How should posts be displayed?"
-     - Cards (reuses existing Card component — consistent with Messages)
-     - List (simpler, would be a new pattern)
-     - Timeline (needs new Timeline component — none exists yet)
+     「投稿はどのように表示すべきですか？」
+     - カード（既存のCardコンポーネントを再利用 — メッセージと一貫）
+     - リスト（よりシンプル、新しいパターンになる）
+     - タイムライン（新しいTimelineコンポーネントが必要 — まだ存在しない）
      ```
-   - Include "You decide" as an option when reasonable — captures Claude discretion
-   - **Context7 for library choices:** When a gray area involves library selection (e.g., "magic links" → query next-auth docs) or API approach decisions, use `mcp__context7__*` tools to fetch current documentation and inform the options. Don't use Context7 for every question — only when library-specific knowledge improves the options.
+   - 合理的な場合は「You decide」をオプションとして含める — Claude discretionを記録
+   - **ライブラリ選択のためのContext7：** グレーエリアがライブラリの選択（例：「マジックリンク」→ next-authドキュメントを照会）やAPIアプローチの決定を含む場合、`mcp__context7__*`ツールを使用して最新のドキュメントを取得しオプションに情報を提供する。すべての質問にContext7を使用しない — ライブラリ固有の知識がオプションを改善する場合のみ。
 
-3. **After 4 questions, check:**
-   - header: "[Area]" (max 12 chars)
-   - question: "More questions about [area], or move to next?"
+3. **4つの質問の後、チェック：**
+   - header: "[Area]" (最大12文字)
+   - question: "[area]についてさらに質問しますか、次に進みますか？"
    - options: "More questions" / "Next area"
 
-   If "More questions" → ask 4 more, then check again
-   If "Next area" → proceed to next selected area
-   If "Other" (free text) → interpret intent: continuation phrases ("chat more", "keep going", "yes", "more") map to "More questions"; advancement phrases ("done", "move on", "next", "skip") map to "Next area". If ambiguous, ask: "Continue with more questions about [area], or move to the next area?"
+   "More questions"の場合 → さらに4つ質問し、その後再度チェック
+   "Next area"の場合 → 次の選択されたエリアに進む
+   "Other"（フリーテキスト）の場合 → インテントを解釈：継続フレーズ（「もっと話す」「続けて」「はい」「もっと」）は"More questions"にマッピング、進行フレーズ（「完了」「次へ」「スキップ」）は"Next area"にマッピング。曖昧な場合は質問：「[area]についてさらに質問を続けますか、次のエリアに進みますか？」
 
-4. **After all initially-selected areas complete:**
-   - Summarize what was captured from the discussion so far
+4. **最初に選択されたすべてのエリアが完了した後：**
+   - ディスカッションで記録された内容を要約
    - AskUserQuestion:
      - header: "Done"
-     - question: "We've discussed [list areas]. Which gray areas remain unclear?"
+     - question: "[エリアのリスト]についてディスカッションしました。どのグレーエリアがまだ不明確ですか？"
      - options: "Explore more gray areas" / "I'm ready for context"
-   - If "Explore more gray areas":
-     - Identify 2-4 additional gray areas based on what was learned
-     - Return to present_gray_areas logic with these new areas
-     - Loop: discuss new areas, then prompt again
-   - If "I'm ready for context": Proceed to write_context
+   - "Explore more gray areas"の場合：
+     - 学んだことに基づいて2-4の追加グレーエリアを特定
+     - これらの新しいエリアでpresent_gray_areasロジックに戻る
+     - ループ：新しいエリアをディスカッションし、再度質問
+   - "I'm ready for context"の場合：write_contextに進む
 
-**Question design:**
-- Options should be concrete, not abstract ("Cards" not "Option A")
-- Each answer should inform the next question
-- If user picks "Other" to provide freeform input (e.g., "let me describe it", "something else", or an open-ended reply), ask your follow-up as plain text — NOT another AskUserQuestion. Wait for them to type at the normal prompt, then reflect their input back and confirm before resuming AskUserQuestion for the next question.
+**質問の設計：**
+- オプションは具体的であるべき、抽象的ではない（「カード」、「Option A」ではない）
+- 各回答が次の質問に情報を提供すべき
+- ユーザーが「Other」を選んでフリーフォーム入力を提供する場合（例：「説明させて」「他のもの」、またはオープンエンドの回答）、フォローアップを別のAskUserQuestionではなくプレーンテキストで質問する。通常のプロンプトで入力するのを待ち、その入力を反映して確認してから、次の質問のAskUserQuestionを再開する。
 
-**Scope creep handling:**
-If user mentions something outside the phase domain:
+**スコープクリープの処理：**
+ユーザーがフェーズドメイン外のものに言及した場合：
 ```
-"[Feature] sounds like a new capability — that belongs in its own phase.
-I'll note it as a deferred idea.
+「[Feature]は新しい機能のようです — 独自のフェーズに属します。
+延期アイデアとして記録しておきます。
 
-Back to [current area]: [return to current question]"
+[current area]に戻ります：[現在の質問に戻る]」
 ```
 
-Track deferred ideas internally.
+延期アイデアを内部的に追跡。
 </step>
 
 <step name="write_context">
-Create CONTEXT.md capturing decisions made.
+行われた決定を記録するCONTEXT.mdを作成する。
 
-**Find or create phase directory:**
+**フェーズディレクトリを見つけるか作成：**
 
-Use values from init: `phase_dir`, `phase_slug`, `padded_phase`.
+initからの値を使用：`phase_dir`, `phase_slug`, `padded_phase`。
 
-If `phase_dir` is null (phase exists in roadmap but no directory):
+`phase_dir`がnullの場合（フェーズがロードマップに存在するがディレクトリがない）：
 ```bash
 mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 ```
 
-**File location:** `${phase_dir}/${padded_phase}-CONTEXT.md`
+**ファイルの場所：** `${phase_dir}/${padded_phase}-CONTEXT.md`
 
-**Structure the content by what was discussed:**
+**ディスカッションされた内容でコンテンツを構造化：**
 
 ```markdown
 # Phase [X]: [Name] - Context
@@ -462,22 +462,22 @@ mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 <domain>
 ## Phase Boundary
 
-[Clear statement of what this phase delivers — the scope anchor]
+[このフェーズが提供するものの明確な記述 — スコープアンカー]
 
 </domain>
 
 <decisions>
 ## Implementation Decisions
 
-### [Category 1 that was discussed]
-- [Decision or preference captured]
-- [Another decision if applicable]
+### [ディスカッションされたカテゴリ1]
+- [記録された決定または好み]
+- [該当する場合は別の決定]
 
-### [Category 2 that was discussed]
-- [Decision or preference captured]
+### [ディスカッションされたカテゴリ2]
+- [記録された決定または好み]
 
 ### Claude's Discretion
-[Areas where user said "you decide" — note that Claude has flexibility here]
+[ユーザーが「お任せ」と言ったエリア — Claudeがここで柔軟に対応できることを記載]
 
 </decisions>
 
@@ -485,31 +485,31 @@ mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 ## Existing Code Insights
 
 ### Reusable Assets
-- [Component/hook/utility]: [How it could be used in this phase]
+- [コンポーネント/フック/ユーティリティ]: [このフェーズでの使用方法]
 
 ### Established Patterns
-- [Pattern]: [How it constrains/enables this phase]
+- [パターン]: [このフェーズをどのように制約/可能にするか]
 
 ### Integration Points
-- [Where new code connects to existing system]
+- [新しいコードが既存システムに接続する場所]
 
 </code_context>
 
 <specifics>
 ## Specific Ideas
 
-[Any particular references, examples, or "I want it like X" moments from discussion]
+[ディスカッションからの特定の参照、例、「Xのようにしたい」という瞬間]
 
-[If none: "No specific requirements — open to standard approaches"]
+[該当なしの場合: "No specific requirements — open to standard approaches"]
 
 </specifics>
 
 <deferred>
 ## Deferred Ideas
 
-[Ideas that came up but belong in other phases. Don't lose them.]
+[出てきたが他のフェーズに属するアイデア。失わないこと。]
 
-[If none: "None — discussion stayed within phase scope"]
+[該当なしの場合: "None — discussion stayed within phase scope"]
 
 </deferred>
 
@@ -519,59 +519,59 @@ mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 *Context gathered: [date]*
 ```
 
-Write file.
+ファイルを書き込む。
 </step>
 
 <step name="confirm_creation">
-Present summary and next steps:
+サマリーと次のステップを提示：
 
 ```
-Created: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
+作成完了: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
 
-## Decisions Captured
-
-### [Category]
-- [Key decision]
+## 記録された決定
 
 ### [Category]
-- [Key decision]
+- [主要な決定]
 
-[If deferred ideas exist:]
-## Noted for Later
-- [Deferred idea] — future phase
+### [Category]
+- [主要な決定]
+
+[延期アイデアがある場合：]
+## 後で記録
+- [延期アイデア] — 将来のフェーズ
 
 ---
 
 ## ▶ Next Up
 
-**Phase ${PHASE}: [Name]** — [Goal from ROADMAP.md]
+**Phase ${PHASE}: [Name]** — [ROADMAP.mdからの目標]
 
 `/gsd:plan-phase ${PHASE}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:plan-phase ${PHASE} --skip-research` — plan without research
-- Review/edit CONTEXT.md before continuing
+**その他のオプション：**
+- `/gsd:plan-phase ${PHASE} --skip-research` — リサーチなしで計画
+- 続行前にCONTEXT.mdをレビュー/編集
 
 ---
 ```
 </step>
 
 <step name="git_commit">
-Commit phase context (uses `commit_docs` from init internally):
+フェーズコンテキストをコミット（内部的にinitからの`commit_docs`を使用）：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(${padded_phase}): capture phase context" --files "${phase_dir}/${padded_phase}-CONTEXT.md"
 ```
 
-Confirm: "Committed: docs(${padded_phase}): capture phase context"
+確認：「Committed: docs(${padded_phase}): capture phase context」
 </step>
 
 <step name="update_state">
-Update STATE.md with session info:
+STATE.mdをセッション情報で更新：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state record-session \
@@ -579,7 +579,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state record-session \
   --resume-file "${phase_dir}/${padded_phase}-CONTEXT.md"
 ```
 
-Commit STATE.md:
+STATE.mdをコミット：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(state): record phase ${PHASE} context session" --files .planning/STATE.md
@@ -587,90 +587,91 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(state): record
 </step>
 
 <step name="auto_advance">
-Check for auto-advance trigger:
+自動進行トリガーを確認：
 
-1. Parse `--auto` flag from $ARGUMENTS
-2. **Sync chain flag with intent** — if user invoked manually (no `--auto`), clear the ephemeral chain flag from any previous interrupted `--auto` chain. This does NOT touch `workflow.auto_advance` (the user's persistent settings preference):
+1. $ARGUMENTSから`--auto`フラグをパース
+2. **チェーンフラグをインテントと同期** — ユーザーが手動で呼び出した場合（`--auto`なし）、以前の中断された`--auto`チェーンからのエフェメラルチェーンフラグをクリアする。これは`workflow.auto_advance`（ユーザーの永続設定）には触れない：
    ```bash
    if [[ ! "$ARGUMENTS" =~ --auto ]]; then
      node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_chain_active false 2>/dev/null
    fi
    ```
-3. Read both the chain flag and user preference:
+3. チェーンフラグとユーザー設定の両方を読む：
    ```bash
    AUTO_CHAIN=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow._auto_chain_active 2>/dev/null || echo "false")
    AUTO_CFG=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow.auto_advance 2>/dev/null || echo "false")
    ```
 
-**If `--auto` flag present AND `AUTO_CHAIN` is not true:** Persist chain flag to config (handles direct `--auto` usage without new-project):
+**`--auto`フラグが存在するが`AUTO_CHAIN`がtrueでない場合：** チェーンフラグを設定に永続化（new-projectなしでの直接`--auto`使用を処理）：
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_chain_active true
 ```
 
-**If `--auto` flag present OR `AUTO_CHAIN` is true OR `AUTO_CFG` is true:**
+**`--auto`フラグが存在する場合 または `AUTO_CHAIN`がtrue または `AUTO_CFG`がtrueの場合：**
 
-Display banner:
+バナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► AUTO-ADVANCING TO PLAN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Context captured. Launching plan-phase...
+コンテキスト記録完了。plan-phaseを起動中...
 ```
 
-Launch plan-phase using the Skill tool to avoid nested Task sessions (which cause runtime freezes due to deep agent nesting — see #686):
+ネストされたTaskセッション（深いエージェントネスティングによるランタイムフリーズを引き起こす — #686参照）を避けるため、Skillツールを使用してplan-phaseを起動：
 ```
 Skill(skill="gsd:plan-phase", args="${PHASE} --auto")
 ```
 
-This keeps the auto-advance chain flat — discuss, plan, and execute all run at the same nesting level rather than spawning increasingly deep Task agents.
+これにより自動進行チェーンがフラット化される — discuss、plan、executeがすべて同じネスティングレベルで実行され、深いTaskエージェントを生成しない。
 
-**Handle plan-phase return:**
-- **PHASE COMPLETE** → Full chain succeeded. Display:
+**plan-phaseの戻り値を処理：**
+- **PHASE COMPLETE** → フルチェーン成功。表示：
   ```
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    GSD ► PHASE ${PHASE} COMPLETE
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  Auto-advance pipeline finished: discuss → plan → execute
+  自動進行パイプライン完了: discuss → plan → execute
 
-  Next: /gsd:discuss-phase ${NEXT_PHASE} --auto
-  <sub>/clear first → fresh context window</sub>
+  次: /gsd:discuss-phase ${NEXT_PHASE} --auto
+  <sub>/clear first → 新しいコンテキストウィンドウ</sub>
   ```
-- **PLANNING COMPLETE** → Planning done, execution didn't complete:
+- **PLANNING COMPLETE** → 計画完了、実行が完了していない：
   ```
-  Auto-advance partial: Planning complete, execution did not finish.
-  Continue: /gsd:execute-phase ${PHASE}
+  自動進行部分完了：計画完了、実行は完了していません。
+  続行: /gsd:execute-phase ${PHASE}
   ```
-- **PLANNING INCONCLUSIVE / CHECKPOINT** → Stop chain:
+- **PLANNING INCONCLUSIVE / CHECKPOINT** → チェーンを停止：
   ```
-  Auto-advance stopped: Planning needs input.
-  Continue: /gsd:plan-phase ${PHASE}
+  自動進行停止：計画に入力が必要です。
+  続行: /gsd:plan-phase ${PHASE}
   ```
-- **GAPS FOUND** → Stop chain:
+- **GAPS FOUND** → チェーンを停止：
   ```
-  Auto-advance stopped: Gaps found during execution.
-  Continue: /gsd:plan-phase ${PHASE} --gaps
+  自動進行停止：実行中にギャップが見つかりました。
+  続行: /gsd:plan-phase ${PHASE} --gaps
   ```
 
-**If neither `--auto` nor config enabled:**
-Route to `confirm_creation` step (existing behavior — show manual next steps).
+**`--auto`も設定も有効でない場合：**
+`confirm_creation`ステップにルーティング（既存の動作 — 手動の次ステップを表示）。
 </step>
 
 </process>
 
 <success_criteria>
-- Phase validated against roadmap
-- Prior context loaded (PROJECT.md, REQUIREMENTS.md, STATE.md, prior CONTEXT.md files)
-- Already-decided questions not re-asked (carried forward from prior phases)
-- Codebase scouted for reusable assets, patterns, and integration points
-- Gray areas identified through intelligent analysis with code and prior decision annotations
-- User selected which areas to discuss
-- Each selected area explored until user satisfied (with code-informed and prior-decision-informed options)
-- Scope creep redirected to deferred ideas
-- CONTEXT.md captures actual decisions, not vague vision
-- CONTEXT.md includes code_context section with reusable assets and patterns
-- Deferred ideas preserved for future phases
-- STATE.md updated with session info
-- User knows next steps
+- フェーズがロードマップに対して検証された
+- 以前のコンテキストが読み込まれた（PROJECT.md、REQUIREMENTS.md、STATE.md、以前のCONTEXT.mdファイル）
+- 既に決定された質問が再度聞かれなかった（以前のフェーズから引き継ぎ）
+- 再利用可能なアセット、パターン、統合ポイントのためにコードベースがスカウトされた
+- コードと以前の決定の注釈付きでインテリジェントな分析を通じてグレーエリアが特定された
+- ユーザーがどのエリアをディスカッションするか選択した
+- 選択された各エリアがユーザーが満足するまで探索された（コード情報と以前の決定情報に基づくオプション付き）
+- スコープクリープが延期アイデアにリダイレクトされた
+- CONTEXT.mdが曖昧なビジョンではなく実際の決定を記録している
+- CONTEXT.mdに再利用可能なアセットとパターンのcode_contextセクションが含まれる
+- 延期アイデアが将来のフェーズのために保存された
+- STATE.mdがセッション情報で更新された
+- ユーザーが次のステップを認識している
 </success_criteria>
+</output>

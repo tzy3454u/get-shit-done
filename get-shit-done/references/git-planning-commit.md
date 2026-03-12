@@ -1,28 +1,28 @@
-# Git Planning Commit
+# Gitプランニングコミット
 
-Commit planning artifacts using the gsd-tools CLI, which automatically checks `commit_docs` config and gitignore status.
+gsd-tools CLIを使用してプランニング成果物をコミットします。`commit_docs`設定とgitignoreステータスを自動的にチェックします。
 
-## Commit via CLI
+## CLIでのコミット
 
-Always use `gsd-tools.cjs commit` for `.planning/` files — it handles `commit_docs` and gitignore checks automatically:
+`.planning/`ファイルには常に`gsd-tools.cjs commit`を使用してください。`commit_docs`とgitignoreのチェックを自動的に処理します:
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs({scope}): {description}" --files .planning/STATE.md .planning/ROADMAP.md
 ```
 
-The CLI will return `skipped` (with reason) if `commit_docs` is `false` or `.planning/` is gitignored. No manual conditional checks needed.
+CLIは`commit_docs`が`false`または`.planning/`がgitignoreされている場合、`skipped`（理由付き）を返します。手動の条件チェックは不要です。
 
-## Amend previous commit
+## 前のコミットへのamend
 
-To fold `.planning/` file changes into the previous commit:
+`.planning/`ファイルの変更を前のコミットに統合する場合:
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "" --files .planning/codebase/*.md --amend
 ```
 
-## Commit Message Patterns
+## コミットメッセージパターン
 
-| Command | Scope | Example |
+| コマンド | スコープ | 例 |
 |---------|-------|---------|
 | plan-phase | phase | `docs(phase-03): create authentication plans` |
 | execute-phase | phase | `docs(phase-03): complete authentication phase` |
@@ -31,8 +31,8 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "" --files .planning
 | insert-phase | phase | `docs: insert phase 16.1 (critical fix)` |
 | add-phase | phase | `docs: add phase 07 (settings page)` |
 
-## When to Skip
+## スキップする場合
 
-- `commit_docs: false` in config
-- `.planning/` is gitignored
-- No changes to commit (check with `git status --porcelain .planning/`)
+- configで`commit_docs: false`の場合
+- `.planning/`がgitignoreされている場合
+- コミットする変更がない場合（`git status --porcelain .planning/`で確認）

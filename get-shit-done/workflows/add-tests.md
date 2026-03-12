@@ -1,64 +1,64 @@
 <purpose>
-Generate unit and E2E tests for a completed phase based on its SUMMARY.md, CONTEXT.md, and implementation. Classifies each changed file into TDD (unit), E2E (browser), or Skip categories, presents a test plan for user approval, then generates tests following RED-GREEN conventions.
+完了したフェーズのSUMMARY.md、CONTEXT.md、および実装に基づいて、ユニットテストとE2Eテストを生成する。変更された各ファイルをTDD（ユニット）、E2E（ブラウザ）、またはスキップのカテゴリに分類し、テスト計画をユーザーの承認のために提示し、RED-GREENの慣例に従ってテストを生成する。
 
-Users currently hand-craft `/gsd:quick` prompts for test generation after each phase. This workflow standardizes the process with proper classification, quality gates, and gap reporting.
+現在、ユーザーは各フェーズ後にテスト生成のために`/gsd:quick`プロンプトを手作業で作成している。このワークフローは適切な分類、品質ゲート、およびギャップレポートでそのプロセスを標準化する。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されるすべてのファイルを読み取ること。
 </required_reading>
 
 <process>
 
 <step name="parse_arguments">
-Parse `$ARGUMENTS` for:
-- Phase number (integer, decimal, or letter-suffix) → store as `$PHASE_ARG`
-- Remaining text after phase number → store as `$EXTRA_INSTRUCTIONS` (optional)
+`$ARGUMENTS`を以下についてパース:
+- フェーズ番号（整数、小数、または文字サフィックス） → `$PHASE_ARG`として保存
+- フェーズ番号の後の残りのテキスト → `$EXTRA_INSTRUCTIONS`として保存（オプション）
 
-Example: `/gsd:add-tests 12 focus on edge cases` → `$PHASE_ARG=12`, `$EXTRA_INSTRUCTIONS="focus on edge cases"`
+例: `/gsd:add-tests 12 focus on edge cases` → `$PHASE_ARG=12`, `$EXTRA_INSTRUCTIONS="focus on edge cases"`
 
-If no phase argument provided:
+フェーズ引数が指定されていない場合:
 
 ```
-ERROR: Phase number required
-Usage: /gsd:add-tests <phase> [additional instructions]
+ERROR: フェーズ番号が必要です
+Usage: /gsd:add-tests <phase> [追加の指示]
 Example: /gsd:add-tests 12
 Example: /gsd:add-tests 12 focus on edge cases in the pricing module
 ```
 
-Exit.
+終了。
 </step>
 
 <step name="init_context">
-Load phase operation context:
+フェーズ操作コンテキストを読み込む:
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init phase-op "${PHASE_ARG}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `phase_dir`, `phase_number`, `phase_name`.
+init JSONから抽出: `phase_dir`, `phase_number`, `phase_name`。
 
-Verify the phase directory exists. If not:
+フェーズディレクトリの存在を確認。存在しない場合:
 ```
-ERROR: Phase directory not found for phase ${PHASE_ARG}
-Ensure the phase exists in .planning/phases/
+ERROR: フェーズ ${PHASE_ARG} のフェーズディレクトリが見つかりません
+.planning/phases/にフェーズが存在することを確認してください
 ```
-Exit.
+終了。
 
-Read the phase artifacts (in order of priority):
-1. `${phase_dir}/*-SUMMARY.md` — what was implemented, files changed
-2. `${phase_dir}/CONTEXT.md` — acceptance criteria, decisions
-3. `${phase_dir}/*-VERIFICATION.md` — user-verified scenarios (if UAT was done)
+フェーズ成果物を読み取る（優先順）:
+1. `${phase_dir}/*-SUMMARY.md` — 実装された内容、変更されたファイル
+2. `${phase_dir}/CONTEXT.md` — 受け入れ基準、決定
+3. `${phase_dir}/*-VERIFICATION.md` — ユーザー検証済みのシナリオ（UATが実施された場合）
 
-If no SUMMARY.md exists:
+SUMMARY.mdが存在しない場合:
 ```
-ERROR: No SUMMARY.md found for phase ${PHASE_ARG}
-This command works on completed phases. Run /gsd:execute-phase first.
+ERROR: フェーズ ${PHASE_ARG} のSUMMARY.mdが見つかりません
+このコマンドは完了したフェーズに対して動作します。先に/gsd:execute-phaseを実行してください。
 ```
-Exit.
+終了。
 
-Present banner:
+バナーを提示:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► ADD TESTS — Phase ${phase_number}: ${phase_name}
@@ -67,267 +67,267 @@ Present banner:
 </step>
 
 <step name="analyze_implementation">
-Extract the list of files modified by the phase from SUMMARY.md ("Files Changed" or equivalent section).
+SUMMARY.mdからフェーズで変更されたファイルのリストを抽出する（"Files Changed"または同等のセクション）。
 
-For each file, classify into one of three categories:
+各ファイルを3つのカテゴリのいずれかに分類:
 
-| Category | Criteria | Test Type |
+| カテゴリ | 基準 | テストタイプ |
 |----------|----------|-----------|
-| **TDD** | Pure functions where `expect(fn(input)).toBe(output)` is writable | Unit tests |
-| **E2E** | UI behavior verifiable by browser automation | Playwright/E2E tests |
-| **Skip** | Not meaningfully testable or already covered | None |
+| **TDD** | `expect(fn(input)).toBe(output)`が書ける純粋関数 | ユニットテスト |
+| **E2E** | ブラウザ自動化で検証可能なUI動作 | Playwright/E2Eテスト |
+| **Skip** | 意味のあるテストが不可能、または既にカバー済み | なし |
 
-**TDD classification — apply when:**
-- Business logic: calculations, pricing, tax rules, validation
-- Data transformations: mapping, filtering, aggregation, formatting
-- Parsers: CSV, JSON, XML, custom format parsing
-- Validators: input validation, schema validation, business rules
-- State machines: status transitions, workflow steps
-- Utilities: string manipulation, date handling, number formatting
+**TDD分類 — 適用する場合:**
+- ビジネスロジック: 計算、価格設定、税金ルール、バリデーション
+- データ変換: マッピング、フィルタリング、集計、フォーマット
+- パーサー: CSV、JSON、XML、カスタムフォーマットの解析
+- バリデーター: 入力バリデーション、スキーマバリデーション、ビジネスルール
+- ステートマシン: ステータス遷移、ワークフローステップ
+- ユーティリティ: 文字列操作、日付処理、数値フォーマット
 
-**E2E classification — apply when:**
-- Keyboard shortcuts: key bindings, modifier keys, chord sequences
-- Navigation: page transitions, routing, breadcrumbs, back/forward
-- Form interactions: submit, validation errors, field focus, autocomplete
-- Selection: row selection, multi-select, shift-click ranges
-- Drag and drop: reordering, moving between containers
-- Modal dialogs: open, close, confirm, cancel
-- Data grids: sorting, filtering, inline editing, column resize
+**E2E分類 — 適用する場合:**
+- キーボードショートカット: キーバインディング、修飾キー、コードシーケンス
+- ナビゲーション: ページ遷移、ルーティング、パンくず、前後移動
+- フォームインタラクション: 送信、バリデーションエラー、フィールドフォーカス、オートコンプリート
+- セレクション: 行選択、マルチセレクト、Shift+クリック範囲
+- ドラッグ＆ドロップ: 並べ替え、コンテナ間の移動
+- モーダルダイアログ: 開く、閉じる、確認、キャンセル
+- データグリッド: ソート、フィルタリング、インライン編集、カラムリサイズ
 
-**Skip classification — apply when:**
-- UI layout/styling: CSS classes, visual appearance, responsive breakpoints
-- Configuration: config files, environment variables, feature flags
-- Glue code: dependency injection setup, middleware registration, routing tables
-- Migrations: database migrations, schema changes
-- Simple CRUD: basic create/read/update/delete with no business logic
-- Type definitions: records, DTOs, interfaces with no logic
+**Skip分類 — 適用する場合:**
+- UIレイアウト/スタイリング: CSSクラス、視覚的な外観、レスポンシブブレークポイント
+- 設定: 設定ファイル、環境変数、フィーチャーフラグ
+- グルーコード: DI設定、ミドルウェア登録、ルーティングテーブル
+- マイグレーション: データベースマイグレーション、スキーマ変更
+- 単純なCRUD: ビジネスロジックのない基本的な作成/読み取り/更新/削除
+- 型定義: ロジックのないレコード、DTO、インターフェース
 
-Read each file to verify classification. Don't classify based on filename alone.
+分類を検証するために各ファイルを読み取る。ファイル名だけで分類しないこと。
 </step>
 
 <step name="present_classification">
-Present the classification to the user for confirmation before proceeding:
+進行前にユーザーに分類を確認のために提示:
 
 ```
 AskUserQuestion(
-  header: "Test Classification",
+  header: "テスト分類",
   question: |
-    ## Files classified for testing
+    ## テスト対象として分類されたファイル
 
-    ### TDD (Unit Tests) — {N} files
-    {list of files with brief reason}
+    ### TDD (ユニットテスト) — {N}ファイル
+    {ファイルリストと簡単な理由}
 
-    ### E2E (Browser Tests) — {M} files
-    {list of files with brief reason}
+    ### E2E (ブラウザテスト) — {M}ファイル
+    {ファイルリストと簡単な理由}
 
-    ### Skip — {K} files
-    {list of files with brief reason}
+    ### Skip — {K}ファイル
+    {ファイルリストと簡単な理由}
 
-    {if $EXTRA_INSTRUCTIONS: "Additional instructions: ${EXTRA_INSTRUCTIONS}"}
+    {$EXTRA_INSTRUCTIONSがある場合: "追加の指示: ${EXTRA_INSTRUCTIONS}"}
 
-    How would you like to proceed?
+    どのように進めますか？
   options:
-    - "Approve and generate test plan"
-    - "Adjust classification (I'll specify changes)"
-    - "Cancel"
+    - "承認してテスト計画を生成"
+    - "分類を調整（変更を指定します）"
+    - "キャンセル"
 )
 ```
 
-If user selects "Adjust classification": apply their changes and re-present.
-If user selects "Cancel": exit gracefully.
+ユーザーが"分類を調整"を選択した場合: 変更を適用して再提示。
+ユーザーが"キャンセル"を選択した場合: 正常に終了。
 </step>
 
 <step name="discover_test_structure">
-Before generating the test plan, discover the project's existing test structure:
+テスト計画を生成する前に、プロジェクトの既存のテスト構造を調査:
 
 ```bash
-# Find existing test directories
+# 既存のテストディレクトリを検索
 find . -type d -name "*test*" -o -name "*spec*" -o -name "*__tests__*" 2>/dev/null | head -20
-# Find existing test files for convention matching
+# 規約照合のために既存のテストファイルを検索
 find . -type f \( -name "*.test.*" -o -name "*.spec.*" -o -name "*Tests.fs" -o -name "*Test.fs" \) 2>/dev/null | head -20
-# Check for test runners
+# テストランナーを確認
 ls package.json *.sln 2>/dev/null
 ```
 
-Identify:
-- Test directory structure (where unit tests live, where E2E tests live)
-- Naming conventions (`.test.ts`, `.spec.ts`, `*Tests.fs`, etc.)
-- Test runner commands (how to execute unit tests, how to execute E2E tests)
-- Test framework (xUnit, NUnit, Jest, Playwright, etc.)
+以下を特定:
+- テストディレクトリ構造（ユニットテストの配置場所、E2Eテストの配置場所）
+- 命名規則（`.test.ts`, `.spec.ts`, `*Tests.fs`など）
+- テストランナーコマンド（ユニットテストの実行方法、E2Eテストの実行方法）
+- テストフレームワーク（xUnit, NUnit, Jest, Playwrightなど）
 
-If test structure is ambiguous, ask the user:
+テスト構造が曖昧な場合、ユーザーに確認:
 ```
 AskUserQuestion(
-  header: "Test Structure",
-  question: "I found multiple test locations. Where should I create tests?",
-  options: [list discovered locations]
+  header: "テスト構造",
+  question: "複数のテスト配置場所が見つかりました。どこにテストを作成しますか？",
+  options: [検出された場所のリスト]
 )
 ```
 </step>
 
 <step name="generate_test_plan">
-For each approved file, create a detailed test plan.
+承認された各ファイルについて、詳細なテスト計画を作成。
 
-**For TDD files**, plan tests following RED-GREEN-REFACTOR:
-1. Identify testable functions/methods in the file
-2. For each function: list input scenarios, expected outputs, edge cases
-3. Note: since code already exists, tests may pass immediately — that's OK, but verify they test the RIGHT behavior
+**TDDファイル**の場合、RED-GREEN-REFACTORに従ってテストを計画:
+1. ファイル内のテスト可能な関数/メソッドを特定
+2. 各関数について: 入力シナリオ、期待される出力、エッジケースをリスト
+3. 注: コードは既に存在するため、テストはすぐに合格する可能性がある — それは問題ないが、正しい動作をテストしていることを確認
 
-**For E2E files**, plan tests following RED-GREEN gates:
-1. Identify user scenarios from CONTEXT.md/VERIFICATION.md
-2. For each scenario: describe the user action, expected outcome, assertions
-3. Note: RED gate means confirming the test would fail if the feature were broken
+**E2Eファイル**の場合、RED-GREENゲートに従ってテストを計画:
+1. CONTEXT.md/VERIFICATION.mdからユーザーシナリオを特定
+2. 各シナリオについて: ユーザーアクション、期待される結果、アサーションを記述
+3. 注: REDゲートとは、機能が壊れていた場合にテストが失敗することを確認すること
 
-Present the complete test plan:
+完全なテスト計画を提示:
 
 ```
 AskUserQuestion(
-  header: "Test Plan",
+  header: "テスト計画",
   question: |
-    ## Test Generation Plan
+    ## テスト生成計画
 
-    ### Unit Tests ({N} tests across {M} files)
-    {for each file: test file path, list of test cases}
+    ### ユニットテスト ({N}テスト、{M}ファイル)
+    {各ファイルについて: テストファイルパス、テストケースのリスト}
 
-    ### E2E Tests ({P} tests across {Q} files)
-    {for each file: test file path, list of test scenarios}
+    ### E2Eテスト ({P}テスト、{Q}ファイル)
+    {各ファイルについて: テストファイルパス、テストシナリオのリスト}
 
-    ### Test Commands
-    - Unit: {discovered test command}
-    - E2E: {discovered e2e command}
+    ### テストコマンド
+    - ユニット: {検出されたテストコマンド}
+    - E2E: {検出されたE2Eコマンド}
 
-    Ready to generate?
+    生成の準備はできていますか？
   options:
-    - "Generate all"
-    - "Cherry-pick (I'll specify which)"
-    - "Adjust plan"
+    - "すべて生成"
+    - "チェリーピック（指定します）"
+    - "計画を調整"
 )
 ```
 
-If "Cherry-pick": ask user which tests to include.
-If "Adjust plan": apply changes and re-present.
+"チェリーピック"の場合: どのテストを含めるか確認。
+"計画を調整"の場合: 変更を適用して再提示。
 </step>
 
 <step name="execute_tdd_generation">
-For each approved TDD test:
+承認された各TDDテストについて:
 
-1. **Create test file** following discovered project conventions (directory, naming, imports)
+1. **テストファイルを作成** — 検出されたプロジェクトの規約（ディレクトリ、命名、インポート）に従う
 
-2. **Write test** with clear arrange/act/assert structure:
+2. **テストを記述** — 明確なarrange/act/assert構造で:
    ```
-   // Arrange — set up inputs and expected outputs
-   // Act — call the function under test
-   // Assert — verify the output matches expectations
+   // Arrange — 入力と期待される出力を設定
+   // Act — テスト対象の関数を呼び出す
+   // Assert — 出力が期待値と一致することを検証
    ```
 
-3. **Run the test**:
+3. **テストを実行**:
    ```bash
-   {discovered test command}
+   {検出されたテストコマンド}
    ```
 
-4. **Evaluate result:**
-   - **Test passes**: Good — the implementation satisfies the test. Verify the test checks meaningful behavior (not just that it compiles).
-   - **Test fails with assertion error**: This may be a genuine bug discovered by the test. Flag it:
+4. **結果を評価:**
+   - **テスト合格**: 良好 — 実装がテストを満たしている。テストが意味のある動作を確認していることを検証（コンパイルが通るだけでなく）。
+   - **アサーションエラーでテスト失敗**: テストによって発見された本当のバグの可能性がある。フラグを立てる:
      ```
-     ⚠️ Potential bug found: {test name}
-     Expected: {expected}
-     Actual: {actual}
-     File: {implementation file}
+     ⚠️ 潜在的なバグを発見: {テスト名}
+     Expected: {期待値}
+     Actual: {実際の値}
+     File: {実装ファイル}
      ```
-     Do NOT fix the implementation — this is a test-generation command, not a fix command. Record the finding.
-   - **Test fails with error (import, syntax, etc.)**: This is a test error. Fix the test and re-run.
+     実装を修正しないこと — これはテスト生成コマンドであり、修正コマンドではない。発見を記録。
+   - **エラー（インポート、構文など）でテスト失敗**: テストのエラー。テストを修正して再実行。
 </step>
 
 <step name="execute_e2e_generation">
-For each approved E2E test:
+承認された各E2Eテストについて:
 
-1. **Check for existing tests** covering the same scenario:
+1. **同じシナリオをカバーする既存テストを確認**:
    ```bash
-   grep -r "{scenario keyword}" {e2e test directory} 2>/dev/null
+   grep -r "{scenario keyword}" {e2eテストディレクトリ} 2>/dev/null
    ```
-   If found, extend rather than duplicate.
+   見つかった場合、重複ではなく拡張する。
 
-2. **Create test file** targeting the user scenario from CONTEXT.md/VERIFICATION.md
+2. **テストファイルを作成** — CONTEXT.md/VERIFICATION.mdのユーザーシナリオを対象
 
-3. **Run the E2E test**:
+3. **E2Eテストを実行**:
    ```bash
-   {discovered e2e command}
+   {検出されたE2Eコマンド}
    ```
 
-4. **Evaluate result:**
-   - **GREEN (passes)**: Record success
-   - **RED (fails)**: Determine if it's a test issue or a genuine application bug. Flag bugs:
+4. **結果を評価:**
+   - **GREEN（合格）**: 成功を記録
+   - **RED（失敗）**: テストの問題か本当のアプリケーションバグかを判断。バグにフラグ:
      ```
-     ⚠️ E2E failure: {test name}
-     Scenario: {description}
-     Error: {error message}
+     ⚠️ E2E失敗: {テスト名}
+     シナリオ: {説明}
+     エラー: {エラーメッセージ}
      ```
-   - **Cannot run**: Report blocker. Do NOT mark as complete.
+   - **実行不可**: ブロッカーを報告。完了としてマークしないこと。
      ```
-     🛑 E2E blocker: {reason tests cannot run}
+     🛑 E2Eブロッカー: {テストが実行できない理由}
      ```
 
-**No-skip rule:** If E2E tests cannot execute (missing dependencies, environment issues), report the blocker and mark the test as incomplete. Never mark success without actually running the test.
+**スキップ不可ルール:** E2Eテストが実行できない場合（依存関係の欠落、環境の問題）、ブロッカーを報告し、テストを未完了としてマーク。実際にテストを実行せずに成功とマークしないこと。
 </step>
 
 <step name="summary_and_commit">
-Create a test coverage report and present to user:
+テストカバレッジレポートを作成してユーザーに提示:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► TEST GENERATION COMPLETE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Results
+## 結果
 
-| Category | Generated | Passing | Failing | Blocked |
+| カテゴリ | 生成 | 合格 | 失敗 | ブロック |
 |----------|-----------|---------|---------|---------|
-| Unit     | {N}       | {n1}    | {n2}    | {n3}    |
+| ユニット | {N}       | {n1}    | {n2}    | {n3}    |
 | E2E      | {M}       | {m1}    | {m2}    | {m3}    |
 
-## Files Created/Modified
-{list of test files with paths}
+## 作成/変更されたファイル
+{パス付きテストファイルのリスト}
 
-## Coverage Gaps
-{areas that couldn't be tested and why}
+## カバレッジギャップ
+{テストできなかった領域とその理由}
 
-## Bugs Discovered
-{any assertion failures that indicate implementation bugs}
+## 発見されたバグ
+{実装のバグを示すアサーション失敗}
 ```
 
-Record test generation in project state:
+プロジェクト状態にテスト生成を記録:
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state-snapshot
 ```
 
-If there are passing tests to commit:
+合格するテストがコミットできる場合:
 
 ```bash
-git add {test files}
+git add {テストファイル}
 git commit -m "test(phase-${phase_number}): add unit and E2E tests from add-tests command"
 ```
 
-Present next steps:
+次のステップを提示:
 
 ```
 ---
 
 ## ▶ Next Up
 
-{if bugs discovered:}
-**Fix discovered bugs:** `/gsd:quick fix the {N} test failures discovered in phase ${phase_number}`
+{バグが発見された場合:}
+**発見されたバグを修正:** `/gsd:quick fix the {N} test failures discovered in phase ${phase_number}`
 
-{if blocked tests:}
-**Resolve test blockers:** {description of what's needed}
+{ブロックされたテストがある場合:}
+**テストブロッカーを解決:** {必要なものの説明}
 
-{otherwise:}
-**All tests passing!** Phase ${phase_number} is fully tested.
+{それ以外:}
+**すべてのテストが合格!** フェーズ${phase_number}は完全にテスト済みです。
 
 ---
 
-**Also available:**
-- `/gsd:add-tests {next_phase}` — test another phase
-- `/gsd:verify-work {phase_number}` — run UAT verification
+**その他のオプション:**
+- `/gsd:add-tests {next_phase}` — 別のフェーズをテスト
+- `/gsd:verify-work {phase_number}` — UAT検証を実行
 
 ---
 ```
@@ -336,16 +336,17 @@ Present next steps:
 </process>
 
 <success_criteria>
-- [ ] Phase artifacts loaded (SUMMARY.md, CONTEXT.md, optionally VERIFICATION.md)
-- [ ] All changed files classified into TDD/E2E/Skip categories
-- [ ] Classification presented to user and approved
-- [ ] Project test structure discovered (directories, conventions, runners)
-- [ ] Test plan presented to user and approved
-- [ ] TDD tests generated with arrange/act/assert structure
-- [ ] E2E tests generated targeting user scenarios
-- [ ] All tests executed — no untested tests marked as passing
-- [ ] Bugs discovered by tests flagged (not fixed)
-- [ ] Test files committed with proper message
-- [ ] Coverage gaps documented
-- [ ] Next steps presented to user
+- [ ] フェーズ成果物を読み込み（SUMMARY.md, CONTEXT.md, オプションでVERIFICATION.md）
+- [ ] 変更されたすべてのファイルをTDD/E2E/Skipカテゴリに分類
+- [ ] 分類をユーザーに提示し承認を得る
+- [ ] プロジェクトのテスト構造を調査（ディレクトリ、規約、ランナー）
+- [ ] テスト計画をユーザーに提示し承認を得る
+- [ ] arrange/act/assert構造でTDDテストを生成
+- [ ] ユーザーシナリオを対象としたE2Eテストを生成
+- [ ] すべてのテストを実行 — 実行していないテストを合格とマークしない
+- [ ] テストで発見されたバグにフラグを立てる（修正しない）
+- [ ] 適切なメッセージでテストファイルをコミット
+- [ ] カバレッジギャップを文書化
+- [ ] 次のステップをユーザーに提示
 </success_criteria>
+</output>

@@ -1,6 +1,6 @@
 <planning_config>
 
-Configuration options for `.planning/` directory behavior.
+`.planning/`ディレクトリの動作に関する設定オプション。
 
 <config_schema>
 ```json
@@ -15,76 +15,76 @@ Configuration options for `.planning/` directory behavior.
 }
 ```
 
-| Option | Default | Description |
+| オプション | デフォルト | 説明 |
 |--------|---------|-------------|
-| `commit_docs` | `true` | Whether to commit planning artifacts to git |
-| `search_gitignored` | `false` | Add `--no-ignore` to broad rg searches |
-| `git.branching_strategy` | `"none"` | Git branching approach: `"none"`, `"phase"`, or `"milestone"` |
-| `git.phase_branch_template` | `"gsd/phase-{phase}-{slug}"` | Branch template for phase strategy |
-| `git.milestone_branch_template` | `"gsd/{milestone}-{slug}"` | Branch template for milestone strategy |
+| `commit_docs` | `true` | プランニング成果物をgitにコミットするかどうか |
+| `search_gitignored` | `false` | 広範なrg検索に`--no-ignore`を追加する |
+| `git.branching_strategy` | `"none"` | Gitブランチ戦略: `"none"`, `"phase"`, `"milestone"` |
+| `git.phase_branch_template` | `"gsd/phase-{phase}-{slug}"` | phase戦略用のブランチテンプレート |
+| `git.milestone_branch_template` | `"gsd/{milestone}-{slug}"` | milestone戦略用のブランチテンプレート |
 </config_schema>
 
 <commit_docs_behavior>
 
-**When `commit_docs: true` (default):**
-- Planning files committed normally
-- SUMMARY.md, STATE.md, ROADMAP.md tracked in git
-- Full history of planning decisions preserved
+**`commit_docs: true`（デフォルト）の場合:**
+- プランニングファイルは通常通りコミットされる
+- SUMMARY.md, STATE.md, ROADMAP.mdはgitで追跡される
+- プランニング決定の完全な履歴が保存される
 
-**When `commit_docs: false`:**
-- Skip all `git add`/`git commit` for `.planning/` files
-- User must add `.planning/` to `.gitignore`
-- Useful for: OSS contributions, client projects, keeping planning private
+**`commit_docs: false`の場合:**
+- `.planning/`ファイルのすべての`git add`/`git commit`をスキップ
+- ユーザーは`.planning/`を`.gitignore`に追加する必要がある
+- 用途: OSSへのコントリビューション、クライアントプロジェクト、プランニングのプライベート保持
 
-**Using gsd-tools.cjs (preferred):**
+**gsd-tools.cjsの使用（推奨）:**
 
 ```bash
-# Commit with automatic commit_docs + gitignore checks:
+# commit_docs + gitignoreチェックを自動で行うコミット:
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: update state" --files .planning/STATE.md
 
-# Load config via state load (returns JSON):
+# state loadでconfigを読み込む（JSONを返す）:
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state load)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
-# commit_docs is available in the JSON output
+# commit_docsはJSON出力で利用可能
 
-# Or use init commands which include commit_docs:
+# またはcommit_docsを含むinitコマンドを使用:
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init execute-phase "1")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
-# commit_docs is included in all init command outputs
+# commit_docsはすべてのinitコマンド出力に含まれる
 ```
 
-**Auto-detection:** If `.planning/` is gitignored, `commit_docs` is automatically `false` regardless of config.json. This prevents git errors when users have `.planning/` in `.gitignore`.
+**自動検出:** `.planning/`がgitignoreされている場合、config.jsonの設定に関係なく`commit_docs`は自動的に`false`になります。これにより、`.planning/`が`.gitignore`にあるときのgitエラーを防ぎます。
 
-**Commit via CLI (handles checks automatically):**
+**CLIでのコミット（チェックを自動処理）:**
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: update state" --files .planning/STATE.md
 ```
 
-The CLI checks `commit_docs` config and gitignore status internally — no manual conditionals needed.
+CLIは`commit_docs`のconfigとgitignoreステータスを内部的にチェックします。手動の条件分岐は不要です。
 
 </commit_docs_behavior>
 
 <search_behavior>
 
-**When `search_gitignored: false` (default):**
-- Standard rg behavior (respects .gitignore)
-- Direct path searches work: `rg "pattern" .planning/` finds files
-- Broad searches skip gitignored: `rg "pattern"` skips `.planning/`
+**`search_gitignored: false`（デフォルト）の場合:**
+- 標準的なrgの動作（.gitignoreを尊重）
+- 直接パス検索は動作する: `rg "pattern" .planning/`でファイルを見つける
+- 広範な検索はgitignored対象をスキップ: `rg "pattern"`は`.planning/`をスキップ
 
-**When `search_gitignored: true`:**
-- Add `--no-ignore` to broad rg searches that should include `.planning/`
-- Only needed when searching entire repo and expecting `.planning/` matches
+**`search_gitignored: true`の場合:**
+- `.planning/`を含めるべき広範なrg検索に`--no-ignore`を追加
+- リポジトリ全体を検索して`.planning/`のマッチを期待する場合にのみ必要
 
-**Note:** Most GSD operations use direct file reads or explicit paths, which work regardless of gitignore status.
+**注意:** ほとんどのGSD操作は直接ファイル読み取りまたは明示的なパスを使用し、gitignoreのステータスに関係なく動作します。
 
 </search_behavior>
 
 <setup_uncommitted_mode>
 
-To use uncommitted mode:
+コミットしないモードを使用するには:
 
-1. **Set config:**
+1. **configを設定:**
    ```json
    "planning": {
      "commit_docs": false,
@@ -92,83 +92,83 @@ To use uncommitted mode:
    }
    ```
 
-2. **Add to .gitignore:**
+2. **.gitignoreに追加:**
    ```
    .planning/
    ```
 
-3. **Existing tracked files:** If `.planning/` was previously tracked:
+3. **既存の追跡ファイル:** `.planning/`が以前追跡されていた場合:
    ```bash
    git rm -r --cached .planning/
    git commit -m "chore: stop tracking planning docs"
    ```
 
-4. **Branch merges:** When using `branching_strategy: phase` or `milestone`, the `complete-milestone` workflow automatically strips `.planning/` files from staging before merge commits when `commit_docs: false`.
+4. **ブランチマージ:** `branching_strategy: phase`または`milestone`を使用する場合、`complete-milestone`ワークフローは`commit_docs: false`の場合、マージコミット前にステージングから`.planning/`ファイルを自動的に除去します。
 
 </setup_uncommitted_mode>
 
 <branching_strategy_behavior>
 
-**Branching Strategies:**
+**ブランチ戦略:**
 
-| Strategy | When branch created | Branch scope | Merge point |
+| 戦略 | ブランチ作成タイミング | ブランチスコープ | マージポイント |
 |----------|---------------------|--------------|-------------|
-| `none` | Never | N/A | N/A |
-| `phase` | At `execute-phase` start | Single phase | User merges after phase |
-| `milestone` | At first `execute-phase` of milestone | Entire milestone | At `complete-milestone` |
+| `none` | なし | N/A | N/A |
+| `phase` | `execute-phase`開始時 | 単一フェーズ | フェーズ後にユーザーがマージ |
+| `milestone` | マイルストーンの最初の`execute-phase`時 | マイルストーン全体 | `complete-milestone`時 |
 
-**When `git.branching_strategy: "none"` (default):**
-- All work commits to current branch
-- Standard GSD behavior
+**`git.branching_strategy: "none"`（デフォルト）の場合:**
+- すべての作業は現在のブランチにコミット
+- 標準的なGSDの動作
 
-**When `git.branching_strategy: "phase"`:**
-- `execute-phase` creates/switches to a branch before execution
-- Branch name from `phase_branch_template` (e.g., `gsd/phase-03-authentication`)
-- All plan commits go to that branch
-- User merges branches manually after phase completion
-- `complete-milestone` offers to merge all phase branches
+**`git.branching_strategy: "phase"`の場合:**
+- `execute-phase`が実行前にブランチを作成/切り替え
+- ブランチ名は`phase_branch_template`から（例: `gsd/phase-03-authentication`）
+- すべてのプランコミットはそのブランチに
+- フェーズ完了後にユーザーが手動でブランチをマージ
+- `complete-milestone`はすべてのフェーズブランチのマージを提案
 
-**When `git.branching_strategy: "milestone"`:**
-- First `execute-phase` of milestone creates the milestone branch
-- Branch name from `milestone_branch_template` (e.g., `gsd/v1.0-mvp`)
-- All phases in milestone commit to same branch
-- `complete-milestone` offers to merge milestone branch to main
+**`git.branching_strategy: "milestone"`の場合:**
+- マイルストーンの最初の`execute-phase`がマイルストーンブランチを作成
+- ブランチ名は`milestone_branch_template`から（例: `gsd/v1.0-mvp`）
+- マイルストーン内のすべてのフェーズが同じブランチにコミット
+- `complete-milestone`がマイルストーンブランチのmainへのマージを提案
 
-**Template variables:**
+**テンプレート変数:**
 
-| Variable | Available in | Description |
+| 変数 | 利用可能な場所 | 説明 |
 |----------|--------------|-------------|
-| `{phase}` | phase_branch_template | Zero-padded phase number (e.g., "03") |
-| `{slug}` | Both | Lowercase, hyphenated name |
-| `{milestone}` | milestone_branch_template | Milestone version (e.g., "v1.0") |
+| `{phase}` | phase_branch_template | ゼロパディングされたフェーズ番号（例: "03"） |
+| `{slug}` | 両方 | 小文字、ハイフン区切りの名前 |
+| `{milestone}` | milestone_branch_template | マイルストーンバージョン（例: "v1.0"） |
 
-**Checking the config:**
+**configの確認:**
 
-Use `init execute-phase` which returns all config as JSON:
+`init execute-phase`を使用すると、すべてのconfigがJSONとして返されます:
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init execute-phase "1")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
-# JSON output includes: branching_strategy, phase_branch_template, milestone_branch_template
+# JSON出力に含まれる: branching_strategy, phase_branch_template, milestone_branch_template
 ```
 
-Or use `state load` for the config values:
+または`state load`でconfig値を取得:
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state load)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
-# Parse branching_strategy, phase_branch_template, milestone_branch_template from JSON
+# JSONからbranching_strategy, phase_branch_template, milestone_branch_templateを解析
 ```
 
-**Branch creation:**
+**ブランチ作成:**
 
 ```bash
-# For phase strategy
+# phase戦略の場合
 if [ "$BRANCHING_STRATEGY" = "phase" ]; then
   PHASE_SLUG=$(echo "$PHASE_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
   BRANCH_NAME=$(echo "$PHASE_BRANCH_TEMPLATE" | sed "s/{phase}/$PADDED_PHASE/g" | sed "s/{slug}/$PHASE_SLUG/g")
   git checkout -b "$BRANCH_NAME" 2>/dev/null || git checkout "$BRANCH_NAME"
 fi
 
-# For milestone strategy
+# milestone戦略の場合
 if [ "$BRANCHING_STRATEGY" = "milestone" ]; then
   MILESTONE_SLUG=$(echo "$MILESTONE_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
   BRANCH_NAME=$(echo "$MILESTONE_BRANCH_TEMPLATE" | sed "s/{milestone}/$MILESTONE_VERSION/g" | sed "s/{slug}/$MILESTONE_SLUG/g")
@@ -176,24 +176,24 @@ if [ "$BRANCHING_STRATEGY" = "milestone" ]; then
 fi
 ```
 
-**Merge options at complete-milestone:**
+**complete-milestoneでのマージオプション:**
 
-| Option | Git command | Result |
+| オプション | Gitコマンド | 結果 |
 |--------|-------------|--------|
-| Squash merge (recommended) | `git merge --squash` | Single clean commit per branch |
-| Merge with history | `git merge --no-ff` | Preserves all individual commits |
-| Delete without merging | `git branch -D` | Discard branch work |
-| Keep branches | (none) | Manual handling later |
+| スカッシュマージ（推奨） | `git merge --squash` | ブランチごとに1つのクリーンなコミット |
+| 履歴付きマージ | `git merge --no-ff` | すべての個別コミットを保存 |
+| マージせずに削除 | `git branch -D` | ブランチの作業を破棄 |
+| ブランチを保持 | （なし） | 後で手動処理 |
 
-Squash merge is recommended — keeps main branch history clean while preserving the full development history in the branch (until deleted).
+スカッシュマージを推奨 — mainブランチの履歴をクリーンに保ちながら、完全な開発履歴をブランチに保存します（削除するまで）。
 
-**Use cases:**
+**ユースケース:**
 
-| Strategy | Best for |
+| 戦略 | 最適な用途 |
 |----------|----------|
-| `none` | Solo development, simple projects |
-| `phase` | Code review per phase, granular rollback, team collaboration |
-| `milestone` | Release branches, staging environments, PR per version |
+| `none` | ソロ開発、シンプルなプロジェクト |
+| `phase` | フェーズごとのコードレビュー、細粒度のロールバック、チームコラボレーション |
+| `milestone` | リリースブランチ、ステージング環境、バージョンごとのPR |
 
 </branching_strategy_behavior>
 

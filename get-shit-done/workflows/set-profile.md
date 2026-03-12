@@ -1,26 +1,26 @@
 <purpose>
-Switch the model profile used by GSD agents. Controls which Claude model each agent uses, balancing quality vs token spend.
+GSDエージェントが使用するモデルプロファイルを切り替えます。各エージェントが使用するClaudeモデルを制御し、品質とトークン消費のバランスを調整します。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込んでください。
 </required_reading>
 
 <process>
 
 <step name="validate">
-Validate argument:
+引数を検証します：
 
 ```
 if $ARGUMENTS.profile not in ["quality", "balanced", "budget"]:
-  Error: Invalid profile "$ARGUMENTS.profile"
-  Valid profiles: quality, balanced, budget
+  Error: 無効なプロファイル "$ARGUMENTS.profile"
+  有効なプロファイル: quality, balanced, budget
   EXIT
 ```
 </step>
 
 <step name="ensure_and_load_config">
-Ensure config exists and load current state:
+設定が存在することを確認し、現在の状態を読み込みます：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-ensure-section
@@ -28,54 +28,54 @@ INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state load)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-This creates `.planning/config.json` with defaults if missing and loads current config.
+`.planning/config.json`が存在しない場合はデフォルトで作成し、現在の設定を読み込みます。
 </step>
 
 <step name="update_config">
-Read current config from state load or directly:
+state loadまたは直接から現在の設定を読み込みます：
 
-Update `model_profile` field:
+`model_profile`フィールドを更新：
 ```json
 {
   "model_profile": "$ARGUMENTS.profile"
 }
 ```
 
-Write updated config back to `.planning/config.json`.
+更新された設定を`.planning/config.json`に書き戻します。
 </step>
 
 <step name="confirm">
-Display confirmation with model table for selected profile:
+選択されたプロファイルのモデルテーブルとともに確認を表示します：
 
 ```
-✓ Model profile set to: $ARGUMENTS.profile
+✓ モデルプロファイルを設定しました: $ARGUMENTS.profile
 
-Agents will now use:
+エージェントは以下を使用します:
 
-[Show table from MODEL_PROFILES in gsd-tools.cjs for selected profile]
+[選択されたプロファイルのgsd-tools.cjs内MODEL_PROFILESからテーブルを表示]
 
-Example:
-| Agent | Model |
+例:
+| エージェント | モデル |
 |-------|-------|
 | gsd-planner | opus |
 | gsd-executor | sonnet |
 | gsd-verifier | haiku |
 | ... | ... |
 
-Next spawned agents will use the new profile.
+次に生成されるエージェントから新しいプロファイルが使用されます。
 ```
 
-Map profile names:
-- quality: use "quality" column from MODEL_PROFILES
-- balanced: use "balanced" column from MODEL_PROFILES
-- budget: use "budget" column from MODEL_PROFILES
+プロファイル名のマッピング：
+- quality: MODEL_PROFILESの"quality"カラムを使用
+- balanced: MODEL_PROFILESの"balanced"カラムを使用
+- budget: MODEL_PROFILESの"budget"カラムを使用
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] Argument validated
-- [ ] Config file ensured
-- [ ] Config updated with new model_profile
-- [ ] Confirmation displayed with model table
+- [ ] 引数が検証された
+- [ ] 設定ファイルの存在が確認された
+- [ ] 設定が新しいmodel_profileで更新された
+- [ ] モデルテーブルとともに確認が表示された
 </success_criteria>

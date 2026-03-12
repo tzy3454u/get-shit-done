@@ -1,18 +1,18 @@
-# Phase Context Template
+# フェーズコンテキストテンプレート
 
-Template for `.planning/phases/XX-name/{phase_num}-CONTEXT.md` - captures implementation decisions for a phase.
+`.planning/phases/XX-name/{phase_num}-CONTEXT.md` 用テンプレート - フェーズの実装判断を記録します。
 
-**Purpose:** Document decisions that downstream agents need. Researcher uses this to know WHAT to investigate. Planner uses this to know WHAT choices are locked vs flexible.
+**目的:** 下流エージェントが必要とする判断を文書化します。リサーチャーはこれを読んで何を調査すべきかを把握します。プランナーはこれを読んでどの選択が確定済みでどれが柔軟かを把握します。
 
-**Key principle:** Categories are NOT predefined. They emerge from what was actually discussed for THIS phase. A CLI phase has CLI-relevant sections, a UI phase has UI-relevant sections.
+**重要な原則:** カテゴリは事前定義されません。このフェーズで実際に議論された内容から生まれます。CLIフェーズにはCLI関連のセクションがあり、UIフェーズにはUI関連のセクションがあります。
 
-**Downstream consumers:**
-- `gsd-phase-researcher` — Reads decisions to focus research (e.g., "card layout" → research card component patterns)
-- `gsd-planner` — Reads decisions to create specific tasks (e.g., "infinite scroll" → task includes virtualization)
+**下流の利用者:**
+- `gsd-phase-researcher` — 判断を読んでリサーチの焦点を絞ります（例: 「カードレイアウト」→ カードコンポーネントのパターンを調査）
+- `gsd-planner` — 判断を読んで具体的なタスクを作成します（例: 「無限スクロール」→ タスクに仮想化を含める）
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
 # Phase [X]: [Name] - Context
@@ -21,59 +21,59 @@ Template for `.planning/phases/XX-name/{phase_num}-CONTEXT.md` - captures implem
 **Status:** Ready for planning
 
 <domain>
-## Phase Boundary
+## フェーズ境界
 
-[Clear statement of what this phase delivers — the scope anchor. This comes from ROADMAP.md and is fixed. Discussion clarifies implementation within this boundary.]
+[このフェーズが何を提供するかの明確な記述 — スコープの基準点。これはROADMAP.mdから取得され固定です。議論はこの境界内の実装を明確にします。]
 
 </domain>
 
 <decisions>
-## Implementation Decisions
+## 実装判断
 
-### [Area 1 that was discussed]
-- [Specific decision made]
-- [Another decision if applicable]
+### [議論された領域1]
+- [行われた具体的な判断]
+- [該当する場合は別の判断]
 
-### [Area 2 that was discussed]
-- [Specific decision made]
+### [議論された領域2]
+- [行われた具体的な判断]
 
-### [Area 3 that was discussed]
-- [Specific decision made]
+### [議論された領域3]
+- [行われた具体的な判断]
 
-### Claude's Discretion
-[Areas where user explicitly said "you decide" — Claude has flexibility here during planning/implementation]
+### Claudeの裁量
+[ユーザーが明示的に「あなたが決めて」と言った領域 — 計画/実装時にClaudeが柔軟に対応できます]
 
 </decisions>
 
 <specifics>
-## Specific Ideas
+## 具体的なアイデア
 
-[Any particular references, examples, or "I want it like X" moments from discussion. Product references, specific behaviors, interaction patterns.]
+[議論中に出た特定の参考例、サンプル、または「Xのようにしたい」という瞬間。製品の参考例、特定の動作、インタラクションパターン。]
 
-[If none: "No specific requirements — open to standard approaches"]
+[該当なしの場合: 「特定の要件なし — 標準的なアプローチで対応可」]
 
 </specifics>
 
 <code_context>
-## Existing Code Insights
+## 既存コードの知見
 
-### Reusable Assets
-- [Component/hook/utility]: [How it could be used in this phase]
+### 再利用可能なアセット
+- [コンポーネント/フック/ユーティリティ]: [このフェーズでどのように使用できるか]
 
-### Established Patterns
-- [Pattern]: [How it constrains/enables this phase]
+### 確立されたパターン
+- [パターン]: [このフェーズをどのように制約/促進するか]
 
-### Integration Points
-- [Where new code connects to existing system]
+### 統合ポイント
+- [新しいコードが既存システムとどこで接続するか]
 
 </code_context>
 
 <deferred>
-## Deferred Ideas
+## 先送りのアイデア
 
-[Ideas that came up during discussion but belong in other phases. Captured here so they're not lost, but explicitly out of scope for this phase.]
+[議論中に出たが他のフェーズに属するアイデア。失われないようにここに記録されますが、このフェーズのスコープ外として明示されています。]
 
-[If none: "None — discussion stayed within phase scope"]
+[該当なしの場合: 「なし — 議論はフェーズスコープ内に留まりました」]
 
 </deferred>
 
@@ -85,7 +85,7 @@ Template for `.planning/phases/XX-name/{phase_num}-CONTEXT.md` - captures implem
 
 <good_examples>
 
-**Example 1: Visual feature (Post Feed)**
+**例1: ビジュアル機能（投稿フィード）**
 
 ```markdown
 # Phase 3: Post Feed - Context
@@ -94,49 +94,49 @@ Template for `.planning/phases/XX-name/{phase_num}-CONTEXT.md` - captures implem
 **Status:** Ready for planning
 
 <domain>
-## Phase Boundary
+## フェーズ境界
 
-Display posts from followed users in a scrollable feed. Users can view posts and see engagement counts. Creating posts and interactions are separate phases.
+フォロー中のユーザーの投稿をスクロール可能なフィードに表示します。ユーザーは投稿を閲覧しエンゲージメント数を確認できます。投稿の作成とインタラクションは別のフェーズです。
 
 </domain>
 
 <decisions>
-## Implementation Decisions
+## 実装判断
 
-### Layout style
-- Card-based layout, not timeline or list
-- Each card shows: author avatar, name, timestamp, full post content, reaction counts
-- Cards have subtle shadows, rounded corners — modern feel
+### レイアウトスタイル
+- カードベースのレイアウト、タイムラインやリストではない
+- 各カードに表示: 著者のアバター、名前、タイムスタンプ、投稿全文、リアクション数
+- カードには微妙な影、角丸 — モダンな印象
 
-### Loading behavior
-- Infinite scroll, not pagination
-- Pull-to-refresh on mobile
-- New posts indicator at top ("3 new posts") rather than auto-inserting
+### 読み込み動作
+- 無限スクロール、ページネーションではない
+- モバイルではプルトゥリフレッシュ
+- 上部に新着投稿インジケーター（「新しい投稿が3件」）、自動挿入ではない
 
-### Empty state
-- Friendly illustration + "Follow people to see posts here"
-- Suggest 3-5 accounts to follow based on interests
+### 空の状態
+- フレンドリーなイラスト + 「人をフォローするとここに投稿が表示されます」
+- 興味に基づいて3〜5件のアカウントをフォロー候補として表示
 
-### Claude's Discretion
-- Loading skeleton design
-- Exact spacing and typography
-- Error state handling
+### Claudeの裁量
+- ローディングスケルトンのデザイン
+- 正確なスペーシングとタイポグラフィ
+- エラー状態の処理
 
 </decisions>
 
 <specifics>
-## Specific Ideas
+## 具体的なアイデア
 
-- "I like how Twitter shows the new posts indicator without disrupting your scroll position"
-- Cards should feel like Linear's issue cards — clean, not cluttered
+- 「Twitterがスクロール位置を乱さずに新着投稿インジケーターを表示する方法が好き」
+- カードはLinearのイシューカードのような感じにしたい — クリーンで、ごちゃごちゃしない
 
 </specifics>
 
 <deferred>
-## Deferred Ideas
+## 先送りのアイデア
 
-- Commenting on posts — Phase 5
-- Bookmarking posts — add to backlog
+- 投稿へのコメント — Phase 5
+- 投稿のブックマーク — バックログに追加
 
 </deferred>
 
@@ -146,7 +146,7 @@ Display posts from followed users in a scrollable feed. Users can view posts and
 *Context gathered: 2025-01-20*
 ```
 
-**Example 2: CLI tool (Database backup)**
+**例2: CLIツール（データベースバックアップ）**
 
 ```markdown
 # Phase 2: Backup Command - Context
@@ -155,50 +155,50 @@ Display posts from followed users in a scrollable feed. Users can view posts and
 **Status:** Ready for planning
 
 <domain>
-## Phase Boundary
+## フェーズ境界
 
-CLI command to backup database to local file or S3. Supports full and incremental backups. Restore command is a separate phase.
+データベースをローカルファイルまたはS3にバックアップするCLIコマンド。フルバックアップと増分バックアップに対応。リストアコマンドは別のフェーズです。
 
 </domain>
 
 <decisions>
-## Implementation Decisions
+## 実装判断
 
-### Output format
-- JSON for programmatic use, table format for humans
-- Default to table, --json flag for JSON
-- Verbose mode (-v) shows progress, silent by default
+### 出力形式
+- プログラム的な使用にはJSON、人間にはテーブル形式
+- デフォルトはテーブル、JSONには--jsonフラグ
+- 詳細モード（-v）で進捗を表示、デフォルトはサイレント
 
-### Flag design
-- Short flags for common options: -o (output), -v (verbose), -f (force)
-- Long flags for clarity: --incremental, --compress, --encrypt
-- Required: database connection string (positional or --db)
+### フラグ設計
+- よく使うオプションには短いフラグ: -o（出力）、-v（詳細）、-f（強制）
+- 明確性のために長いフラグ: --incremental、--compress、--encrypt
+- 必須: データベース接続文字列（位置引数または--db）
 
-### Error recovery
-- Retry 3 times on network failure, then fail with clear message
-- --no-retry flag to fail fast
-- Partial backups are deleted on failure (no corrupt files)
+### エラーリカバリー
+- ネットワーク障害時に3回リトライ、その後明確なメッセージで失敗
+- --no-retryフラグで即座に失敗
+- 失敗時に部分バックアップを削除（破損ファイルを残さない）
 
-### Claude's Discretion
-- Exact progress bar implementation
-- Compression algorithm choice
-- Temp file handling
+### Claudeの裁量
+- プログレスバーの正確な実装
+- 圧縮アルゴリズムの選択
+- 一時ファイルの処理
 
 </decisions>
 
 <specifics>
-## Specific Ideas
+## 具体的なアイデア
 
-- "I want it to feel like pg_dump — familiar to database people"
-- Should work in CI pipelines (exit codes, no interactive prompts)
+- 「pg_dumpのような使い心地にしたい — データベースに慣れた人に親しみやすく」
+- CIパイプラインで動作すべき（終了コード、対話プロンプトなし）
 
 </specifics>
 
 <deferred>
-## Deferred Ideas
+## 先送りのアイデア
 
-- Scheduled backups — separate phase
-- Backup rotation/retention — add to backlog
+- スケジュールバックアップ — 別のフェーズ
+- バックアップのローテーション/保持 — バックログに追加
 
 </deferred>
 
@@ -208,7 +208,7 @@ CLI command to backup database to local file or S3. Supports full and incrementa
 *Context gathered: 2025-01-20*
 ```
 
-**Example 3: Organization task (Photo library)**
+**例3: 整理タスク（フォトライブラリ）**
 
 ```markdown
 # Phase 1: Photo Organization - Context
@@ -217,50 +217,50 @@ CLI command to backup database to local file or S3. Supports full and incrementa
 **Status:** Ready for planning
 
 <domain>
-## Phase Boundary
+## フェーズ境界
 
-Organize existing photo library into structured folders. Handle duplicates and apply consistent naming. Tagging and search are separate phases.
+既存のフォトライブラリを構造化されたフォルダに整理します。重複を処理し、一貫した命名を適用します。タグ付けと検索は別のフェーズです。
 
 </domain>
 
 <decisions>
-## Implementation Decisions
+## 実装判断
 
-### Grouping criteria
-- Primary grouping by year, then by month
-- Events detected by time clustering (photos within 2 hours = same event)
-- Event folders named by date + location if available
+### グループ化基準
+- 主なグループ化は年別、次に月別
+- 時間のクラスタリングによるイベント検出（2時間以内の写真 = 同じイベント）
+- イベントフォルダ名は日付 + 利用可能であれば場所
 
-### Duplicate handling
-- Keep highest resolution version
-- Move duplicates to _duplicates folder (don't delete)
-- Log all duplicate decisions for review
+### 重複処理
+- 最も高解像度のバージョンを保持
+- 重複を_duplicatesフォルダに移動（削除しない）
+- すべての重複判断をレビュー用にログ記録
 
-### Naming convention
-- Format: YYYY-MM-DD_HH-MM-SS_originalname.ext
-- Preserve original filename as suffix for searchability
-- Handle name collisions with incrementing suffix
+### 命名規則
+- 形式: YYYY-MM-DD_HH-MM-SS_originalname.ext
+- 検索性のために元のファイル名をサフィックスとして保持
+- 名前の衝突はインクリメントサフィックスで処理
 
-### Claude's Discretion
-- Exact clustering algorithm
-- How to handle photos with no EXIF data
-- Folder emoji usage
+### Claudeの裁量
+- 正確なクラスタリングアルゴリズム
+- EXIFデータのない写真の処理方法
+- フォルダの絵文字使用
 
 </decisions>
 
 <specifics>
-## Specific Ideas
+## 具体的なアイデア
 
-- "I want to be able to find photos by roughly when they were taken"
-- Don't delete anything — worst case, move to a review folder
+- 「だいたいいつ撮ったかで写真を見つけられるようにしたい」
+- 何も削除しない — 最悪の場合、レビューフォルダに移動
 
 </specifics>
 
 <deferred>
-## Deferred Ideas
+## 先送りのアイデア
 
-- Face detection grouping — future phase
-- Cloud sync — out of scope for now
+- 顔検出グループ化 — 将来のフェーズ
+- クラウド同期 — 現時点ではスコープ外
 
 </deferred>
 
@@ -273,25 +273,26 @@ Organize existing photo library into structured folders. Handle duplicates and a
 </good_examples>
 
 <guidelines>
-**This template captures DECISIONS for downstream agents.**
+**このテンプレートは下流エージェント向けの判断を記録します。**
 
-The output should answer: "What does the researcher need to investigate? What choices are locked for the planner?"
+出力は次の質問に答えるべきです: 「リサーチャーは何を調査する必要があるか？プランナーにとってどの選択が確定しているか？」
 
-**Good content (concrete decisions):**
-- "Card-based layout, not timeline"
-- "Retry 3 times on network failure, then fail"
-- "Group by year, then by month"
-- "JSON for programmatic use, table for humans"
+**良いコンテンツ（具体的な判断）:**
+- 「カードベースのレイアウト、タイムラインではない」
+- 「ネットワーク障害時に3回リトライ、その後失敗」
+- 「年別、次に月別でグループ化」
+- 「プログラム的な使用にはJSON、人間にはテーブル」
 
-**Bad content (too vague):**
-- "Should feel modern and clean"
-- "Good user experience"
-- "Fast and responsive"
-- "Easy to use"
+**悪いコンテンツ（曖昧すぎる）:**
+- 「モダンでクリーンな感じにすべき」
+- 「良いユーザー体験」
+- 「速くてレスポンシブ」
+- 「使いやすい」
 
-**After creation:**
-- File lives in phase directory: `.planning/phases/XX-name/{phase_num}-CONTEXT.md`
-- `gsd-phase-researcher` uses decisions to focus investigation
-- `gsd-planner` uses decisions + research to create executable tasks
-- Downstream agents should NOT need to ask the user again about captured decisions
+**作成後:**
+- ファイルはフェーズディレクトリに配置: `.planning/phases/XX-name/{phase_num}-CONTEXT.md`
+- `gsd-phase-researcher`が判断を使って調査の焦点を絞ります
+- `gsd-planner`が判断 + リサーチを使って実行可能なタスクを作成します
+- 下流エージェントは記録された判断についてユーザーに再度質問する必要があるべきではありません
 </guidelines>
+</output>

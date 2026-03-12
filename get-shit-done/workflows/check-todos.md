@@ -1,177 +1,178 @@
 <purpose>
-List all pending todos, allow selection, load full context for the selected todo, and route to appropriate action.
+保留中のTODOを一覧表示し、選択を可能にし、選択されたTODOの完全なコンテキストを読み込み、適切なアクションにルーティングする。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出し元プロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <process>
 
 <step name="init_context">
-Load todo context:
+TODOコンテキストを読み込む：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init todos)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `todo_count`, `todos`, `pending_dir`.
+init JSONから `todo_count`、`todos`、`pending_dir` を抽出する。
 
-If `todo_count` is 0:
+`todo_count` が0の場合：
 ```
-No pending todos.
+保留中のTODOはありません。
 
-Todos are captured during work sessions with /gsd:add-todo.
+TODOは /gsd:add-todo で作業セッション中にキャプチャされます。
 
 ---
 
-Would you like to:
+次のアクション：
 
-1. Continue with current phase (/gsd:progress)
-2. Add a todo now (/gsd:add-todo)
+1. 現在のフェーズを続行 (/gsd:progress)
+2. 今すぐTODOを追加 (/gsd:add-todo)
 ```
 
-Exit.
+終了。
 </step>
 
 <step name="parse_filter">
-Check for area filter in arguments:
-- `/gsd:check-todos` → show all
-- `/gsd:check-todos api` → filter to area:api only
+引数のエリアフィルタを確認する：
+- `/gsd:check-todos` → すべて表示
+- `/gsd:check-todos api` → area:api のみにフィルタ
 </step>
 
 <step name="list_todos">
-Use the `todos` array from init context (already filtered by area if specified).
+initコンテキストの `todos` 配列を使用する（指定された場合はエリアでフィルタ済み）。
 
-Parse and display as numbered list:
+パースして番号付きリストとして表示する：
 
 ```
-Pending Todos:
+保留中のTODO：
 
-1. Add auth token refresh (api, 2d ago)
-2. Fix modal z-index issue (ui, 1d ago)
-3. Refactor database connection pool (database, 5h ago)
+1. 認証トークンのリフレッシュを追加 (api, 2日前)
+2. モーダルのz-index問題を修正 (ui, 1日前)
+3. データベース接続プールのリファクタリング (database, 5時間前)
 
 ---
 
-Reply with a number to view details, or:
-- `/gsd:check-todos [area]` to filter by area
-- `q` to exit
+詳細を見るには番号で返信、または：
+- `/gsd:check-todos [area]` でエリアでフィルタ
+- `q` で終了
 ```
 
-Format age as relative time from created timestamp.
+作成タイムスタンプからの相対時間として経過時間をフォーマットする。
 </step>
 
 <step name="handle_selection">
-Wait for user to reply with a number.
+ユーザーが番号で返信するのを待つ。
 
-If valid: load selected todo, proceed.
-If invalid: "Invalid selection. Reply with a number (1-[N]) or `q` to exit."
+有効な場合：選択されたTODOを読み込み、続行する。
+無効な場合："無効な選択です。番号 (1-[N]) を入力するか、`q` で終了してください。"
 </step>
 
 <step name="load_context">
-Read the todo file completely. Display:
+TODOファイルを完全に読み込む。表示する：
 
 ```
 ## [title]
 
 **Area:** [area]
-**Created:** [date] ([relative time] ago)
-**Files:** [list or "None"]
+**Created:** [date] ([relative time]前)
+**Files:** [リスト または "なし"]
 
-### Problem
-[problem section content]
+### 問題
+[problem セクションの内容]
 
-### Solution
-[solution section content]
+### 解決策
+[solution セクションの内容]
 ```
 
-If `files` field has entries, read and briefly summarize each.
+`files` フィールドにエントリがある場合、それぞれを読み込み簡潔に要約する。
 </step>
 
 <step name="check_roadmap">
-Check for roadmap (can use init progress or directly check file existence):
+ロードマップを確認する（init progressを使用するか、ファイルの存在を直接確認可能）：
 
-If `.planning/ROADMAP.md` exists:
-1. Check if todo's area matches an upcoming phase
-2. Check if todo's files overlap with a phase's scope
-3. Note any match for action options
+`.planning/ROADMAP.md` が存在する場合：
+1. TODOのエリアが次のフェーズと一致するか確認する
+2. TODOのファイルがフェーズのスコープと重複するか確認する
+3. アクションオプションのためにマッチを記録する
 </step>
 
 <step name="offer_actions">
-**If todo maps to a roadmap phase:**
+**TODOがロードマップのフェーズにマッピングされる場合：**
 
-Use AskUserQuestion:
+AskUserQuestionを使用する：
 - header: "Action"
-- question: "This todo relates to Phase [N]: [name]. What would you like to do?"
+- question: "このTODOはフェーズ [N]: [name] に関連しています。どうしますか？"
 - options:
-  - "Work on it now" — move to done, start working
-  - "Add to phase plan" — include when planning Phase [N]
-  - "Brainstorm approach" — think through before deciding
-  - "Put it back" — return to list
+  - "今すぐ作業する" — doneに移動して作業を開始
+  - "フェーズ計画に追加" — フェーズ [N] の計画時に含める
+  - "アプローチをブレインストーミング" — 決定する前に考える
+  - "戻す" — リストに戻る
 
-**If no roadmap match:**
+**ロードマップのマッチがない場合：**
 
-Use AskUserQuestion:
+AskUserQuestionを使用する：
 - header: "Action"
-- question: "What would you like to do with this todo?"
+- question: "このTODOをどうしますか？"
 - options:
-  - "Work on it now" — move to done, start working
-  - "Create a phase" — /gsd:add-phase with this scope
-  - "Brainstorm approach" — think through before deciding
-  - "Put it back" — return to list
+  - "今すぐ作業する" — doneに移動して作業を開始
+  - "フェーズを作成" — このスコープで /gsd:add-phase
+  - "アプローチをブレインストーミング" — 決定する前に考える
+  - "戻す" — リストに戻る
 </step>
 
 <step name="execute_action">
-**Work on it now:**
+**今すぐ作業する：**
 ```bash
 mv ".planning/todos/pending/[filename]" ".planning/todos/done/"
 ```
-Update STATE.md todo count. Present problem/solution context. Begin work or ask how to proceed.
+STATE.mdのTODOカウントを更新する。問題/解決策のコンテキストを表示する。作業を開始するか、どう進めるか確認する。
 
-**Add to phase plan:**
-Note todo reference in phase planning notes. Keep in pending. Return to list or exit.
+**フェーズ計画に追加：**
+フェーズの計画メモにTODO参照を記録する。pendingに保持する。リストに戻るか終了する。
 
-**Create a phase:**
-Display: `/gsd:add-phase [description from todo]`
-Keep in pending. User runs command in fresh context.
+**フェーズを作成：**
+表示する：`/gsd:add-phase [TODOからの説明]`
+pendingに保持する。ユーザーが新しいコンテキストでコマンドを実行する。
 
-**Brainstorm approach:**
-Keep in pending. Start discussion about problem and approaches.
+**アプローチをブレインストーミング：**
+pendingに保持する。問題とアプローチについての議論を開始する。
 
-**Put it back:**
-Return to list_todos step.
+**戻す：**
+list_todosステップに戻る。
 </step>
 
 <step name="update_state">
-After any action that changes todo count:
+TODOカウントを変更するアクションの後：
 
-Re-run `init todos` to get updated count, then update STATE.md "### Pending Todos" section if exists.
+`init todos` を再実行して更新されたカウントを取得し、STATE.mdの "### Pending Todos" セクションが存在する場合は更新する。
 </step>
 
 <step name="git_commit">
-If todo was moved to done/, commit the change:
+TODOがdone/に移動された場合、変更をコミットする：
 
 ```bash
 git rm --cached .planning/todos/pending/[filename] 2>/dev/null || true
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: start work on todo - [title]" --files .planning/todos/done/[filename] .planning/STATE.md
 ```
 
-Tool respects `commit_docs` config and gitignore automatically.
+ツールは `commit_docs` 設定とgitignoreを自動的に尊重する。
 
-Confirm: "Committed: docs: start work on todo - [title]"
+確認表示："Committed: docs: start work on todo - [title]"
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] All pending todos listed with title, area, age
-- [ ] Area filter applied if specified
-- [ ] Selected todo's full context loaded
-- [ ] Roadmap context checked for phase match
-- [ ] Appropriate actions offered
-- [ ] Selected action executed
-- [ ] STATE.md updated if todo count changed
-- [ ] Changes committed to git (if todo moved to done/)
+- [ ] すべての保留中TODOがタイトル、エリア、経過時間とともに一覧表示されている
+- [ ] 指定された場合にエリアフィルタが適用されている
+- [ ] 選択されたTODOの完全なコンテキストが読み込まれている
+- [ ] フェーズマッチのためにロードマップコンテキストが確認されている
+- [ ] 適切なアクションが提示されている
+- [ ] 選択されたアクションが実行されている
+- [ ] TODOカウントが変更された場合にSTATE.mdが更新されている
+- [ ] 変更がgitにコミットされている（TODOがdone/に移動された場合）
 </success_criteria>
+</output>

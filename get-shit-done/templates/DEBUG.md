@@ -1,57 +1,57 @@
-# Debug Template
+# デバッグテンプレート
 
-Template for `.planning/debug/[slug].md` — active debug session tracking.
+`.planning/debug/[slug].md` 用テンプレート — アクティブなデバッグセッションの追跡。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
 ---
 status: gathering | investigating | fixing | verifying | awaiting_human_verify | resolved
-trigger: "[verbatim user input]"
-created: [ISO timestamp]
-updated: [ISO timestamp]
+trigger: "[ユーザー入力そのまま]"
+created: [ISOタイムスタンプ]
+updated: [ISOタイムスタンプ]
 ---
 
 ## Current Focus
-<!-- OVERWRITE on each update - always reflects NOW -->
+<!-- 更新のたびに上書き - 常に現在の状態を反映 -->
 
-hypothesis: [current theory being tested]
-test: [how testing it]
-expecting: [what result means if true/false]
-next_action: [immediate next step]
+hypothesis: [テスト中の現在の仮説]
+test: [どのようにテストしているか]
+expecting: [真/偽の場合に結果が何を意味するか]
+next_action: [直近の次のステップ]
 
 ## Symptoms
-<!-- Written during gathering, then immutable -->
+<!-- 収集中に記述、その後不変 -->
 
-expected: [what should happen]
-actual: [what actually happens]
-errors: [error messages if any]
-reproduction: [how to trigger]
-started: [when it broke / always broken]
+expected: [何が起こるべきか]
+actual: [実際に何が起こるか]
+errors: [エラーメッセージがある場合]
+reproduction: [どのようにトリガーするか]
+started: [いつ壊れたか / 最初から壊れていたか]
 
 ## Eliminated
-<!-- APPEND only - prevents re-investigating after /clear -->
+<!-- 追記のみ - /clear後の再調査を防止 -->
 
-- hypothesis: [theory that was wrong]
-  evidence: [what disproved it]
-  timestamp: [when eliminated]
+- hypothesis: [誤っていた仮説]
+  evidence: [反証したもの]
+  timestamp: [排除された時刻]
 
 ## Evidence
-<!-- APPEND only - facts discovered during investigation -->
+<!-- 追記のみ - 調査中に発見された事実 -->
 
-- timestamp: [when found]
-  checked: [what was examined]
-  found: [what was observed]
-  implication: [what this means]
+- timestamp: [発見時刻]
+  checked: [何を調べたか]
+  found: [何が観察されたか]
+  implication: [これが何を意味するか]
 
 ## Resolution
-<!-- OVERWRITE as understanding evolves -->
+<!-- 理解が深まるにつれて上書き -->
 
-root_cause: [empty until found]
-fix: [empty until applied]
-verification: [empty until verified]
+root_cause: [見つかるまで空]
+fix: [適用されるまで空]
+verification: [検証されるまで空]
 files_changed: []
 ```
 
@@ -59,106 +59,107 @@ files_changed: []
 
 <section_rules>
 
-**Frontmatter (status, trigger, timestamps):**
-- `status`: OVERWRITE - reflects current phase
-- `trigger`: IMMUTABLE - verbatim user input, never changes
-- `created`: IMMUTABLE - set once
-- `updated`: OVERWRITE - update on every change
+**フロントマター（status、trigger、タイムスタンプ）:**
+- `status`: 上書き - 現在のフェーズを反映
+- `trigger`: 不変 - ユーザー入力そのまま、変更しない
+- `created`: 不変 - 一度だけ設定
+- `updated`: 上書き - 変更のたびに更新
 
 **Current Focus:**
-- OVERWRITE entirely on each update
-- Always reflects what Claude is doing RIGHT NOW
-- If Claude reads this after /clear, it knows exactly where to resume
-- Fields: hypothesis, test, expecting, next_action
+- 更新のたびに全体を上書き
+- 常にClaudeが今何をしているかを反映
+- Claudeが/clear後にこれを読めば、正確にどこで再開すべきかがわかる
+- フィールド: hypothesis、test、expecting、next_action
 
 **Symptoms:**
-- Written during initial gathering phase
-- IMMUTABLE after gathering complete
-- Reference point for what we're trying to fix
-- Fields: expected, actual, errors, reproduction, started
+- 初期の収集フェーズで記述
+- 収集完了後は不変
+- 修正しようとしている内容の参照ポイント
+- フィールド: expected、actual、errors、reproduction、started
 
 **Eliminated:**
-- APPEND only - never remove entries
-- Prevents re-investigating dead ends after context reset
-- Each entry: hypothesis, evidence that disproved it, timestamp
-- Critical for efficiency across /clear boundaries
+- 追記のみ - エントリを削除しない
+- コンテキストリセット後の行き止まりの再調査を防止
+- 各エントリ: 仮説、反証した証拠、タイムスタンプ
+- /clearの境界を越えた効率性に不可欠
 
 **Evidence:**
-- APPEND only - never remove entries
-- Facts discovered during investigation
-- Each entry: timestamp, what checked, what found, implication
-- Builds the case for root cause
+- 追記のみ - エントリを削除しない
+- 調査中に発見された事実
+- 各エントリ: タイムスタンプ、何を調べたか、何を発見したか、意味
+- 根本原因の根拠を構築
 
 **Resolution:**
-- OVERWRITE as understanding evolves
-- May update multiple times as fixes are tried
-- Final state shows confirmed root cause and verified fix
-- Fields: root_cause, fix, verification, files_changed
+- 理解が深まるにつれて上書き
+- 修正が試みられるにつれて複数回更新される可能性あり
+- 最終状態は確認された根本原因と検証済みの修正を示す
+- フィールド: root_cause、fix、verification、files_changed
 
 </section_rules>
 
 <lifecycle>
 
-**Creation:** Immediately when /gsd:debug is called
-- Create file with trigger from user input
-- Set status to "gathering"
+**作成:** /gsd:debugが呼ばれたとき即座に
+- ユーザー入力からtriggerを含むファイルを作成
+- statusを"gathering"に設定
 - Current Focus: next_action = "gather symptoms"
-- Symptoms: empty, to be filled
+- Symptoms: 空、記入予定
 
-**During symptom gathering:**
-- Update Symptoms section as user answers questions
-- Update Current Focus with each question
-- When complete: status → "investigating"
+**症状収集中:**
+- ユーザーが質問に答えるたびにSymptomsセクションを更新
+- 各質問でCurrent Focusを更新
+- 完了時: status → "investigating"
 
-**During investigation:**
-- OVERWRITE Current Focus with each hypothesis
-- APPEND to Evidence with each finding
-- APPEND to Eliminated when hypothesis disproved
-- Update timestamp in frontmatter
+**調査中:**
+- 各仮説でCurrent Focusを上書き
+- 各発見でEvidenceに追記
+- 仮説が反証されたらEliminatedに追記
+- フロントマターのタイムスタンプを更新
 
-**During fixing:**
+**修正中:**
 - status → "fixing"
-- Update Resolution.root_cause when confirmed
-- Update Resolution.fix when applied
-- Update Resolution.files_changed
+- 確認されたらResolution.root_causeを更新
+- 適用されたらResolution.fixを更新
+- Resolution.files_changedを更新
 
-**During verification:**
+**検証中:**
 - status → "verifying"
-- Update Resolution.verification with results
-- If verification fails: status → "investigating", try again
+- Resolution.verificationに結果を更新
+- 検証失敗時: status → "investigating"、再試行
 
-**After self-verification passes:**
+**自己検証通過後:**
 - status -> "awaiting_human_verify"
-- Request explicit user confirmation in a checkpoint
-- Do NOT move file to resolved yet
+- チェックポイントで明示的なユーザー確認を要求
+- まだファイルをresolvedに移動しない
 
-**On resolution:**
+**解決時:**
 - status → "resolved"
-- Move file to .planning/debug/resolved/ (only after user confirms fix)
+- ファイルを.planning/debug/resolved/に移動（ユーザーが修正を確認した後のみ）
 
 </lifecycle>
 
 <resume_behavior>
 
-When Claude reads this file after /clear:
+Claudeが/clear後にこのファイルを読んだ場合:
 
-1. Parse frontmatter → know status
-2. Read Current Focus → know exactly what was happening
-3. Read Eliminated → know what NOT to retry
-4. Read Evidence → know what's been learned
-5. Continue from next_action
+1. フロントマターを解析 → statusを把握
+2. Current Focusを読む → 正確に何をしていたかを把握
+3. Eliminatedを読む → 再試行すべきでないものを把握
+4. Evidenceを読む → 何が学ばれたかを把握
+5. next_actionから継続
 
-The file IS the debugging brain. Claude should be able to resume perfectly from any interruption point.
+このファイルがデバッグの頭脳です。Claudeはどの中断ポイントからでも完璧に再開できるべきです。
 
 </resume_behavior>
 
 <size_constraint>
 
-Keep debug files focused:
-- Evidence entries: 1-2 lines each, just the facts
-- Eliminated: brief - hypothesis + why it failed
-- No narrative prose - structured data only
+デバッグファイルは簡潔に保つ:
+- Evidenceエントリ: 各1〜2行、事実のみ
+- Eliminated: 簡潔に - 仮説 + 失敗した理由
+- 散文的な説明なし - 構造化されたデータのみ
 
-If evidence grows very large (10+ entries), consider whether you're going in circles. Check Eliminated to ensure you're not re-treading.
+エビデンスが非常に多くなった場合（10以上のエントリ）、堂々巡りしていないか検討してください。Eliminatedを確認して同じことを繰り返していないか確認してください。
 
 </size_constraint>
+</output>

@@ -1,15 +1,15 @@
 <purpose>
-Interactive configuration of GSD workflow agents (research, plan_check, verifier) and model profile selection via multi-question prompt. Updates .planning/config.json with user preferences. Optionally saves settings as global defaults (~/.gsd/defaults.json) for future projects.
+GSDワークフローエージェント（research、plan_check、verifier）のインタラクティブな設定と、複数質問プロンプトによるモデルプロファイルの選択。ユーザーの設定で.planning/config.jsonを更新します。オプションで設定をグローバルデフォルト（~/.gsd/defaults.json）として保存し、将来のプロジェクトに適用できます。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込んでください。
 </required_reading>
 
 <process>
 
 <step name="ensure_and_load_config">
-Ensure config exists and load current state:
+設定が存在することを確認し、現在の状態を読み込みます：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-ensure-section
@@ -17,7 +17,7 @@ INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state load)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Creates `.planning/config.json` with defaults if missing and loads current config values.
+`.planning/config.json`が存在しない場合はデフォルトで作成し、現在の設定値を読み込みます。
 </step>
 
 <step name="read_current">
@@ -25,83 +25,83 @@ Creates `.planning/config.json` with defaults if missing and loads current confi
 cat .planning/config.json
 ```
 
-Parse current values (default to `true` if not present):
-- `workflow.research` — spawn researcher during plan-phase
-- `workflow.plan_check` — spawn plan checker during plan-phase
-- `workflow.verifier` — spawn verifier during execute-phase
-- `workflow.nyquist_validation` — validation architecture research during plan-phase (default: true if absent)
-- `model_profile` — which model each agent uses (default: `balanced`)
-- `git.branching_strategy` — branching approach (default: `"none"`)
+現在の値を解析します（存在しない場合はデフォルトで`true`）：
+- `workflow.research` — plan-phase中にリサーチャーを生成
+- `workflow.plan_check` — plan-phase中にプランチェッカーを生成
+- `workflow.verifier` — execute-phase中にベリファイアを生成
+- `workflow.nyquist_validation` — plan-phase中のバリデーションアーキテクチャリサーチ（デフォルト: 存在しない場合はtrue）
+- `model_profile` — 各エージェントが使用するモデル（デフォルト: `balanced`）
+- `git.branching_strategy` — ブランチ戦略（デフォルト: `"none"`）
 </step>
 
 <step name="present_settings">
-Use AskUserQuestion with current values pre-selected:
+現在の値が事前選択されたAskUserQuestionを使用します：
 
 ```
 AskUserQuestion([
   {
-    question: "Which model profile for agents?",
+    question: "エージェントにどのモデルプロファイルを使用しますか？",
     header: "Model",
     multiSelect: false,
     options: [
-      { label: "Quality", description: "Opus everywhere except verification (highest cost)" },
-      { label: "Balanced (Recommended)", description: "Opus for planning, Sonnet for execution/verification" },
-      { label: "Budget", description: "Sonnet for writing, Haiku for research/verification (lowest cost)" }
+      { label: "Quality", description: "検証以外すべてOpus（最高コスト）" },
+      { label: "Balanced（推奨）", description: "計画にOpus、実行/検証にSonnet" },
+      { label: "Budget", description: "執筆にSonnet、リサーチ/検証にHaiku（最低コスト）" }
     ]
   },
   {
-    question: "Spawn Plan Researcher? (researches domain before planning)",
+    question: "プランリサーチャーを生成しますか？（計画前にドメインを調査）",
     header: "Research",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "Research phase goals before planning" },
-      { label: "No", description: "Skip research, plan directly" }
+      { label: "はい", description: "計画前にフェーズの目標を調査" },
+      { label: "いいえ", description: "調査をスキップし、直接計画" }
     ]
   },
   {
-    question: "Spawn Plan Checker? (verifies plans before execution)",
+    question: "プランチェッカーを生成しますか？（実行前にプランを検証）",
     header: "Plan Check",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "Verify plans meet phase goals" },
-      { label: "No", description: "Skip plan verification" }
+      { label: "はい", description: "プランがフェーズの目標を満たすか検証" },
+      { label: "いいえ", description: "プラン検証をスキップ" }
     ]
   },
   {
-    question: "Spawn Execution Verifier? (verifies phase completion)",
+    question: "実行ベリファイアを生成しますか？（フェーズ完了を検証）",
     header: "Verifier",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "Verify must-haves after execution" },
-      { label: "No", description: "Skip post-execution verification" }
+      { label: "はい", description: "実行後に必須要件を検証" },
+      { label: "いいえ", description: "実行後の検証をスキップ" }
     ]
   },
   {
-    question: "Auto-advance pipeline? (discuss → plan → execute automatically)",
+    question: "パイプラインを自動進行しますか？（discuss → plan → execute を自動実行）",
     header: "Auto",
     multiSelect: false,
     options: [
-      { label: "No (Recommended)", description: "Manual /clear + paste between stages" },
-      { label: "Yes", description: "Chain stages via Task() subagents (same isolation)" }
+      { label: "いいえ（推奨）", description: "ステージ間で手動 /clear + ペースト" },
+      { label: "はい", description: "Task()サブエージェント経由でステージを連鎖（同じ分離）" }
     ]
   },
   {
-    question: "Enable Nyquist Validation? (researches test coverage during planning)",
+    question: "Nyquistバリデーションを有効にしますか？（計画中にテストカバレッジを調査）",
     header: "Nyquist",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Research automated test coverage during plan-phase. Adds validation requirements to plans. Blocks approval if tasks lack automated verify." },
-      { label: "No", description: "Skip validation research. Good for rapid prototyping or no-test phases." }
+      { label: "はい（推奨）", description: "plan-phase中に自動テストカバレッジを調査。プランにバリデーション要件を追加。タスクに自動検証がない場合、承認をブロック。" },
+      { label: "いいえ", description: "バリデーション調査をスキップ。ラピッドプロトタイピングやテストなしフェーズに適しています。" }
     ]
   },
   {
-    question: "Git branching strategy?",
+    question: "Gitブランチ戦略は？",
     header: "Branching",
     multiSelect: false,
     options: [
-      { label: "None (Recommended)", description: "Commit directly to current branch" },
-      { label: "Per Phase", description: "Create branch for each phase (gsd/phase-{N}-{name})" },
-      { label: "Per Milestone", description: "Create branch for entire milestone (gsd/{version}-{name})" }
+      { label: "なし（推奨）", description: "現在のブランチに直接コミット" },
+      { label: "フェーズごと", description: "各フェーズにブランチを作成（gsd/phase-{N}-{name}）" },
+      { label: "マイルストーンごと", description: "マイルストーン全体にブランチを作成（gsd/{version}-{name}）" }
     ]
   }
 ])
@@ -109,7 +109,7 @@ AskUserQuestion([
 </step>
 
 <step name="update_config">
-Merge new settings into existing config.json:
+新しい設定を既存のconfig.jsonにマージします：
 
 ```json
 {
@@ -128,27 +128,27 @@ Merge new settings into existing config.json:
 }
 ```
 
-Write updated config to `.planning/config.json`.
+更新された設定を`.planning/config.json`に書き込みます。
 </step>
 
 <step name="save_as_defaults">
-Ask whether to save these settings as global defaults for future projects:
+これらの設定を将来のプロジェクトのグローバルデフォルトとして保存するか確認します：
 
 ```
 AskUserQuestion([
   {
-    question: "Save these as default settings for all new projects?",
+    question: "これらをすべての新規プロジェクトのデフォルト設定として保存しますか？",
     header: "Defaults",
     multiSelect: false,
     options: [
-      { label: "Yes", description: "New projects start with these settings (saved to ~/.gsd/defaults.json)" },
-      { label: "No", description: "Only apply to this project" }
+      { label: "はい", description: "新規プロジェクトがこれらの設定で開始されます（~/.gsd/defaults.jsonに保存）" },
+      { label: "いいえ", description: "このプロジェクトにのみ適用" }
     ]
   }
 ])
 ```
 
-If "Yes": write the same config object (minus project-specific fields like `brave_search`) to `~/.gsd/defaults.json`:
+「はい」の場合：同じ設定オブジェクト（`brave_search`などのプロジェクト固有フィールドを除く）を`~/.gsd/defaults.json`に書き込みます：
 
 ```bash
 mkdir -p ~/.gsd
@@ -175,40 +175,40 @@ Write `~/.gsd/defaults.json` with:
 </step>
 
 <step name="confirm">
-Display:
+表示：
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► SETTINGS UPDATED
+ GSD ► 設定更新完了
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-| Setting              | Value |
+| 設定                  | 値 |
 |----------------------|-------|
-| Model Profile        | {quality/balanced/budget} |
-| Plan Researcher      | {On/Off} |
-| Plan Checker         | {On/Off} |
-| Execution Verifier   | {On/Off} |
-| Auto-Advance         | {On/Off} |
-| Nyquist Validation   | {On/Off} |
-| Git Branching        | {None/Per Phase/Per Milestone} |
-| Saved as Defaults    | {Yes/No} |
+| モデルプロファイル       | {quality/balanced/budget} |
+| プランリサーチャー       | {On/Off} |
+| プランチェッカー         | {On/Off} |
+| 実行ベリファイア         | {On/Off} |
+| 自動進行               | {On/Off} |
+| Nyquistバリデーション    | {On/Off} |
+| Gitブランチ            | {なし/フェーズごと/マイルストーンごと} |
+| デフォルトとして保存     | {はい/いいえ} |
 
-These settings apply to future /gsd:plan-phase and /gsd:execute-phase runs.
+これらの設定は今後の /gsd:plan-phase と /gsd:execute-phase の実行に適用されます。
 
-Quick commands:
-- /gsd:set-profile <profile> — switch model profile
-- /gsd:plan-phase --research — force research
-- /gsd:plan-phase --skip-research — skip research
-- /gsd:plan-phase --skip-verify — skip plan check
+クイックコマンド:
+- /gsd:set-profile <profile> — モデルプロファイルを切り替え
+- /gsd:plan-phase --research — リサーチを強制
+- /gsd:plan-phase --skip-research — リサーチをスキップ
+- /gsd:plan-phase --skip-verify — プランチェックをスキップ
 ```
 </step>
 
 </process>
 
 <success_criteria>
-- [ ] Current config read
-- [ ] User presented with 7 settings (profile + 5 workflow toggles + git branching)
-- [ ] Config updated with model_profile, workflow, and git sections
-- [ ] User offered to save as global defaults (~/.gsd/defaults.json)
-- [ ] Changes confirmed to user
+- [ ] 現在の設定が読み込まれた
+- [ ] ユーザーに7つの設定が提示された（プロファイル + 5つのワークフロートグル + gitブランチ）
+- [ ] 設定がmodel_profile、workflow、gitセクションで更新された
+- [ ] ユーザーにグローバルデフォルトとしての保存が提案された（~/.gsd/defaults.json）
+- [ ] 変更がユーザーに確認された
 </success_criteria>

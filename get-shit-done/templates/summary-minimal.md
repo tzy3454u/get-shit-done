@@ -1,41 +1,41 @@
 ---
 phase: XX-name
 plan: YY
-subsystem: [primary category]
-tags: [searchable tech]
+subsystem: [主要カテゴリ]
+tags: [検索可能な技術]
 provides:
-  - [bullet list of what was built/delivered]
-affects: [list of phase names or keywords]
+  - [構築/提供されたもののリスト]
+affects: [フェーズ名やキーワードのリスト]
 tech-stack:
-  added: [libraries/tools]
-  patterns: [architectural/code patterns]
+  added: [ライブラリ/ツール]
+  patterns: [アーキテクチャ/コードパターン]
 key-files:
-  created: [important files created]
-  modified: [important files modified]
+  created: [作成した重要ファイル]
+  modified: [変更した重要ファイル]
 key-decisions: []
 duration: Xmin
 completed: YYYY-MM-DD
 ---
 
-# Phase [X]: [Name] Summary (Minimal)
+# Phase [X]: [名前] サマリー（最小）
 
-**[Substantive one-liner describing outcome]**
+**[成果を説明する実質的な一行]**
 
-## Performance
-- **Duration:** [time]
-- **Tasks:** [count]
-- **Files modified:** [count]
+## パフォーマンス
+- **所要時間:** [時間]
+- **タスク:** [数]
+- **変更ファイル:** [数]
 
-## Accomplishments
-- [Most important outcome]
-- [Second key accomplishment]
+## 成果
+- [最も重要な成果]
+- [2番目の主要な達成事項]
 
-## Task Commits
-1. **Task 1: [task name]** - `hash`
-2. **Task 2: [task name]** - `hash`
+## タスクコミット
+1. **Task 1: [タスク名]** - `hash`
+2. **Task 2: [タスク名]** - `hash`
 
-## Files Created/Modified
-- `path/to/file.ts` - What it does
+## 作成/変更ファイル
+- `path/to/file.ts` - 役割
 
-## Next Phase Readiness
-[Ready for next phase]
+## 次フェーズの準備状況
+[次のフェーズの準備完了]

@@ -1,10 +1,10 @@
-# Verification Report Template
+# 検証レポートテンプレート
 
-Template for `.planning/phases/XX-name/{phase_num}-VERIFICATION.md` — phase goal verification results.
+`.planning/phases/XX-name/{phase_num}-VERIFICATION.md` 用テンプレート — フェーズ目標の検証結果。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
 ---
@@ -14,178 +14,178 @@ status: passed | gaps_found | human_needed
 score: N/M must-haves verified
 ---
 
-# Phase {X}: {Name} Verification Report
+# Phase {X}: {名前} 検証レポート
 
-**Phase Goal:** {goal from ROADMAP.md}
-**Verified:** {timestamp}
+**Phase Goal:** {ROADMAP.mdからの目標}
+**Verified:** {タイムスタンプ}
 **Status:** {passed | gaps_found | human_needed}
 
-## Goal Achievement
+## 目標達成
 
-### Observable Truths
+### 観察可能な真実
 
-| # | Truth | Status | Evidence |
+| # | 真実 | ステータス | エビデンス |
 |---|-------|--------|----------|
-| 1 | {truth from must_haves} | ✓ VERIFIED | {what confirmed it} |
-| 2 | {truth from must_haves} | ✗ FAILED | {what's wrong} |
-| 3 | {truth from must_haves} | ? UNCERTAIN | {why can't verify} |
+| 1 | {must_havesからの真実} | ✓ VERIFIED | {確認した内容} |
+| 2 | {must_havesからの真実} | ✗ FAILED | {何が問題か} |
+| 3 | {must_havesからの真実} | ? UNCERTAIN | {検証できない理由} |
 
-**Score:** {N}/{M} truths verified
+**スコア:** {N}/{M} 件の真実を検証
 
-### Required Artifacts
+### 必須アーティファクト
 
-| Artifact | Expected | Status | Details |
+| アーティファクト | 期待値 | ステータス | 詳細 |
 |----------|----------|--------|---------|
-| `src/components/Chat.tsx` | Message list component | ✓ EXISTS + SUBSTANTIVE | Exports ChatList, renders Message[], no stubs |
-| `src/app/api/chat/route.ts` | Message CRUD | ✗ STUB | File exists but POST returns placeholder |
-| `prisma/schema.prisma` | Message model | ✓ EXISTS + SUBSTANTIVE | Model defined with all fields |
+| `src/components/Chat.tsx` | メッセージリストコンポーネント | ✓ EXISTS + SUBSTANTIVE | ChatListをエクスポート、Message[]をレンダリング、スタブなし |
+| `src/app/api/chat/route.ts` | メッセージCRUD | ✗ STUB | ファイルは存在するがPOSTはプレースホルダーを返す |
+| `prisma/schema.prisma` | メッセージモデル | ✓ EXISTS + SUBSTANTIVE | モデルがすべてのフィールドで定義済み |
 
-**Artifacts:** {N}/{M} verified
+**アーティファクト:** {N}/{M} 件検証済み
 
-### Key Link Verification
+### 主要リンク検証
 
-| From | To | Via | Status | Details |
+| From | To | Via | ステータス | 詳細 |
 |------|----|----|--------|---------|
-| Chat.tsx | /api/chat | fetch in useEffect | ✓ WIRED | Line 23: `fetch('/api/chat')` with response handling |
-| ChatInput | /api/chat POST | onSubmit handler | ✗ NOT WIRED | onSubmit only calls console.log |
-| /api/chat POST | database | prisma.message.create | ✗ NOT WIRED | Returns hardcoded response, no DB call |
+| Chat.tsx | /api/chat | fetch in useEffect | ✓ WIRED | Line 23: `fetch('/api/chat')` でレスポンス処理 |
+| ChatInput | /api/chat POST | onSubmit handler | ✗ NOT WIRED | onSubmitはconsole.logのみ呼び出し |
+| /api/chat POST | database | prisma.message.create | ✗ NOT WIRED | ハードコードされたレスポンスを返す、DB呼び出しなし |
 
-**Wiring:** {N}/{M} connections verified
+**接続:** {N}/{M} 件の接続を検証
 
-## Requirements Coverage
+## 要件カバレッジ
 
-| Requirement | Status | Blocking Issue |
+| 要件 | ステータス | ブロッキング問題 |
 |-------------|--------|----------------|
-| {REQ-01}: {description} | ✓ SATISFIED | - |
-| {REQ-02}: {description} | ✗ BLOCKED | API route is stub |
-| {REQ-03}: {description} | ? NEEDS HUMAN | Can't verify WebSocket programmatically |
+| {REQ-01}: {説明} | ✓ SATISFIED | - |
+| {REQ-02}: {説明} | ✗ BLOCKED | APIルートがスタブ |
+| {REQ-03}: {説明} | ? NEEDS HUMAN | WebSocketをプログラム的に検証不可 |
 
-**Coverage:** {N}/{M} requirements satisfied
+**カバレッジ:** {N}/{M} 件の要件を充足
 
-## Anti-Patterns Found
+## 検出されたアンチパターン
 
-| File | Line | Pattern | Severity | Impact |
+| ファイル | 行 | パターン | 重大度 | 影響 |
 |------|------|---------|----------|--------|
-| src/app/api/chat/route.ts | 12 | `// TODO: implement` | ⚠️ Warning | Indicates incomplete |
-| src/components/Chat.tsx | 45 | `return <div>Placeholder</div>` | 🛑 Blocker | Renders no content |
-| src/hooks/useChat.ts | - | File missing | 🛑 Blocker | Expected hook doesn't exist |
+| src/app/api/chat/route.ts | 12 | `// TODO: implement` | ⚠️ Warning | 未完了を示す |
+| src/components/Chat.tsx | 45 | `return <div>Placeholder</div>` | 🛑 Blocker | コンテンツがレンダリングされない |
+| src/hooks/useChat.ts | - | ファイル不在 | 🛑 Blocker | 期待されるhookが存在しない |
 
-**Anti-patterns:** {N} found ({blockers} blockers, {warnings} warnings)
+**アンチパターン:** {N} 件検出（{blockers} 件ブロッカー、{warnings} 件警告）
 
-## Human Verification Required
+## 人手による検証が必要
 
-{If no human verification needed:}
-None — all verifiable items checked programmatically.
+{人手による検証が不要な場合:}
+なし — すべての検証可能項目をプログラム的にチェック済み。
 
-{If human verification needed:}
+{人手による検証が必要な場合:}
 
-### 1. {Test Name}
-**Test:** {What to do}
-**Expected:** {What should happen}
-**Why human:** {Why can't verify programmatically}
+### 1. {テスト名}
+**テスト:** {実行すること}
+**期待値:** {起こるべきこと}
+**人手が必要な理由:** {プログラム的に検証できない理由}
 
-### 2. {Test Name}
-**Test:** {What to do}
-**Expected:** {What should happen}
-**Why human:** {Why can't verify programmatically}
+### 2. {テスト名}
+**テスト:** {実行すること}
+**期待値:** {起こるべきこと}
+**人手が必要な理由:** {プログラム的に検証できない理由}
 
-## Gaps Summary
+## ギャップサマリー
 
-{If no gaps:}
-**No gaps found.** Phase goal achieved. Ready to proceed.
+{ギャップがない場合:}
+**ギャップは見つかりませんでした。** フェーズ目標達成。続行の準備完了。
 
-{If gaps found:}
+{ギャップが見つかった場合:}
 
-### Critical Gaps (Block Progress)
+### クリティカルギャップ（進行をブロック）
 
-1. **{Gap name}**
-   - Missing: {what's missing}
-   - Impact: {why this blocks the goal}
-   - Fix: {what needs to happen}
+1. **{ギャップ名}**
+   - 不足: {不足しているもの}
+   - 影響: {目標をブロックする理由}
+   - 修正: {必要なアクション}
 
-2. **{Gap name}**
-   - Missing: {what's missing}
-   - Impact: {why this blocks the goal}
-   - Fix: {what needs to happen}
+2. **{ギャップ名}**
+   - 不足: {不足しているもの}
+   - 影響: {目標をブロックする理由}
+   - 修正: {必要なアクション}
 
-### Non-Critical Gaps (Can Defer)
+### 非クリティカルギャップ（延期可能）
 
-1. **{Gap name}**
-   - Issue: {what's wrong}
-   - Impact: {limited impact because...}
-   - Recommendation: {fix now or defer}
+1. **{ギャップ名}**
+   - 問題: {何が問題か}
+   - 影響: {影響が限定的な理由...}
+   - 推奨: {今すぐ修正するか延期するか}
 
-## Recommended Fix Plans
+## 推奨修正プラン
 
-{If gaps found, generate fix plan recommendations:}
+{ギャップが見つかった場合、修正プランの推奨を生成:}
 
-### {phase}-{next}-PLAN.md: {Fix Name}
+### {phase}-{next}-PLAN.md: {修正名}
 
-**Objective:** {What this fixes}
+**目的:** {修正内容}
 
-**Tasks:**
-1. {Task to fix gap 1}
-2. {Task to fix gap 2}
-3. {Verification task}
+**タスク:**
+1. {ギャップ1を修正するタスク}
+2. {ギャップ2を修正するタスク}
+3. {検証タスク}
 
-**Estimated scope:** {Small / Medium}
-
----
-
-### {phase}-{next+1}-PLAN.md: {Fix Name}
-
-**Objective:** {What this fixes}
-
-**Tasks:**
-1. {Task}
-2. {Task}
-
-**Estimated scope:** {Small / Medium}
+**推定規模:** {Small / Medium}
 
 ---
 
-## Verification Metadata
+### {phase}-{next+1}-PLAN.md: {修正名}
 
-**Verification approach:** Goal-backward (derived from phase goal)
-**Must-haves source:** {PLAN.md frontmatter | derived from ROADMAP.md goal}
-**Automated checks:** {N} passed, {M} failed
-**Human checks required:** {N}
-**Total verification time:** {duration}
+**目的:** {修正内容}
+
+**タスク:**
+1. {タスク}
+2. {タスク}
+
+**推定規模:** {Small / Medium}
 
 ---
-*Verified: {timestamp}*
+
+## 検証メタデータ
+
+**検証アプローチ:** 目標逆算（フェーズ目標から導出）
+**Must-havesソース:** {PLAN.md frontmatter | ROADMAP.md goalから導出}
+**自動チェック:** {N} 件通過、{M} 件失敗
+**人手チェック必要:** {N} 件
+**総検証時間:** {duration}
+
+---
+*Verified: {タイムスタンプ}*
 *Verifier: Claude (subagent)*
 ```
 
 ---
 
-## Guidelines
+## ガイドライン
 
-**Status values:**
-- `passed` — All must-haves verified, no blockers
-- `gaps_found` — One or more critical gaps found
-- `human_needed` — Automated checks pass but human verification required
+**ステータス値:**
+- `passed` — すべてのmust-havesが検証済み、ブロッカーなし
+- `gaps_found` — 1つ以上のクリティカルギャップが見つかった
+- `human_needed` — 自動チェックは通過だが人手による検証が必要
 
-**Evidence types:**
-- For EXISTS: "File at path, exports X"
-- For SUBSTANTIVE: "N lines, has patterns X, Y, Z"
-- For WIRED: "Line N: code that connects A to B"
-- For FAILED: "Missing because X" or "Stub because Y"
+**エビデンスタイプ:**
+- EXISTS: "パスにファイルあり、Xをエクスポート"
+- SUBSTANTIVE: "N行、パターンX, Y, Zを持つ"
+- WIRED: "行N: AとBを接続するコード"
+- FAILED: "Xが理由で不足" または "Yが理由でスタブ"
 
-**Severity levels:**
-- 🛑 Blocker: Prevents goal achievement, must fix
-- ⚠️ Warning: Indicates incomplete but doesn't block
-- ℹ️ Info: Notable but not problematic
+**重大度レベル:**
+- 🛑 Blocker: 目標達成を妨げる、修正必須
+- ⚠️ Warning: 未完了を示すが目標はブロックしない
+- ℹ️ Info: 注目すべきだが問題はない
 
-**Fix plan generation:**
-- Only generate if gaps_found
-- Group related fixes into single plans
-- Keep to 2-3 tasks per plan
-- Include verification task in each plan
+**修正プラン生成:**
+- gaps_foundの場合のみ生成
+- 関連する修正を1つのプランにグループ化
+- プランごとに2〜3タスクに抑える
+- 各プランに検証タスクを含める
 
 ---
 
-## Example
+## 例
 
 ```markdown
 ---
@@ -195,126 +195,126 @@ status: gaps_found
 score: 2/5 must-haves verified
 ---
 
-# Phase 3: Chat Interface Verification Report
+# Phase 3: チャットインターフェース 検証レポート
 
-**Phase Goal:** Working chat interface where users can send and receive messages
+**Phase Goal:** ユーザーがメッセージを送受信できる動作するチャットインターフェース
 **Verified:** 2025-01-15T14:30:00Z
 **Status:** gaps_found
 
-## Goal Achievement
+## 目標達成
 
-### Observable Truths
+### 観察可能な真実
 
-| # | Truth | Status | Evidence |
+| # | 真実 | ステータス | エビデンス |
 |---|-------|--------|----------|
-| 1 | User can see existing messages | ✗ FAILED | Component renders placeholder, not message data |
-| 2 | User can type a message | ✓ VERIFIED | Input field exists with onChange handler |
-| 3 | User can send a message | ✗ FAILED | onSubmit handler is console.log only |
-| 4 | Sent message appears in list | ✗ FAILED | No state update after send |
-| 5 | Messages persist across refresh | ? UNCERTAIN | Can't verify - send doesn't work |
+| 1 | ユーザーが既存のメッセージを見られる | ✗ FAILED | コンポーネントがメッセージデータではなくプレースホルダーをレンダリング |
+| 2 | ユーザーがメッセージを入力できる | ✓ VERIFIED | onChangeハンドラー付きの入力フィールドが存在 |
+| 3 | ユーザーがメッセージを送信できる | ✗ FAILED | onSubmitハンドラーがconsole.logのみ |
+| 4 | 送信メッセージがリストに表示される | ✗ FAILED | 送信後のステート更新なし |
+| 5 | メッセージがリフレッシュ後も持続する | ? UNCERTAIN | 検証不可 - 送信が機能しない |
 
-**Score:** 1/5 truths verified
+**スコア:** 1/5 件の真実を検証
 
-### Required Artifacts
+### 必須アーティファクト
 
-| Artifact | Expected | Status | Details |
+| アーティファクト | 期待値 | ステータス | 詳細 |
 |----------|----------|--------|---------|
-| `src/components/Chat.tsx` | Message list component | ✗ STUB | Returns `<div>Chat will be here</div>` |
-| `src/components/ChatInput.tsx` | Message input | ✓ EXISTS + SUBSTANTIVE | Form with input, submit button, handlers |
-| `src/app/api/chat/route.ts` | Message CRUD | ✗ STUB | GET returns [], POST returns { ok: true } |
-| `prisma/schema.prisma` | Message model | ✓ EXISTS + SUBSTANTIVE | Message model with id, content, userId, createdAt |
+| `src/components/Chat.tsx` | メッセージリストコンポーネント | ✗ STUB | `<div>Chat will be here</div>` を返す |
+| `src/components/ChatInput.tsx` | メッセージ入力 | ✓ EXISTS + SUBSTANTIVE | 入力フィールド、送信ボタン、ハンドラー付きフォーム |
+| `src/app/api/chat/route.ts` | メッセージCRUD | ✗ STUB | GETは[]を返す、POSTは{ ok: true }を返す |
+| `prisma/schema.prisma` | メッセージモデル | ✓ EXISTS + SUBSTANTIVE | id, content, userId, createdAt付きMessageモデル |
 
-**Artifacts:** 2/4 verified
+**アーティファクト:** 2/4 件検証済み
 
-### Key Link Verification
+### 主要リンク検証
 
-| From | To | Via | Status | Details |
+| From | To | Via | ステータス | 詳細 |
 |------|----|----|--------|---------|
-| Chat.tsx | /api/chat GET | fetch | ✗ NOT WIRED | No fetch call in component |
-| ChatInput | /api/chat POST | onSubmit | ✗ NOT WIRED | Handler only logs, doesn't fetch |
-| /api/chat GET | database | prisma.message.findMany | ✗ NOT WIRED | Returns hardcoded [] |
-| /api/chat POST | database | prisma.message.create | ✗ NOT WIRED | Returns { ok: true }, no DB call |
+| Chat.tsx | /api/chat GET | fetch | ✗ NOT WIRED | コンポーネントにfetch呼び出しなし |
+| ChatInput | /api/chat POST | onSubmit | ✗ NOT WIRED | ハンドラーはログのみ、fetchなし |
+| /api/chat GET | database | prisma.message.findMany | ✗ NOT WIRED | ハードコードされた[]を返す |
+| /api/chat POST | database | prisma.message.create | ✗ NOT WIRED | { ok: true }を返す、DB呼び出しなし |
 
-**Wiring:** 0/4 connections verified
+**接続:** 0/4 件の接続を検証
 
-## Requirements Coverage
+## 要件カバレッジ
 
-| Requirement | Status | Blocking Issue |
+| 要件 | ステータス | ブロッキング問題 |
 |-------------|--------|----------------|
-| CHAT-01: User can send message | ✗ BLOCKED | API POST is stub |
-| CHAT-02: User can view messages | ✗ BLOCKED | Component is placeholder |
-| CHAT-03: Messages persist | ✗ BLOCKED | No database integration |
+| CHAT-01: ユーザーがメッセージを送信できる | ✗ BLOCKED | API POSTがスタブ |
+| CHAT-02: ユーザーがメッセージを閲覧できる | ✗ BLOCKED | コンポーネントがプレースホルダー |
+| CHAT-03: メッセージが永続化される | ✗ BLOCKED | データベース統合なし |
 
-**Coverage:** 0/3 requirements satisfied
+**カバレッジ:** 0/3 件の要件を充足
 
-## Anti-Patterns Found
+## 検出されたアンチパターン
 
-| File | Line | Pattern | Severity | Impact |
+| ファイル | 行 | パターン | 重大度 | 影響 |
 |------|------|---------|----------|--------|
-| src/components/Chat.tsx | 8 | `<div>Chat will be here</div>` | 🛑 Blocker | No actual content |
-| src/app/api/chat/route.ts | 5 | `return Response.json([])` | 🛑 Blocker | Hardcoded empty |
-| src/app/api/chat/route.ts | 12 | `// TODO: save to database` | ⚠️ Warning | Incomplete |
+| src/components/Chat.tsx | 8 | `<div>Chat will be here</div>` | 🛑 Blocker | 実際のコンテンツなし |
+| src/app/api/chat/route.ts | 5 | `return Response.json([])` | 🛑 Blocker | ハードコードされた空 |
+| src/app/api/chat/route.ts | 12 | `// TODO: save to database` | ⚠️ Warning | 未完了 |
 
-**Anti-patterns:** 3 found (2 blockers, 1 warning)
+**アンチパターン:** 3件検出（2件ブロッカー、1件警告）
 
-## Human Verification Required
+## 人手による検証が必要
 
-None needed until automated gaps are fixed.
+自動化されたギャップが修正されるまで不要。
 
-## Gaps Summary
+## ギャップサマリー
 
-### Critical Gaps (Block Progress)
+### クリティカルギャップ（進行をブロック）
 
-1. **Chat component is placeholder**
-   - Missing: Actual message list rendering
-   - Impact: Users see "Chat will be here" instead of messages
-   - Fix: Implement Chat.tsx to fetch and render messages
+1. **チャットコンポーネントがプレースホルダー**
+   - 不足: 実際のメッセージリストレンダリング
+   - 影響: ユーザーにメッセージの代わりに "Chat will be here" が表示される
+   - 修正: Chat.tsxを実装しメッセージをフェッチしてレンダリング
 
-2. **API routes are stubs**
-   - Missing: Database integration in GET and POST
-   - Impact: No data persistence, no real functionality
-   - Fix: Wire prisma calls in route handlers
+2. **APIルートがスタブ**
+   - 不足: GETとPOSTのデータベース統合
+   - 影響: データ永続化なし、実際の機能なし
+   - 修正: ルートハンドラーにprisma呼び出しを接続
 
-3. **No wiring between frontend and backend**
-   - Missing: fetch calls in components
-   - Impact: Even if API worked, UI wouldn't call it
-   - Fix: Add useEffect fetch in Chat, onSubmit fetch in ChatInput
+3. **フロントエンドとバックエンド間の接続なし**
+   - 不足: コンポーネントでのfetch呼び出し
+   - 影響: APIが動作してもUIがそれを呼び出さない
+   - 修正: ChatにuseEffect fetchを、ChatInputにonSubmit fetchを追加
 
-## Recommended Fix Plans
+## 推奨修正プラン
 
-### 03-04-PLAN.md: Implement Chat API
+### 03-04-PLAN.md: チャットAPIの実装
 
-**Objective:** Wire API routes to database
+**目的:** APIルートをデータベースに接続
 
-**Tasks:**
-1. Implement GET /api/chat with prisma.message.findMany
-2. Implement POST /api/chat with prisma.message.create
-3. Verify: API returns real data, POST creates records
+**タスク:**
+1. GET /api/chatをprisma.message.findManyで実装
+2. POST /api/chatをprisma.message.createで実装
+3. 検証: APIが実データを返す、POSTがレコードを作成
 
-**Estimated scope:** Small
-
----
-
-### 03-05-PLAN.md: Implement Chat UI
-
-**Objective:** Wire Chat component to API
-
-**Tasks:**
-1. Implement Chat.tsx with useEffect fetch and message rendering
-2. Wire ChatInput onSubmit to POST /api/chat
-3. Verify: Messages display, new messages appear after send
-
-**Estimated scope:** Small
+**推定規模:** Small
 
 ---
 
-## Verification Metadata
+### 03-05-PLAN.md: チャットUIの実装
 
-**Verification approach:** Goal-backward (derived from phase goal)
-**Must-haves source:** 03-01-PLAN.md frontmatter
-**Automated checks:** 2 passed, 8 failed
-**Human checks required:** 0 (blocked by automated failures)
-**Total verification time:** 2 min
+**目的:** ChatコンポーネントをAPIに接続
+
+**タスク:**
+1. Chat.tsxをuseEffect fetchとメッセージレンダリングで実装
+2. ChatInputのonSubmitをPOST /api/chatに接続
+3. 検証: メッセージが表示される、送信後に新メッセージが表示される
+
+**推定規模:** Small
+
+---
+
+## 検証メタデータ
+
+**検証アプローチ:** 目標逆算（フェーズ目標から導出）
+**Must-havesソース:** 03-01-PLAN.md frontmatter
+**自動チェック:** 2件通過、8件失敗
+**人手チェック必要:** 0件（自動化の失敗によりブロック）
+**総検証時間:** 2 min
 
 ---
 *Verified: 2025-01-15T14:30:00Z*

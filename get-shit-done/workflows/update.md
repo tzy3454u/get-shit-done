@@ -1,15 +1,15 @@
 <purpose>
-Check for GSD updates via npm, display changelog for versions between installed and latest, obtain user confirmation, and execute clean installation with cache clearing.
+npm経由でGSDの更新を確認し、インストール済みバージョンと最新バージョン間の変更ログを表示し、ユーザーの確認を得て、キャッシュクリアを含むクリーンインストールを実行します。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込んでください。
 </required_reading>
 
 <process>
 
 <step name="get_installed_version">
-Detect whether GSD is installed locally or globally by checking both locations and validating install integrity:
+両方の場所を確認しインストールの整合性を検証して、GSDがローカルまたはグローバルにインストールされているかを検出します：
 
 ```bash
 # Check local first (takes priority only if valid)
@@ -52,84 +52,84 @@ else
 fi
 ```
 
-Parse output:
-- If last line is "LOCAL": local install is valid; installed version is first line; use `--local`
-- If last line is "GLOBAL": local missing/invalid, global install is valid; installed version is first line; use `--global`
-- If "UNKNOWN": proceed to install step (treat as version 0.0.0)
+出力を解析します：
+- 最後の行が「LOCAL」の場合：ローカルインストールが有効、インストール済みバージョンは最初の行、`--local`を使用
+- 最後の行が「GLOBAL」の場合：ローカルが存在しない/無効、グローバルインストールが有効、インストール済みバージョンは最初の行、`--global`を使用
+- 「UNKNOWN」の場合：インストールステップに進む（バージョン0.0.0として扱う）
 
-**If VERSION file missing:**
+**VERSIONファイルが存在しない場合：**
 ```
-## GSD Update
+## GSD アップデート
 
-**Installed version:** Unknown
+**インストール済みバージョン:** 不明
 
-Your installation doesn't include version tracking.
+インストールにバージョン追跡が含まれていません。
 
-Running fresh install...
+新規インストールを実行中...
 ```
 
-Proceed to install step (treat as version 0.0.0 for comparison).
+インストールステップに進みます（比較用にバージョン0.0.0として扱う）。
 </step>
 
 <step name="check_latest_version">
-Check npm for latest version:
+npmで最新バージョンを確認します：
 
 ```bash
 npm view get-shit-done-cc version 2>/dev/null
 ```
 
-**If npm check fails:**
+**npmチェックが失敗した場合：**
 ```
-Couldn't check for updates (offline or npm unavailable).
+更新を確認できませんでした（オフラインまたはnpmが利用不可）。
 
-To update manually: `npx get-shit-done-cc --global`
+手動で更新するには: `npx get-shit-done-cc --global`
 ```
 
-Exit.
+終了します。
 </step>
 
 <step name="compare_versions">
-Compare installed vs latest:
+インストール済みと最新を比較します：
 
-**If installed == latest:**
+**インストール済み == 最新の場合：**
 ```
-## GSD Update
+## GSD アップデート
 
-**Installed:** X.Y.Z
-**Latest:** X.Y.Z
+**インストール済み:** X.Y.Z
+**最新:** X.Y.Z
 
-You're already on the latest version.
-```
-
-Exit.
-
-**If installed > latest:**
-```
-## GSD Update
-
-**Installed:** X.Y.Z
-**Latest:** A.B.C
-
-You're ahead of the latest release (development version?).
+既に最新バージョンです。
 ```
 
-Exit.
+終了します。
+
+**インストール済み > 最新の場合：**
+```
+## GSD アップデート
+
+**インストール済み:** X.Y.Z
+**最新:** A.B.C
+
+最新リリースより先のバージョンです（開発バージョン？）。
+```
+
+終了します。
 </step>
 
 <step name="show_changes_and_confirm">
-**If update available**, fetch and show what's new BEFORE updating:
+**更新が利用可能な場合**、更新前に新機能を取得して表示します：
 
-1. Fetch changelog from GitHub raw URL
-2. Extract entries between installed and latest versions
-3. Display preview and ask for confirmation:
+1. GitHubのraw URLから変更ログを取得
+2. インストール済みバージョンと最新バージョン間のエントリを抽出
+3. プレビューを表示して確認を求めます：
 
 ```
-## GSD Update Available
+## GSD アップデートが利用可能
 
-**Installed:** 1.5.10
-**Latest:** 1.5.15
+**インストール済み:** 1.5.10
+**最新:** 1.5.15
 
-### What's New
+### 新機能
 ────────────────────────────────────────────────────────────
 
 ## [1.5.15] - 2026-01-20
@@ -144,47 +144,47 @@ Exit.
 
 ────────────────────────────────────────────────────────────
 
-⚠️  **Note:** The installer performs a clean install of GSD folders:
-- `commands/gsd/` will be wiped and replaced
-- `get-shit-done/` will be wiped and replaced
-- `agents/gsd-*` files will be replaced
+⚠️  **注意:** インストーラーはGSDフォルダのクリーンインストールを実行します:
+- `commands/gsd/`は消去され置き換えられます
+- `get-shit-done/`は消去され置き換えられます
+- `agents/gsd-*`ファイルは置き換えられます
 
-(Paths are relative to your install location: `~/.claude/` for global, `./.claude/` for local)
+（パスはインストール場所に対して相対的です: グローバルは`~/.claude/`、ローカルは`./.claude/`）
 
-Your custom files in other locations are preserved:
-- Custom commands not in `commands/gsd/` ✓
-- Custom agents not prefixed with `gsd-` ✓
-- Custom hooks ✓
-- Your CLAUDE.md files ✓
+他の場所のカスタムファイルは保持されます:
+- `commands/gsd/`にないカスタムコマンド ✓
+- `gsd-`プレフィックスのないカスタムエージェント ✓
+- カスタムフック ✓
+- CLAUDE.mdファイル ✓
 
-If you've modified any GSD files directly, they'll be automatically backed up to `gsd-local-patches/` and can be reapplied with `/gsd:reapply-patches` after the update.
+GSDファイルを直接変更している場合、自動的に`gsd-local-patches/`にバックアップされ、更新後に`/gsd:reapply-patches`で再適用できます。
 ```
 
-Use AskUserQuestion:
-- Question: "Proceed with update?"
-- Options:
-  - "Yes, update now"
-  - "No, cancel"
+AskUserQuestionを使用：
+- 質問: 「更新を続行しますか？」
+- オプション:
+  - 「はい、今すぐ更新」
+  - 「いいえ、キャンセル」
 
-**If user cancels:** Exit.
+**ユーザーがキャンセルした場合:** 終了します。
 </step>
 
 <step name="run_update">
-Run the update using the install type detected in step 1:
+ステップ1で検出されたインストールタイプを使用して更新を実行します：
 
-**If LOCAL install:**
+**ローカルインストールの場合：**
 ```bash
 npx -y get-shit-done-cc@latest --local
 ```
 
-**If GLOBAL install (or unknown):**
+**グローバルインストール（または不明）の場合：**
 ```bash
 npx -y get-shit-done-cc@latest --global
 ```
 
-Capture output. If install fails, show error and exit.
+出力をキャプチャします。インストールが失敗した場合、エラーを表示して終了します。
 
-Clear the update cache so statusline indicator disappears:
+ステータスラインのインジケータが消えるよう更新キャッシュをクリアします：
 
 ```bash
 # Clear update cache across all runtime directories
@@ -194,47 +194,47 @@ for dir in .claude .config/opencode .opencode .gemini; do
 done
 ```
 
-The SessionStart hook (`gsd-check-update.js`) writes to the detected runtime's cache directory, so all paths must be cleared to prevent stale update indicators.
+SessionStartフック（`gsd-check-update.js`）は検出されたランタイムのキャッシュディレクトリに書き込むため、古い更新インジケータを防ぐためにすべてのパスをクリアする必要があります。
 </step>
 
 <step name="display_result">
-Format completion message (changelog was already shown in confirmation step):
+完了メッセージをフォーマットします（変更ログは確認ステップで既に表示済み）：
 
 ```
 ╔═══════════════════════════════════════════════════════════╗
-║  GSD Updated: v1.5.10 → v1.5.15                           ║
+║  GSD 更新完了: v1.5.10 → v1.5.15                          ║
 ╚═══════════════════════════════════════════════════════════╝
 
-⚠️  Restart Claude Code to pick up the new commands.
+⚠️  新しいコマンドを反映するにはClaude Codeを再起動してください。
 
-[View full changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
+[完全な変更ログを見る](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
 ```
 </step>
 
 
 <step name="check_local_patches">
-After update completes, check if the installer detected and backed up any locally modified files:
+更新完了後、インストーラーがローカルで変更されたファイルを検出しバックアップしたかを確認します：
 
-Check for gsd-local-patches/backup-meta.json in the config directory.
+設定ディレクトリ内のgsd-local-patches/backup-meta.jsonを確認します。
 
-**If patches found:**
+**パッチが見つかった場合：**
 
 ```
-Local patches were backed up before the update.
-Run /gsd:reapply-patches to merge your modifications into the new version.
+更新前にローカルパッチがバックアップされました。
+/gsd:reapply-patches を実行して、変更を新しいバージョンにマージしてください。
 ```
 
-**If no patches:** Continue normally.
+**パッチがない場合：** 通常通り続行します。
 </step>
 </process>
 
 <success_criteria>
-- [ ] Installed version read correctly
-- [ ] Latest version checked via npm
-- [ ] Update skipped if already current
-- [ ] Changelog fetched and displayed BEFORE update
-- [ ] Clean install warning shown
-- [ ] User confirmation obtained
-- [ ] Update executed successfully
-- [ ] Restart reminder shown
+- [ ] インストール済みバージョンが正しく読み取られた
+- [ ] npmで最新バージョンが確認された
+- [ ] 既に最新の場合は更新がスキップされた
+- [ ] 更新前に変更ログが取得・表示された
+- [ ] クリーンインストールの警告が表示された
+- [ ] ユーザーの確認が得られた
+- [ ] 更新が正常に実行された
+- [ ] 再起動リマインダーが表示された
 </success_criteria>

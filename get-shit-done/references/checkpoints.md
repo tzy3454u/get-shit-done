@@ -1,43 +1,43 @@
 <overview>
-Plans execute autonomously. Checkpoints formalize interaction points where human verification or decisions are needed.
+プランは自律的に実行されます。チェックポイントは、人間による検証や意思決定が必要なインタラクションポイントを形式化します。
 
-**Core principle:** Claude automates everything with CLI/API. Checkpoints are for verification and decisions, not manual work.
+**基本原則:** ClaudeはCLI/APIですべてを自動化します。チェックポイントは検証と意思決定のためであり、手動作業のためではありません。
 
-**Golden rules:**
-1. **If Claude can run it, Claude runs it** - Never ask user to execute CLI commands, start servers, or run builds
-2. **Claude sets up the verification environment** - Start dev servers, seed databases, configure env vars
-3. **User only does what requires human judgment** - Visual checks, UX evaluation, "does this feel right?"
-4. **Secrets come from user, automation comes from Claude** - Ask for API keys, then Claude uses them via CLI
-5. **Auto-mode bypasses verification/decision checkpoints** — When `workflow._auto_chain_active` or `workflow.auto_advance` is true in config: human-verify auto-approves, decision auto-selects first option, human-action still stops (auth gates cannot be automated)
+**ゴールデンルール:**
+1. **Claudeが実行できるなら、Claudeが実行する** - ユーザーにCLIコマンドの実行、サーバーの起動、ビルドの実行を依頼しない
+2. **Claudeが検証環境をセットアップする** - 開発サーバーの起動、データベースのシード、環境変数の設定
+3. **ユーザーは人間の判断が必要なことだけを行う** - 視覚的チェック、UX評価、「これで正しいか？」
+4. **シークレットはユーザーから、自動化はClaudeから** - APIキーを聞いて、ClaudeがCLIで使用する
+5. **自動モードは検証/意思決定チェックポイントをバイパスする** — `workflow._auto_chain_active`または`workflow.auto_advance`がconfigでtrueの場合：human-verifyは自動承認、decisionは最初のオプションを自動選択、human-actionは停止する（認証ゲートは自動化できない）
 </overview>
 
 <checkpoint_types>
 
 <type name="human-verify">
-## checkpoint:human-verify (Most Common - 90%)
+## checkpoint:human-verify（最も一般的 - 90%）
 
-**When:** Claude completed automated work, human confirms it works correctly.
+**使用タイミング:** Claudeが自動化作業を完了し、人間が正しく動作するか確認する。
 
-**Use for:**
-- Visual UI checks (layout, styling, responsiveness)
-- Interactive flows (click through wizard, test user flows)
-- Functional verification (feature works as expected)
-- Audio/video playback quality
-- Animation smoothness
-- Accessibility testing
+**使用対象:**
+- 視覚的なUIチェック（レイアウト、スタイリング、レスポンシブ対応）
+- インタラクティブフロー（ウィザードのクリック操作、ユーザーフローのテスト）
+- 機能検証（機能が期待通りに動作するか）
+- オーディオ/ビデオの再生品質
+- アニメーションの滑らかさ
+- アクセシビリティテスト
 
-**Structure:**
+**構造:**
 ```xml
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>[What Claude automated and deployed/built]</what-built>
+  <what-built>[Claudeが自動化・デプロイ/ビルドした内容]</what-built>
   <how-to-verify>
-    [Exact steps to test - URLs, commands, expected behavior]
+    [テストの正確な手順 - URL、コマンド、期待される動作]
   </how-to-verify>
-  <resume-signal>[How to continue - "approved", "yes", or describe issues]</resume-signal>
+  <resume-signal>[続行方法 - "approved"、"yes"、または問題を説明]</resume-signal>
 </task>
 ```
 
-**Example: UI Component (shows key pattern: Claude starts server BEFORE checkpoint)**
+**例: UIコンポーネント（重要なパターン：Claudeがチェックポイントの前にサーバーを起動する）**
 ```xml
 <task type="auto">
   <name>Build responsive dashboard layout</name>
@@ -67,7 +67,7 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 </task>
 ```
 
-**Example: Xcode Build**
+**例: Xcodeビルド**
 ```xml
 <task type="auto">
   <name>Build macOS app with Xcode</name>
@@ -92,39 +92,39 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 </type>
 
 <type name="decision">
-## checkpoint:decision (9%)
+## checkpoint:decision（9%）
 
-**When:** Human must make choice that affects implementation direction.
+**使用タイミング:** 人間が実装方針に影響する選択をしなければならない。
 
-**Use for:**
-- Technology selection (which auth provider, which database)
-- Architecture decisions (monorepo vs separate repos)
-- Design choices (color scheme, layout approach)
-- Feature prioritization (which variant to build)
-- Data model decisions (schema structure)
+**使用対象:**
+- 技術選定（どの認証プロバイダー、どのデータベース）
+- アーキテクチャの決定（モノレポかリポジトリ分割か）
+- デザインの選択（カラースキーム、レイアウトアプローチ）
+- 機能の優先順位付け（どのバリアントをビルドするか）
+- データモデルの決定（スキーマ構造）
 
-**Structure:**
+**構造:**
 ```xml
 <task type="checkpoint:decision" gate="blocking">
-  <decision>[What's being decided]</decision>
-  <context>[Why this decision matters]</context>
+  <decision>[決定事項]</decision>
+  <context>[この決定が重要な理由]</context>
   <options>
     <option id="option-a">
-      <name>[Option name]</name>
-      <pros>[Benefits]</pros>
-      <cons>[Tradeoffs]</cons>
+      <name>[オプション名]</name>
+      <pros>[メリット]</pros>
+      <cons>[トレードオフ]</cons>
     </option>
     <option id="option-b">
-      <name>[Option name]</name>
-      <pros>[Benefits]</pros>
-      <cons>[Tradeoffs]</cons>
+      <name>[オプション名]</name>
+      <pros>[メリット]</pros>
+      <cons>[トレードオフ]</cons>
     </option>
   </options>
-  <resume-signal>[How to indicate choice]</resume-signal>
+  <resume-signal>[選択の示し方]</resume-signal>
 </task>
 ```
 
-**Example: Auth Provider Selection**
+**例: 認証プロバイダーの選択**
 ```xml
 <task type="checkpoint:decision" gate="blocking">
   <decision>Select authentication provider</decision>
@@ -152,7 +152,7 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 </task>
 ```
 
-**Example: Database Selection**
+**例: データベースの選択**
 ```xml
 <task type="checkpoint:decision" gate="blocking">
   <decision>Select database for user data</decision>
@@ -183,38 +183,38 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 </type>
 
 <type name="human-action">
-## checkpoint:human-action (1% - Rare)
+## checkpoint:human-action（1% - まれ）
 
-**When:** Action has NO CLI/API and requires human-only interaction, OR Claude hit an authentication gate during automation.
+**使用タイミング:** アクションにCLI/APIがなく人間のみの操作が必要、またはClaudeが自動化中に認証ゲートにヒットした。
 
-**Use ONLY for:**
-- **Authentication gates** - Claude tried CLI/API but needs credentials (this is NOT a failure)
-- Email verification links (clicking email)
-- SMS 2FA codes (phone verification)
-- Manual account approvals (platform requires human review)
-- Credit card 3D Secure flows (web-based payment authorization)
-- OAuth app approvals (web-based approval)
+**使用対象（これらのみ）:**
+- **認証ゲート** - ClaudeがCLI/APIを試みたが認証情報が必要（これは失敗ではない）
+- メール認証リンク（メールのクリック）
+- SMS 2FAコード（電話認証）
+- 手動アカウント承認（プラットフォームが人間のレビューを要求）
+- クレジットカード3Dセキュアフロー（Webベースの支払い認可）
+- OAuthアプリの承認（Webベースの承認）
 
-**Do NOT use for pre-planned manual work:**
-- Deploying (use CLI - auth gate if needed)
-- Creating webhooks/databases (use API/CLI - auth gate if needed)
-- Running builds/tests (use Bash tool)
-- Creating files (use Write tool)
+**事前に計画された手動作業には使用しない:**
+- デプロイ（CLIを使用 - 必要に応じて認証ゲート）
+- Webhook/データベースの作成（API/CLIを使用 - 必要に応じて認証ゲート）
+- ビルド/テストの実行（Bashツールを使用）
+- ファイルの作成（Writeツールを使用）
 
-**Structure:**
+**構造:**
 ```xml
 <task type="checkpoint:human-action" gate="blocking">
-  <action>[What human must do - Claude already did everything automatable]</action>
+  <action>[人間が行うべきこと - Claudeは自動化可能なすべてを完了済み]</action>
   <instructions>
-    [What Claude already automated]
-    [The ONE thing requiring human action]
+    [Claudeが既に自動化した内容]
+    [人間のアクションが必要な一つのこと]
   </instructions>
-  <verification>[What Claude can check afterward]</verification>
-  <resume-signal>[How to continue]</resume-signal>
+  <verification>[Claudeが後で確認できること]</verification>
+  <resume-signal>[続行方法]</resume-signal>
 </task>
 ```
 
-**Example: Email Verification**
+**例: メール認証**
 ```xml
 <task type="auto">
   <name>Create SendGrid account via API</name>
@@ -234,7 +234,7 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 </task>
 ```
 
-**Example: Authentication Gate (Dynamic Checkpoint)**
+**例: 認証ゲート（動的チェックポイント）**
 ```xml
 <task type="auto">
   <name>Deploy to Vercel</name>
@@ -243,7 +243,7 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
   <verify>vercel ls shows deployment, curl returns 200</verify>
 </task>
 
-<!-- If vercel returns "Error: Not authenticated", Claude creates checkpoint on the fly -->
+<!-- vercelが"Error: Not authenticated"を返した場合、Claudeがその場でチェックポイントを作成 -->
 
 <task type="checkpoint:human-action" gate="blocking">
   <action>Authenticate Vercel CLI so I can continue deployment</action>
@@ -256,7 +256,7 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
   <resume-signal>Type "done" when authenticated</resume-signal>
 </task>
 
-<!-- After authentication, Claude retries the deployment -->
+<!-- 認証後、Claudeがデプロイを再試行 -->
 
 <task type="auto">
   <name>Retry Vercel deployment</name>
@@ -265,21 +265,21 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 </task>
 ```
 
-**Key distinction:** Auth gates are created dynamically when Claude encounters auth errors. NOT pre-planned — Claude automates first, asks for credentials only when blocked.
+**重要な区別:** 認証ゲートは、Claudeが認証エラーに遭遇したときに動的に作成されます。事前に計画されるものではなく、Claudeがまず自動化を試み、ブロックされた場合にのみ認証情報を求めます。
 </type>
 </checkpoint_types>
 
 <execution_protocol>
 
-When Claude encounters `type="checkpoint:*"`:
+Claudeが`type="checkpoint:*"`に遭遇した場合:
 
-1. **Stop immediately** - do not proceed to next task
-2. **Display checkpoint clearly** using the format below
-3. **Wait for user response** - do not hallucinate completion
-4. **Verify if possible** - check files, run tests, whatever is specified
-5. **Resume execution** - continue to next task only after confirmation
+1. **直ちに停止する** - 次のタスクに進まない
+2. **チェックポイントを明確に表示する** - 以下のフォーマットを使用
+3. **ユーザーの応答を待つ** - 完了をハルシネーションしない
+4. **可能であれば検証する** - ファイルの確認、テストの実行、指定された内容
+5. **実行を再開する** - 確認後にのみ次のタスクに進む
 
-**For checkpoint:human-verify:**
+**checkpoint:human-verifyの場合:**
 ```
 ╔═══════════════════════════════════════════════════════╗
 ║  CHECKPOINT: Verification Required                    ║
@@ -301,7 +301,7 @@ How to verify:
 ────────────────────────────────────────────────────────
 ```
 
-**For checkpoint:decision:**
+**checkpoint:decisionの場合:**
 ```
 ╔═══════════════════════════════════════════════════════╗
 ║  CHECKPOINT: Decision Required                        ║
@@ -332,7 +332,7 @@ Options:
 ────────────────────────────────────────────────────────
 ```
 
-**For checkpoint:human-action:**
+**checkpoint:human-actionの場合:**
 ```
 ╔═══════════════════════════════════════════════════════╗
 ║  CHECKPOINT: Action Required                          ║
@@ -359,32 +359,32 @@ I'll verify: vercel whoami returns your account
 
 <authentication_gates>
 
-**Auth gate = Claude tried CLI/API, got auth error.** Not a failure — a gate requiring human input to unblock.
+**認証ゲート = ClaudeがCLI/APIを試みて、認証エラーが発生した。** 失敗ではなく、ブロック解除のために人間の入力が必要なゲートです。
 
-**Pattern:** Claude tries automation → auth error → creates checkpoint:human-action → user authenticates → Claude retries → continues
+**パターン:** Claudeが自動化を試みる → 認証エラー → checkpoint:human-actionを作成 → ユーザーが認証 → Claudeが再試行 → 続行
 
-**Gate protocol:**
-1. Recognize it's not a failure - missing auth is expected
-2. Stop current task - don't retry repeatedly
-3. Create checkpoint:human-action dynamically
-4. Provide exact authentication steps
-5. Verify authentication works
-6. Retry the original task
-7. Continue normally
+**ゲートプロトコル:**
+1. 失敗ではないことを認識する - 認証がないのは想定内
+2. 現在のタスクを停止する - 繰り返しリトライしない
+3. checkpoint:human-actionを動的に作成する
+4. 正確な認証手順を提供する
+5. 認証が機能することを確認する
+6. 元のタスクを再試行する
+7. 通常通り続行する
 
-**Key distinction:**
-- Pre-planned checkpoint: "I need you to do X" (wrong - Claude should automate)
-- Auth gate: "I tried to automate X but need credentials" (correct - unblocks automation)
+**重要な区別:**
+- 事前計画されたチェックポイント: 「Xをしてください」（間違い - Claudeが自動化すべき）
+- 認証ゲート: 「Xを自動化しようとしましたが認証情報が必要です」（正しい - 自動化のブロック解除）
 
 </authentication_gates>
 
 <automation_reference>
 
-**The rule:** If it has CLI/API, Claude does it. Never ask human to perform automatable work.
+**ルール:** CLI/APIがあれば、Claudeが実行する。自動化可能な作業を人間に依頼しない。
 
-## Service CLI Reference
+## サービスCLIリファレンス
 
-| Service | CLI/API | Key Commands | Auth Gate |
+| サービス | CLI/API | 主要コマンド | 認証ゲート |
 |---------|---------|--------------|-----------|
 | Vercel | `vercel` | `--yes`, `env add`, `--prod`, `ls` | `vercel login` |
 | Railway | `railway` | `init`, `up`, `variables set` | `railway login` |
@@ -398,13 +398,13 @@ I'll verify: vercel whoami returns your account
 | Xcode | `xcodebuild` | `-project`, `-scheme`, `build`, `test` | N/A |
 | Convex | `npx convex` | `dev`, `deploy`, `env set`, `env get` | `npx convex login` |
 
-## Environment Variable Automation
+## 環境変数の自動化
 
-**Env files:** Use Write/Edit tools. Never ask human to create .env manually.
+**環境ファイル:** Write/Editツールを使用する。ユーザーに手動で.envを作成させない。
 
-**Dashboard env vars via CLI:**
+**CLIによるダッシュボード環境変数:**
 
-| Platform | CLI Command | Example |
+| プラットフォーム | CLIコマンド | 例 |
 |----------|-------------|---------|
 | Convex | `npx convex env set` | `npx convex env set OPENAI_API_KEY sk-...` |
 | Vercel | `vercel env add` | `vercel env add STRIPE_KEY production` |
@@ -412,15 +412,15 @@ I'll verify: vercel whoami returns your account
 | Fly | `fly secrets set` | `fly secrets set DATABASE_URL=...` |
 | Supabase | `supabase secrets set` | `supabase secrets set MY_SECRET=value` |
 
-**Secret collection pattern:**
+**シークレット収集パターン:**
 ```xml
-<!-- WRONG: Asking user to add env vars in dashboard -->
+<!-- 間違い: ダッシュボードで環境変数を追加するようユーザーに依頼 -->
 <task type="checkpoint:human-action">
   <action>Add OPENAI_API_KEY to Convex dashboard</action>
   <instructions>Go to dashboard.convex.dev → Settings → Environment Variables → Add</instructions>
 </task>
 
-<!-- RIGHT: Claude asks for value, then adds via CLI -->
+<!-- 正しい: Claudeが値を聞いて、CLIで追加 -->
 <task type="checkpoint:human-action">
   <action>Provide your OpenAI API key</action>
   <instructions>
@@ -439,66 +439,66 @@ I'll verify: vercel whoami returns your account
 </task>
 ```
 
-## Dev Server Automation
+## 開発サーバーの自動化
 
-| Framework | Start Command | Ready Signal | Default URL |
+| フレームワーク | 起動コマンド | 準備完了シグナル | デフォルトURL |
 |-----------|---------------|--------------|-------------|
 | Next.js | `npm run dev` | "Ready in" or "started server" | http://localhost:3000 |
 | Vite | `npm run dev` | "ready in" | http://localhost:5173 |
-| Convex | `npx convex dev` | "Convex functions ready" | N/A (backend only) |
+| Convex | `npx convex dev` | "Convex functions ready" | N/A（バックエンドのみ） |
 | Express | `npm start` | "listening on port" | http://localhost:3000 |
 | Django | `python manage.py runserver` | "Starting development server" | http://localhost:8000 |
 
-**Server lifecycle:**
+**サーバーのライフサイクル:**
 ```bash
-# Run in background, capture PID
+# バックグラウンドで実行、PIDを取得
 npm run dev &
 DEV_SERVER_PID=$!
 
-# Wait for ready (max 30s)
+# 準備完了を待つ（最大30秒）
 timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; done'
 ```
 
-**Port conflicts:** Kill stale process (`lsof -ti:3000 | xargs kill`) or use alternate port (`--port 3001`).
+**ポート競合:** 古いプロセスをkill（`lsof -ti:3000 | xargs kill`）するか、別のポートを使用する（`--port 3001`）。
 
-**Server stays running** through checkpoints. Only kill when plan complete, switching to production, or port needed for different service.
+**サーバーはチェックポイント中も実行し続ける。** プランが完了した時、本番環境に切り替える時、またはポートが別のサービスに必要な時のみkillする。
 
-## CLI Installation Handling
+## CLIインストール処理
 
-| CLI | Auto-install? | Command |
+| CLI | 自動インストール? | コマンド |
 |-----|---------------|---------|
-| npm/pnpm/yarn | No - ask user | User chooses package manager |
-| vercel | Yes | `npm i -g vercel` |
-| gh (GitHub) | Yes | `brew install gh` (macOS) or `apt install gh` (Linux) |
-| stripe | Yes | `npm i -g stripe` |
-| supabase | Yes | `npm i -g supabase` |
-| convex | No - use npx | `npx convex` (no install needed) |
-| fly | Yes | `brew install flyctl` or curl installer |
-| railway | Yes | `npm i -g @railway/cli` |
+| npm/pnpm/yarn | いいえ - ユーザーに確認 | ユーザーがパッケージマネージャーを選択 |
+| vercel | はい | `npm i -g vercel` |
+| gh (GitHub) | はい | `brew install gh`（macOS）または`apt install gh`（Linux） |
+| stripe | はい | `npm i -g stripe` |
+| supabase | はい | `npm i -g supabase` |
+| convex | いいえ - npxを使用 | `npx convex`（インストール不要） |
+| fly | はい | `brew install flyctl`またはcurlインストーラー |
+| railway | はい | `npm i -g @railway/cli` |
 
-**Protocol:** Try command → "command not found" → auto-installable? → yes: install silently, retry → no: checkpoint asking user to install.
+**プロトコル:** コマンド実行 → "command not found" → 自動インストール可能？ → はい: サイレントインストール、再試行 → いいえ: ユーザーにインストールを求めるチェックポイント。
 
-## Pre-Checkpoint Automation Failures
+## チェックポイント前の自動化失敗
 
-| Failure | Response |
+| 失敗 | 対応 |
 |---------|----------|
-| Server won't start | Check error, fix issue, retry (don't proceed to checkpoint) |
-| Port in use | Kill stale process or use alternate port |
-| Missing dependency | Run `npm install`, retry |
-| Build error | Fix the error first (bug, not checkpoint issue) |
-| Auth error | Create auth gate checkpoint |
-| Network timeout | Retry with backoff, then checkpoint if persistent |
+| サーバーが起動しない | エラーを確認、問題を修正、再試行（チェックポイントに進まない） |
+| ポート使用中 | 古いプロセスをkillするか別のポートを使用 |
+| 依存関係が不足 | `npm install`を実行、再試行 |
+| ビルドエラー | まずエラーを修正（バグであり、チェックポイントの問題ではない） |
+| 認証エラー | 認証ゲートチェックポイントを作成 |
+| ネットワークタイムアウト | バックオフで再試行、持続する場合はチェックポイント |
 
-**Never present a checkpoint with broken verification environment.** If `curl localhost:3000` fails, don't ask user to "visit localhost:3000".
+**壊れた検証環境でチェックポイントを提示しない。** `curl localhost:3000`が失敗するなら、ユーザーに「localhost:3000にアクセスしてください」と依頼しない。
 
 ```xml
-<!-- WRONG: Checkpoint with broken environment -->
+<!-- 間違い: 壊れた環境でのチェックポイント -->
 <task type="checkpoint:human-verify">
   <what-built>Dashboard (server failed to start)</what-built>
   <how-to-verify>Visit http://localhost:3000...</how-to-verify>
 </task>
 
-<!-- RIGHT: Fix first, then checkpoint -->
+<!-- 正しい: まず修正してからチェックポイント -->
 <task type="auto">
   <name>Fix server startup issue</name>
   <action>Investigate error, fix root cause, restart server</action>
@@ -511,54 +511,54 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-## Automatable Quick Reference
+## 自動化可能なクイックリファレンス
 
-| Action | Automatable? | Claude does it? |
+| アクション | 自動化可能? | Claudeが実行? |
 |--------|--------------|-----------------|
-| Deploy to Vercel | Yes (`vercel`) | YES |
-| Create Stripe webhook | Yes (API) | YES |
-| Write .env file | Yes (Write tool) | YES |
-| Create Upstash DB | Yes (`upstash`) | YES |
-| Run tests | Yes (`npm test`) | YES |
-| Start dev server | Yes (`npm run dev`) | YES |
-| Add env vars to Convex | Yes (`npx convex env set`) | YES |
-| Add env vars to Vercel | Yes (`vercel env add`) | YES |
-| Seed database | Yes (CLI/API) | YES |
-| Click email verification link | No | NO |
-| Enter credit card with 3DS | No | NO |
-| Complete OAuth in browser | No | NO |
-| Visually verify UI looks correct | No | NO |
-| Test interactive user flows | No | NO |
+| Vercelにデプロイ | はい（`vercel`） | はい |
+| Stripe webhookの作成 | はい（API） | はい |
+| .envファイルの記述 | はい（Writeツール） | はい |
+| Upstash DBの作成 | はい（`upstash`） | はい |
+| テストの実行 | はい（`npm test`） | はい |
+| 開発サーバーの起動 | はい（`npm run dev`） | はい |
+| Convexへの環境変数追加 | はい（`npx convex env set`） | はい |
+| Vercelへの環境変数追加 | はい（`vercel env add`） | はい |
+| データベースのシード | はい（CLI/API） | はい |
+| メール認証リンクのクリック | いいえ | いいえ |
+| 3DSクレジットカード入力 | いいえ | いいえ |
+| ブラウザでのOAuth完了 | いいえ | いいえ |
+| UIが正しく見えるかの視覚的検証 | いいえ | いいえ |
+| インタラクティブなユーザーフローのテスト | いいえ | いいえ |
 
 </automation_reference>
 
 <writing_guidelines>
 
-**DO:**
-- Automate everything with CLI/API before checkpoint
-- Be specific: "Visit https://myapp.vercel.app" not "check deployment"
-- Number verification steps
-- State expected outcomes: "You should see X"
-- Provide context: why this checkpoint exists
+**すべきこと:**
+- チェックポイントの前にCLI/APIですべてを自動化する
+- 具体的に書く: 「デプロイメントを確認」ではなく「https://myapp.vercel.app にアクセス」
+- 検証ステップに番号を付ける
+- 期待される結果を記述する: 「Xが表示されるはずです」
+- コンテキストを提供する: なぜこのチェックポイントが存在するか
 
-**DON'T:**
-- Ask human to do work Claude can automate ❌
-- Assume knowledge: "Configure the usual settings" ❌
-- Skip steps: "Set up database" (too vague) ❌
-- Mix multiple verifications in one checkpoint ❌
+**すべきでないこと:**
+- Claudeが自動化できる作業を人間に依頼する
+- 知識を前提にする: 「通常の設定を行ってください」
+- ステップを省略する: 「データベースをセットアップ」（曖昧すぎる）
+- 複数の検証を1つのチェックポイントに混在させる
 
-**Placement:**
-- **After automation completes** - not before Claude does the work
-- **After UI buildout** - before declaring phase complete
-- **Before dependent work** - decisions before implementation
-- **At integration points** - after configuring external services
+**配置:**
+- **自動化完了後** - Claudeが作業を行う前ではない
+- **UIビルドアウト後** - フェーズ完了を宣言する前
+- **依存する作業の前** - 実装前の意思決定
+- **統合ポイント** - 外部サービスの設定後
 
-**Bad placement:** Before automation ❌ | Too frequent ❌ | Too late (dependent tasks already needed the result) ❌
+**悪い配置:** 自動化の前 | 頻度が高すぎる | 遅すぎる（依存タスクが既に結果を必要としていた）
 </writing_guidelines>
 
 <examples>
 
-### Example 1: Database Setup (No Checkpoint Needed)
+### 例1: データベースセットアップ（チェックポイント不要）
 
 ```xml
 <task type="auto">
@@ -578,10 +578,10 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
   <done>Redis database created and configured</done>
 </task>
 
-<!-- NO CHECKPOINT NEEDED - Claude automated everything and verified programmatically -->
+<!-- チェックポイント不要 - Claudeがすべてを自動化し、プログラム的に検証済み -->
 ```
 
-### Example 2: Full Auth Flow (Single checkpoint at end)
+### 例2: 完全な認証フロー（最後に1つのチェックポイント）
 
 ```xml
 <task type="auto">
@@ -612,7 +612,7 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
   <done>Dev server running at http://localhost:3000</done>
 </task>
 
-<!-- ONE checkpoint at end verifies the complete flow -->
+<!-- 最後に1つのチェックポイントで完全なフローを検証 -->
 <task type="checkpoint:human-verify" gate="blocking">
   <what-built>Complete authentication flow - dev server running at http://localhost:3000</what-built>
   <how-to-verify>
@@ -630,7 +630,7 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 
 <anti_patterns>
 
-### ❌ BAD: Asking user to start dev server
+### 悪い例: ユーザーに開発サーバーの起動を依頼
 
 ```xml
 <task type="checkpoint:human-verify" gate="blocking">
@@ -643,9 +643,9 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-**Why bad:** Claude can run `npm run dev`. User should only visit URLs, not execute commands.
+**なぜ悪いか:** Claudeが`npm run dev`を実行できる。ユーザーはURLにアクセスするだけで、コマンドを実行すべきではない。
 
-### ✅ GOOD: Claude starts server, user visits
+### 良い例: Claudeがサーバーを起動、ユーザーがアクセス
 
 ```xml
 <task type="auto">
@@ -664,16 +664,16 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-### ❌ BAD: Asking human to deploy / ✅ GOOD: Claude automates
+### 悪い例: 人間にデプロイを依頼 / 良い例: Claudeが自動化
 
 ```xml
-<!-- BAD: Asking user to deploy via dashboard -->
+<!-- 悪い: ダッシュボードでデプロイするようユーザーに依頼 -->
 <task type="checkpoint:human-action" gate="blocking">
   <action>Deploy to Vercel</action>
   <instructions>Visit vercel.com/new → Import repo → Click Deploy → Copy URL</instructions>
 </task>
 
-<!-- GOOD: Claude deploys, user verifies -->
+<!-- 良い: Claudeがデプロイ、ユーザーが検証 -->
 <task type="auto">
   <name>Deploy to Vercel</name>
   <action>Run `vercel --yes`. Capture URL.</action>
@@ -687,10 +687,10 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-### ❌ BAD: Too many checkpoints / ✅ GOOD: Single checkpoint
+### 悪い例: チェックポイントが多すぎる / 良い例: 単一チェックポイント
 
 ```xml
-<!-- BAD: Checkpoint after every task -->
+<!-- 悪い: 各タスクの後にチェックポイント -->
 <task type="auto">Create schema</task>
 <task type="checkpoint:human-verify">Check schema</task>
 <task type="auto">Create API route</task>
@@ -698,7 +698,7 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 <task type="auto">Create UI form</task>
 <task type="checkpoint:human-verify">Check form</task>
 
-<!-- GOOD: One checkpoint at end -->
+<!-- 良い: 最後に1つのチェックポイント -->
 <task type="auto">Create schema</task>
 <task type="auto">Create API route</task>
 <task type="auto">Create UI form</task>
@@ -710,16 +710,16 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-### ❌ BAD: Vague verification / ✅ GOOD: Specific steps
+### 悪い例: 曖昧な検証 / 良い例: 具体的な手順
 
 ```xml
-<!-- BAD -->
+<!-- 悪い -->
 <task type="checkpoint:human-verify">
   <what-built>Dashboard</what-built>
   <how-to-verify>Check it works</how-to-verify>
 </task>
 
-<!-- GOOD -->
+<!-- 良い -->
 <task type="checkpoint:human-verify">
   <what-built>Responsive dashboard - server running at http://localhost:3000</what-built>
   <how-to-verify>
@@ -733,7 +733,7 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-### ❌ BAD: Asking user to run CLI commands
+### 悪い例: ユーザーにCLIコマンドの実行を依頼
 
 ```xml
 <task type="checkpoint:human-action">
@@ -742,9 +742,9 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-**Why bad:** Claude can run these commands. User should never execute CLI commands.
+**なぜ悪いか:** Claudeがこれらのコマンドを実行できる。ユーザーがCLIコマンドを実行すべきではない。
 
-### ❌ BAD: Asking user to copy values between services
+### 悪い例: ユーザーにサービス間で値のコピーを依頼
 
 ```xml
 <task type="checkpoint:human-action">
@@ -753,24 +753,24 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 </task>
 ```
 
-**Why bad:** Stripe has an API. Claude should create the webhook via API and write to .env directly.
+**なぜ悪いか:** StripeにはAPIがある。ClaudeがAPI経由でwebhookを作成し、直接.envに書き込むべき。
 
 </anti_patterns>
 
 <summary>
 
-Checkpoints formalize human-in-the-loop points for verification and decisions, not manual work.
+チェックポイントは、手動作業ではなく、検証と意思決定のための人間参加型ポイントを形式化します。
 
-**The golden rule:** If Claude CAN automate it, Claude MUST automate it.
+**ゴールデンルール:** Claudeが自動化できるなら、Claudeが自動化しなければならない。
 
-**Checkpoint priority:**
-1. **checkpoint:human-verify** (90%) - Claude automated everything, human confirms visual/functional correctness
-2. **checkpoint:decision** (9%) - Human makes architectural/technology choices
-3. **checkpoint:human-action** (1%) - Truly unavoidable manual steps with no API/CLI
+**チェックポイントの優先順位:**
+1. **checkpoint:human-verify**（90%）- Claudeがすべてを自動化し、人間が視覚的/機能的な正しさを確認
+2. **checkpoint:decision**（9%）- 人間がアーキテクチャ/技術の選択を行う
+3. **checkpoint:human-action**（1%）- API/CLIのない本当に避けられない手動ステップ
 
-**When NOT to use checkpoints:**
-- Things Claude can verify programmatically (tests, builds)
-- File operations (Claude can read files)
-- Code correctness (tests and static analysis)
-- Anything automatable via CLI/API
+**チェックポイントを使用しない場合:**
+- Claudeがプログラム的に検証できるもの（テスト、ビルド）
+- ファイル操作（Claudeがファイルを読める）
+- コードの正しさ（テストと静的解析）
+- CLI/APIで自動化可能なすべて
 </summary>

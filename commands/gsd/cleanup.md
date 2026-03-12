@@ -1,11 +1,11 @@
 ---
 name: gsd:cleanup
-description: Archive accumulated phase directories from completed milestones
+description: 完了したマイルストーンから蓄積されたフェーズディレクトリをアーカイブする
 ---
 <objective>
-Archive phase directories from completed milestones into `.planning/milestones/v{X.Y}-phases/`.
+完了したマイルストーンのフェーズディレクトリを `.planning/milestones/v{X.Y}-phases/` にアーカイブします。
 
-Use when `.planning/phases/` has accumulated directories from past milestones.
+`.planning/phases/` に過去のマイルストーンのディレクトリが蓄積されている場合に使用します。
 </objective>
 
 <execution_context>
@@ -13,6 +13,6 @@ Use when `.planning/phases/` has accumulated directories from past milestones.
 </execution_context>
 
 <process>
-Follow the cleanup workflow at @~/.claude/get-shit-done/workflows/cleanup.md.
-Identify completed milestones, show a dry-run summary, and archive on confirmation.
+@~/.claude/get-shit-done/workflows/cleanup.md のクリーンアップワークフローに従います。
+完了したマイルストーンを特定し、ドライラン概要を表示し、確認後にアーカイブを実行します。
 </process>

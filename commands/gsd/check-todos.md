@@ -1,6 +1,6 @@
 ---
 name: gsd:check-todos
-description: List pending todos and select one to work on
+description: 保留中のTodoを一覧表示し、作業するものを選択する
 argument-hint: [area filter]
 allowed-tools:
   - Read
@@ -10,14 +10,14 @@ allowed-tools:
 ---
 
 <objective>
-List all pending todos, allow selection, load full context for the selected todo, and route to appropriate action.
+すべての保留中のTodoを一覧表示し、選択を許可し、選択されたTodoの完全なコンテキストを読み込み、適切なアクションにルーティングする。
 
-Routes to the check-todos workflow which handles:
-- Todo counting and listing with area filtering
-- Interactive selection with full context loading
-- Roadmap correlation checking
-- Action routing (work now, add to phase, brainstorm, create phase)
-- STATE.md updates and git commits
+check-todosワークフローにルーティングし、以下を処理する:
+- エリアフィルタリング付きのTodoカウントとリスト表示
+- 完全なコンテキスト読み込み付きのインタラクティブ選択
+- ロードマップ相関チェック
+- アクションルーティング（今すぐ作業、フェーズに追加、ブレインストーム、フェーズ作成）
+- STATE.mdの更新とGitコミット
 </objective>
 
 <execution_context>
@@ -25,21 +25,22 @@ Routes to the check-todos workflow which handles:
 </execution_context>
 
 <context>
-Arguments: $ARGUMENTS (optional area filter)
+引数: $ARGUMENTS (省略可能なエリアフィルタ)
 
-Todo state and roadmap correlation are loaded in-workflow using `init todos` and targeted reads.
+Todoの状態とロードマップの相関は、`init todos` と対象を絞った読み取りを使用してワークフロー内で読み込まれる。
 </context>
 
 <process>
-**Follow the check-todos workflow** from `@~/.claude/get-shit-done/workflows/check-todos.md`.
+`@~/.claude/get-shit-done/workflows/check-todos.md` の **check-todosワークフローに従う**。
 
-The workflow handles all logic including:
-1. Todo existence checking
-2. Area filtering
-3. Interactive listing and selection
-4. Full context loading with file summaries
-5. Roadmap correlation checking
-6. Action offering and execution
-7. STATE.md updates
-8. Git commits
+ワークフローは以下を含むすべてのロジックを処理する:
+1. Todoの存在確認
+2. エリアフィルタリング
+3. インタラクティブなリスト表示と選択
+4. ファイルサマリー付きの完全なコンテキスト読み込み
+5. ロードマップ相関チェック
+6. アクションの提示と実行
+7. STATE.mdの更新
+8. Gitコミット
 </process>
+</output>

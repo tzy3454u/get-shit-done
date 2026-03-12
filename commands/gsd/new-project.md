@@ -1,6 +1,6 @@
 ---
 name: gsd:new-project
-description: Initialize a new project with deep context gathering and PROJECT.md
+description: 深いコンテキスト収集とPROJECT.mdによる新規プロジェクトの初期化
 argument-hint: "[--auto]"
 allowed-tools:
   - Read
@@ -10,22 +10,22 @@ allowed-tools:
   - AskUserQuestion
 ---
 <context>
-**Flags:**
-- `--auto` — Automatic mode. After config questions, runs research → requirements → roadmap without further interaction. Expects idea document via @ reference.
+**フラグ:**
+- `--auto` — 自動モード。設定の質問後、追加のやり取りなしでリサーチ → 要件定義 → ロードマップを実行します。@参照でアイデアドキュメントを指定してください。
 </context>
 
 <objective>
-Initialize a new project through unified flow: questioning → research (optional) → requirements → roadmap.
+統合フローによる新規プロジェクトの初期化: 質問 → リサーチ（任意） → 要件定義 → ロードマップ。
 
-**Creates:**
-- `.planning/PROJECT.md` — project context
-- `.planning/config.json` — workflow preferences
-- `.planning/research/` — domain research (optional)
-- `.planning/REQUIREMENTS.md` — scoped requirements
-- `.planning/ROADMAP.md` — phase structure
-- `.planning/STATE.md` — project memory
+**作成されるファイル:**
+- `.planning/PROJECT.md` — プロジェクトコンテキスト
+- `.planning/config.json` — ワークフロー設定
+- `.planning/research/` — ドメインリサーチ（任意）
+- `.planning/REQUIREMENTS.md` — スコープされた要件
+- `.planning/ROADMAP.md` — フェーズ構成
+- `.planning/STATE.md` — プロジェクトメモリ
 
-**After this command:** Run `/gsd:plan-phase 1` to start execution.
+**このコマンドの後:** `/gsd:plan-phase 1` を実行して実行を開始してください。
 </objective>
 
 <execution_context>
@@ -37,6 +37,7 @@ Initialize a new project through unified flow: questioning → research (optiona
 </execution_context>
 
 <process>
-Execute the new-project workflow from @~/.claude/get-shit-done/workflows/new-project.md end-to-end.
-Preserve all workflow gates (validation, approvals, commits, routing).
+@~/.claude/get-shit-done/workflows/new-project.md のnew-projectワークフローをエンドツーエンドで実行します。
+すべてのワークフローゲート（バリデーション、承認、commit、ルーティング）を維持してください。
 </process>
+</output>

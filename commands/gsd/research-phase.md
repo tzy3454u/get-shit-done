@@ -1,6 +1,6 @@
 ---
 name: gsd:research-phase
-description: Research how to implement a phase (standalone - usually use /gsd:plan-phase instead)
+description: フェーズの実装方法をリサーチ（スタンドアロン — 通常は/gsd:plan-phaseを使用）
 argument-hint: "[phase]"
 allowed-tools:
   - Read
@@ -9,128 +9,128 @@ allowed-tools:
 ---
 
 <objective>
-Research how to implement a phase. Spawns gsd-phase-researcher agent with phase context.
+フェーズの実装方法をリサーチします。フェーズコンテキスト付きでgsd-phase-researcherエージェントを起動します。
 
-**Note:** This is a standalone research command. For most workflows, use `/gsd:plan-phase` which integrates research automatically.
+**注意:** これはスタンドアロンのリサーチコマンドです。ほとんどのワークフローでは、リサーチを自動的に統合する`/gsd:plan-phase`を使用してください。
 
-**Use this command when:**
-- You want to research without planning yet
-- You want to re-research after planning is complete
-- You need to investigate before deciding if a phase is feasible
+**このコマンドを使用する場合:**
+- 計画を立てる前にリサーチだけしたい場合
+- 計画完了後にリサーチをやり直したい場合
+- フェーズが実現可能かどうか判断する前に調査が必要な場合
 
-**Orchestrator role:** Parse phase, validate against roadmap, check existing research, gather context, spawn researcher agent, present results.
+**オーケストレーターの役割:** フェーズの解析、ロードマップに対する検証、既存リサーチの確認、コンテキストの収集、リサーチャーエージェントの起動、結果の提示。
 
-**Why subagent:** Research burns context fast (WebSearch, Context7 queries, source verification). Fresh 200k context for investigation. Main context stays lean for user interaction.
+**サブエージェントを使う理由:** リサーチはコンテキストを急速に消費します（WebSearch、Context7クエリ、ソース検証）。調査にフレッシュな200kコンテキストを確保。メインコンテキストはユーザーとのやり取りのためにスリムに保ちます。
 </objective>
 
 <context>
-Phase number: $ARGUMENTS (required)
+フェーズ番号: $ARGUMENTS（必須）
 
-Normalize phase input in step 1 before any directory lookups.
+ステップ1でディレクトリ検索を行う前にフェーズ入力を正規化してください。
 </context>
 
 <process>
 
-## 0. Initialize Context
+## 0. コンテキストの初期化
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init phase-op "$ARGUMENTS")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `phase_dir`, `phase_number`, `phase_name`, `phase_found`, `commit_docs`, `has_research`, `state_path`, `requirements_path`, `context_path`, `research_path`.
+init JSONから抽出: `phase_dir`、`phase_number`、`phase_name`、`phase_found`、`commit_docs`、`has_research`、`state_path`、`requirements_path`、`context_path`、`research_path`。
 
-Resolve researcher model:
+リサーチャーモデルを解決:
 ```bash
 RESEARCHER_MODEL=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" resolve-model gsd-phase-researcher --raw)
 ```
 
-## 1. Validate Phase
+## 1. フェーズの検証
 
 ```bash
 PHASE_INFO=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap get-phase "${phase_number}")
 ```
 
-**If `found` is false:** Error and exit. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
+**`found`がfalseの場合:** エラーを出して終了。 **`found`がtrueの場合:** JSONから`phase_number`、`phase_name`、`goal`を抽出。
 
-## 2. Check Existing Research
+## 2. 既存リサーチの確認
 
 ```bash
 ls .planning/phases/${PHASE}-*/RESEARCH.md 2>/dev/null
 ```
 
-**If exists:** Offer: 1) Update research, 2) View existing, 3) Skip. Wait for response.
+**存在する場合:** 提示: 1) リサーチを更新、2) 既存を表示、3) スキップ。応答を待つ。
 
-**If doesn't exist:** Continue.
+**存在しない場合:** 続行。
 
-## 3. Gather Phase Context
+## 3. フェーズコンテキストの収集
 
-Use paths from INIT (do not inline file contents in orchestrator context):
+INITからのパスを使用（オーケストレーターコンテキストにファイル内容をインラインしない）:
 - `requirements_path`
 - `context_path`
 - `state_path`
 
-Present summary with phase description and what files the researcher will load.
+フェーズの説明とリサーチャーがロードするファイルの概要を提示。
 
-## 4. Spawn gsd-phase-researcher Agent
+## 4. gsd-phase-researcherエージェントの起動
 
-Research modes: ecosystem (default), feasibility, implementation, comparison.
+リサーチモード: ecosystem（デフォルト）、feasibility、implementation、comparison。
 
 ```markdown
 <research_type>
-Phase Research — investigating HOW to implement a specific phase well.
+フェーズリサーチ — 特定のフェーズをうまく実装する方法を調査。
 </research_type>
 
 <key_insight>
-The question is NOT "which library should I use?"
+問題は「どのライブラリを使うべきか？」ではありません。
 
-The question is: "What do I not know that I don't know?"
+問題は: 「自分が知らないことで、知らないことは何か？」です。
 
-For this phase, discover:
-- What's the established architecture pattern?
-- What libraries form the standard stack?
-- What problems do people commonly hit?
-- What's SOTA vs what Claude's training thinks is SOTA?
-- What should NOT be hand-rolled?
+このフェーズについて発見すべきこと:
+- 確立されたアーキテクチャパターンは何か？
+- 標準スタックを構成するライブラリは何か？
+- 一般的にどのような問題に遭遇するか？
+- SOTAは何か vs Claudeの学習データが考えるSOTAは何か？
+- 自前で実装すべきでないものは何か？
 </key_insight>
 
 <objective>
-Research implementation approach for Phase {phase_number}: {phase_name}
-Mode: ecosystem
+フェーズ {phase_number}: {phase_name} の実装アプローチをリサーチ
+モード: ecosystem
 </objective>
 
 <files_to_read>
-- {requirements_path} (Requirements)
-- {context_path} (Phase context from discuss-phase, if exists)
-- {state_path} (Prior project decisions and blockers)
+- {requirements_path} (要件)
+- {context_path} (discuss-phaseからのフェーズコンテキスト、存在する場合)
+- {state_path} (過去のプロジェクト決定事項とブロッカー)
 </files_to_read>
 
 <additional_context>
-**Phase description:** {phase_description}
+**フェーズの説明:** {phase_description}
 </additional_context>
 
 <downstream_consumer>
-Your RESEARCH.md will be loaded by `/gsd:plan-phase` which uses specific sections:
-- `## Standard Stack` → Plans use these libraries
-- `## Architecture Patterns` → Task structure follows these
-- `## Don't Hand-Roll` → Tasks NEVER build custom solutions for listed problems
-- `## Common Pitfalls` → Verification steps check for these
-- `## Code Examples` → Task actions reference these patterns
+あなたのRESEARCH.mdは`/gsd:plan-phase`によってロードされ、特定のセクションが使用されます:
+- `## Standard Stack` → 計画はこれらのライブラリを使用
+- `## Architecture Patterns` → タスク構造はこれらに従う
+- `## Don't Hand-Roll` → タスクはリストされた問題に対してカスタムソリューションを構築しない
+- `## Common Pitfalls` → 検証ステップでこれらを確認
+- `## Code Examples` → タスクアクションはこれらのパターンを参照
 
-Be prescriptive, not exploratory. "Use X" not "Consider X or Y."
+探索的ではなく処方的に。「Xを検討する」ではなく「Xを使用する」。
 </downstream_consumer>
 
 <quality_gate>
-Before declaring complete, verify:
-- [ ] All domains investigated (not just some)
-- [ ] Negative claims verified with official docs
-- [ ] Multiple sources for critical claims
-- [ ] Confidence levels assigned honestly
-- [ ] Section names match what plan-phase expects
+完了を宣言する前に検証:
+- [ ] すべてのドメインを調査済み（一部だけでなく）
+- [ ] 否定的な主張を公式ドキュメントで検証済み
+- [ ] 重要な主張に複数のソースを確認
+- [ ] 信頼度レベルを正直に割り当て済み
+- [ ] セクション名がplan-phaseの期待と一致
 </quality_gate>
 
 <output>
-Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
+書き出し先: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
 </output>
 ```
 
@@ -143,24 +143,24 @@ Task(
 )
 ```
 
-## 5. Handle Agent Return
+## 5. エージェントの返却処理
 
-**`## RESEARCH COMPLETE`:** Display summary, offer: Plan phase, Dig deeper, Review full, Done.
+**`## RESEARCH COMPLETE`:** 概要を表示、提示: フェーズを計画、さらに深掘り、全体をレビュー、完了。
 
-**`## CHECKPOINT REACHED`:** Present to user, get response, spawn continuation.
+**`## CHECKPOINT REACHED`:** ユーザーに提示、応答を取得、継続を起動。
 
-**`## RESEARCH INCONCLUSIVE`:** Show what was attempted, offer: Add context, Try different mode, Manual.
+**`## RESEARCH INCONCLUSIVE`:** 試行した内容を表示、提示: コンテキストを追加、別のモードを試行、手動。
 
-## 6. Spawn Continuation Agent
+## 6. 継続エージェントの起動
 
 ```markdown
 <objective>
-Continue research for Phase {phase_number}: {phase_name}
+フェーズ {phase_number}: {phase_name} のリサーチを継続
 </objective>
 
 <prior_state>
 <files_to_read>
-- .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md (Existing research)
+- .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md (既存リサーチ)
 </files_to_read>
 </prior_state>
 
@@ -182,9 +182,10 @@ Task(
 </process>
 
 <success_criteria>
-- [ ] Phase validated against roadmap
-- [ ] Existing research checked
-- [ ] gsd-phase-researcher spawned with context
-- [ ] Checkpoints handled correctly
-- [ ] User knows next steps
+- [ ] フェーズをロードマップに対して検証済み
+- [ ] 既存リサーチを確認済み
+- [ ] gsd-phase-researcherをコンテキスト付きで起動済み
+- [ ] チェックポイントを正しく処理済み
+- [ ] ユーザーが次のステップを把握済み
 </success_criteria>
+</output>

@@ -1,307 +1,307 @@
-# Coding Conventions Template
+# コーディング規約テンプレート
 
-Template for `.planning/codebase/CONVENTIONS.md` - captures coding style and patterns.
+`.planning/codebase/CONVENTIONS.md` 用テンプレート - コーディングスタイルとパターンを記録します。
 
-**Purpose:** Document how code is written in this codebase. Prescriptive guide for Claude to match existing style.
+**目的:** このコードベースでコードがどのように書かれているかを文書化します。Claudeが既存のスタイルに合わせるための規範的ガイド。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
-# Coding Conventions
+# コーディング規約
 
-**Analysis Date:** [YYYY-MM-DD]
+**分析日:** [YYYY-MM-DD]
 
-## Naming Patterns
+## 命名パターン
 
-**Files:**
-- [Pattern: e.g., "kebab-case for all files"]
-- [Test files: e.g., "*.test.ts alongside source"]
-- [Components: e.g., "PascalCase.tsx for React components"]
+**ファイル:**
+- [パターン: 例: "すべてのファイルにkebab-case"]
+- [テストファイル: 例: "ソースと並んで*.test.ts"]
+- [コンポーネント: 例: "ReactコンポーネントにPascalCase.tsx"]
 
-**Functions:**
-- [Pattern: e.g., "camelCase for all functions"]
-- [Async: e.g., "no special prefix for async functions"]
-- [Handlers: e.g., "handleEventName for event handlers"]
+**関数:**
+- [パターン: 例: "すべての関数にcamelCase"]
+- [非同期: 例: "非同期関数に特別なプレフィックスなし"]
+- [ハンドラー: 例: "イベントハンドラーにhandleEventName"]
 
-**Variables:**
-- [Pattern: e.g., "camelCase for variables"]
-- [Constants: e.g., "UPPER_SNAKE_CASE for constants"]
-- [Private: e.g., "_prefix for private members" or "no prefix"]
+**変数:**
+- [パターン: 例: "変数にcamelCase"]
+- [定数: 例: "定数にUPPER_SNAKE_CASE"]
+- [プライベート: 例: "プライベートメンバーに_プレフィックス"または"プレフィックスなし"]
 
-**Types:**
-- [Interfaces: e.g., "PascalCase, no I prefix"]
-- [Types: e.g., "PascalCase for type aliases"]
-- [Enums: e.g., "PascalCase for enum name, UPPER_CASE for values"]
+**型:**
+- [インターフェース: 例: "PascalCase、Iプレフィックスなし"]
+- [型: 例: "型エイリアスにPascalCase"]
+- [列挙型: 例: "列挙型名にPascalCase、値にUPPER_CASE"]
 
-## Code Style
+## コードスタイル
 
-**Formatting:**
-- [Tool: e.g., "Prettier with config in .prettierrc"]
-- [Line length: e.g., "100 characters max"]
-- [Quotes: e.g., "single quotes for strings"]
-- [Semicolons: e.g., "required" or "omitted"]
+**フォーマット:**
+- [ツール: 例: ".prettierrcの設定でPrettier"]
+- [行の長さ: 例: "最大100文字"]
+- [クォート: 例: "文字列にシングルクォート"]
+- [セミコロン: 例: "必須"または"省略"]
 
-**Linting:**
-- [Tool: e.g., "ESLint with eslint.config.js"]
-- [Rules: e.g., "extends airbnb-base, no console in production"]
-- [Run: e.g., "npm run lint"]
+**リンティング:**
+- [ツール: 例: "eslint.config.jsでESLint"]
+- [ルール: 例: "airbnb-baseを拡張、本番環境でconsole禁止"]
+- [実行: 例: "npm run lint"]
 
-## Import Organization
+## インポートの整理
 
-**Order:**
-1. [e.g., "External packages (react, express, etc.)"]
-2. [e.g., "Internal modules (@/lib, @/components)"]
-3. [e.g., "Relative imports (., ..)"]
-4. [e.g., "Type imports (import type {})"]
+**順序:**
+1. [例: "外部パッケージ（react, express等）"]
+2. [例: "内部モジュール（@/lib, @/components）"]
+3. [例: "相対インポート（., ..）"]
+4. [例: "型インポート（import type {}）"]
 
-**Grouping:**
-- [Blank lines: e.g., "blank line between groups"]
-- [Sorting: e.g., "alphabetical within each group"]
+**グループ分け:**
+- [空行: 例: "グループ間に空行"]
+- [ソート: 例: "各グループ内でアルファベット順"]
 
-**Path Aliases:**
-- [Aliases used: e.g., "@/ for src/, @components/ for src/components/"]
+**パスエイリアス:**
+- [使用エイリアス: 例: "@/はsrc/、@components/はsrc/components/に対応"]
 
-## Error Handling
+## エラーハンドリング
 
-**Patterns:**
-- [Strategy: e.g., "throw errors, catch at boundaries"]
-- [Custom errors: e.g., "extend Error class, named *Error"]
-- [Async: e.g., "use try/catch, no .catch() chains"]
+**パターン:**
+- [戦略: 例: "エラーをスロー、境界でキャッチ"]
+- [カスタムエラー: 例: "Errorクラスを拡張、*Errorと命名"]
+- [非同期: 例: "try/catchを使用、.catch()チェーンは使用しない"]
 
-**Error Types:**
-- [When to throw: e.g., "invalid input, missing dependencies"]
-- [When to return: e.g., "expected failures return Result<T, E>"]
-- [Logging: e.g., "log error with context before throwing"]
+**エラーの種類:**
+- [スローする場合: 例: "無効な入力、依存関係の欠如"]
+- [返す場合: 例: "予想される失敗はResult<T, E>を返す"]
+- [ロギング: 例: "スロー前にコンテキスト付きでエラーをログ"]
 
-## Logging
+## ロギング
 
-**Framework:**
-- [Tool: e.g., "console.log, pino, winston"]
-- [Levels: e.g., "debug, info, warn, error"]
+**フレームワーク:**
+- [ツール: 例: "console.log, pino, winston"]
+- [レベル: 例: "debug, info, warn, error"]
 
-**Patterns:**
-- [Format: e.g., "structured logging with context object"]
-- [When: e.g., "log state transitions, external calls"]
-- [Where: e.g., "log at service boundaries, not in utils"]
+**パターン:**
+- [フォーマット: 例: "コンテキストオブジェクト付き構造化ロギング"]
+- [タイミング: 例: "状態遷移、外部呼び出し時にログ"]
+- [場所: 例: "サービス境界でログ、ユーティリティではログしない"]
 
-## Comments
+## コメント
 
-**When to Comment:**
-- [e.g., "explain why, not what"]
-- [e.g., "document business logic, algorithms, edge cases"]
-- [e.g., "avoid obvious comments like // increment counter"]
+**コメントすべき場合:**
+- [例: "何をではなく、なぜを説明"]
+- [例: "ビジネスロジック、アルゴリズム、エッジケースを文書化"]
+- [例: "// カウンターをインクリメントのような明白なコメントは避ける"]
 
 **JSDoc/TSDoc:**
-- [Usage: e.g., "required for public APIs, optional for internal"]
-- [Format: e.g., "use @param, @returns, @throws tags"]
+- [使用法: 例: "パブリックAPIには必須、内部は任意"]
+- [フォーマット: 例: "@param, @returns, @throwsタグを使用"]
 
-**TODO Comments:**
-- [Pattern: e.g., "// TODO(username): description"]
-- [Tracking: e.g., "link to issue number if available"]
+**TODOコメント:**
+- [パターン: 例: "// TODO(username): 説明"]
+- [追跡: 例: "可能ならイシュー番号にリンク"]
 
-## Function Design
+## 関数設計
 
-**Size:**
-- [e.g., "keep under 50 lines, extract helpers"]
+**サイズ:**
+- [例: "50行以内に収める、ヘルパーを抽出"]
 
-**Parameters:**
-- [e.g., "max 3 parameters, use object for more"]
-- [e.g., "destructure objects in parameter list"]
+**パラメータ:**
+- [例: "最大3パラメータ、それ以上はオブジェクトを使用"]
+- [例: "パラメータリストでオブジェクトを分割代入"]
 
-**Return Values:**
-- [e.g., "explicit returns, no implicit undefined"]
-- [e.g., "return early for guard clauses"]
+**戻り値:**
+- [例: "明示的なreturn、暗黙のundefinedなし"]
+- [例: "ガード句にはearly return"]
 
-## Module Design
+## モジュール設計
 
-**Exports:**
-- [e.g., "named exports preferred, default exports for React components"]
-- [e.g., "export from index.ts for public API"]
+**エクスポート:**
+- [例: "名前付きエクスポート推奨、Reactコンポーネントのみデフォルトエクスポート"]
+- [例: "パブリックAPIはindex.tsからエクスポート"]
 
-**Barrel Files:**
-- [e.g., "use index.ts to re-export public API"]
-- [e.g., "avoid circular dependencies"]
+**バレルファイル:**
+- [例: "パブリックAPIの再エクスポートにindex.tsを使用"]
+- [例: "循環依存を避ける"]
 
 ---
 
-*Convention analysis: [date]*
-*Update when patterns change*
+*規約分析: [日付]*
+*パターンが変更された際に更新*
 ```
 
 <good_examples>
 ```markdown
-# Coding Conventions
+# コーディング規約
 
-**Analysis Date:** 2025-01-20
+**分析日:** 2025-01-20
 
-## Naming Patterns
+## 命名パターン
 
-**Files:**
-- kebab-case for all files (command-handler.ts, user-service.ts)
-- *.test.ts alongside source files
-- index.ts for barrel exports
+**ファイル:**
+- すべてのファイルにkebab-case（command-handler.ts, user-service.ts）
+- ソースファイルと並んで*.test.ts
+- バレルエクスポートにindex.ts
 
-**Functions:**
-- camelCase for all functions
-- No special prefix for async functions
-- handleEventName for event handlers (handleClick, handleSubmit)
+**関数:**
+- すべての関数にcamelCase
+- 非同期関数に特別なプレフィックスなし
+- イベントハンドラーにhandleEventName（handleClick, handleSubmit）
 
-**Variables:**
-- camelCase for variables
-- UPPER_SNAKE_CASE for constants (MAX_RETRIES, API_BASE_URL)
-- No underscore prefix (no private marker in TS)
+**変数:**
+- 変数にcamelCase
+- 定数にUPPER_SNAKE_CASE（MAX_RETRIES, API_BASE_URL）
+- アンダースコアプレフィックスなし（TSにプライベートマーカーなし）
 
-**Types:**
-- PascalCase for interfaces, no I prefix (User, not IUser)
-- PascalCase for type aliases (UserConfig, ResponseData)
-- PascalCase for enum names, UPPER_CASE for values (Status.PENDING)
+**型:**
+- インターフェースにPascalCase、Iプレフィックスなし（IUserではなくUser）
+- 型エイリアスにPascalCase（UserConfig, ResponseData）
+- 列挙型名にPascalCase、値にUPPER_CASE（Status.PENDING）
 
-## Code Style
+## コードスタイル
 
-**Formatting:**
-- Prettier with .prettierrc
-- 100 character line length
-- Single quotes for strings
-- Semicolons required
-- 2 space indentation
+**フォーマット:**
+- .prettierrcでPrettier
+- 行の長さ100文字
+- 文字列にシングルクォート
+- セミコロン必須
+- 2スペースインデント
 
-**Linting:**
-- ESLint with eslint.config.js
-- Extends @typescript-eslint/recommended
-- No console.log in production code (use logger)
-- Run: npm run lint
+**リンティング:**
+- eslint.config.jsでESLint
+- @typescript-eslint/recommendedを拡張
+- 本番コードでconsole.log禁止（loggerを使用）
+- 実行: npm run lint
 
-## Import Organization
+## インポートの整理
 
-**Order:**
-1. External packages (react, express, commander)
-2. Internal modules (@/lib, @/services)
-3. Relative imports (./utils, ../types)
-4. Type imports (import type { User })
+**順序:**
+1. 外部パッケージ（react, express, commander）
+2. 内部モジュール（@/lib, @/services）
+3. 相対インポート（./utils, ../types）
+4. 型インポート（import type { User }）
 
-**Grouping:**
-- Blank line between groups
-- Alphabetical within each group
-- Type imports last within each group
+**グループ分け:**
+- グループ間に空行
+- 各グループ内でアルファベット順
+- 型インポートは各グループ内で最後
 
-**Path Aliases:**
-- @/ maps to src/
-- No other aliases defined
+**パスエイリアス:**
+- @/はsrc/に対応
+- その他のエイリアスは未定義
 
-## Error Handling
+## エラーハンドリング
 
-**Patterns:**
-- Throw errors, catch at boundaries (route handlers, main functions)
-- Extend Error class for custom errors (ValidationError, NotFoundError)
-- Async functions use try/catch, no .catch() chains
+**パターン:**
+- エラーをスロー、境界でキャッチ（ルートハンドラー、メイン関数）
+- カスタムエラーはErrorクラスを拡張（ValidationError, NotFoundError）
+- 非同期関数はtry/catchを使用、.catch()チェーンは使用しない
 
-**Error Types:**
-- Throw on invalid input, missing dependencies, invariant violations
-- Log error with context before throwing: logger.error({ err, userId }, 'Failed to process')
-- Include cause in error message: new Error('Failed to X', { cause: originalError })
+**エラーの種類:**
+- 無効な入力、依存関係の欠如、不変条件違反時にスロー
+- スロー前にコンテキスト付きでエラーをログ: logger.error({ err, userId }, 'Failed to process')
+- エラーメッセージにcauseを含める: new Error('Failed to X', { cause: originalError })
 
-## Logging
+## ロギング
 
-**Framework:**
-- pino logger instance exported from lib/logger.ts
-- Levels: debug, info, warn, error (no trace)
+**フレームワーク:**
+- lib/logger.tsからエクスポートされたpinoロガーインスタンス
+- レベル: debug, info, warn, error（traceなし）
 
-**Patterns:**
-- Structured logging with context: logger.info({ userId, action }, 'User action')
-- Log at service boundaries, not in utility functions
-- Log state transitions, external API calls, errors
-- No console.log in committed code
+**パターン:**
+- コンテキスト付き構造化ロギング: logger.info({ userId, action }, 'User action')
+- サービス境界でログ、ユーティリティ関数ではログしない
+- 状態遷移、外部APIコール、エラーをログ
+- コミットされたコードにconsole.log禁止
 
-## Comments
+## コメント
 
-**When to Comment:**
-- Explain why, not what: // Retry 3 times because API has transient failures
-- Document business rules: // Users must verify email within 24 hours
-- Explain non-obvious algorithms or workarounds
-- Avoid obvious comments: // set count to 0
+**コメントすべき場合:**
+- 何をではなく、なぜを説明: // APIに一時的な障害があるため3回リトライ
+- ビジネスルールを文書化: // ユーザーは24時間以内にメールを確認する必要がある
+- 非自明なアルゴリズムやワークアラウンドを説明
+- 明白なコメントを避ける: // countを0に設定
 
 **JSDoc/TSDoc:**
-- Required for public API functions
-- Optional for internal functions if signature is self-explanatory
-- Use @param, @returns, @throws tags
+- パブリックAPI関数には必須
+- シグネチャが自明な内部関数には任意
+- @param, @returns, @throwsタグを使用
 
-**TODO Comments:**
-- Format: // TODO: description (no username, using git blame)
-- Link to issue if exists: // TODO: Fix race condition (issue #123)
+**TODOコメント:**
+- フォーマット: // TODO: 説明（ユーザー名なし、git blameを使用）
+- イシューがあればリンク: // TODO: 競合状態を修正 (issue #123)
 
-## Function Design
+## 関数設計
 
-**Size:**
-- Keep under 50 lines
-- Extract helpers for complex logic
-- One level of abstraction per function
+**サイズ:**
+- 50行以内に収める
+- 複雑なロジックにはヘルパーを抽出
+- 関数ごとに1つの抽象化レベル
 
-**Parameters:**
-- Max 3 parameters
-- Use options object for 4+ parameters: function create(options: CreateOptions)
-- Destructure in parameter list: function process({ id, name }: ProcessParams)
+**パラメータ:**
+- 最大3パラメータ
+- 4つ以上のパラメータにはオプションオブジェクトを使用: function create(options: CreateOptions)
+- パラメータリストで分割代入: function process({ id, name }: ProcessParams)
 
-**Return Values:**
-- Explicit return statements
-- Return early for guard clauses
-- Use Result<T, E> type for expected failures
+**戻り値:**
+- 明示的なreturn文
+- ガード句にはearly return
+- 予想される失敗にはResult<T, E>型を使用
 
-## Module Design
+## モジュール設計
 
-**Exports:**
-- Named exports preferred
-- Default exports only for React components
-- Export public API from index.ts barrel files
+**エクスポート:**
+- 名前付きエクスポート推奨
+- デフォルトエクスポートはReactコンポーネントのみ
+- パブリックAPIはindex.tsバレルファイルからエクスポート
 
-**Barrel Files:**
-- index.ts re-exports public API
-- Keep internal helpers private (don't export from index)
-- Avoid circular dependencies (import from specific files if needed)
+**バレルファイル:**
+- index.tsがパブリックAPIを再エクスポート
+- 内部ヘルパーはプライベートに保つ（indexからエクスポートしない）
+- 循環依存を避ける（必要なら特定のファイルからインポート）
 
 ---
 
-*Convention analysis: 2025-01-20*
-*Update when patterns change*
+*規約分析: 2025-01-20*
+*パターンが変更された際に更新*
 ```
 </good_examples>
 
 <guidelines>
-**What belongs in CONVENTIONS.md:**
-- Naming patterns observed in the codebase
-- Formatting rules (Prettier config, linting rules)
-- Import organization patterns
-- Error handling strategy
-- Logging approach
-- Comment conventions
-- Function and module design patterns
+**CONVENTIONS.mdに含めるもの:**
+- コードベースで観察される命名パターン
+- フォーマットルール（Prettier設定、リンティングルール）
+- インポートの整理パターン
+- エラーハンドリング戦略
+- ロギングアプローチ
+- コメント規約
+- 関数とモジュールの設計パターン
 
-**What does NOT belong here:**
-- Architecture decisions (that's ARCHITECTURE.md)
-- Technology choices (that's STACK.md)
-- Test patterns (that's TESTING.md)
-- File organization (that's STRUCTURE.md)
+**ここに含めないもの:**
+- アーキテクチャ上の決定（ARCHITECTURE.mdの範囲）
+- 技術選定（STACK.mdの範囲）
+- テストパターン（TESTING.mdの範囲）
+- ファイル構成（STRUCTURE.mdの範囲）
 
-**When filling this template:**
-- Check .prettierrc, .eslintrc, or similar config files
-- Examine 5-10 representative source files for patterns
-- Look for consistency: if 80%+ follows a pattern, document it
-- Be prescriptive: "Use X" not "Sometimes Y is used"
-- Note deviations: "Legacy code uses Y, new code should use X"
-- Keep under ~150 lines total
+**このテンプレートを記入する際:**
+- .prettierrc、.eslintrc、または類似の設定ファイルを確認
+- 5〜10の代表的なソースファイルでパターンを調査
+- 一貫性を探す: 80%以上がパターンに従っていれば文書化
+- 規範的に記述: 「時々Yが使われる」ではなく「Xを使用」
+- 逸脱に注意: 「レガシーコードはYを使用、新しいコードはXを使うべき」
+- 合計約150行以内に収める
 
-**Useful for phase planning when:**
-- Writing new code (match existing style)
-- Adding features (follow naming patterns)
-- Refactoring (apply consistent conventions)
-- Code review (check against documented patterns)
-- Onboarding (understand style expectations)
+**フェーズ計画で役立つ場面:**
+- 新しいコードの記述（既存スタイルに合わせる）
+- 機能の追加（命名パターンに従う）
+- リファクタリング（一貫した規約を適用）
+- コードレビュー（文書化されたパターンに照らして確認）
+- オンボーディング（スタイルの期待値を理解）
 
-**Analysis approach:**
-- Scan src/ directory for file naming patterns
-- Check package.json scripts for lint/format commands
-- Read 5-10 files to identify function naming, error handling
-- Look for config files (.prettierrc, eslint.config.js)
-- Note patterns in imports, comments, function signatures
+**分析アプローチ:**
+- src/ディレクトリでファイル命名パターンをスキャン
+- package.jsonスクリプトでlint/formatコマンドを確認
+- 5〜10ファイルを読んで関数命名、エラーハンドリングを特定
+- 設定ファイル（.prettierrc、eslint.config.js）を探す
+- インポート、コメント、関数シグネチャのパターンに注目
 </guidelines>

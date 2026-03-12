@@ -1,40 +1,40 @@
 <overview>
-TDD is about design quality, not coverage metrics. The red-green-refactor cycle forces you to think about behavior before implementation, producing cleaner interfaces and more testable code.
+TDDは、カバレッジメトリクスではなく設計品質のためのものです。Red-Green-Refactorサイクルは、実装前に動作について考えることを強制し、よりクリーンなインターフェースとよりテスト可能なコードを生み出します。
 
-**Principle:** If you can describe the behavior as `expect(fn(input)).toBe(output)` before writing `fn`, TDD improves the result.
+**原則:** `expect(fn(input)).toBe(output)`で動作を`fn`を書く前に記述できるなら、TDDは結果を改善します。
 
-**Key insight:** TDD work is fundamentally heavier than standard tasks—it requires 2-3 execution cycles (RED → GREEN → REFACTOR), each with file reads, test runs, and potential debugging. TDD features get dedicated plans to ensure full context is available throughout the cycle.
+**重要な洞察:** TDDの作業は標準的なタスクよりも根本的に重いです — 2-3回の実行サイクル（RED → GREEN → REFACTOR）が必要で、それぞれにファイル読み取り、テスト実行、潜在的なデバッグが含まれます。TDDの機能はサイクル全体を通じて完全なコンテキストを確保するために専用のプランを取得します。
 </overview>
 
 <when_to_use_tdd>
-## When TDD Improves Quality
+## TDDが品質を改善する場合
 
-**TDD candidates (create a TDD plan):**
-- Business logic with defined inputs/outputs
-- API endpoints with request/response contracts
-- Data transformations, parsing, formatting
-- Validation rules and constraints
-- Algorithms with testable behavior
-- State machines and workflows
-- Utility functions with clear specifications
+**TDD候補（TDDプランを作成）:**
+- 定義された入力/出力のあるビジネスロジック
+- リクエスト/レスポンス契約のあるAPIエンドポイント
+- データ変換、パース、フォーマット
+- バリデーションルールと制約
+- テスト可能な動作のあるアルゴリズム
+- ステートマシンとワークフロー
+- 明確な仕様のあるユーティリティ関数
 
-**Skip TDD (use standard plan with `type="auto"` tasks):**
-- UI layout, styling, visual components
-- Configuration changes
-- Glue code connecting existing components
-- One-off scripts and migrations
-- Simple CRUD with no business logic
-- Exploratory prototyping
+**TDDをスキップ（`type="auto"`タスクの標準プランを使用）:**
+- UIレイアウト、スタイリング、ビジュアルコンポーネント
+- 設定変更
+- 既存コンポーネントを接続するグルーコード
+- ワンタイムスクリプトとマイグレーション
+- ビジネスロジックのないシンプルなCRUD
+- 探索的プロトタイピング
 
-**Heuristic:** Can you write `expect(fn(input)).toBe(output)` before writing `fn`?
-→ Yes: Create a TDD plan
-→ No: Use standard plan, add tests after if needed
+**ヒューリスティック:** `fn`を書く前に`expect(fn(input)).toBe(output)`と書けますか？
+→ はい: TDDプランを作成
+→ いいえ: 標準プランを使用、必要に応じて後でテストを追加
 </when_to_use_tdd>
 
 <tdd_plan_structure>
-## TDD Plan Structure
+## TDDプラン構造
 
-Each TDD plan implements **one feature** through the full RED-GREEN-REFACTOR cycle.
+各TDDプランは、完全なRED-GREEN-REFACTORサイクルを通じて**1つの機能**を実装します。
 
 ```markdown
 ---
@@ -44,9 +44,9 @@ type: tdd
 ---
 
 <objective>
-[What feature and why]
-Purpose: [Design benefit of TDD for this feature]
-Output: [Working, tested feature]
+[どの機能でなぜか]
+Purpose: [この機能へのTDDの設計上のメリット]
+Output: [動作する、テスト済みの機能]
 </objective>
 
 <context>
@@ -56,89 +56,89 @@ Output: [Working, tested feature]
 </context>
 
 <feature>
-  <name>[Feature name]</name>
-  <files>[source file, test file]</files>
+  <name>[機能名]</name>
+  <files>[ソースファイル, テストファイル]</files>
   <behavior>
-    [Expected behavior in testable terms]
+    [テスト可能な用語での期待される動作]
     Cases: input → expected output
   </behavior>
-  <implementation>[How to implement once tests pass]</implementation>
+  <implementation>[テストがパスした後の実装方法]</implementation>
 </feature>
 
 <verification>
-[Test command that proves feature works]
+[機能の動作を証明するテストコマンド]
 </verification>
 
 <success_criteria>
-- Failing test written and committed
-- Implementation passes test
-- Refactor complete (if needed)
-- All 2-3 commits present
+- 失敗するテストが書かれてコミットされた
+- 実装がテストをパスする
+- リファクタリング完了（必要な場合）
+- 2-3のコミットがすべて存在
 </success_criteria>
 
 <output>
-After completion, create SUMMARY.md with:
-- RED: What test was written, why it failed
-- GREEN: What implementation made it pass
-- REFACTOR: What cleanup was done (if any)
-- Commits: List of commits produced
+完了後、以下の内容でSUMMARY.mdを作成:
+- RED: どのテストが書かれ、なぜ失敗したか
+- GREEN: どの実装がテストをパスさせたか
+- REFACTOR: どのクリーンアップが行われたか（もしあれば）
+- Commits: 生成されたコミットのリスト
 </output>
 ```
 
-**One feature per TDD plan.** If features are trivial enough to batch, they're trivial enough to skip TDD—use a standard plan and add tests after.
+**1つのTDDプランにつき1つの機能。** 機能がバッチ処理できるほど些細なら、TDDをスキップするほど些細です — 標準プランを使用して後でテストを追加してください。
 </tdd_plan_structure>
 
 <execution_flow>
-## Red-Green-Refactor Cycle
+## Red-Green-Refactorサイクル
 
-**RED - Write failing test:**
-1. Create test file following project conventions
-2. Write test describing expected behavior (from `<behavior>` element)
-3. Run test - it MUST fail
-4. If test passes: feature exists or test is wrong. Investigate.
-5. Commit: `test({phase}-{plan}): add failing test for [feature]`
+**RED - 失敗するテストを書く:**
+1. プロジェクトの慣例に従ってテストファイルを作成
+2. 期待される動作を記述するテストを書く（`<behavior>`要素から）
+3. テストを実行 - 必ず失敗すること
+4. テストがパスする場合: 機能が既に存在するかテストが間違っている。調査する。
+5. コミット: `test({phase}-{plan}): add failing test for [feature]`
 
-**GREEN - Implement to pass:**
-1. Write minimal code to make test pass
-2. No cleverness, no optimization - just make it work
-3. Run test - it MUST pass
-4. Commit: `feat({phase}-{plan}): implement [feature]`
+**GREEN - パスするよう実装:**
+1. テストをパスさせるための最小限のコードを書く
+2. 賢いことはしない、最適化もしない - とにかく動かす
+3. テストを実行 - 必ずパスすること
+4. コミット: `feat({phase}-{plan}): implement [feature]`
 
-**REFACTOR (if needed):**
-1. Clean up implementation if obvious improvements exist
-2. Run tests - MUST still pass
-3. Only commit if changes made: `refactor({phase}-{plan}): clean up [feature]`
+**REFACTOR（必要な場合）:**
+1. 明らかな改善がある場合、実装をクリーンアップ
+2. テストを実行 - 依然としてパスすること
+3. 変更があった場合のみコミット: `refactor({phase}-{plan}): clean up [feature]`
 
-**Result:** Each TDD plan produces 2-3 atomic commits.
+**結果:** 各TDDプランは2-3のアトミックコミットを生成します。
 </execution_flow>
 
 <test_quality>
-## Good Tests vs Bad Tests
+## 良いテストと悪いテスト
 
-**Test behavior, not implementation:**
-- Good: "returns formatted date string"
-- Bad: "calls formatDate helper with correct params"
-- Tests should survive refactors
+**実装ではなく動作をテストする:**
+- 良い: 「フォーマットされた日付文字列を返す」
+- 悪い: 「正しいパラメータでformatDateヘルパーを呼び出す」
+- テストはリファクタリングを生き延びるべき
 
-**One concept per test:**
-- Good: Separate tests for valid input, empty input, malformed input
-- Bad: Single test checking all edge cases with multiple assertions
+**テストごとに1つの概念:**
+- 良い: 有効な入力、空の入力、不正な入力それぞれに個別のテスト
+- 悪い: 複数のアサーションですべてのエッジケースをチェックする単一テスト
 
-**Descriptive names:**
-- Good: "should reject empty email", "returns null for invalid ID"
-- Bad: "test1", "handles error", "works correctly"
+**説明的な名前:**
+- 良い: "should reject empty email", "returns null for invalid ID"
+- 悪い: "test1", "handles error", "works correctly"
 
-**No implementation details:**
-- Good: Test public API, observable behavior
-- Bad: Mock internals, test private methods, assert on internal state
+**実装の詳細を含めない:**
+- 良い: パブリックAPI、観察可能な動作をテスト
+- 悪い: 内部をモック、プライベートメソッドをテスト、内部状態にアサート
 </test_quality>
 
 <framework_setup>
-## Test Framework Setup (If None Exists)
+## テストフレームワークセットアップ（存在しない場合）
 
-When executing a TDD plan but no test framework is configured, set it up as part of the RED phase:
+TDDプランを実行するがテストフレームワークが設定されていない場合、REDフェーズの一部としてセットアップします:
 
-**1. Detect project type:**
+**1. プロジェクトタイプを検出:**
 ```bash
 # JavaScript/TypeScript
 if [ -f package.json ]; then echo "node"; fi
@@ -153,66 +153,66 @@ if [ -f go.mod ]; then echo "go"; fi
 if [ -f Cargo.toml ]; then echo "rust"; fi
 ```
 
-**2. Install minimal framework:**
-| Project | Framework | Install |
+**2. 最小限のフレームワークをインストール:**
+| プロジェクト | フレームワーク | インストール |
 |---------|-----------|---------|
 | Node.js | Jest | `npm install -D jest @types/jest ts-jest` |
 | Node.js (Vite) | Vitest | `npm install -D vitest` |
 | Python | pytest | `pip install pytest` |
-| Go | testing | Built-in |
-| Rust | cargo test | Built-in |
+| Go | testing | 組み込み |
+| Rust | cargo test | 組み込み |
 
-**3. Create config if needed:**
-- Jest: `jest.config.js` with ts-jest preset
-- Vitest: `vitest.config.ts` with test globals
-- pytest: `pytest.ini` or `pyproject.toml` section
+**3. 必要に応じて設定を作成:**
+- Jest: ts-jestプリセットの`jest.config.js`
+- Vitest: テストグローバルの`vitest.config.ts`
+- pytest: `pytest.ini`または`pyproject.toml`セクション
 
-**4. Verify setup:**
+**4. セットアップを検証:**
 ```bash
-# Run empty test suite - should pass with 0 tests
+# 空のテストスイートを実行 - 0テストでパスすべき
 npm test  # Node
 pytest    # Python
 go test ./...  # Go
 cargo test    # Rust
 ```
 
-**5. Create first test file:**
-Follow project conventions for test location:
-- `*.test.ts` / `*.spec.ts` next to source
-- `__tests__/` directory
-- `tests/` directory at root
+**5. 最初のテストファイルを作成:**
+テストの場所はプロジェクトの慣例に従う:
+- ソースの隣の`*.test.ts` / `*.spec.ts`
+- `__tests__/`ディレクトリ
+- ルートの`tests/`ディレクトリ
 
-Framework setup is a one-time cost included in the first TDD plan's RED phase.
+フレームワークセットアップは最初のTDDプランのREDフェーズに含まれるワンタイムコストです。
 </framework_setup>
 
 <error_handling>
-## Error Handling
+## エラーハンドリング
 
-**Test doesn't fail in RED phase:**
-- Feature may already exist - investigate
-- Test may be wrong (not testing what you think)
-- Fix before proceeding
+**REDフェーズでテストが失敗しない:**
+- 機能が既に存在する可能性 - 調査する
+- テストが間違っている可能性（思っていることをテストしていない）
+- 先に進む前に修正する
 
-**Test doesn't pass in GREEN phase:**
-- Debug implementation
-- Don't skip to refactor
-- Keep iterating until green
+**GREENフェーズでテストがパスしない:**
+- 実装をデバッグする
+- リファクタリングにスキップしない
+- グリーンになるまで繰り返す
 
-**Tests fail in REFACTOR phase:**
-- Undo refactor
-- Commit was premature
-- Refactor in smaller steps
+**REFACTORフェーズでテストが失敗:**
+- リファクタリングを元に戻す
+- コミットが早すぎた
+- より小さなステップでリファクタリング
 
-**Unrelated tests break:**
-- Stop and investigate
-- May indicate coupling issue
-- Fix before proceeding
+**関係のないテストが壊れる:**
+- 停止して調査する
+- カップリングの問題を示している可能性
+- 先に進む前に修正する
 </error_handling>
 
 <commit_pattern>
-## Commit Pattern for TDD Plans
+## TDDプランのコミットパターン
 
-TDD plans produce 2-3 atomic commits (one per phase):
+TDDプランは2-3のアトミックコミットを生成します（フェーズごとに1つ）:
 
 ```
 test(08-02): add failing test for email validation
@@ -234,30 +234,30 @@ refactor(08-02): extract regex to constant (optional)
 - Tests still pass
 ```
 
-**Comparison with standard plans:**
-- Standard plans: 1 commit per task, 2-4 commits per plan
-- TDD plans: 2-3 commits for single feature
+**標準プランとの比較:**
+- 標準プラン: タスクごとに1コミット、プランごとに2-4コミット
+- TDDプラン: 単一機能に2-3コミット
 
-Both follow same format: `{type}({phase}-{plan}): {description}`
+両方とも同じフォーマットに従う: `{type}({phase}-{plan}): {description}`
 
-**Benefits:**
-- Each commit independently revertable
-- Git bisect works at commit level
-- Clear history showing TDD discipline
-- Consistent with overall commit strategy
+**メリット:**
+- 各コミットが独立して取り消し可能
+- Git bisectがコミットレベルで動作
+- TDDの規律を示す明確な履歴
+- 全体的なコミット戦略と一貫
 </commit_pattern>
 
 <context_budget>
-## Context Budget
+## コンテキストバジェット
 
-TDD plans target **~40% context usage** (lower than standard plans' ~50%).
+TDDプランは**約40%のコンテキスト使用量**を目標とします（標準プランの約50%より低い）。
 
-Why lower:
-- RED phase: write test, run test, potentially debug why it didn't fail
-- GREEN phase: implement, run test, potentially iterate on failures
-- REFACTOR phase: modify code, run tests, verify no regressions
+低い理由:
+- REDフェーズ: テストを書く、テストを実行、なぜ失敗しなかったかのデバッグの可能性
+- GREENフェーズ: 実装する、テストを実行、失敗に対する反復の可能性
+- REFACTORフェーズ: コードを修正、テストを実行、リグレッションがないことを確認
 
-Each phase involves reading files, running commands, analyzing output. The back-and-forth is inherently heavier than linear task execution.
+各フェーズにはファイル読み取り、コマンド実行、出力分析が含まれます。このやり取りは線形的なタスク実行よりも本質的に重いです。
 
-Single feature focus ensures full quality throughout the cycle.
+単一機能に焦点を当てることで、サイクル全体を通じた完全な品質を確保します。
 </context_budget>

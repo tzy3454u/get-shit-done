@@ -1,84 +1,84 @@
-# Verification Patterns
+# 検証パターン
 
-How to verify different types of artifacts are real implementations, not stubs or placeholders.
+さまざまな種類の成果物が、スタブやプレースホルダーではなく実際の実装であることを検証する方法。
 
 <core_principle>
-**Existence ≠ Implementation**
+**存在 ≠ 実装**
 
-A file existing does not mean the feature works. Verification must check:
-1. **Exists** - File is present at expected path
-2. **Substantive** - Content is real implementation, not placeholder
-3. **Wired** - Connected to the rest of the system
-4. **Functional** - Actually works when invoked
+ファイルが存在することは機能が動作することを意味しません。検証は以下を確認する必要があります:
+1. **存在** - ファイルが期待されるパスに存在する
+2. **実質的** - 内容がプレースホルダーではなく実際の実装
+3. **接続済み** - システムの残りの部分に接続されている
+4. **機能的** - 呼び出されたときに実際に動作する
 
-Levels 1-3 can be checked programmatically. Level 4 often requires human verification.
+レベル1-3はプログラム的に確認できます。レベル4は多くの場合、人間による検証が必要です。
 </core_principle>
 
 <stub_detection>
 
-## Universal Stub Patterns
+## ユニバーサルスタブパターン
 
-These patterns indicate placeholder code regardless of file type:
+これらのパターンは、ファイルタイプに関係なくプレースホルダーコードを示します:
 
-**Comment-based stubs:**
+**コメントベースのスタブ:**
 ```bash
-# Grep patterns for stub comments
+# スタブコメントのgrepパターン
 grep -E "(TODO|FIXME|XXX|HACK|PLACEHOLDER)" "$file"
 grep -E "implement|add later|coming soon|will be" "$file" -i
 grep -E "// \.\.\.|/\* \.\.\. \*/|# \.\.\." "$file"
 ```
 
-**Placeholder text in output:**
+**出力のプレースホルダーテキスト:**
 ```bash
-# UI placeholder patterns
+# UIプレースホルダーパターン
 grep -E "placeholder|lorem ipsum|coming soon|under construction" "$file" -i
 grep -E "sample|example|test data|dummy" "$file" -i
-grep -E "\[.*\]|<.*>|\{.*\}" "$file"  # Template brackets left in
+grep -E "\[.*\]|<.*>|\{.*\}" "$file"  # 残されたテンプレートブラケット
 ```
 
-**Empty or trivial implementations:**
+**空または些細な実装:**
 ```bash
-# Functions that do nothing
+# 何もしない関数
 grep -E "return null|return undefined|return \{\}|return \[\]" "$file"
 grep -E "pass$|\.\.\.|\bnothing\b" "$file"
-grep -E "console\.(log|warn|error).*only" "$file"  # Log-only functions
+grep -E "console\.(log|warn|error).*only" "$file"  # ログのみの関数
 ```
 
-**Hardcoded values where dynamic expected:**
+**動的であるべきところにハードコードされた値:**
 ```bash
-# Hardcoded IDs, counts, or content
-grep -E "id.*=.*['\"].*['\"]" "$file"  # Hardcoded string IDs
-grep -E "count.*=.*\d+|length.*=.*\d+" "$file"  # Hardcoded counts
-grep -E "\\\$\d+\.\d{2}|\d+ items" "$file"  # Hardcoded display values
+# ハードコードされたID、カウント、コンテンツ
+grep -E "id.*=.*['\"].*['\"]" "$file"  # ハードコードされた文字列ID
+grep -E "count.*=.*\d+|length.*=.*\d+" "$file"  # ハードコードされたカウント
+grep -E "\\\$\d+\.\d{2}|\d+ items" "$file"  # ハードコードされた表示値
 ```
 
 </stub_detection>
 
 <react_components>
 
-## React/Next.js Components
+## React/Next.jsコンポーネント
 
-**Existence check:**
+**存在チェック:**
 ```bash
-# File exists and exports component
+# ファイルが存在しコンポーネントをエクスポート
 [ -f "$component_path" ] && grep -E "export (default |)function|export const.*=.*\(" "$component_path"
 ```
 
-**Substantive check:**
+**実質性チェック:**
 ```bash
-# Returns actual JSX, not placeholder
+# プレースホルダーではなく実際のJSXを返す
 grep -E "return.*<" "$component_path" | grep -v "return.*null" | grep -v "placeholder" -i
 
-# Has meaningful content (not just wrapper div)
+# 意味のあるコンテンツがある（ラッパーdivだけではない）
 grep -E "<[A-Z][a-zA-Z]+|className=|onClick=|onChange=" "$component_path"
 
-# Uses props or state (not static)
+# propsまたはstateを使用（静的ではない）
 grep -E "props\.|useState|useEffect|useContext|\{.*\}" "$component_path"
 ```
 
-**Stub patterns specific to React:**
+**Reactに特有のスタブパターン:**
 ```javascript
-// RED FLAGS - These are stubs:
+// 警告 - これらはスタブです:
 return <div>Component</div>
 return <div>Placeholder</div>
 return <div>{/* TODO */}</div>
@@ -86,134 +86,134 @@ return <p>Coming soon</p>
 return null
 return <></>
 
-// Also stubs - empty handlers:
+// これもスタブ - 空のハンドラー:
 onClick={() => {}}
 onChange={() => console.log('clicked')}
-onSubmit={(e) => e.preventDefault()}  // Only prevents default, does nothing
+onSubmit={(e) => e.preventDefault()}  // デフォルトを防ぐだけで何もしない
 ```
 
-**Wiring check:**
+**接続チェック:**
 ```bash
-# Component imports what it needs
+# コンポーネントが必要なものをインポート
 grep -E "^import.*from" "$component_path"
 
-# Props are actually used (not just received)
-# Look for destructuring or props.X usage
+# propsが実際に使用されている（受け取るだけでなく）
+# デストラクチャリングまたはprops.Xの使用を確認
 grep -E "\{ .* \}.*props|\bprops\.[a-zA-Z]+" "$component_path"
 
-# API calls exist (for data-fetching components)
+# API呼び出しが存在する（データフェッチコンポーネント用）
 grep -E "fetch\(|axios\.|useSWR|useQuery|getServerSideProps|getStaticProps" "$component_path"
 ```
 
-**Functional verification (human required):**
-- Does the component render visible content?
-- Do interactive elements respond to clicks?
-- Does data load and display?
-- Do error states show appropriately?
+**機能検証（人間が必要）:**
+- コンポーネントは可視コンテンツをレンダリングするか？
+- インタラクティブ要素はクリックに応答するか？
+- データは読み込まれて表示されるか？
+- エラー状態は適切に表示されるか？
 
 </react_components>
 
 <api_routes>
 
-## API Routes (Next.js App Router / Express / etc.)
+## APIルート（Next.js App Router / Express / etc.）
 
-**Existence check:**
+**存在チェック:**
 ```bash
-# Route file exists
+# ルートファイルが存在
 [ -f "$route_path" ]
 
-# Exports HTTP method handlers (Next.js App Router)
+# HTTPメソッドハンドラーをエクスポート（Next.js App Router）
 grep -E "export (async )?(function|const) (GET|POST|PUT|PATCH|DELETE)" "$route_path"
 
-# Or Express-style handlers
+# またはExpress形式のハンドラー
 grep -E "\.(get|post|put|patch|delete)\(" "$route_path"
 ```
 
-**Substantive check:**
+**実質性チェック:**
 ```bash
-# Has actual logic, not just return statement
-wc -l "$route_path"  # More than 10-15 lines suggests real implementation
+# 単なるreturn文ではなく実際のロジックがある
+wc -l "$route_path"  # 10-15行以上なら実際の実装を示唆
 
-# Interacts with data source
+# データソースとやり取り
 grep -E "prisma\.|db\.|mongoose\.|sql|query|find|create|update|delete" "$route_path" -i
 
-# Has error handling
+# エラーハンドリングがある
 grep -E "try|catch|throw|error|Error" "$route_path"
 
-# Returns meaningful response
+# 意味のあるレスポンスを返す
 grep -E "Response\.json|res\.json|res\.send|return.*\{" "$route_path" | grep -v "message.*not implemented" -i
 ```
 
-**Stub patterns specific to API routes:**
+**APIルートに特有のスタブパターン:**
 ```typescript
-// RED FLAGS - These are stubs:
+// 警告 - これらはスタブです:
 export async function POST() {
   return Response.json({ message: "Not implemented" })
 }
 
 export async function GET() {
-  return Response.json([])  // Empty array with no DB query
+  return Response.json([])  // DBクエリなしの空配列
 }
 
 export async function PUT() {
-  return new Response()  // Empty response
+  return new Response()  // 空のレスポンス
 }
 
-// Console log only:
+// コンソールログのみ:
 export async function POST(req) {
   console.log(await req.json())
   return Response.json({ ok: true })
 }
 ```
 
-**Wiring check:**
+**接続チェック:**
 ```bash
-# Imports database/service clients
+# データベース/サービスクライアントをインポート
 grep -E "^import.*prisma|^import.*db|^import.*client" "$route_path"
 
-# Actually uses request body (for POST/PUT)
+# リクエストボディを実際に使用（POST/PUT用）
 grep -E "req\.json\(\)|req\.body|request\.json\(\)" "$route_path"
 
-# Validates input (not just trusting request)
+# 入力を検証（リクエストを信頼するだけでなく）
 grep -E "schema\.parse|validate|zod|yup|joi" "$route_path"
 ```
 
-**Functional verification (human or automated):**
-- Does GET return real data from database?
-- Does POST actually create a record?
-- Does error response have correct status code?
-- Are auth checks actually enforced?
+**機能検証（人間または自動化）:**
+- GETはデータベースから実際のデータを返すか？
+- POSTは実際にレコードを作成するか？
+- エラーレスポンスは正しいステータスコードか？
+- 認証チェックは実際に実施されているか？
 
 </api_routes>
 
 <database_schema>
 
-## Database Schema (Prisma / Drizzle / SQL)
+## データベーススキーマ（Prisma / Drizzle / SQL）
 
-**Existence check:**
+**存在チェック:**
 ```bash
-# Schema file exists
+# スキーマファイルが存在
 [ -f "prisma/schema.prisma" ] || [ -f "drizzle/schema.ts" ] || [ -f "src/db/schema.sql" ]
 
-# Model/table is defined
+# モデル/テーブルが定義されている
 grep -E "^model $model_name|CREATE TABLE $table_name|export const $table_name" "$schema_path"
 ```
 
-**Substantive check:**
+**実質性チェック:**
 ```bash
-# Has expected fields (not just id)
+# 期待されるフィールドがある（idだけではない）
 grep -A 20 "model $model_name" "$schema_path" | grep -E "^\s+\w+\s+\w+"
 
-# Has relationships if expected
+# 期待される場合リレーションがある
 grep -E "@relation|REFERENCES|FOREIGN KEY" "$schema_path"
 
-# Has appropriate field types (not all String)
+# 適切なフィールドタイプがある（すべてStringではない）
 grep -A 20 "model $model_name" "$schema_path" | grep -E "Int|DateTime|Boolean|Float|Decimal|Json"
 ```
 
-**Stub patterns specific to schemas:**
+**スキーマに特有のスタブパターン:**
 ```prisma
-// RED FLAGS - These are stubs:
+// 警告 - これらはスタブです:
 model User {
   id String @id
   // TODO: add fields
@@ -221,29 +221,29 @@ model User {
 
 model Message {
   id        String @id
-  content   String  // Only one real field
+  content   String  // 実際のフィールドが1つだけ
 }
 
-// Missing critical fields:
+// 重要なフィールドが欠落:
 model Order {
   id     String @id
-  // No: userId, items, total, status, createdAt
+  // ない: userId, items, total, status, createdAt
 }
 ```
 
-**Wiring check:**
+**接続チェック:**
 ```bash
-# Migrations exist and are applied
-ls prisma/migrations/ 2>/dev/null | wc -l  # Should be > 0
+# マイグレーションが存在し適用されている
+ls prisma/migrations/ 2>/dev/null | wc -l  # 0より大きいべき
 npx prisma migrate status 2>/dev/null | grep -v "pending"
 
-# Client is generated
+# クライアントが生成されている
 [ -d "node_modules/.prisma/client" ]
 ```
 
-**Functional verification:**
+**機能検証:**
 ```bash
-# Can query the table (automated)
+# テーブルをクエリできる（自動化）
 npx prisma db execute --stdin <<< "SELECT COUNT(*) FROM $table_name"
 ```
 
@@ -251,29 +251,29 @@ npx prisma db execute --stdin <<< "SELECT COUNT(*) FROM $table_name"
 
 <hooks_utilities>
 
-## Custom Hooks and Utilities
+## カスタムフックとユーティリティ
 
-**Existence check:**
+**存在チェック:**
 ```bash
-# File exists and exports function
+# ファイルが存在し関数をエクスポート
 [ -f "$hook_path" ] && grep -E "export (default )?(function|const)" "$hook_path"
 ```
 
-**Substantive check:**
+**実質性チェック:**
 ```bash
-# Hook uses React hooks (for custom hooks)
+# フックがReactフックを使用（カスタムフック用）
 grep -E "useState|useEffect|useCallback|useMemo|useRef|useContext" "$hook_path"
 
-# Has meaningful return value
+# 意味のある戻り値がある
 grep -E "return \{|return \[" "$hook_path"
 
-# More than trivial length
+# 些細な長さ以上
 [ $(wc -l < "$hook_path") -gt 10 ]
 ```
 
-**Stub patterns specific to hooks:**
+**フックに特有のスタブパターン:**
 ```typescript
-// RED FLAGS - These are stubs:
+// 警告 - これらはスタブです:
 export function useAuth() {
   return { user: null, login: () => {}, logout: () => {} }
 }
@@ -283,18 +283,18 @@ export function useCart() {
   return { items, addItem: () => console.log('add'), removeItem: () => {} }
 }
 
-// Hardcoded return:
+// ハードコードされた戻り値:
 export function useUser() {
   return { name: "Test User", email: "test@example.com" }
 }
 ```
 
-**Wiring check:**
+**接続チェック:**
 ```bash
-# Hook is actually imported somewhere
+# フックが実際にどこかでインポートされている
 grep -r "import.*$hook_name" src/ --include="*.tsx" --include="*.ts" | grep -v "$hook_path"
 
-# Hook is actually called
+# フックが実際に呼び出されている
 grep -r "$hook_name()" src/ --include="*.tsx" --include="*.ts" | grep -v "$hook_path"
 ```
 
@@ -302,43 +302,43 @@ grep -r "$hook_name()" src/ --include="*.tsx" --include="*.ts" | grep -v "$hook_
 
 <environment_config>
 
-## Environment Variables and Configuration
+## 環境変数と設定
 
-**Existence check:**
+**存在チェック:**
 ```bash
-# .env file exists
+# .envファイルが存在
 [ -f ".env" ] || [ -f ".env.local" ]
 
-# Required variable is defined
+# 必要な変数が定義されている
 grep -E "^$VAR_NAME=" .env .env.local 2>/dev/null
 ```
 
-**Substantive check:**
+**実質性チェック:**
 ```bash
-# Variable has actual value (not placeholder)
+# 変数にプレースホルダーではなく実際の値がある
 grep -E "^$VAR_NAME=.+" .env .env.local 2>/dev/null | grep -v "your-.*-here|xxx|placeholder|TODO" -i
 
-# Value looks valid for type:
-# - URLs should start with http
-# - Keys should be long enough
-# - Booleans should be true/false
+# 値がタイプに対して妥当に見える:
+# - URLはhttpで始まるべき
+# - キーは十分な長さであるべき
+# - ブーリアンはtrue/falseであるべき
 ```
 
-**Stub patterns specific to env:**
+**envに特有のスタブパターン:**
 ```bash
-# RED FLAGS - These are stubs:
+# 警告 - これらはスタブです:
 DATABASE_URL=your-database-url-here
 STRIPE_SECRET_KEY=sk_test_xxx
 API_KEY=placeholder
-NEXT_PUBLIC_API_URL=http://localhost:3000  # Still pointing to localhost in prod
+NEXT_PUBLIC_API_URL=http://localhost:3000  # 本番でもまだlocalhostを指す
 ```
 
-**Wiring check:**
+**接続チェック:**
 ```bash
-# Variable is actually used in code
+# 変数がコード内で実際に使用されている
 grep -r "process\.env\.$VAR_NAME|env\.$VAR_NAME" src/ --include="*.ts" --include="*.tsx"
 
-# Variable is in validation schema (if using zod/etc for env)
+# 変数がバリデーションスキーマにある（envにzod等を使用している場合）
 grep -E "$VAR_NAME" src/env.ts src/env.mjs 2>/dev/null
 ```
 
@@ -346,202 +346,202 @@ grep -E "$VAR_NAME" src/env.ts src/env.mjs 2>/dev/null
 
 <wiring_verification>
 
-## Wiring Verification Patterns
+## 接続検証パターン
 
-Wiring verification checks that components actually communicate. This is where most stubs hide.
+接続検証はコンポーネントが実際に通信していることを確認します。ここがほとんどのスタブが隠れる場所です。
 
-### Pattern: Component → API
+### パターン: コンポーネント → API
 
-**Check:** Does the component actually call the API?
+**確認:** コンポーネントは実際にAPIを呼び出しているか？
 
 ```bash
-# Find the fetch/axios call
+# fetch/axios呼び出しを見つける
 grep -E "fetch\(['\"].*$api_path|axios\.(get|post).*$api_path" "$component_path"
 
-# Verify it's not commented out
+# コメントアウトされていないことを確認
 grep -E "fetch\(|axios\." "$component_path" | grep -v "^.*//.*fetch"
 
-# Check the response is used
+# レスポンスが使用されていることを確認
 grep -E "await.*fetch|\.then\(|setData|setState" "$component_path"
 ```
 
-**Red flags:**
+**警告:**
 ```typescript
-// Fetch exists but response ignored:
-fetch('/api/messages')  // No await, no .then, no assignment
+// fetchは存在するがレスポンスが無視されている:
+fetch('/api/messages')  // awaitなし、.thenなし、代入なし
 
-// Fetch in comment:
+// コメント内のfetch:
 // fetch('/api/messages').then(r => r.json()).then(setMessages)
 
-// Fetch to wrong endpoint:
-fetch('/api/message')  // Typo - should be /api/messages
+// 間違ったエンドポイントへのfetch:
+fetch('/api/message')  // タイポ - /api/messagesであるべき
 ```
 
-### Pattern: API → Database
+### パターン: API → データベース
 
-**Check:** Does the API route actually query the database?
+**確認:** APIルートは実際にデータベースをクエリしているか？
 
 ```bash
-# Find the database call
+# データベース呼び出しを見つける
 grep -E "prisma\.$model|db\.query|Model\.find" "$route_path"
 
-# Verify it's awaited
+# awaitされていることを確認
 grep -E "await.*prisma|await.*db\." "$route_path"
 
-# Check result is returned
+# 結果が返されていることを確認
 grep -E "return.*json.*data|res\.json.*result" "$route_path"
 ```
 
-**Red flags:**
+**警告:**
 ```typescript
-// Query exists but result not returned:
+// クエリは存在するが結果が返されていない:
 await prisma.message.findMany()
-return Response.json({ ok: true })  // Returns static, not query result
+return Response.json({ ok: true })  // クエリ結果ではなく静的を返す
 
-// Query not awaited:
-const messages = prisma.message.findMany()  // Missing await
-return Response.json(messages)  // Returns Promise, not data
+// クエリがawaitされていない:
+const messages = prisma.message.findMany()  // awaitが欠落
+return Response.json(messages)  // データではなくPromiseを返す
 ```
 
-### Pattern: Form → Handler
+### パターン: フォーム → ハンドラー
 
-**Check:** Does the form submission actually do something?
+**確認:** フォーム送信は実際に何かをするか？
 
 ```bash
-# Find onSubmit handler
+# onSubmitハンドラーを見つける
 grep -E "onSubmit=\{|handleSubmit" "$component_path"
 
-# Check handler has content
+# ハンドラーに内容があることを確認
 grep -A 10 "onSubmit.*=" "$component_path" | grep -E "fetch|axios|mutate|dispatch"
 
-# Verify not just preventDefault
+# preventDefaultだけでないことを確認
 grep -A 5 "onSubmit" "$component_path" | grep -v "only.*preventDefault" -i
 ```
 
-**Red flags:**
+**警告:**
 ```typescript
-// Handler only prevents default:
+// ハンドラーがデフォルトを防ぐだけ:
 onSubmit={(e) => e.preventDefault()}
 
-// Handler only logs:
+// ハンドラーがログを取るだけ:
 const handleSubmit = (data) => {
   console.log(data)
 }
 
-// Handler is empty:
+// ハンドラーが空:
 onSubmit={() => {}}
 ```
 
-### Pattern: State → Render
+### パターン: ステート → レンダー
 
-**Check:** Does the component render state, not hardcoded content?
+**確認:** コンポーネントはハードコードされたコンテンツではなくステートをレンダリングしているか？
 
 ```bash
-# Find state usage in JSX
+# JSX内のステート使用を見つける
 grep -E "\{.*messages.*\}|\{.*data.*\}|\{.*items.*\}" "$component_path"
 
-# Check map/render of state
+# ステートのmap/レンダーを確認
 grep -E "\.map\(|\.filter\(|\.reduce\(" "$component_path"
 
-# Verify dynamic content
-grep -E "\{[a-zA-Z_]+\." "$component_path"  # Variable interpolation
+# 動的コンテンツを確認
+grep -E "\{[a-zA-Z_]+\." "$component_path"  # 変数補間
 ```
 
-**Red flags:**
+**警告:**
 ```tsx
-// Hardcoded instead of state:
+// ステートではなくハードコード:
 return <div>
   <p>Message 1</p>
   <p>Message 2</p>
 </div>
 
-// State exists but not rendered:
+// ステートが存在するがレンダリングされていない:
 const [messages, setMessages] = useState([])
-return <div>No messages</div>  // Always shows "no messages"
+return <div>No messages</div>  // 常に"no messages"を表示
 
-// Wrong state rendered:
+// 間違ったステートがレンダリングされている:
 const [messages, setMessages] = useState([])
-return <div>{otherData.map(...)}</div>  // Uses different data
+return <div>{otherData.map(...)}</div>  // 別のデータを使用
 ```
 
 </wiring_verification>
 
 <verification_checklist>
 
-## Quick Verification Checklist
+## クイック検証チェックリスト
 
-For each artifact type, run through this checklist:
+各成果物タイプに対して、このチェックリストを実行してください:
 
-### Component Checklist
-- [ ] File exists at expected path
-- [ ] Exports a function/const component
-- [ ] Returns JSX (not null/empty)
-- [ ] No placeholder text in render
-- [ ] Uses props or state (not static)
-- [ ] Event handlers have real implementations
-- [ ] Imports resolve correctly
-- [ ] Used somewhere in the app
+### コンポーネントチェックリスト
+- [ ] ファイルが期待されるパスに存在
+- [ ] function/constコンポーネントをエクスポート
+- [ ] JSXを返す（nullや空ではない）
+- [ ] レンダーにプレースホルダーテキストがない
+- [ ] propsまたはstateを使用（静的ではない）
+- [ ] イベントハンドラーに実際の実装がある
+- [ ] インポートが正しく解決される
+- [ ] アプリのどこかで使用されている
 
-### API Route Checklist
-- [ ] File exists at expected path
-- [ ] Exports HTTP method handlers
-- [ ] Handlers have more than 5 lines
-- [ ] Queries database or service
-- [ ] Returns meaningful response (not empty/placeholder)
-- [ ] Has error handling
-- [ ] Validates input
-- [ ] Called from frontend
+### APIルートチェックリスト
+- [ ] ファイルが期待されるパスに存在
+- [ ] HTTPメソッドハンドラーをエクスポート
+- [ ] ハンドラーが5行以上ある
+- [ ] データベースまたはサービスをクエリ
+- [ ] 意味のあるレスポンスを返す（空/プレースホルダーではない）
+- [ ] エラーハンドリングがある
+- [ ] 入力を検証
+- [ ] フロントエンドから呼び出されている
 
-### Schema Checklist
-- [ ] Model/table defined
-- [ ] Has all expected fields
-- [ ] Fields have appropriate types
-- [ ] Relationships defined if needed
-- [ ] Migrations exist and applied
-- [ ] Client generated
+### スキーマチェックリスト
+- [ ] モデル/テーブルが定義されている
+- [ ] 期待されるすべてのフィールドがある
+- [ ] フィールドに適切なタイプがある
+- [ ] 必要な場合リレーションが定義されている
+- [ ] マイグレーションが存在し適用されている
+- [ ] クライアントが生成されている
 
-### Hook/Utility Checklist
-- [ ] File exists at expected path
-- [ ] Exports function
-- [ ] Has meaningful implementation (not empty returns)
-- [ ] Used somewhere in the app
-- [ ] Return values consumed
+### フック/ユーティリティチェックリスト
+- [ ] ファイルが期待されるパスに存在
+- [ ] 関数をエクスポート
+- [ ] 意味のある実装がある（空の戻り値ではない）
+- [ ] アプリのどこかで使用されている
+- [ ] 戻り値が消費されている
 
-### Wiring Checklist
-- [ ] Component → API: fetch/axios call exists and uses response
-- [ ] API → Database: query exists and result returned
-- [ ] Form → Handler: onSubmit calls API/mutation
-- [ ] State → Render: state variables appear in JSX
+### 接続チェックリスト
+- [ ] コンポーネント → API: fetch/axios呼び出しが存在しレスポンスを使用
+- [ ] API → データベース: クエリが存在し結果が返されている
+- [ ] フォーム → ハンドラー: onSubmitがAPI/mutationを呼び出す
+- [ ] ステート → レンダー: ステート変数がJSXに現れる
 
 </verification_checklist>
 
 <automated_verification_script>
 
-## Automated Verification Approach
+## 自動検証アプローチ
 
-For the verification subagent, use this pattern:
+検証サブエージェント用に、このパターンを使用してください:
 
 ```bash
-# 1. Check existence
+# 1. 存在チェック
 check_exists() {
   [ -f "$1" ] && echo "EXISTS: $1" || echo "MISSING: $1"
 }
 
-# 2. Check for stub patterns
+# 2. スタブパターンのチェック
 check_stubs() {
   local file="$1"
   local stubs=$(grep -c -E "TODO|FIXME|placeholder|not implemented" "$file" 2>/dev/null || echo 0)
   [ "$stubs" -gt 0 ] && echo "STUB_PATTERNS: $stubs in $file"
 }
 
-# 3. Check wiring (component calls API)
+# 3. 接続チェック（コンポーネントがAPIを呼び出す）
 check_wiring() {
   local component="$1"
   local api_path="$2"
   grep -q "$api_path" "$component" && echo "WIRED: $component → $api_path" || echo "NOT_WIRED: $component → $api_path"
 }
 
-# 4. Check substantive (more than N lines, has expected patterns)
+# 4. 実質性チェック（N行以上、期待されるパターンがある）
 check_substantive() {
   local file="$1"
   local min_lines="$2"
@@ -552,32 +552,32 @@ check_substantive() {
 }
 ```
 
-Run these checks against each must-have artifact. Aggregate results into VERIFICATION.md.
+これらのチェックを必須の各成果物に対して実行してください。結果をVERIFICATION.mdに集約します。
 
 </automated_verification_script>
 
 <human_verification_triggers>
 
-## When to Require Human Verification
+## 人間による検証が必要な場合
 
-Some things can't be verified programmatically. Flag these for human testing:
+プログラム的に検証できないものがあります。これらを人間によるテスト用にフラグ付けしてください:
 
-**Always human:**
-- Visual appearance (does it look right?)
-- User flow completion (can you actually do the thing?)
-- Real-time behavior (WebSocket, SSE)
-- External service integration (Stripe, email sending)
-- Error message clarity (is the message helpful?)
-- Performance feel (does it feel fast?)
+**常に人間が必要:**
+- 外観（正しく見えるか？）
+- ユーザーフローの完了（実際にそのことができるか？）
+- リアルタイム動作（WebSocket、SSE）
+- 外部サービス統合（Stripe、メール送信）
+- エラーメッセージの明確さ（メッセージは役立つか？）
+- パフォーマンスの体感（速く感じるか？）
 
-**Human if uncertain:**
-- Complex wiring that grep can't trace
-- Dynamic behavior depending on state
-- Edge cases and error states
-- Mobile responsiveness
-- Accessibility
+**不確かな場合は人間:**
+- grepで追跡できない複雑な接続
+- 状態に依存する動的動作
+- エッジケースとエラー状態
+- モバイルレスポンシブ対応
+- アクセシビリティ
 
-**Format for human verification request:**
+**人間による検証リクエストのフォーマット:**
 ```markdown
 ## Human Verification Required
 
@@ -596,17 +596,17 @@ Some things can't be verified programmatically. Flag these for human testing:
 
 <checkpoint_automation_reference>
 
-## Pre-Checkpoint Automation
+## チェックポイント前の自動化
 
-For automation-first checkpoint patterns, server lifecycle management, CLI installation handling, and error recovery protocols, see:
+自動化ファーストのチェックポイントパターン、サーバーライフサイクル管理、CLIインストール処理、エラー回復プロトコルについては、以下を参照:
 
-**@~/.claude/get-shit-done/references/checkpoints.md** → `<automation_reference>` section
+**@~/.claude/get-shit-done/references/checkpoints.md** → `<automation_reference>`セクション
 
-Key principles:
-- Claude sets up verification environment BEFORE presenting checkpoints
-- Users never run CLI commands (visit URLs only)
-- Server lifecycle: start before checkpoint, handle port conflicts, keep running for duration
-- CLI installation: auto-install where safe, checkpoint for user choice otherwise
-- Error handling: fix broken environment before checkpoint, never present checkpoint with failed setup
+主要な原則:
+- Claudeはチェックポイントを提示する前に検証環境をセットアップする
+- ユーザーはCLIコマンドを実行しない（URLにアクセスするのみ）
+- サーバーライフサイクル: チェックポイント前に起動、ポート競合を処理、期間中は実行し続ける
+- CLIインストール: 安全な場合は自動インストール、それ以外はユーザーの選択をチェックポイント
+- エラーハンドリング: チェックポイント前に壊れた環境を修正、セットアップ失敗でチェックポイントを提示しない
 
 </checkpoint_automation_reference>

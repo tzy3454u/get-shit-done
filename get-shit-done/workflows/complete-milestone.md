@@ -1,6 +1,6 @@
 <purpose>
 
-Mark a shipped version (v1.0, v1.1, v2.0) as complete. Creates historical record in MILESTONES.md, performs full PROJECT.md evolution review, reorganizes ROADMAP.md with milestone groupings, and tags the release in git.
+出荷されたバージョン（v1.0、v1.1、v2.0）を完了としてマークする。MILESTONES.mdに履歴レコードを作成し、PROJECT.mdの完全な進化レビューを実施し、マイルストーングループ化によるROADMAP.mdの再編成を行い、gitでリリースにタグを付ける。
 
 </purpose>
 
@@ -16,20 +16,20 @@ Mark a shipped version (v1.0, v1.1, v2.0) as complete. Creates historical record
 
 <archival_behavior>
 
-When a milestone completes:
+マイルストーン完了時：
 
-1. Extract full milestone details to `.planning/milestones/v[X.Y]-ROADMAP.md`
-2. Archive requirements to `.planning/milestones/v[X.Y]-REQUIREMENTS.md`
-3. Update ROADMAP.md — replace milestone details with one-line summary
-4. Delete REQUIREMENTS.md (fresh one for next milestone)
-5. Perform full PROJECT.md evolution review
-6. Offer to create next milestone inline
+1. マイルストーンの詳細を `.planning/milestones/v[X.Y]-ROADMAP.md` に抽出
+2. 要件を `.planning/milestones/v[X.Y]-REQUIREMENTS.md` にアーカイブ
+3. ROADMAP.md を更新 — マイルストーンの詳細を1行サマリーに置換
+4. REQUIREMENTS.md を削除（次のマイルストーン用に新規作成）
+5. PROJECT.md の完全な進化レビューを実施
+6. 次のマイルストーンのインライン作成を提案
 
-**Context Efficiency:** Archives keep ROADMAP.md constant-size and REQUIREMENTS.md milestone-scoped.
+**コンテキスト効率：** アーカイブによりROADMAP.mdのサイズを一定に保ち、REQUIREMENTS.mdをマイルストーンスコープに限定する。
 
-**ROADMAP archive** uses `templates/milestone-archive.md` — includes milestone header (status, phases, date), full phase details, milestone summary (decisions, issues, tech debt).
+**ROADMAPアーカイブ** は `templates/milestone-archive.md` を使用 — マイルストーンヘッダー（ステータス、フェーズ、日付）、完全なフェーズ詳細、マイルストーンサマリー（決定事項、問題、技術的負債）を含む。
 
-**REQUIREMENTS archive** contains all requirements marked complete with outcomes, traceability table with final status, notes on changed requirements.
+**要件アーカイブ** は成果付きで完了マークされたすべての要件、最終ステータス付きのトレーサビリティテーブル、変更された要件のメモを含む。
 
 </archival_behavior>
 
@@ -37,53 +37,53 @@ When a milestone completes:
 
 <step name="verify_readiness">
 
-**Use `roadmap analyze` for comprehensive readiness check:**
+**包括的な準備状況チェックに `roadmap analyze` を使用する：**
 
 ```bash
 ROADMAP=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap analyze)
 ```
 
-This returns all phases with plan/summary counts and disk status. Use this to verify:
-- Which phases belong to this milestone?
-- All phases complete (all plans have summaries)? Check `disk_status === 'complete'` for each.
-- `progress_percent` should be 100%.
+これはすべてのフェーズの計画/サマリー数とディスクステータスを返す。以下を検証するために使用する：
+- このマイルストーンにどのフェーズが属するか？
+- すべてのフェーズが完了しているか（すべての計画にサマリーがあるか）？各フェーズの `disk_status === 'complete'` を確認する。
+- `progress_percent` が100%であるべき。
 
-**Requirements completion check (REQUIRED before presenting):**
+**要件完了チェック（表示前に必須）：**
 
-Parse REQUIREMENTS.md traceability table:
-- Count total v1 requirements vs checked-off (`[x]`) requirements
-- Identify any non-Complete rows in the traceability table
+REQUIREMENTS.mdのトレーサビリティテーブルをパースする：
+- v1要件の合計数とチェック済み（`[x]`）の要件数を数える
+- トレーサビリティテーブルでComplete以外の行を識別する
 
-Present:
-
-```
-Milestone: [Name, e.g., "v1.0 MVP"]
-
-Includes:
-- Phase 1: Foundation (2/2 plans complete)
-- Phase 2: Authentication (2/2 plans complete)
-- Phase 3: Core Features (3/3 plans complete)
-- Phase 4: Polish (1/1 plan complete)
-
-Total: {phase_count} phases, {total_plans} plans, all complete
-Requirements: {N}/{M} v1 requirements checked off
-```
-
-**If requirements incomplete** (N < M):
+表示する：
 
 ```
-⚠ Unchecked Requirements:
+マイルストーン: [名前、例："v1.0 MVP"]
+
+含まれるフェーズ：
+- Phase 1: Foundation (2/2 計画完了)
+- Phase 2: Authentication (2/2 計画完了)
+- Phase 3: Core Features (3/3 計画完了)
+- Phase 4: Polish (1/1 計画完了)
+
+合計: {phase_count} フェーズ、{total_plans} 計画、すべて完了
+要件: {N}/{M} v1要件チェック済み
+```
+
+**要件が未完了の場合**（N < M）：
+
+```
+⚠ 未チェックの要件：
 
 - [ ] {REQ-ID}: {description} (Phase {X})
 - [ ] {REQ-ID}: {description} (Phase {Y})
 ```
 
-MUST present 3 options:
-1. **Proceed anyway** — mark milestone complete with known gaps
-2. **Run audit first** — `/gsd:audit-milestone` to assess gap severity
-3. **Abort** — return to development
+3つのオプションを提示する（必須）：
+1. **そのまま続行** — 既知のギャップありでマイルストーンを完了としてマーク
+2. **先に監査を実行** — `/gsd:audit-milestone` でギャップの深刻度を評価
+3. **中止** — 開発に戻る
 
-If user selects "Proceed anyway": note incomplete requirements in MILESTONES.md under `### Known Gaps` with REQ-IDs and descriptions.
+ユーザーが "そのまま続行" を選択した場合：未完了の要件をMILESTONES.mdの `### Known Gaps` にREQ-IDと説明付きで記録する。
 
 <config-check>
 
@@ -96,25 +96,25 @@ cat .planning/config.json 2>/dev/null
 <if mode="yolo">
 
 ```
-⚡ Auto-approved: Milestone scope verification
-[Show breakdown summary without prompting]
-Proceeding to stats gathering...
+⚡ 自動承認: マイルストーンスコープの検証
+[プロンプトなしで内訳サマリーを表示]
+統計情報の収集に進みます...
 ```
 
-Proceed to gather_stats.
+gather_statsに進む。
 
 </if>
 
 <if mode="interactive" OR="custom with gates.confirm_milestone_scope true">
 
 ```
-Ready to mark this milestone as shipped?
+このマイルストーンを出荷済みとしてマークする準備はできていますか？
 (yes / wait / adjust scope)
 ```
 
-Wait for confirmation.
-- "adjust scope": Ask which phases to include.
-- "wait": Stop, user returns when ready.
+確認を待つ。
+- "adjust scope": どのフェーズを含めるか確認する。
+- "wait": 停止する。準備ができたらユーザーが戻る。
 
 </if>
 
@@ -122,7 +122,7 @@ Wait for confirmation.
 
 <step name="gather_stats">
 
-Calculate milestone statistics:
+マイルストーンの統計情報を計算する：
 
 ```bash
 git log --oneline --grep="feat(" | head -20
@@ -132,221 +132,221 @@ git log --format="%ai" FIRST_COMMIT | tail -1
 git log --format="%ai" LAST_COMMIT | head -1
 ```
 
-Present:
+表示する：
 
 ```
-Milestone Stats:
-- Phases: [X-Y]
-- Plans: [Z] total
-- Tasks: [N] total (from phase summaries)
-- Files modified: [M]
-- Lines of code: [LOC] [language]
-- Timeline: [Days] days ([Start] → [End])
-- Git range: feat(XX-XX) → feat(YY-YY)
+マイルストーン統計:
+- フェーズ: [X-Y]
+- 計画: [Z] 合計
+- タスク: [N] 合計（フェーズサマリーから）
+- 変更ファイル: [M]
+- コード行数: [LOC] [言語]
+- タイムライン: [日数] 日 ([開始] → [終了])
+- Gitレンジ: feat(XX-XX) → feat(YY-YY)
 ```
 
 </step>
 
 <step name="extract_accomplishments">
 
-Extract one-liners from SUMMARY.md files using summary-extract:
+summary-extractを使用してSUMMARY.mdファイルからワンライナーを抽出する：
 
 ```bash
-# For each phase in milestone, extract one-liner
+# マイルストーン内の各フェーズについてワンライナーを抽出
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
   node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" summary-extract "$summary" --fields one_liner | jq -r '.one_liner'
 done
 ```
 
-Extract 4-6 key accomplishments. Present:
+4-6個の主要な成果を抽出する。表示する：
 
 ```
-Key accomplishments for this milestone:
-1. [Achievement from phase 1]
-2. [Achievement from phase 2]
-3. [Achievement from phase 3]
-4. [Achievement from phase 4]
-5. [Achievement from phase 5]
+このマイルストーンの主要な成果：
+1. [フェーズ1からの成果]
+2. [フェーズ2からの成果]
+3. [フェーズ3からの成果]
+4. [フェーズ4からの成果]
+5. [フェーズ5からの成果]
 ```
 
 </step>
 
 <step name="create_milestone_entry">
 
-**Note:** MILESTONES.md entry is now created automatically by `gsd-tools milestone complete` in the archive_milestone step. The entry includes version, date, phase/plan/task counts, and accomplishments extracted from SUMMARY.md files.
+**注意：** MILESTONES.mdのエントリは、archive_milestoneステップの `gsd-tools milestone complete` によって自動的に作成される。エントリにはバージョン、日付、フェーズ/計画/タスク数、SUMMARY.mdファイルから抽出された成果が含まれる。
 
-If additional details are needed (e.g., user-provided "Delivered" summary, git range, LOC stats), add them manually after the CLI creates the base entry.
+追加の詳細が必要な場合（例：ユーザー提供の "Delivered" サマリー、gitレンジ、LOC統計）、CLIがベースエントリを作成した後に手動で追加する。
 
 </step>
 
 <step name="evolve_project_full_review">
 
-Full PROJECT.md evolution review at milestone completion.
+マイルストーン完了時のPROJECT.md完全進化レビュー。
 
-Read all phase summaries:
+すべてのフェーズサマリーを読み込む：
 
 ```bash
 cat .planning/phases/*-*/*-SUMMARY.md
 ```
 
-**Full review checklist:**
+**完全レビューチェックリスト：**
 
-1. **"What This Is" accuracy:**
-   - Compare current description to what was built
-   - Update if product has meaningfully changed
+1. **"What This Is" の正確性：**
+   - 現在の説明と構築されたものを比較
+   - プロダクトが意味のある変化をした場合は更新
 
-2. **Core Value check:**
-   - Still the right priority? Did shipping reveal a different core value?
-   - Update if the ONE thing has shifted
+2. **Core Valueの確認：**
+   - まだ正しい優先度か？出荷により異なるcore valueが明らかになったか？
+   - そのONE THINGが変わった場合は更新
 
-3. **Requirements audit:**
+3. **要件の監査：**
 
-   **Validated section:**
-   - All Active requirements shipped this milestone → Move to Validated
-   - Format: `- ✓ [Requirement] — v[X.Y]`
+   **Validatedセクション：**
+   - このマイルストーンで出荷されたすべてのActive要件 → Validatedに移動
+   - フォーマット: `- ✓ [要件] — v[X.Y]`
 
-   **Active section:**
-   - Remove requirements moved to Validated
-   - Add new requirements for next milestone
-   - Keep unaddressed requirements
+   **Activeセクション：**
+   - Validatedに移動した要件を削除
+   - 次のマイルストーンの新しい要件を追加
+   - 未対応の要件を保持
 
-   **Out of Scope audit:**
-   - Review each item — reasoning still valid?
-   - Remove irrelevant items
-   - Add requirements invalidated during milestone
+   **Out of Scopeの監査：**
+   - 各項目を確認 — 理由がまだ有効か？
+   - 関連性のない項目を削除
+   - マイルストーン中に無効になった要件を追加
 
-4. **Context update:**
-   - Current codebase state (LOC, tech stack)
-   - User feedback themes (if any)
-   - Known issues or technical debt
+4. **コンテキストの更新：**
+   - 現在のコードベース状態（LOC、技術スタック）
+   - ユーザーフィードバックのテーマ（ある場合）
+   - 既知の問題や技術的負債
 
-5. **Key Decisions audit:**
-   - Extract all decisions from milestone phase summaries
-   - Add to Key Decisions table with outcomes
-   - Mark ✓ Good, ⚠️ Revisit, or — Pending
+5. **Key Decisionsの監査：**
+   - マイルストーンのフェーズサマリーからすべての決定事項を抽出
+   - 成果付きでKey Decisionsテーブルに追加
+   - ✓ Good、⚠️ Revisit、または — Pending をマーク
 
-6. **Constraints check:**
-   - Any constraints changed during development? Update as needed
+6. **制約の確認：**
+   - 開発中に変更された制約があるか？必要に応じて更新
 
-Update PROJECT.md inline. Update "Last updated" footer:
+PROJECT.mdをインラインで更新する。"Last updated" フッターを更新する：
 
 ```markdown
 ---
 *Last updated: [date] after v[X.Y] milestone*
 ```
 
-**Example full evolution (v1.0 → v1.1 prep):**
+**完全進化の例（v1.0 → v1.1準備）：**
 
 Before:
 
 ```markdown
 ## What This Is
 
-A real-time collaborative whiteboard for remote teams.
+リモートチーム向けのリアルタイム共同ホワイトボード。
 
 ## Core Value
 
-Real-time sync that feels instant.
+即座に感じるリアルタイム同期。
 
 ## Requirements
 
 ### Validated
 
-(None yet — ship to validate)
+(まだなし — 出荷して検証)
 
 ### Active
 
-- [ ] Canvas drawing tools
-- [ ] Real-time sync < 500ms
-- [ ] User authentication
-- [ ] Export to PNG
+- [ ] キャンバス描画ツール
+- [ ] リアルタイム同期 < 500ms
+- [ ] ユーザー認証
+- [ ] PNGエクスポート
 
 ### Out of Scope
 
-- Mobile app — web-first approach
-- Video chat — use external tools
+- モバイルアプリ — Webファーストアプローチ
+- ビデオチャット — 外部ツールを使用
 ```
 
-After v1.0:
+v1.0後:
 
 ```markdown
 ## What This Is
 
-A real-time collaborative whiteboard for remote teams with instant sync and drawing tools.
+即座の同期と描画ツールを備えたリモートチーム向けリアルタイム共同ホワイトボード。
 
 ## Core Value
 
-Real-time sync that feels instant.
+即座に感じるリアルタイム同期。
 
 ## Requirements
 
 ### Validated
 
-- ✓ Canvas drawing tools — v1.0
-- ✓ Real-time sync < 500ms — v1.0 (achieved 200ms avg)
-- ✓ User authentication — v1.0
+- ✓ キャンバス描画ツール — v1.0
+- ✓ リアルタイム同期 < 500ms — v1.0 (平均200ms達成)
+- ✓ ユーザー認証 — v1.0
 
 ### Active
 
-- [ ] Export to PNG
-- [ ] Undo/redo history
-- [ ] Shape tools (rectangles, circles)
+- [ ] PNGエクスポート
+- [ ] 元に戻す/やり直し履歴
+- [ ] 図形ツール（長方形、円）
 
 ### Out of Scope
 
-- Mobile app — web-first approach, PWA works well
-- Video chat — use external tools
-- Offline mode — real-time is core value
+- モバイルアプリ — Webファーストアプローチ、PWAが良好に機能
+- ビデオチャット — 外部ツールを使用
+- オフラインモード — リアルタイムがcore value
 
 ## Context
 
-Shipped v1.0 with 2,400 LOC TypeScript.
-Tech stack: Next.js, Supabase, Canvas API.
-Initial user testing showed demand for shape tools.
+v1.0を2,400行のTypeScriptで出荷。
+技術スタック: Next.js, Supabase, Canvas API。
+初期ユーザーテストで図形ツールの需要が判明。
 ```
 
-**Step complete when:**
+**ステップ完了条件：**
 
-- [ ] "What This Is" reviewed and updated if needed
-- [ ] Core Value verified as still correct
-- [ ] All shipped requirements moved to Validated
-- [ ] New requirements added to Active for next milestone
-- [ ] Out of Scope reasoning audited
-- [ ] Context updated with current state
-- [ ] All milestone decisions added to Key Decisions
-- [ ] "Last updated" footer reflects milestone completion
+- [ ] "What This Is" がレビューされ、必要に応じて更新されている
+- [ ] Core Valueがまだ正しいことが確認されている
+- [ ] 出荷されたすべての要件がValidatedに移動されている
+- [ ] 次のマイルストーンの新しい要件がActiveに追加されている
+- [ ] Out of Scopeの理由が監査されている
+- [ ] コンテキストが現在の状態で更新されている
+- [ ] マイルストーンのすべての決定事項がKey Decisionsに追加されている
+- [ ] "Last updated" フッターがマイルストーン完了を反映している
 
 </step>
 
 <step name="reorganize_roadmap">
 
-Update `.planning/ROADMAP.md` — group completed milestone phases:
+`.planning/ROADMAP.md` を更新する — 完了したマイルストーンのフェーズをグループ化する：
 
 ```markdown
-# Roadmap: [Project Name]
+# Roadmap: [プロジェクト名]
 
 ## Milestones
 
-- ✅ **v1.0 MVP** — Phases 1-4 (shipped YYYY-MM-DD)
-- 🚧 **v1.1 Security** — Phases 5-6 (in progress)
-- 📋 **v2.0 Redesign** — Phases 7-10 (planned)
+- ✅ **v1.0 MVP** — Phases 1-4 (出荷 YYYY-MM-DD)
+- 🚧 **v1.1 Security** — Phases 5-6 (進行中)
+- 📋 **v2.0 Redesign** — Phases 7-10 (計画済み)
 
 ## Phases
 
 <details>
 <summary>✅ v1.0 MVP (Phases 1-4) — SHIPPED YYYY-MM-DD</summary>
 
-- [x] Phase 1: Foundation (2/2 plans) — completed YYYY-MM-DD
-- [x] Phase 2: Authentication (2/2 plans) — completed YYYY-MM-DD
-- [x] Phase 3: Core Features (3/3 plans) — completed YYYY-MM-DD
-- [x] Phase 4: Polish (1/1 plan) — completed YYYY-MM-DD
+- [x] Phase 1: Foundation (2/2 計画) — 完了 YYYY-MM-DD
+- [x] Phase 2: Authentication (2/2 計画) — 完了 YYYY-MM-DD
+- [x] Phase 3: Core Features (3/3 計画) — 完了 YYYY-MM-DD
+- [x] Phase 4: Polish (1/1 計画) — 完了 YYYY-MM-DD
 
 </details>
 
-### 🚧 v[Next] [Name] (In Progress / Planned)
+### 🚧 v[Next] [名前] (進行中 / 計画済み)
 
-- [ ] Phase 5: [Name] ([N] plans)
-- [ ] Phase 6: [Name] ([N] plans)
+- [ ] Phase 5: [名前] ([N] 計画)
+- [ ] Phase 6: [名前] ([N] 計画)
 
 ## Progress
 
@@ -364,72 +364,72 @@ Update `.planning/ROADMAP.md` — group completed milestone phases:
 
 <step name="archive_milestone">
 
-**Delegate archival to gsd-tools:**
+**アーカイブをgsd-toolsに委譲する：**
 
 ```bash
-ARCHIVE=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" milestone complete "v[X.Y]" --name "[Milestone Name]")
+ARCHIVE=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" milestone complete "v[X.Y]" --name "[マイルストーン名]")
 ```
 
-The CLI handles:
-- Creating `.planning/milestones/` directory
-- Archiving ROADMAP.md to `milestones/v[X.Y]-ROADMAP.md`
-- Archiving REQUIREMENTS.md to `milestones/v[X.Y]-REQUIREMENTS.md` with archive header
-- Moving audit file to milestones if it exists
-- Creating/appending MILESTONES.md entry with accomplishments from SUMMARY.md files
-- Updating STATE.md (status, last activity)
+CLIが処理する内容：
+- `.planning/milestones/` ディレクトリの作成
+- ROADMAP.mdを `milestones/v[X.Y]-ROADMAP.md` にアーカイブ
+- REQUIREMENTS.mdを `milestones/v[X.Y]-REQUIREMENTS.md` にアーカイブヘッダー付きでアーカイブ
+- 監査ファイルが存在する場合はmilestonesに移動
+- SUMMARY.mdファイルからの成果付きでMILESTONES.mdエントリを作成/追記
+- STATE.mdの更新（ステータス、最終アクティビティ）
 
-Extract from result: `version`, `date`, `phases`, `plans`, `tasks`, `accomplishments`, `archived`.
+結果から抽出する：`version`、`date`、`phases`、`plans`、`tasks`、`accomplishments`、`archived`。
 
-Verify: `✅ Milestone archived to .planning/milestones/`
+確認する：`✅ マイルストーンが .planning/milestones/ にアーカイブされました`
 
-**Phase archival (optional):** After archival completes, ask the user:
+**フェーズアーカイブ（オプション）：** アーカイブ完了後、ユーザーに確認する：
 
-AskUserQuestion(header="Archive Phases", question="Archive phase directories to milestones/?", options: "Yes — move to milestones/v[X.Y]-phases/" | "Skip — keep phases in place")
+AskUserQuestion(header="Archive Phases", question="フェーズディレクトリをmilestones/にアーカイブしますか？", options: "はい — milestones/v[X.Y]-phases/ に移動" | "スキップ — フェーズをそのまま保持")
 
-If "Yes": move phase directories to the milestone archive:
+"はい" の場合：フェーズディレクトリをマイルストーンアーカイブに移動する：
 ```bash
 mkdir -p .planning/milestones/v[X.Y]-phases
-# For each phase directory in .planning/phases/:
+# .planning/phases/ 内の各フェーズディレクトリについて：
 mv .planning/phases/{phase-dir} .planning/milestones/v[X.Y]-phases/
 ```
-Verify: `✅ Phase directories archived to .planning/milestones/v[X.Y]-phases/`
+確認する：`✅ フェーズディレクトリが .planning/milestones/v[X.Y]-phases/ にアーカイブされました`
 
-If "Skip": Phase directories remain in `.planning/phases/` as raw execution history. Use `/gsd:cleanup` later to archive retroactively.
+"スキップ" の場合：フェーズディレクトリは `.planning/phases/` に生の実行履歴として残る。後で `/gsd:cleanup` を使って遡及的にアーカイブ可能。
 
-After archival, the AI still handles:
-- Reorganizing ROADMAP.md with milestone grouping (requires judgment)
-- Full PROJECT.md evolution review (requires understanding)
-- Deleting original ROADMAP.md and REQUIREMENTS.md
-- These are NOT fully delegated because they require AI interpretation of content
+アーカイブ後、AIが引き続き処理する内容：
+- マイルストーングループ化によるROADMAP.mdの再編成（判断が必要）
+- PROJECT.mdの完全進化レビュー（理解が必要）
+- 元のROADMAP.mdとREQUIREMENTS.mdの削除
+- これらはコンテンツのAI解釈が必要なため完全には委譲されない
 
 </step>
 
 <step name="reorganize_roadmap_and_delete_originals">
 
-After `milestone complete` has archived, reorganize ROADMAP.md with milestone groupings, then delete originals:
+`milestone complete` がアーカイブした後、マイルストーングループ化でROADMAP.mdを再編成し、元ファイルを削除する：
 
-**Reorganize ROADMAP.md** — group completed milestone phases:
+**ROADMAP.mdを再編成** — 完了したマイルストーンのフェーズをグループ化する：
 
 ```markdown
-# Roadmap: [Project Name]
+# Roadmap: [プロジェクト名]
 
 ## Milestones
 
-- ✅ **v1.0 MVP** — Phases 1-4 (shipped YYYY-MM-DD)
-- 🚧 **v1.1 Security** — Phases 5-6 (in progress)
+- ✅ **v1.0 MVP** — Phases 1-4 (出荷 YYYY-MM-DD)
+- 🚧 **v1.1 Security** — Phases 5-6 (進行中)
 
 ## Phases
 
 <details>
 <summary>✅ v1.0 MVP (Phases 1-4) — SHIPPED YYYY-MM-DD</summary>
 
-- [x] Phase 1: Foundation (2/2 plans) — completed YYYY-MM-DD
-- [x] Phase 2: Authentication (2/2 plans) — completed YYYY-MM-DD
+- [x] Phase 1: Foundation (2/2 計画) — 完了 YYYY-MM-DD
+- [x] Phase 2: Authentication (2/2 計画) — 完了 YYYY-MM-DD
 
 </details>
 ```
 
-**Then delete originals:**
+**その後、元ファイルを削除する：**
 
 ```bash
 rm .planning/ROADMAP.md
@@ -440,59 +440,59 @@ rm .planning/REQUIREMENTS.md
 
 <step name="write_retrospective">
 
-**Append to living retrospective:**
+**リビングレトロスペクティブに追記する：**
 
-Check for existing retrospective:
+既存のレトロスペクティブを確認する：
 ```bash
 ls .planning/RETROSPECTIVE.md 2>/dev/null
 ```
 
-**If exists:** Read the file, append new milestone section before the "## Cross-Milestone Trends" section.
+**存在する場合：** ファイルを読み込み、"## Cross-Milestone Trends" セクションの前に新しいマイルストーンセクションを追記する。
 
-**If doesn't exist:** Create from template at `~/.claude/get-shit-done/templates/retrospective.md`.
+**存在しない場合：** `~/.claude/get-shit-done/templates/retrospective.md` のテンプレートから作成する。
 
-**Gather retrospective data:**
+**レトロスペクティブデータを収集する：**
 
-1. From SUMMARY.md files: Extract key deliverables, one-liners, tech decisions
-2. From VERIFICATION.md files: Extract verification scores, gaps found
-3. From UAT.md files: Extract test results, issues found
-4. From git log: Count commits, calculate timeline
-5. From the milestone work: Reflect on what worked and what didn't
+1. SUMMARY.mdファイルから：主要な成果物、ワンライナー、技術的決定を抽出
+2. VERIFICATION.mdファイルから：検証スコア、発見されたギャップを抽出
+3. UAT.mdファイルから：テスト結果、発見された問題を抽出
+4. gitログから：コミット数を数え、タイムラインを計算
+5. マイルストーンの作業から：うまくいったことと改善が必要なことを振り返る
 
-**Write the milestone section:**
+**マイルストーンセクションを書く：**
 
 ```markdown
 ## Milestone: v{version} — {name}
 
-**Shipped:** {date}
-**Phases:** {phase_count} | **Plans:** {plan_count}
+**出荷日:** {date}
+**フェーズ:** {phase_count} | **計画:** {plan_count}
 
-### What Was Built
-{Extract from SUMMARY.md one-liners}
+### 構築したもの
+{SUMMARY.mdのワンライナーから抽出}
 
-### What Worked
-{Patterns that led to smooth execution}
+### うまくいったこと
+{スムーズな実行につながったパターン}
 
-### What Was Inefficient
-{Missed opportunities, rework, bottlenecks}
+### 非効率だったこと
+{逃したチャンス、やり直し、ボトルネック}
 
-### Patterns Established
-{New conventions discovered during this milestone}
+### 確立されたパターン
+{このマイルストーンで発見された新しい規約}
 
-### Key Lessons
-{Specific, actionable takeaways}
+### 主な教訓
+{具体的で実行可能なテイクアウェイ}
 
-### Cost Observations
-- Model mix: {X}% opus, {Y}% sonnet, {Z}% haiku
-- Sessions: {count}
-- Notable: {efficiency observation}
+### コスト観察
+- モデル配分: {X}% opus, {Y}% sonnet, {Z}% haiku
+- セッション数: {count}
+- 注目: {効率に関する観察}
 ```
 
-**Update cross-milestone trends:**
+**マイルストーン横断のトレンドを更新する：**
 
-If the "## Cross-Milestone Trends" section exists, update the tables with new data from this milestone.
+"## Cross-Milestone Trends" セクションが存在する場合、このマイルストーンの新しいデータでテーブルを更新する。
 
-**Commit:**
+**コミット：**
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: update retrospective for v${VERSION}" --files .planning/RETROSPECTIVE.md
 ```
@@ -501,74 +501,74 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: update retros
 
 <step name="update_state">
 
-Most STATE.md updates were handled by `milestone complete`, but verify and update remaining fields:
+STATE.mdの更新の大部分は `milestone complete` で処理されているが、残りのフィールドを確認して更新する：
 
-**Project Reference:**
+**Project Reference：**
 
 ```markdown
 ## Project Reference
 
 See: .planning/PROJECT.md (updated [today])
 
-**Core value:** [Current core value from PROJECT.md]
-**Current focus:** [Next milestone or "Planning next milestone"]
+**Core value:** [PROJECT.mdからの現在のcore value]
+**Current focus:** [次のマイルストーン または "次のマイルストーンを計画中"]
 ```
 
-**Accumulated Context:**
-- Clear decisions summary (full log in PROJECT.md)
-- Clear resolved blockers
-- Keep open blockers for next milestone
+**Accumulated Context：**
+- 決定事項のサマリーをクリア（完全なログはPROJECT.mdに）
+- 解決済みブロッカーをクリア
+- 次のマイルストーンの未解決ブロッカーを保持
 
 </step>
 
 <step name="handle_branches">
 
-Check branching strategy and offer merge options.
+ブランチ戦略を確認し、マージオプションを提示する。
 
-Use `init milestone-op` for context, or load config directly:
+コンテキストには `init milestone-op` を使用するか、設定を直接読み込む：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init execute-phase "1")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract `branching_strategy`, `phase_branch_template`, `milestone_branch_template`, and `commit_docs` from init JSON.
+init JSONから `branching_strategy`、`phase_branch_template`、`milestone_branch_template`、`commit_docs` を抽出する。
 
-**If "none":** Skip to git_tag.
+**"none" の場合：** git_tagにスキップする。
 
-**For "phase" strategy:**
+**"phase" 戦略の場合：**
 
 ```bash
 BRANCH_PREFIX=$(echo "$PHASE_BRANCH_TEMPLATE" | sed 's/{.*//')
 PHASE_BRANCHES=$(git branch --list "${BRANCH_PREFIX}*" 2>/dev/null | sed 's/^\*//' | tr -d ' ')
 ```
 
-**For "milestone" strategy:**
+**"milestone" 戦略の場合：**
 
 ```bash
 BRANCH_PREFIX=$(echo "$MILESTONE_BRANCH_TEMPLATE" | sed 's/{.*//')
 MILESTONE_BRANCH=$(git branch --list "${BRANCH_PREFIX}*" 2>/dev/null | sed 's/^\*//' | tr -d ' ' | head -1)
 ```
 
-**If no branches found:** Skip to git_tag.
+**ブランチが見つからない場合：** git_tagにスキップする。
 
-**If branches exist:**
+**ブランチが存在する場合：**
 
 ```
-## Git Branches Detected
+## 検出されたGitブランチ
 
-Branching strategy: {phase/milestone}
-Branches: {list}
+ブランチ戦略: {phase/milestone}
+ブランチ: {一覧}
 
-Options:
-1. **Merge to main** — Merge branch(es) to main
-2. **Delete without merging** — Already merged or not needed
-3. **Keep branches** — Leave for manual handling
+オプション：
+1. **mainにマージ** — ブランチをmainにマージ
+2. **マージせずに削除** — 既にマージ済みまたは不要
+3. **ブランチを保持** — 手動処理のために残す
 ```
 
-AskUserQuestion with options: Squash merge (Recommended), Merge with history, Delete without merging, Keep branches.
+AskUserQuestion オプション: Squash merge（推奨）, Merge with history, マージせずに削除, ブランチを保持。
 
-**Squash merge:**
+**Squash merge：**
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current)
@@ -577,7 +577,7 @@ git checkout main
 if [ "$BRANCHING_STRATEGY" = "phase" ]; then
   for branch in $PHASE_BRANCHES; do
     git merge --squash "$branch"
-    # Strip .planning/ from staging if commit_docs is false
+    # commit_docsがfalseの場合、ステージングから.planning/を除外
     if [ "$COMMIT_DOCS" = "false" ]; then
       git reset HEAD .planning/ 2>/dev/null || true
     fi
@@ -587,7 +587,7 @@ fi
 
 if [ "$BRANCHING_STRATEGY" = "milestone" ]; then
   git merge --squash "$MILESTONE_BRANCH"
-  # Strip .planning/ from staging if commit_docs is false
+  # commit_docsがfalseの場合、ステージングから.planning/を除外
   if [ "$COMMIT_DOCS" = "false" ]; then
     git reset HEAD .planning/ 2>/dev/null || true
   fi
@@ -597,7 +597,7 @@ fi
 git checkout "$CURRENT_BRANCH"
 ```
 
-**Merge with history:**
+**Merge with history：**
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current)
@@ -606,7 +606,7 @@ git checkout main
 if [ "$BRANCHING_STRATEGY" = "phase" ]; then
   for branch in $PHASE_BRANCHES; do
     git merge --no-ff --no-commit "$branch"
-    # Strip .planning/ from staging if commit_docs is false
+    # commit_docsがfalseの場合、ステージングから.planning/を除外
     if [ "$COMMIT_DOCS" = "false" ]; then
       git reset HEAD .planning/ 2>/dev/null || true
     fi
@@ -616,7 +616,7 @@ fi
 
 if [ "$BRANCHING_STRATEGY" = "milestone" ]; then
   git merge --no-ff --no-commit "$MILESTONE_BRANCH"
-  # Strip .planning/ from staging if commit_docs is false
+  # commit_docsがfalseの場合、ステージングから.planning/を除外
   if [ "$COMMIT_DOCS" = "false" ]; then
     git reset HEAD .planning/ 2>/dev/null || true
   fi
@@ -626,7 +626,7 @@ fi
 git checkout "$CURRENT_BRANCH"
 ```
 
-**Delete without merging:**
+**マージせずに削除：**
 
 ```bash
 if [ "$BRANCHING_STRATEGY" = "phase" ]; then
@@ -640,32 +640,32 @@ if [ "$BRANCHING_STRATEGY" = "milestone" ]; then
 fi
 ```
 
-**Keep branches:** Report "Branches preserved for manual handling"
+**ブランチを保持：** "ブランチは手動処理のために保持されています" と報告する
 
 </step>
 
 <step name="git_tag">
 
-Create git tag:
+gitタグを作成する：
 
 ```bash
-git tag -a v[X.Y] -m "v[X.Y] [Name]
+git tag -a v[X.Y] -m "v[X.Y] [名前]
 
-Delivered: [One sentence]
+Delivered: [1文]
 
-Key accomplishments:
-- [Item 1]
-- [Item 2]
-- [Item 3]
+主要な成果：
+- [項目1]
+- [項目2]
+- [項目3]
 
-See .planning/MILESTONES.md for full details."
+詳細は .planning/MILESTONES.md を参照。"
 ```
 
-Confirm: "Tagged: v[X.Y]"
+確認する："タグ作成完了: v[X.Y]"
 
-Ask: "Push tag to remote? (y/n)"
+確認する："タグをリモートにプッシュしますか？ (y/n)"
 
-If yes:
+はいの場合：
 ```bash
 git push origin v[X.Y]
 ```
@@ -674,38 +674,38 @@ git push origin v[X.Y]
 
 <step name="git_commit_milestone">
 
-Commit milestone completion.
+マイルストーン完了をコミットする。
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
 ```
 ```
 
-Confirm: "Committed: chore: complete v[X.Y] milestone"
+確認する："Committed: chore: complete v[X.Y] milestone"
 
 </step>
 
 <step name="offer_next">
 
 ```
-✅ Milestone v[X.Y] [Name] complete
+✅ マイルストーン v[X.Y] [名前] 完了
 
-Shipped:
-- [N] phases ([M] plans, [P] tasks)
-- [One sentence of what shipped]
+出荷内容：
+- [N] フェーズ ([M] 計画、[P] タスク)
+- [出荷内容の1文]
 
-Archived:
+アーカイブ先：
 - milestones/v[X.Y]-ROADMAP.md
 - milestones/v[X.Y]-REQUIREMENTS.md
 
-Summary: .planning/MILESTONES.md
-Tag: v[X.Y]
+サマリー: .planning/MILESTONES.md
+タグ: v[X.Y]
 
 ---
 
 ## ▶ Next Up
 
-**Start Next Milestone** — questioning → research → requirements → roadmap
+**次のマイルストーンを開始** — 質問 → 調査 → 要件 → ロードマップ
 
 `/gsd:new-milestone`
 
@@ -720,45 +720,46 @@ Tag: v[X.Y]
 
 <milestone_naming>
 
-**Version conventions:**
-- **v1.0** — Initial MVP
-- **v1.1, v1.2** — Minor updates, new features, fixes
-- **v2.0, v3.0** — Major rewrites, breaking changes, new direction
+**バージョン規約：**
+- **v1.0** — 初期MVP
+- **v1.1, v1.2** — マイナーアップデート、新機能、修正
+- **v2.0, v3.0** — 大規模リライト、破壊的変更、新方向性
 
-**Names:** Short 1-2 words (v1.0 MVP, v1.1 Security, v1.2 Performance, v2.0 Redesign).
+**名前：** 短い1-2単語（v1.0 MVP, v1.1 Security, v1.2 Performance, v2.0 Redesign）。
 
 </milestone_naming>
 
 <what_qualifies>
 
-**Create milestones for:** Initial release, public releases, major feature sets shipped, before archiving planning.
+**マイルストーンを作成するケース：** 初回リリース、公開リリース、主要な機能セットの出荷、計画のアーカイブ前。
 
-**Don't create milestones for:** Every phase completion (too granular), work in progress, internal dev iterations (unless truly shipped).
+**マイルストーンを作成しないケース：** 各フェーズの完了（粒度が細かすぎる）、作業中、内部開発イテレーション（本当に出荷されていない限り）。
 
-Heuristic: "Is this deployed/usable/shipped?" If yes → milestone. If no → keep working.
+ヒューリスティック："これはデプロイ/使用可能/出荷されているか？" はいなら → マイルストーン。いいえなら → 作業を続ける。
 
 </what_qualifies>
 
 <success_criteria>
 
-Milestone completion is successful when:
+マイルストーン完了が成功する条件：
 
-- [ ] MILESTONES.md entry created with stats and accomplishments
-- [ ] PROJECT.md full evolution review completed
-- [ ] All shipped requirements moved to Validated in PROJECT.md
-- [ ] Key Decisions updated with outcomes
-- [ ] ROADMAP.md reorganized with milestone grouping
-- [ ] Roadmap archive created (milestones/v[X.Y]-ROADMAP.md)
-- [ ] Requirements archive created (milestones/v[X.Y]-REQUIREMENTS.md)
-- [ ] REQUIREMENTS.md deleted (fresh for next milestone)
-- [ ] STATE.md updated with fresh project reference
-- [ ] Git tag created (v[X.Y])
-- [ ] Milestone commit made (includes archive files and deletion)
-- [ ] Requirements completion checked against REQUIREMENTS.md traceability table
-- [ ] Incomplete requirements surfaced with proceed/audit/abort options
-- [ ] Known gaps recorded in MILESTONES.md if user proceeded with incomplete requirements
-- [ ] RETROSPECTIVE.md updated with milestone section
-- [ ] Cross-milestone trends updated
-- [ ] User knows next step (/gsd:new-milestone)
+- [ ] MILESTONES.mdエントリが統計と成果付きで作成されている
+- [ ] PROJECT.mdの完全進化レビューが完了している
+- [ ] 出荷されたすべての要件がPROJECT.mdのValidatedに移動されている
+- [ ] Key Decisionsが成果付きで更新されている
+- [ ] ROADMAP.mdがマイルストーングループ化で再編成されている
+- [ ] ロードマップアーカイブが作成されている (milestones/v[X.Y]-ROADMAP.md)
+- [ ] 要件アーカイブが作成されている (milestones/v[X.Y]-REQUIREMENTS.md)
+- [ ] REQUIREMENTS.mdが削除されている（次のマイルストーン用に新規作成）
+- [ ] STATE.mdが新しいプロジェクト参照で更新されている
+- [ ] Gitタグが作成されている (v[X.Y])
+- [ ] マイルストーンコミットが作成されている（アーカイブファイルと削除を含む）
+- [ ] REQUIREMENTS.mdのトレーサビリティテーブルに対して要件の完了が確認されている
+- [ ] 未完了の要件が続行/監査/中止オプション付きで表示されている
+- [ ] ユーザーが未完了の要件で続行した場合、既知のギャップがMILESTONES.mdに記録されている
+- [ ] RETROSPECTIVE.mdがマイルストーンセクションで更新されている
+- [ ] マイルストーン横断のトレンドが更新されている
+- [ ] ユーザーが次のステップを知っている (/gsd:new-milestone)
 
 </success_criteria>
+</output>

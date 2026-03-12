@@ -1,54 +1,54 @@
-# Project Retrospective
+# プロジェクト振り返り
 
-*A living document updated after each milestone. Lessons feed forward into future planning.*
+*各マイルストーン後に更新されるリビングドキュメント。教訓は将来の計画にフィードフォワードされます。*
 
-## Milestone: v{version} — {name}
+## マイルストーン: v{version} — {name}
 
-**Shipped:** {date}
-**Phases:** {count} | **Plans:** {count} | **Sessions:** {count}
+**リリース日:** {date}
+**フェーズ:** {count} | **プラン:** {count} | **セッション:** {count}
 
-### What Was Built
-- {Key deliverable 1}
-- {Key deliverable 2}
-- {Key deliverable 3}
+### 構築されたもの
+- {主要成果物 1}
+- {主要成果物 2}
+- {主要成果物 3}
 
-### What Worked
-- {Efficiency win or successful pattern}
-- {What went smoothly}
+### うまくいったこと
+- {効率化の成功やうまくいったパターン}
+- {スムーズに進んだこと}
 
-### What Was Inefficient
-- {Missed opportunity}
-- {What took longer than expected}
+### 非効率だったこと
+- {逃した機会}
+- {予想以上に時間がかかったこと}
 
-### Patterns Established
-- {New pattern or convention that should persist}
+### 確立されたパターン
+- {今後も維持すべき新しいパターンや規約}
 
-### Key Lessons
-1. {Specific, actionable lesson}
-2. {Another lesson}
+### 主な教訓
+1. {具体的で実行可能な教訓}
+2. {もう一つの教訓}
 
-### Cost Observations
-- Model mix: {X}% opus, {Y}% sonnet, {Z}% haiku
-- Sessions: {count}
-- Notable: {efficiency observation}
+### コスト観察
+- モデル構成: {X}% opus, {Y}% sonnet, {Z}% haiku
+- セッション数: {count}
+- 特記事項: {効率に関する観察}
 
 ---
 
-## Cross-Milestone Trends
+## マイルストーン横断トレンド
 
-### Process Evolution
+### プロセスの進化
 
-| Milestone | Sessions | Phases | Key Change |
+| マイルストーン | セッション | フェーズ | 主な変更点 |
 |-----------|----------|--------|------------|
-| v{X} | {N} | {M} | {What changed in process} |
+| v{X} | {N} | {M} | {プロセスで変わったこと} |
 
-### Cumulative Quality
+### 累積品質
 
-| Milestone | Tests | Coverage | Zero-Dep Additions |
+| マイルストーン | テスト | カバレッジ | ゼロ依存追加 |
 |-----------|-------|----------|-------------------|
 | v{X} | {N} | {Y}% | {count} |
 
-### Top Lessons (Verified Across Milestones)
+### 主要な教訓（複数マイルストーンで検証済み）
 
-1. {Lesson verified by multiple milestones}
-2. {Another cross-validated lesson}
+1. {複数のマイルストーンで検証された教訓}
+2. {もう一つの横断的に検証された教訓}

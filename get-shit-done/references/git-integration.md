@@ -1,25 +1,25 @@
 <overview>
-Git integration for GSD framework.
+GSDフレームワークのGit統合。
 </overview>
 
 <core_principle>
 
-**Commit outcomes, not process.**
+**成果をコミットせよ、プロセスではない。**
 
-The git log should read like a changelog of what shipped, not a diary of planning activity.
+gitログは、計画活動の日記ではなく、何がリリースされたかの変更履歴として読めるべきです。
 </core_principle>
 
 <commit_points>
 
-| Event                   | Commit? | Why                                              |
+| イベント                   | コミット? | 理由                                              |
 | ----------------------- | ------- | ------------------------------------------------ |
-| BRIEF + ROADMAP created | YES     | Project initialization                           |
-| PLAN.md created         | NO      | Intermediate - commit with plan completion       |
-| RESEARCH.md created     | NO      | Intermediate                                     |
-| DISCOVERY.md created    | NO      | Intermediate                                     |
-| **Task completed**      | YES     | Atomic unit of work (1 commit per task)         |
-| **Plan completed**      | YES     | Metadata commit (SUMMARY + STATE + ROADMAP)     |
-| Handoff created         | YES     | WIP state preserved                              |
+| BRIEF + ROADMAP作成 | はい     | プロジェクト初期化                           |
+| PLAN.md作成         | いいえ      | 中間成果物 - プラン完了時にコミット       |
+| RESEARCH.md作成     | いいえ      | 中間成果物                                     |
+| DISCOVERY.md作成    | いいえ      | 中間成果物                                     |
+| **タスク完了**      | はい     | 作業の原子単位（1タスクにつき1コミット）         |
+| **プラン完了**      | はい     | メタデータコミット（SUMMARY + STATE + ROADMAP）     |
+| ハンドオフ作成         | はい     | WIP状態の保存                              |
 
 </commit_points>
 
@@ -29,18 +29,18 @@ The git log should read like a changelog of what shipped, not a diary of plannin
 [ -d .git ] && echo "GIT_EXISTS" || echo "NO_GIT"
 ```
 
-If NO_GIT: Run `git init` silently. GSD projects always get their own repo.
+NO_GITの場合: サイレントに`git init`を実行する。GSDプロジェクトは常に独自のリポジトリを持つ。
 </git_check>
 
 <commit_formats>
 
 <format name="initialization">
-## Project Initialization (brief + roadmap together)
+## プロジェクト初期化（briefとroadmapを一緒に）
 
 ```
 docs: initialize [project-name] ([N] phases)
 
-[One-liner from PROJECT.md]
+[PROJECT.mdからの一行説明]
 
 Phases:
 1. [phase-name]: [goal]
@@ -48,7 +48,7 @@ Phases:
 3. [phase-name]: [goal]
 ```
 
-What to commit:
+コミット対象:
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: initialize [project-name] ([N] phases)" --files .planning/
@@ -57,30 +57,30 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: initialize [p
 </format>
 
 <format name="task-completion">
-## Task Completion (During Plan Execution)
+## タスク完了（プラン実行中）
 
-Each task gets its own commit immediately after completion.
+各タスクは完了直後に独自のコミットを取得します。
 
 ```
 {type}({phase}-{plan}): {task-name}
 
-- [Key change 1]
-- [Key change 2]
-- [Key change 3]
+- [主要な変更1]
+- [主要な変更2]
+- [主要な変更3]
 ```
 
-**Commit types:**
-- `feat` - New feature/functionality
-- `fix` - Bug fix
-- `test` - Test-only (TDD RED phase)
-- `refactor` - Code cleanup (TDD REFACTOR phase)
-- `perf` - Performance improvement
-- `chore` - Dependencies, config, tooling
+**コミットタイプ:**
+- `feat` - 新機能/機能性
+- `fix` - バグ修正
+- `test` - テストのみ（TDD REDフェーズ）
+- `refactor` - コードクリーンアップ（TDD REFACTORフェーズ）
+- `perf` - パフォーマンス改善
+- `chore` - 依存関係、設定、ツール
 
-**Examples:**
+**例:**
 
 ```bash
-# Standard task
+# 標準タスク
 git add src/api/auth.ts src/types/user.ts
 git commit -m "feat(08-02): create user registration endpoint
 
@@ -89,7 +89,7 @@ git commit -m "feat(08-02): create user registration endpoint
 - Returns JWT token on success
 "
 
-# TDD task - RED phase
+# TDDタスク - REDフェーズ
 git add src/__tests__/jwt.test.ts
 git commit -m "test(07-02): add failing test for JWT generation
 
@@ -98,7 +98,7 @@ git commit -m "test(07-02): add failing test for JWT generation
 - Tests signature verification
 "
 
-# TDD task - GREEN phase
+# TDDタスク - GREENフェーズ
 git add src/utils/jwt.ts
 git commit -m "feat(07-02): implement JWT generation
 
@@ -111,9 +111,9 @@ git commit -m "feat(07-02): implement JWT generation
 </format>
 
 <format name="plan-completion">
-## Plan Completion (After All Tasks Done)
+## プラン完了（全タスク完了後）
 
-After all tasks committed, one final metadata commit captures plan completion.
+全タスクがコミットされた後、最後のメタデータコミットでプラン完了を記録します。
 
 ```
 docs({phase}-{plan}): complete [plan-name] plan
@@ -126,18 +126,18 @@ Tasks completed: [N]/[N]
 SUMMARY: .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md
 ```
 
-What to commit:
+コミット対象:
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs({phase}-{plan}): complete [plan-name] plan" --files .planning/phases/XX-name/{phase}-{plan}-PLAN.md .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md .planning/STATE.md .planning/ROADMAP.md
 ```
 
-**Note:** Code files NOT included - already committed per-task.
+**注意:** コードファイルは含まない - 既にタスクごとにコミット済み。
 
 </format>
 
 <format name="handoff">
-## Handoff (WIP)
+## ハンドオフ（WIP）
 
 ```
 wip: [phase-name] paused at task [X]/[Y]
@@ -146,7 +146,7 @@ Current: [task name]
 [If blocked:] Blocked: [reason]
 ```
 
-What to commit:
+コミット対象:
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "wip: [phase-name] paused at task [X]/[Y]" --files .planning/
@@ -157,7 +157,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "wip: [phase-name] p
 
 <example_log>
 
-**Old approach (per-plan commits):**
+**旧アプローチ（プラン単位のコミット）:**
 ```
 a7f2d1 feat(checkout): Stripe payments with webhook verification
 3e9c4b feat(products): catalog with search, filters, and pagination
@@ -166,7 +166,7 @@ a7f2d1 feat(checkout): Stripe payments with webhook verification
 2f4a8d docs: initialize ecommerce-app (5 phases)
 ```
 
-**New approach (per-task commits):**
+**新アプローチ（タスク単位のコミット）:**
 ```
 # Phase 04 - Checkout
 1a2b3c docs(04-01): complete checkout flow plan
@@ -198,51 +198,51 @@ a7f2d1 feat(checkout): Stripe payments with webhook verification
 5c6d7e docs: initialize ecommerce-app (5 phases)
 ```
 
-Each plan produces 2-4 commits (tasks + metadata). Clear, granular, bisectable.
+各プランは2-4コミットを生成（タスク + メタデータ）。明確で、細粒度で、bisect可能。
 
 </example_log>
 
 <anti_patterns>
 
-**Still don't commit (intermediate artifacts):**
-- PLAN.md creation (commit with plan completion)
-- RESEARCH.md (intermediate)
-- DISCOVERY.md (intermediate)
-- Minor planning tweaks
-- "Fixed typo in roadmap"
+**コミットしないもの（中間成果物）:**
+- PLAN.md作成（プラン完了時にコミット）
+- RESEARCH.md（中間成果物）
+- DISCOVERY.md（中間成果物）
+- 軽微な計画の微調整
+- 「ロードマップのタイポを修正」
 
-**Do commit (outcomes):**
-- Each task completion (feat/fix/test/refactor)
-- Plan completion metadata (docs)
-- Project initialization (docs)
+**コミットするもの（成果）:**
+- 各タスク完了（feat/fix/test/refactor）
+- プラン完了メタデータ（docs）
+- プロジェクト初期化（docs）
 
-**Key principle:** Commit working code and shipped outcomes, not planning process.
+**重要な原則:** 動作するコードとリリースされた成果をコミットする。計画プロセスではない。
 
 </anti_patterns>
 
 <commit_strategy_rationale>
 
-## Why Per-Task Commits?
+## なぜタスク単位のコミットか？
 
-**Context engineering for AI:**
-- Git history becomes primary context source for future Claude sessions
-- `git log --grep="{phase}-{plan}"` shows all work for a plan
-- `git diff <hash>^..<hash>` shows exact changes per task
-- Less reliance on parsing SUMMARY.md = more context for actual work
+**AIのためのコンテキストエンジニアリング:**
+- Gitの履歴が将来のClaudeセッションの主要なコンテキストソースになる
+- `git log --grep="{phase}-{plan}"`でプランのすべての作業を表示
+- `git diff <hash>^..<hash>`でタスクごとの正確な変更を表示
+- SUMMARY.mdの解析への依存が減り = 実際の作業により多くのコンテキストを使用可能
 
-**Failure recovery:**
-- Task 1 committed ✅, Task 2 failed ❌
-- Claude in next session: sees task 1 complete, can retry task 2
-- Can `git reset --hard` to last successful task
+**障害回復:**
+- タスク1コミット済み、タスク2失敗
+- 次のセッションのClaude: タスク1の完了を確認、タスク2を再試行可能
+- 最後の成功タスクまで`git reset --hard`可能
 
-**Debugging:**
-- `git bisect` finds exact failing task, not just failing plan
-- `git blame` traces line to specific task context
-- Each commit is independently revertable
+**デバッグ:**
+- `git bisect`が失敗したプランではなく、正確に失敗したタスクを特定
+- `git blame`が行を特定のタスクコンテキストに追跡
+- 各コミットは独立して取り消し可能
 
-**Observability:**
-- Solo developer + Claude workflow benefits from granular attribution
-- Atomic commits are git best practice
-- "Commit noise" irrelevant when consumer is Claude, not humans
+**可観測性:**
+- ソロ開発者 + Claudeのワークフローは細粒度の帰属から恩恵を受ける
+- アトミックコミットはgitのベストプラクティス
+- コンシューマーが人間ではなくClaudeの場合、「コミットノイズ」は無関係
 
 </commit_strategy_rationale>

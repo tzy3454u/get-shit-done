@@ -1,49 +1,49 @@
-# UAT Template
+# UATテンプレート
 
-Template for `.planning/phases/XX-name/{phase_num}-UAT.md` — persistent UAT session tracking.
+`.planning/phases/XX-name/{phase_num}-UAT.md` 用テンプレート — 永続的なUATセッション追跡。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
 ---
 status: testing | complete | diagnosed
 phase: XX-name
-source: [list of SUMMARY.md files tested]
-started: [ISO timestamp]
-updated: [ISO timestamp]
+source: [テスト対象のSUMMARY.mdファイルのリスト]
+started: [ISOタイムスタンプ]
+updated: [ISOタイムスタンプ]
 ---
 
 ## Current Test
-<!-- OVERWRITE each test - shows where we are -->
+<!-- 各テストで上書き - 現在地を表示 -->
 
 number: [N]
-name: [test name]
+name: [テスト名]
 expected: |
-  [what user should observe]
+  [ユーザーが観察すべきこと]
 awaiting: user response
 
 ## Tests
 
-### 1. [Test Name]
-expected: [observable behavior - what user should see]
+### 1. [テスト名]
+expected: [観察可能な動作 - ユーザーが見るべきもの]
 result: [pending]
 
-### 2. [Test Name]
-expected: [observable behavior]
+### 2. [テスト名]
+expected: [観察可能な動作]
 result: pass
 
-### 3. [Test Name]
-expected: [observable behavior]
+### 3. [テスト名]
+expected: [観察可能な動作]
 result: issue
-reported: "[verbatim user response]"
+reported: "[ユーザーの回答そのまま]"
 severity: major
 
-### 4. [Test Name]
-expected: [observable behavior]
+### 4. [テスト名]
+expected: [観察可能な動作]
 result: skipped
-reason: [why skipped]
+reason: [スキップ理由]
 
 ...
 
@@ -57,64 +57,64 @@ skipped: [N]
 
 ## Gaps
 
-<!-- YAML format for plan-phase --gaps consumption -->
-- truth: "[expected behavior from test]"
+<!-- plan-phase --gaps消費用のYAML形式 -->
+- truth: "[テストからの期待される動作]"
   status: failed
-  reason: "User reported: [verbatim response]"
+  reason: "User reported: [ユーザーの回答そのまま]"
   severity: blocker | major | minor | cosmetic
   test: [N]
-  root_cause: ""     # Filled by diagnosis
-  artifacts: []      # Filled by diagnosis
-  missing: []        # Filled by diagnosis
-  debug_session: ""  # Filled by diagnosis
+  root_cause: ""     # 診断で記入
+  artifacts: []      # 診断で記入
+  missing: []        # 診断で記入
+  debug_session: ""  # 診断で記入
 ```
 
 ---
 
 <section_rules>
 
-**Frontmatter:**
-- `status`: OVERWRITE - "testing" or "complete"
-- `phase`: IMMUTABLE - set on creation
-- `source`: IMMUTABLE - SUMMARY files being tested
-- `started`: IMMUTABLE - set on creation
-- `updated`: OVERWRITE - update on every change
+**フロントマター:**
+- `status`: 上書き - "testing" または "complete"
+- `phase`: 不変 - 作成時に設定
+- `source`: 不変 - テスト対象のSUMMARYファイル
+- `started`: 不変 - 作成時に設定
+- `updated`: 上書き - 変更のたびに更新
 
 **Current Test:**
-- OVERWRITE entirely on each test transition
-- Shows which test is active and what's awaited
-- On completion: "[testing complete]"
+- 各テスト遷移時に完全に上書き
+- アクティブなテストと待機中の内容を表示
+- 完了時: "[testing complete]"
 
 **Tests:**
-- Each test: OVERWRITE result field when user responds
-- `result` values: [pending], pass, issue, skipped
-- If issue: add `reported` (verbatim) and `severity` (inferred)
-- If skipped: add `reason` if provided
+- 各テスト: ユーザーの回答時にresultフィールドを上書き
+- `result` 値: [pending], pass, issue, skipped
+- issueの場合: `reported`（そのまま）と`severity`（推定）を追加
+- skippedの場合: 提供されていれば`reason`を追加
 
 **Summary:**
-- OVERWRITE counts after each response
-- Tracks: total, passed, issues, pending, skipped
+- 各回答後にカウントを上書き
+- 追跡: total, passed, issues, pending, skipped
 
 **Gaps:**
-- APPEND only when issue found (YAML format)
-- After diagnosis: fill `root_cause`, `artifacts`, `missing`, `debug_session`
-- This section feeds directly into /gsd:plan-phase --gaps
+- 問題発見時のみ追記（YAML形式）
+- 診断後: `root_cause`, `artifacts`, `missing`, `debug_session` を記入
+- このセクションは /gsd:plan-phase --gaps に直接供給される
 
 </section_rules>
 
 <diagnosis_lifecycle>
 
-**After testing complete (status: complete), if gaps exist:**
+**テスト完了後（status: complete）でギャップが存在する場合:**
 
-1. User runs diagnosis (from verify-work offer or manually)
-2. diagnose-issues workflow spawns parallel debug agents
-3. Each agent investigates one gap, returns root cause
-4. UAT.md Gaps section updated with diagnosis:
-   - Each gap gets `root_cause`, `artifacts`, `missing`, `debug_session` filled
+1. ユーザーが診断を実行（verify-workからの提案または手動で）
+2. diagnose-issuesワークフローが並列デバッグエージェントを起動
+3. 各エージェントが1つのギャップを調査し、根本原因を返す
+4. UAT.mdのGapsセクションが診断で更新:
+   - 各ギャップに `root_cause`, `artifacts`, `missing`, `debug_session` が記入
 5. status → "diagnosed"
-6. Ready for /gsd:plan-phase --gaps with root causes
+6. 根本原因付きで /gsd:plan-phase --gaps の準備完了
 
-**After diagnosis:**
+**診断後:**
 ```yaml
 ## Gaps
 
@@ -136,46 +136,46 @@ skipped: [N]
 
 <lifecycle>
 
-**Creation:** When /gsd:verify-work starts new session
-- Extract tests from SUMMARY.md files
-- Set status to "testing"
-- Current Test points to test 1
-- All tests have result: [pending]
+**作成:** /gsd:verify-workが新しいセッションを開始する時
+- SUMMARY.mdファイルからテストを抽出
+- statusを "testing" に設定
+- Current Testをテスト1に設定
+- すべてのテストを result: [pending] に設定
 
-**During testing:**
-- Present test from Current Test section
-- User responds with pass confirmation or issue description
-- Update test result (pass/issue/skipped)
-- Update Summary counts
-- If issue: append to Gaps section (YAML format), infer severity
-- Move Current Test to next pending test
+**テスト中:**
+- Current Testセクションからテストを提示
+- ユーザーが合格確認または問題の説明で回答
+- テスト結果を更新（pass/issue/skipped）
+- Summaryカウントを更新
+- issueの場合: Gapsセクションに追記（YAML形式）、重大度を推定
+- Current Testを次の保留中テストに移動
 
-**On completion:**
+**完了時:**
 - status → "complete"
 - Current Test → "[testing complete]"
-- Commit file
-- Present summary with next steps
+- ファイルをコミット
+- サマリーと次のステップを提示
 
-**Resume after /clear:**
-1. Read frontmatter → know phase and status
-2. Read Current Test → know where we are
-3. Find first [pending] result → continue from there
-4. Summary shows progress so far
+**/clear後の再開:**
+1. フロントマターを読む → フェーズとステータスを把握
+2. Current Testを読む → 現在地を把握
+3. 最初の[pending]結果を見つける → そこから継続
+4. Summaryでこれまでの進捗を表示
 
 </lifecycle>
 
 <severity_guide>
 
-Severity is INFERRED from user's natural language, never asked.
+重大度はユーザーの自然言語から推定され、決して直接尋ねません。
 
-| User describes | Infer |
+| ユーザーの説明 | 推定 |
 |----------------|-------|
-| Crash, error, exception, fails completely, unusable | blocker |
-| Doesn't work, nothing happens, wrong behavior, missing | major |
-| Works but..., slow, weird, minor, small issue | minor |
-| Color, font, spacing, alignment, visual, looks off | cosmetic |
+| クラッシュ、エラー、例外、完全に失敗、使用不可 | blocker |
+| 動かない、何も起こらない、間違った動作、欠落 | major |
+| 動くけど...、遅い、おかしい、軽微、小さな問題 | minor |
+| 色、フォント、余白、配置、視覚的、見た目がずれている | cosmetic |
 
-Default: **major** (safe default, user can clarify if wrong)
+デフォルト: **major**（安全なデフォルト、間違っていればユーザーが訂正可能）
 
 </severity_guide>
 
@@ -195,30 +195,30 @@ updated: 2025-01-15T10:45:00Z
 
 ## Tests
 
-### 1. View Comments on Post
-expected: Comments section expands, shows count and comment list
+### 1. 投稿のコメント表示
+expected: コメントセクションが展開し、件数とコメントリストを表示
 result: pass
 
-### 2. Create Top-Level Comment
-expected: Submit comment via rich text editor, appears in list with author info
+### 2. トップレベルコメントの作成
+expected: リッチテキストエディターでコメントを送信、作成者情報付きでリストに表示
 result: issue
 reported: "works but doesn't show until I refresh the page"
 severity: major
 
-### 3. Reply to a Comment
-expected: Click Reply, inline composer appears, submit shows nested reply
+### 3. コメントへの返信
+expected: 返信をクリック、インラインコンポーザーが表示、送信するとネストされた返信が表示
 result: pass
 
-### 4. Visual Nesting
-expected: 3+ level thread shows indentation, left borders, caps at reasonable depth
+### 4. ビジュアルネスト
+expected: 3段階以上のスレッドがインデント、左ボーダーを表示、適切な深さで制限
 result: pass
 
-### 5. Delete Own Comment
-expected: Click delete on own comment, removed or shows [deleted] if has replies
+### 5. 自分のコメントの削除
+expected: 自分のコメントで削除をクリック、削除されるか返信がある場合は[deleted]を表示
 result: pass
 
-### 6. Comment Count
-expected: Post shows accurate count, increments when adding comment
+### 6. コメント数
+expected: 投稿に正確な数を表示、コメント追加時にインクリメント
 result: pass
 
 ## Summary

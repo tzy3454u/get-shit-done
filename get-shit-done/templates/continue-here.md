@@ -1,6 +1,6 @@
-# Continue-Here Template
+# Continue-Hereテンプレート
 
-Copy and fill this structure for `.planning/phases/XX-name/.continue-here.md`:
+この構造をコピーして `.planning/phases/XX-name/.continue-here.md` に記入してください:
 
 ```yaml
 ---
@@ -14,65 +14,66 @@ last_updated: 2025-01-15T14:30:00Z
 
 ```markdown
 <current_state>
-[Where exactly are we? What's the immediate context?]
+[今どこにいるか？直近のコンテキストは？]
 </current_state>
 
 <completed_work>
-[What got done this session - be specific]
+[このセッションで完了した作業 - 具体的に]
 
-- Task 1: [name] - Done
-- Task 2: [name] - Done
-- Task 3: [name] - In progress, [what's done on it]
+- Task 1: [名前] - 完了
+- Task 2: [名前] - 完了
+- Task 3: [名前] - 進行中、[何が完了したか]
 </completed_work>
 
 <remaining_work>
-[What's left in this phase]
+[このフェーズの残りの作業]
 
-- Task 3: [name] - [what's left to do]
-- Task 4: [name] - Not started
-- Task 5: [name] - Not started
+- Task 3: [名前] - [残りの作業]
+- Task 4: [名前] - 未着手
+- Task 5: [名前] - 未着手
 </remaining_work>
 
 <decisions_made>
-[Key decisions and why - so next session doesn't re-debate]
+[主要な判断とその理由 — 次のセッションで再議論しないために]
 
-- Decided to use [X] because [reason]
-- Chose [approach] over [alternative] because [reason]
+- [X]を使用することに決定、理由は[理由]
+- [代替案]より[アプローチ]を選択、理由は[理由]
 </decisions_made>
 
 <blockers>
-[Anything stuck or waiting on external factors]
+[行き詰まっているもの、外部要因を待っているもの]
 
-- [Blocker 1]: [status/workaround]
+- [ブロッカー1]: [状況/回避策]
 </blockers>
 
 <context>
-[Mental state, "vibe", anything that helps resume smoothly]
+[心理状態、「雰囲気」、スムーズに再開するために役立つ情報]
 
-[What were you thinking about? What was the plan?
-This is the "pick up exactly where you left off" context.]
+[何を考えていたか？計画は何だったか？
+これは「中断した場所からまさにそのまま再開する」ためのコンテキストです。]
 </context>
 
 <next_action>
-[The very first thing to do when resuming]
+[再開時に最初にすべきこと]
 
-Start with: [specific action]
+Start with: [具体的なアクション]
 </next_action>
 ```
 
 <yaml_fields>
-Required YAML frontmatter:
+必須のYAMLフロントマター:
 
-- `phase`: Directory name (e.g., `02-authentication`)
-- `task`: Current task number
-- `total_tasks`: How many tasks in phase
-- `status`: `in_progress`, `blocked`, `almost_done`
-- `last_updated`: ISO timestamp
+- `phase`: ディレクトリ名（例: `02-authentication`）
+- `task`: 現在のタスク番号
+- `total_tasks`: フェーズ内のタスク数
+- `status`: `in_progress`、`blocked`、`almost_done`
+- `last_updated`: ISOタイムスタンプ
 </yaml_fields>
 
 <guidelines>
-- Be specific enough that a fresh Claude instance understands immediately
-- Include WHY decisions were made, not just what
-- The `<next_action>` should be actionable without reading anything else
-- This file gets DELETED after resume - it's not permanent storage
+- 新しいClaudeインスタンスがすぐに理解できるほど具体的に書く
+- 判断の理由（WHY）を含める、何を決めたかだけでなく
+- `<next_action>`は他に何も読まなくても実行可能であるべき
+- このファイルは再開後に削除される — 永続的な保存ではない
 </guidelines>
+</output>

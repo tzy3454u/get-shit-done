@@ -1,6 +1,6 @@
 ---
 name: gsd:audit-milestone
-description: Audit milestone completion against original intent before archiving
+description: アーカイブ前にマイルストーンの完了状況を元の意図と照合して監査する
 argument-hint: "[version]"
 allowed-tools:
   - Read
@@ -11,9 +11,9 @@ allowed-tools:
   - Write
 ---
 <objective>
-Verify milestone achieved its definition of done. Check requirements coverage, cross-phase integration, and end-to-end flows.
+マイルストーンが完了定義を達成したことを検証する。要件カバレッジ、クロスフェーズ統合、エンドツーエンドフローを確認する。
 
-**This command IS the orchestrator.** Reads existing VERIFICATION.md files (phases already verified during execute-phase), aggregates tech debt and deferred gaps, then spawns integration checker for cross-phase wiring.
+**このコマンドがオーケストレーターである。** 既存のVERIFICATION.mdファイル（execute-phase中に既に検証済みのフェーズ）を読み取り、技術的負債と先送りされたギャップを集約し、クロスフェーズの接続を確認するための統合チェッカーを生成する。
 </objective>
 
 <execution_context>
@@ -21,16 +21,17 @@ Verify milestone achieved its definition of done. Check requirements coverage, c
 </execution_context>
 
 <context>
-Version: $ARGUMENTS (optional — defaults to current milestone)
+バージョン: $ARGUMENTS (省略可 — デフォルトは現在のマイルストーン)
 
-Core planning files are resolved in-workflow (`init milestone-op`) and loaded only as needed.
+コア計画ファイルはワークフロー内で解決され (`init milestone-op`)、必要に応じてのみ読み込まれる。
 
-**Completed Work:**
+**完了した作業:**
 Glob: .planning/phases/*/*-SUMMARY.md
 Glob: .planning/phases/*/*-VERIFICATION.md
 </context>
 
 <process>
-Execute the audit-milestone workflow from @~/.claude/get-shit-done/workflows/audit-milestone.md end-to-end.
-Preserve all workflow gates (scope determination, verification reading, integration check, requirements coverage, routing).
+@~/.claude/get-shit-done/workflows/audit-milestone.md のaudit-milestoneワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲートを保持する（スコープ決定、検証読み取り、統合チェック、要件カバレッジ、ルーティング）。
 </process>
+</output>

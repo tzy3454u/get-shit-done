@@ -1,7 +1,7 @@
 ---
 name: gsd:map-codebase
-description: Analyze codebase with parallel mapper agents to produce .planning/codebase/ documents
-argument-hint: "[optional: specific area to map, e.g., 'api' or 'auth']"
+description: 並列マッパーエージェントでコードベースを分析し、.planning/codebase/ ドキュメントを生成する
+argument-hint: "[オプション: マッピングする特定の領域、例: 'api' や 'auth']"
 allowed-tools:
   - Read
   - Bash
@@ -12,11 +12,11 @@ allowed-tools:
 ---
 
 <objective>
-Analyze existing codebase using parallel gsd-codebase-mapper agents to produce structured codebase documents.
+並列の gsd-codebase-mapper エージェントを使用して既存のコードベースを分析し、構造化されたコードベースドキュメントを生成します。
 
-Each mapper agent explores a focus area and **writes documents directly** to `.planning/codebase/`. The orchestrator only receives confirmations, keeping context usage minimal.
+各マッパーエージェントは担当領域を調査し、`.planning/codebase/` に**ドキュメントを直接書き込みます**。オーケストレーターは確認のみを受け取り、コンテキスト使用量を最小限に抑えます。
 
-Output: .planning/codebase/ folder with 7 structured documents about the codebase state.
+出力: .planning/codebase/ フォルダーにコードベースの状態に関する7つの構造化ドキュメント。
 </objective>
 
 <execution_context>
@@ -24,48 +24,48 @@ Output: .planning/codebase/ folder with 7 structured documents about the codebas
 </execution_context>
 
 <context>
-Focus area: $ARGUMENTS (optional - if provided, tells agents to focus on specific subsystem)
+対象領域: $ARGUMENTS（オプション — 指定された場合、エージェントに特定のサブシステムに集中するよう指示）
 
-**Load project state if exists:**
-Check for .planning/STATE.md - loads context if project already initialized
+**既存のプロジェクト状態を読み込む:**
+.planning/STATE.md の存在を確認 — プロジェクトが既に初期化されている場合はコンテキストを読み込む
 
-**This command can run:**
-- Before /gsd:new-project (brownfield codebases) - creates codebase map first
-- After /gsd:new-project (greenfield codebases) - updates codebase map as code evolves
-- Anytime to refresh codebase understanding
+**このコマンドは以下のタイミングで実行可能:**
+- /gsd:new-project の前（ブラウンフィールドコードベース） — 先にコードベースマップを作成
+- /gsd:new-project の後（グリーンフィールドコードベース） — コード進化に合わせてコードベースマップを更新
+- いつでもコードベースの理解を更新
 </context>
 
 <when_to_use>
-**Use map-codebase for:**
-- Brownfield projects before initialization (understand existing code first)
-- Refreshing codebase map after significant changes
-- Onboarding to an unfamiliar codebase
-- Before major refactoring (understand current state)
-- When STATE.md references outdated codebase info
+**map-codebase を使用する場合:**
+- 初期化前のブラウンフィールドプロジェクト（既存コードを先に理解する）
+- 大きな変更後にコードベースマップを更新する
+- 不慣れなコードベースへのオンボーディング
+- 大規模リファクタリング前（現在の状態を理解する）
+- STATE.md が古いコードベース情報を参照している場合
 
-**Skip map-codebase for:**
-- Greenfield projects with no code yet (nothing to map)
-- Trivial codebases (<5 files)
+**map-codebase をスキップする場合:**
+- コードがまだないグリーンフィールドプロジェクト（マッピング対象がない）
+- 些細なコードベース（5ファイル未満）
 </when_to_use>
 
 <process>
-1. Check if .planning/codebase/ already exists (offer to refresh or skip)
-2. Create .planning/codebase/ directory structure
-3. Spawn 4 parallel gsd-codebase-mapper agents:
-   - Agent 1: tech focus → writes STACK.md, INTEGRATIONS.md
-   - Agent 2: arch focus → writes ARCHITECTURE.md, STRUCTURE.md
-   - Agent 3: quality focus → writes CONVENTIONS.md, TESTING.md
-   - Agent 4: concerns focus → writes CONCERNS.md
-4. Wait for agents to complete, collect confirmations (NOT document contents)
-5. Verify all 7 documents exist with line counts
-6. Commit codebase map
-7. Offer next steps (typically: /gsd:new-project or /gsd:plan-phase)
+1. .planning/codebase/ が既に存在するか確認（更新またはスキップを提案）
+2. .planning/codebase/ ディレクトリ構造を作成
+3. 4つの並列 gsd-codebase-mapper エージェントを起動:
+   - エージェント1: tech フォーカス → STACK.md、INTEGRATIONS.md を作成
+   - エージェント2: arch フォーカス → ARCHITECTURE.md、STRUCTURE.md を作成
+   - エージェント3: quality フォーカス → CONVENTIONS.md、TESTING.md を作成
+   - エージェント4: concerns フォーカス → CONCERNS.md を作成
+4. エージェントの完了を待ち、確認を収集（ドキュメント内容ではない）
+5. 7つのドキュメントすべてが行数とともに存在することを検証
+6. コードベースマップをコミット
+7. 次のステップを提案（通常: /gsd:new-project または /gsd:plan-phase）
 </process>
 
 <success_criteria>
-- [ ] .planning/codebase/ directory created
-- [ ] All 7 codebase documents written by mapper agents
-- [ ] Documents follow template structure
-- [ ] Parallel agents completed without errors
-- [ ] User knows next steps
+- [ ] .planning/codebase/ ディレクトリが作成されている
+- [ ] マッパーエージェントにより7つのコードベースドキュメントすべてが書き込まれている
+- [ ] ドキュメントがテンプレート構造に従っている
+- [ ] 並列エージェントがエラーなく完了している
+- [ ] ユーザーが次のステップを把握している
 </success_criteria>

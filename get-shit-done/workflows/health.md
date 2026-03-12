@@ -1,17 +1,17 @@
 <purpose>
-Validate `.planning/` directory integrity and report actionable issues. Checks for missing files, invalid configurations, inconsistent state, and orphaned plans. Optionally repairs auto-fixable issues.
+`.planning/` ディレクトリの整合性を検証し、対処可能な問題を報告する。不足ファイル、無効な設定、不整合な状態、孤立した計画を確認する。オプションで自動修復可能な問題を修復する。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出し元プロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <process>
 
 <step name="parse_args">
-**Parse arguments:**
+**引数をパースする：**
 
-Check if `--repair` flag is present in the command arguments.
+コマンド引数に `--repair` フラグが存在するか確認する。
 
 ```
 REPAIR_FLAG=""
@@ -22,100 +22,100 @@ fi
 </step>
 
 <step name="run_health_check">
-**Run health validation:**
+**ヘルスチェックの検証を実行する：**
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" validate health $REPAIR_FLAG
 ```
 
-Parse JSON output:
+JSON出力をパースする：
 - `status`: "healthy" | "degraded" | "broken"
-- `errors[]`: Critical issues (code, message, fix, repairable)
-- `warnings[]`: Non-critical issues
-- `info[]`: Informational notes
-- `repairable_count`: Number of auto-fixable issues
-- `repairs_performed[]`: Actions taken if --repair was used
+- `errors[]`: 重大な問題 (code, message, fix, repairable)
+- `warnings[]`: 重大ではない問題
+- `info[]`: 情報メモ
+- `repairable_count`: 自動修復可能な問題の数
+- `repairs_performed[]`: --repairが使用された場合に実行されたアクション
 </step>
 
 <step name="format_output">
-**Format and display results:**
+**結果をフォーマットして表示する：**
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD Health Check
+ GSD ヘルスチェック
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Status: HEALTHY | DEGRADED | BROKEN
-Errors: N | Warnings: N | Info: N
+ステータス: HEALTHY | DEGRADED | BROKEN
+エラー: N | 警告: N | 情報: N
 ```
 
-**If repairs were performed:**
+**修復が実行された場合：**
 ```
-## Repairs Performed
+## 実行された修復
 
-- ✓ config.json: Created with defaults
-- ✓ STATE.md: Regenerated from roadmap
-```
-
-**If errors exist:**
-```
-## Errors
-
-- [E001] config.json: JSON parse error at line 5
-  Fix: Run /gsd:health --repair to reset to defaults
-
-- [E002] PROJECT.md not found
-  Fix: Run /gsd:new-project to create
+- ✓ config.json: デフォルト値で作成
+- ✓ STATE.md: ロードマップから再生成
 ```
 
-**If warnings exist:**
+**エラーが存在する場合：**
 ```
-## Warnings
+## エラー
 
-- [W001] STATE.md references phase 5, but only phases 1-3 exist
-  Fix: Run /gsd:health --repair to regenerate
+- [E001] config.json: 5行目でJSONパースエラー
+  修正方法: /gsd:health --repair を実行してデフォルトにリセット
 
-- [W005] Phase directory "1-setup" doesn't follow NN-name format
-  Fix: Rename to match pattern (e.g., 01-setup)
-```
-
-**If info exists:**
-```
-## Info
-
-- [I001] 02-implementation/02-01-PLAN.md has no SUMMARY.md
-  Note: May be in progress
+- [E002] PROJECT.md が見つかりません
+  修正方法: /gsd:new-project を実行して作成
 ```
 
-**Footer (if repairable issues exist and --repair was NOT used):**
+**警告が存在する場合：**
+```
+## 警告
+
+- [W001] STATE.md がフェーズ5を参照していますが、フェーズ1-3のみ存在します
+  修正方法: /gsd:health --repair を実行して再生成
+
+- [W005] フェーズディレクトリ "1-setup" がNN-name形式に従っていません
+  修正方法: パターンに合わせてリネーム（例：01-setup）
+```
+
+**情報が存在する場合：**
+```
+## 情報
+
+- [I001] 02-implementation/02-01-PLAN.md に対応するSUMMARY.mdがありません
+  備考: 進行中の可能性があります
+```
+
+**フッター（修復可能な問題があり--repairが使用されていない場合）：**
 ```
 ---
-N issues can be auto-repaired. Run: /gsd:health --repair
+N 件の問題を自動修復できます。実行: /gsd:health --repair
 ```
 </step>
 
 <step name="offer_repair">
-**If repairable issues exist and --repair was NOT used:**
+**修復可能な問題があり--repairが使用されていない場合：**
 
-Ask user if they want to run repairs:
+ユーザーに修復を実行するか確認する：
 
 ```
-Would you like to run /gsd:health --repair to fix N issues automatically?
+/gsd:health --repair を実行してN件の問題を自動的に修復しますか？
 ```
 
-If yes, re-run with --repair flag and display results.
+はいの場合、--repairフラグ付きで再実行し、結果を表示する。
 </step>
 
 <step name="verify_repairs">
-**If repairs were performed:**
+**修復が実行された場合：**
 
-Re-run health check without --repair to confirm issues are resolved:
+--repairなしでヘルスチェックを再実行し、問題が解決されたことを確認する：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" validate health
 ```
 
-Report final status.
+最終ステータスを報告する。
 </step>
 
 </process>
@@ -124,21 +124,21 @@ Report final status.
 
 | Code | Severity | Description | Repairable |
 |------|----------|-------------|------------|
-| E001 | error | .planning/ directory not found | No |
-| E002 | error | PROJECT.md not found | No |
-| E003 | error | ROADMAP.md not found | No |
-| E004 | error | STATE.md not found | Yes |
-| E005 | error | config.json parse error | Yes |
-| W001 | warning | PROJECT.md missing required section | No |
-| W002 | warning | STATE.md references invalid phase | Yes |
-| W003 | warning | config.json not found | Yes |
-| W004 | warning | config.json invalid field value | No |
-| W005 | warning | Phase directory naming mismatch | No |
-| W006 | warning | Phase in ROADMAP but no directory | No |
-| W007 | warning | Phase on disk but not in ROADMAP | No |
-| W008 | warning | config.json: workflow.nyquist_validation absent (defaults to enabled but agents may skip) | Yes |
-| W009 | warning | Phase has Validation Architecture in RESEARCH.md but no VALIDATION.md | No |
-| I001 | info | Plan without SUMMARY (may be in progress) | No |
+| E001 | error | .planning/ ディレクトリが見つかりません | No |
+| E002 | error | PROJECT.md が見つかりません | No |
+| E003 | error | ROADMAP.md が見つかりません | No |
+| E004 | error | STATE.md が見つかりません | Yes |
+| E005 | error | config.json パースエラー | Yes |
+| W001 | warning | PROJECT.md に必要なセクションがありません | No |
+| W002 | warning | STATE.md が無効なフェーズを参照しています | Yes |
+| W003 | warning | config.json が見つかりません | Yes |
+| W004 | warning | config.json のフィールド値が無効です | No |
+| W005 | warning | フェーズディレクトリの命名が不一致です | No |
+| W006 | warning | ROADMAPにあるフェーズのディレクトリがありません | No |
+| W007 | warning | ディスク上にあるフェーズがROADMAPにありません | No |
+| W008 | warning | config.json: workflow.nyquist_validation が未設定（デフォルトは有効ですがエージェントがスキップする場合があります） | Yes |
+| W009 | warning | フェーズのRESEARCH.mdにValidation Architectureがありますが、VALIDATION.mdがありません | No |
+| I001 | info | SUMMARYのない計画（進行中の可能性） | No |
 
 </error_codes>
 
@@ -146,14 +146,15 @@ Report final status.
 
 | Action | Effect | Risk |
 |--------|--------|------|
-| createConfig | Create config.json with defaults | None |
-| resetConfig | Delete + recreate config.json | Loses custom settings |
-| regenerateState | Create STATE.md from ROADMAP structure | Loses session history |
-| addNyquistKey | Add workflow.nyquist_validation: true to config.json | None — matches existing default |
+| createConfig | デフォルト値でconfig.jsonを作成 | なし |
+| resetConfig | config.jsonを削除して再作成 | カスタム設定が失われる |
+| regenerateState | ROADMAPの構造からSTATE.mdを作成 | セッション履歴が失われる |
+| addNyquistKey | config.jsonにworkflow.nyquist_validation: trueを追加 | なし — 既存のデフォルトと一致 |
 
-**Not repairable (too risky):**
-- PROJECT.md, ROADMAP.md content
-- Phase directory renaming
-- Orphaned plan cleanup
+**修復不可（リスクが高い）：**
+- PROJECT.md、ROADMAP.md のコンテンツ
+- フェーズディレクトリのリネーム
+- 孤立した計画のクリーンアップ
 
 </repair_actions>
+</output>

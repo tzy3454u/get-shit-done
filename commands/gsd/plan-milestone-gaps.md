@@ -1,6 +1,6 @@
 ---
 name: gsd:plan-milestone-gaps
-description: Create phases to close all gaps identified by milestone audit
+description: マイルストーン監査で特定されたすべてのギャップを埋めるフェーズを作成する
 allowed-tools:
   - Read
   - Write
@@ -10,11 +10,11 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Create all phases necessary to close gaps identified by `/gsd:audit-milestone`.
+`/gsd:audit-milestone` で特定されたギャップを埋めるために必要なすべてのフェーズを作成します。
 
-Reads MILESTONE-AUDIT.md, groups gaps into logical phases, creates phase entries in ROADMAP.md, and offers to plan each phase.
+MILESTONE-AUDIT.md を読み取り、ギャップを論理的なフェーズにグループ化し、ROADMAP.md にフェーズエントリを作成し、各フェーズの計画を提案します。
 
-One command creates all fix phases — no manual `/gsd:add-phase` per gap.
+1つのコマンドですべての修正フェーズを作成します — ギャップごとに手動で `/gsd:add-phase` を実行する必要はありません。
 </objective>
 
 <execution_context>
@@ -22,13 +22,13 @@ One command creates all fix phases — no manual `/gsd:add-phase` per gap.
 </execution_context>
 
 <context>
-**Audit results:**
-Glob: .planning/v*-MILESTONE-AUDIT.md (use most recent)
+**監査結果：**
+Glob: .planning/v*-MILESTONE-AUDIT.md（最新のものを使用）
 
-Original intent and current planning state are loaded on demand inside the workflow.
+元の意図と現在の計画状態はワークフロー内でオンデマンドで読み込まれます。
 </context>
 
 <process>
-Execute the plan-milestone-gaps workflow from @~/.claude/get-shit-done/workflows/plan-milestone-gaps.md end-to-end.
-Preserve all workflow gates (audit loading, prioritization, phase grouping, user confirmation, roadmap updates).
+@~/.claude/get-shit-done/workflows/plan-milestone-gaps.md の plan-milestone-gaps ワークフローをエンドツーエンドで実行してください。
+すべてのワークフローゲート（監査の読み込み、優先順位付け、フェーズのグループ化、ユーザー確認、ロードマップ更新）を維持してください。
 </process>

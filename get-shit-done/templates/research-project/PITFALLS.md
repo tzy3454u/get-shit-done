@@ -1,200 +1,200 @@
-# Pitfalls Research Template
+# 落とし穴リサーチテンプレート
 
-Template for `.planning/research/PITFALLS.md` — common mistakes to avoid in the project domain.
+`.planning/research/PITFALLS.md` 用テンプレート — プロジェクトドメインで避けるべきよくある間違い。
 
 <template>
 
 ```markdown
-# Pitfalls Research
+# 落とし穴リサーチ
 
-**Domain:** [domain type]
-**Researched:** [date]
+**Domain:** [ドメインの種類]
+**Researched:** [日付]
 **Confidence:** [HIGH/MEDIUM/LOW]
 
-## Critical Pitfalls
+## 重大な落とし穴
 
-### Pitfall 1: [Name]
+### 落とし穴1: [名前]
 
-**What goes wrong:**
-[Description of the failure mode]
+**何が問題になるか:**
+[障害モードの説明]
 
-**Why it happens:**
-[Root cause — why developers make this mistake]
+**なぜ起こるか:**
+[根本原因 — なぜ開発者がこの間違いを犯すか]
 
-**How to avoid:**
-[Specific prevention strategy]
+**避ける方法:**
+[具体的な予防策]
 
-**Warning signs:**
-[How to detect this early before it becomes a problem]
+**警告サイン:**
+[問題が深刻になる前に早期検出する方法]
 
-**Phase to address:**
-[Which roadmap phase should prevent this]
-
----
-
-### Pitfall 2: [Name]
-
-**What goes wrong:**
-[Description of the failure mode]
-
-**Why it happens:**
-[Root cause — why developers make this mistake]
-
-**How to avoid:**
-[Specific prevention strategy]
-
-**Warning signs:**
-[How to detect this early before it becomes a problem]
-
-**Phase to address:**
-[Which roadmap phase should prevent this]
+**対処すべきフェーズ:**
+[どのロードマップフェーズでこれを防ぐべきか]
 
 ---
 
-### Pitfall 3: [Name]
+### 落とし穴2: [名前]
 
-**What goes wrong:**
-[Description of the failure mode]
+**何が問題になるか:**
+[障害モードの説明]
 
-**Why it happens:**
-[Root cause — why developers make this mistake]
+**なぜ起こるか:**
+[根本原因 — なぜ開発者がこの間違いを犯すか]
 
-**How to avoid:**
-[Specific prevention strategy]
+**避ける方法:**
+[具体的な予防策]
 
-**Warning signs:**
-[How to detect this early before it becomes a problem]
+**警告サイン:**
+[問題が深刻になる前に早期検出する方法]
 
-**Phase to address:**
-[Which roadmap phase should prevent this]
+**対処すべきフェーズ:**
+[どのロードマップフェーズでこれを防ぐべきか]
 
 ---
 
-[Continue for all critical pitfalls...]
+### 落とし穴3: [名前]
 
-## Technical Debt Patterns
+**何が問題になるか:**
+[障害モードの説明]
 
-Shortcuts that seem reasonable but create long-term problems.
+**なぜ起こるか:**
+[根本原因 — なぜ開発者がこの間違いを犯すか]
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+**避ける方法:**
+[具体的な予防策]
+
+**警告サイン:**
+[問題が深刻になる前に早期検出する方法]
+
+**対処すべきフェーズ:**
+[どのロードマップフェーズでこれを防ぐべきか]
+
+---
+
+[すべての重大な落とし穴について続ける...]
+
+## 技術的負債パターン
+
+合理的に見えるが長期的に問題を生むショートカット。
+
+| ショートカット | 短期的メリット | 長期的コスト | 許容される場合 |
 |----------|-------------------|----------------|-----------------|
-| [shortcut] | [benefit] | [cost] | [conditions, or "never"] |
-| [shortcut] | [benefit] | [cost] | [conditions, or "never"] |
-| [shortcut] | [benefit] | [cost] | [conditions, or "never"] |
+| [ショートカット] | [メリット] | [コスト] | [条件、または「決してだめ」] |
+| [ショートカット] | [メリット] | [コスト] | [条件、または「決してだめ」] |
+| [ショートカット] | [メリット] | [コスト] | [条件、または「決してだめ」] |
 
-## Integration Gotchas
+## インテグレーションの落とし穴
 
-Common mistakes when connecting to external services.
+外部サービスに接続する際のよくある間違い。
 
-| Integration | Common Mistake | Correct Approach |
+| インテグレーション | よくある間違い | 正しいアプローチ |
 |-------------|----------------|------------------|
-| [service] | [what people do wrong] | [what to do instead] |
-| [service] | [what people do wrong] | [what to do instead] |
-| [service] | [what people do wrong] | [what to do instead] |
+| [サービス] | [やりがちな間違い] | [代わりにすべきこと] |
+| [サービス] | [やりがちな間違い] | [代わりにすべきこと] |
+| [サービス] | [やりがちな間違い] | [代わりにすべきこと] |
 
-## Performance Traps
+## パフォーマンスの罠
 
-Patterns that work at small scale but fail as usage grows.
+小規模では動作するが使用量の増加で失敗するパターン。
 
-| Trap | Symptoms | Prevention | When It Breaks |
+| 罠 | 症状 | 予防策 | 破綻するスケール |
 |------|----------|------------|----------------|
-| [trap] | [how you notice] | [how to avoid] | [scale threshold] |
-| [trap] | [how you notice] | [how to avoid] | [scale threshold] |
-| [trap] | [how you notice] | [how to avoid] | [scale threshold] |
+| [罠] | [気づく方法] | [避ける方法] | [スケール閾値] |
+| [罠] | [気づく方法] | [避ける方法] | [スケール閾値] |
+| [罠] | [気づく方法] | [避ける方法] | [スケール閾値] |
 
-## Security Mistakes
+## セキュリティの間違い
 
-Domain-specific security issues beyond general web security.
+一般的なWebセキュリティを超えたドメイン固有のセキュリティ問題。
 
-| Mistake | Risk | Prevention |
+| 間違い | リスク | 予防策 |
 |---------|------|------------|
-| [mistake] | [what could happen] | [how to avoid] |
-| [mistake] | [what could happen] | [how to avoid] |
-| [mistake] | [what could happen] | [how to avoid] |
+| [間違い] | [何が起こりうるか] | [避ける方法] |
+| [間違い] | [何が起こりうるか] | [避ける方法] |
+| [間違い] | [何が起こりうるか] | [避ける方法] |
 
-## UX Pitfalls
+## UXの落とし穴
 
-Common user experience mistakes in this domain.
+このドメインでよくあるユーザーエクスペリエンスの間違い。
 
-| Pitfall | User Impact | Better Approach |
+| 落とし穴 | ユーザーへの影響 | より良いアプローチ |
 |---------|-------------|-----------------|
-| [pitfall] | [how users suffer] | [what to do instead] |
-| [pitfall] | [how users suffer] | [what to do instead] |
-| [pitfall] | [how users suffer] | [what to do instead] |
+| [落とし穴] | [ユーザーがどう困るか] | [代わりにすべきこと] |
+| [落とし穴] | [ユーザーがどう困るか] | [代わりにすべきこと] |
+| [落とし穴] | [ユーザーがどう困るか] | [代わりにすべきこと] |
 
-## "Looks Done But Isn't" Checklist
+## 「完成に見えるが実はまだ」チェックリスト
 
-Things that appear complete but are missing critical pieces.
+完成しているように見えるが重要な部分が欠けているもの。
 
-- [ ] **[Feature]:** Often missing [thing] — verify [check]
-- [ ] **[Feature]:** Often missing [thing] — verify [check]
-- [ ] **[Feature]:** Often missing [thing] — verify [check]
-- [ ] **[Feature]:** Often missing [thing] — verify [check]
+- [ ] **[機能]:** [よく欠けているもの] — [確認方法]を検証
+- [ ] **[機能]:** [よく欠けているもの] — [確認方法]を検証
+- [ ] **[機能]:** [よく欠けているもの] — [確認方法]を検証
+- [ ] **[機能]:** [よく欠けているもの] — [確認方法]を検証
 
-## Recovery Strategies
+## リカバリ戦略
 
-When pitfalls occur despite prevention, how to recover.
+予防にもかかわらず落とし穴が発生した場合のリカバリ方法。
 
-| Pitfall | Recovery Cost | Recovery Steps |
+| 落とし穴 | リカバリコスト | リカバリ手順 |
 |---------|---------------|----------------|
-| [pitfall] | LOW/MEDIUM/HIGH | [what to do] |
-| [pitfall] | LOW/MEDIUM/HIGH | [what to do] |
-| [pitfall] | LOW/MEDIUM/HIGH | [what to do] |
+| [落とし穴] | LOW/MEDIUM/HIGH | [すべきこと] |
+| [落とし穴] | LOW/MEDIUM/HIGH | [すべきこと] |
+| [落とし穴] | LOW/MEDIUM/HIGH | [すべきこと] |
 
-## Pitfall-to-Phase Mapping
+## 落とし穴とフェーズの対応表
 
-How roadmap phases should address these pitfalls.
+ロードマップのフェーズがこれらの落とし穴にどう対処すべきか。
 
-| Pitfall | Prevention Phase | Verification |
+| 落とし穴 | 予防フェーズ | 検証方法 |
 |---------|------------------|--------------|
-| [pitfall] | Phase [X] | [how to verify prevention worked] |
-| [pitfall] | Phase [X] | [how to verify prevention worked] |
-| [pitfall] | Phase [X] | [how to verify prevention worked] |
+| [落とし穴] | フェーズ [X] | [予防が機能したことを検証する方法] |
+| [落とし穴] | フェーズ [X] | [予防が機能したことを検証する方法] |
+| [落とし穴] | フェーズ [X] | [予防が機能したことを検証する方法] |
 
-## Sources
+## 情報源
 
-- [Post-mortems referenced]
-- [Community discussions]
-- [Official "gotchas" documentation]
-- [Personal experience / known issues]
+- [参考にしたポストモーテム]
+- [コミュニティでの議論]
+- [公式の「注意点」ドキュメント]
+- [個人的な経験 / 既知の問題]
 
 ---
-*Pitfalls research for: [domain]*
-*Researched: [date]*
+*落とし穴リサーチ対象: [ドメイン]*
+*リサーチ日: [日付]*
 ```
 
 </template>
 
 <guidelines>
 
-**Critical Pitfalls:**
-- Focus on domain-specific issues, not generic mistakes
-- Include warning signs — early detection prevents disasters
-- Link to specific phases — makes pitfalls actionable
+**重大な落とし穴:**
+- 一般的な間違いではなく、ドメイン固有の問題に焦点
+- 警告サインを含める — 早期検出が災害を防ぐ
+- 具体的なフェーズにリンク — 落とし穴を実用的にする
 
-**Technical Debt:**
-- Be realistic — some shortcuts are acceptable
-- Note when shortcuts are "never acceptable" vs. "only in MVP"
-- Include the long-term cost to inform tradeoff decisions
+**技術的負債:**
+- 現実的に — 一部のショートカットは許容される
+- ショートカットが「決して許容されない」場合と「MVPでのみ許容」の場合を注記
+- トレードオフの判断を知らせるために長期的コストを含める
 
-**Performance Traps:**
-- Include scale thresholds ("breaks at 10k users")
-- Focus on what's relevant for this project's expected scale
-- Don't over-engineer for hypothetical scale
+**パフォーマンスの罠:**
+- スケール閾値を含める（「10kユーザーで破綻」）
+- このプロジェクトの想定スケールに関連するものに焦点
+- 仮想的なスケールのための過剰設計をしない
 
-**Security Mistakes:**
-- Beyond OWASP basics — domain-specific issues
-- Example: Community platforms have different security concerns than e-commerce
-- Include risk level to prioritize
+**セキュリティの間違い:**
+- OWASPの基本を超えた — ドメイン固有の問題
+- 例: コミュニティプラットフォームはeコマースとは異なるセキュリティ上の懸念がある
+- 優先順位付けのためにリスクレベルを含める
 
-**"Looks Done But Isn't":**
-- Checklist format for verification during execution
-- Common in demos vs. production
-- Prevents "it works on my machine" issues
+**「完成に見えるが実はまだ」:**
+- 実行中の検証のためのチェックリスト形式
+- デモ対本番環境でよくある
+- 「自分の環境では動く」問題を防ぐ
 
-**Pitfall-to-Phase Mapping:**
-- Critical for roadmap creation
-- Each pitfall should map to a phase that prevents it
-- Informs phase ordering and success criteria
+**落とし穴とフェーズの対応:**
+- ロードマップ作成に重要
+- 各落とし穴はそれを防ぐフェーズに対応すべき
+- フェーズの順序と成功基準に情報を与える
 
 </guidelines>

@@ -1,6 +1,6 @@
 ---
 name: gsd:discuss-phase
-description: Gather phase context through adaptive questioning before planning
+description: 計画前にアダプティブな質問を通じてフェーズコンテキストを収集
 argument-hint: "<phase> [--auto]"
 allowed-tools:
   - Read
@@ -15,17 +15,17 @@ allowed-tools:
 ---
 
 <objective>
-Extract implementation decisions that downstream agents need — researcher and planner will use CONTEXT.md to know what to investigate and what choices are locked.
+下流エージェントが必要とする実装判断を抽出します — リサーチャーとプランナーはCONTEXT.mdを使用して、何を調査すべきか、どの選択が確定しているかを把握します。
 
-**How it works:**
-1. Load prior context (PROJECT.md, REQUIREMENTS.md, STATE.md, prior CONTEXT.md files)
-2. Scout codebase for reusable assets and patterns
-3. Analyze phase — skip gray areas already decided in prior phases
-4. Present remaining gray areas — user selects which to discuss
-5. Deep-dive each selected area until satisfied
-6. Create CONTEXT.md with decisions that guide research and planning
+**動作の仕組み:**
+1. 事前コンテキストのロード（PROJECT.md、REQUIREMENTS.md、STATE.md、過去のCONTEXT.mdファイル）
+2. コードベースの再利用可能なアセットとパターンの調査
+3. フェーズの分析 — 過去のフェーズで決定済みのグレーエリアをスキップ
+4. 残りのグレーエリアを提示 — ユーザーが議論するものを選択
+5. 選択された各エリアを満足するまで深掘り
+6. リサーチと計画をガイドする決定事項を含むCONTEXT.mdの作成
 
-**Output:** `{phase_num}-CONTEXT.md` — decisions clear enough that downstream agents can act without asking the user again
+**出力:** `{phase_num}-CONTEXT.md` — 下流エージェントがユーザーに再度質問せずに行動できるほど明確な決定事項
 </objective>
 
 <execution_context>
@@ -34,57 +34,58 @@ Extract implementation decisions that downstream agents need — researcher and 
 </execution_context>
 
 <context>
-Phase number: $ARGUMENTS (required)
+フェーズ番号: $ARGUMENTS（必須）
 
-Context files are resolved in-workflow using `init phase-op` and roadmap/state tool calls.
+コンテキストファイルはワークフロー内で`init phase-op`およびroadmap/stateツール呼び出しを使用して解決されます。
 </context>
 
 <process>
-1. Validate phase number (error if missing or not in roadmap)
-2. Check if CONTEXT.md exists (offer update/view/skip if yes)
-3. **Load prior context** — Read PROJECT.md, REQUIREMENTS.md, STATE.md, and all prior CONTEXT.md files
-4. **Scout codebase** — Find reusable assets, patterns, and integration points
-5. **Analyze phase** — Check prior decisions, skip already-decided areas, generate remaining gray areas
-6. **Present gray areas** — Multi-select: which to discuss? Annotate with prior decisions + code context
-7. **Deep-dive each area** — 4 questions per area, code-informed options, Context7 for library choices
-8. **Write CONTEXT.md** — Sections match areas discussed + code_context section
-9. Offer next steps (research or plan)
+1. フェーズ番号の検証（欠落またはロードマップにない場合はエラー）
+2. CONTEXT.mdの存在確認（存在する場合は更新/表示/スキップを提示）
+3. **事前コンテキストのロード** — PROJECT.md、REQUIREMENTS.md、STATE.md、および過去のすべてのCONTEXT.mdファイルを読み込み
+4. **コードベースの調査** — 再利用可能なアセット、パターン、統合ポイントを検出
+5. **フェーズの分析** — 過去の決定を確認し、決定済みのエリアをスキップし、残りのグレーエリアを生成
+6. **グレーエリアの提示** — 複数選択: どれを議論するか？過去の決定+コードコンテキストを注釈付きで表示
+7. **各エリアの深掘り** — エリアごとに4つの質問、コード情報に基づくオプション、ライブラリ選択にはContext7を使用
+8. **CONTEXT.mdの作成** — セクションは議論されたエリアに対応 + code_contextセクション
+9. 次のステップを提示（リサーチまたは計画）
 
-**CRITICAL: Scope guardrail**
-- Phase boundary from ROADMAP.md is FIXED
-- Discussion clarifies HOW to implement, not WHETHER to add more
-- If user suggests new capabilities: "That's its own phase. I'll note it for later."
-- Capture deferred ideas — don't lose them, don't act on them
+**重要: スコープガードレール**
+- ROADMAP.mdのフェーズ境界は固定
+- 議論は実装方法（HOW）を明確にするもので、追加するかどうか（WHETHER）ではない
+- ユーザーが新しい機能を提案した場合: 「それは独自のフェーズです。後で記録しておきます。」
+- 保留されたアイデアを記録 — 失わず、実行もしない
 
-**Domain-aware gray areas:**
-Gray areas depend on what's being built. Analyze the phase goal:
-- Something users SEE → layout, density, interactions, states
-- Something users CALL → responses, errors, auth, versioning
-- Something users RUN → output format, flags, modes, error handling
-- Something users READ → structure, tone, depth, flow
-- Something being ORGANIZED → criteria, grouping, naming, exceptions
+**ドメイン認識型グレーエリア:**
+グレーエリアは構築対象に依存します。フェーズの目標を分析:
+- ユーザーが見るもの → レイアウト、密度、インタラクション、状態
+- ユーザーが呼び出すもの → レスポンス、エラー、認証、バージョニング
+- ユーザーが実行するもの → 出力形式、フラグ、モード、エラーハンドリング
+- ユーザーが読むもの → 構造、トーン、深さ、フロー
+- 整理されるもの → 基準、グループ化、命名、例外
 
-Generate 3-4 **phase-specific** gray areas, not generic categories.
+3-4個の**フェーズ固有の**グレーエリアを生成してください。汎用的なカテゴリではありません。
 
-**Probing depth:**
-- Ask 4 questions per area before checking
-- "More questions about [area], or move to next?"
-- If more → ask 4 more, check again
-- After all areas → "Ready to create context?"
+**掘り下げの深さ:**
+- 確認前にエリアごとに4つの質問
+- 「[エリア]についてさらに質問しますか、それとも次に進みますか？」
+- さらにある場合 → 4つ追加で質問し、再度確認
+- すべてのエリア完了後 → 「コンテキストを作成する準備はできましたか？」
 
-**Do NOT ask about (Claude handles these):**
-- Technical implementation
-- Architecture choices
-- Performance concerns
-- Scope expansion
+**以下については質問しないでください（Claudeが処理します）:**
+- 技術的な実装
+- アーキテクチャの選択
+- パフォーマンスの懸念
+- スコープの拡大
 </process>
 
 <success_criteria>
-- Prior context loaded and applied (no re-asking decided questions)
-- Gray areas identified through intelligent analysis
-- User chose which areas to discuss
-- Each selected area explored until satisfied
-- Scope creep redirected to deferred ideas
-- CONTEXT.md captures decisions, not vague vision
-- User knows next steps
+- 事前コンテキストがロードされ適用済み（決定済みの質問を再度聞かない）
+- インテリジェントな分析によりグレーエリアを特定
+- ユーザーが議論するエリアを選択済み
+- 選択された各エリアを満足するまで探索
+- スコープクリープを保留アイデアにリダイレクト
+- CONTEXT.mdに曖昧なビジョンではなく決定事項を記録
+- ユーザーが次のステップを把握済み
 </success_criteria>
+</output>

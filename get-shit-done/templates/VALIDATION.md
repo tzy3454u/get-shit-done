@@ -7,70 +7,70 @@ wave_0_complete: false
 created: {date}
 ---
 
-# Phase {N} — Validation Strategy
+# Phase {N} — バリデーション戦略
 
-> Per-phase validation contract for feedback sampling during execution.
+> 実行中のフィードバックサンプリングのためのフェーズごとのバリデーション契約。
 
 ---
 
-## Test Infrastructure
+## テストインフラストラクチャ
 
-| Property | Value |
+| プロパティ | 値 |
 |----------|-------|
-| **Framework** | {pytest 7.x / jest 29.x / vitest / go test / other} |
-| **Config file** | {path or "none — Wave 0 installs"} |
-| **Quick run command** | `{quick command}` |
-| **Full suite command** | `{full command}` |
-| **Estimated runtime** | ~{N} seconds |
+| **フレームワーク** | {pytest 7.x / jest 29.x / vitest / go test / other} |
+| **設定ファイル** | {パス または "none — Wave 0 installs"} |
+| **クイック実行コマンド** | `{quick command}` |
+| **フルスイートコマンド** | `{full command}` |
+| **推定実行時間** | ~{N} seconds |
 
 ---
 
-## Sampling Rate
+## サンプリングレート
 
-- **After every task commit:** Run `{quick run command}`
-- **After every plan wave:** Run `{full suite command}`
-- **Before `/gsd:verify-work`:** Full suite must be green
-- **Max feedback latency:** {N} seconds
+- **各タスクコミット後:** `{quick run command}` を実行
+- **各プランウェーブ後:** `{full suite command}` を実行
+- **`/gsd:verify-work` 前:** フルスイートがグリーンであること
+- **最大フィードバック遅延:** {N} seconds
 
 ---
 
-## Per-Task Verification Map
+## タスクごとの検証マップ
 
-| Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
+| タスクID | プラン | ウェーブ | 要件 | テストタイプ | 自動化コマンド | ファイル存在 | ステータス |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | {N}-01-01 | 01 | 1 | REQ-{XX} | unit | `{command}` | ✅ / ❌ W0 | ⬜ pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*ステータス: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
 ---
 
-## Wave 0 Requirements
+## Wave 0 要件
 
-- [ ] `{tests/test_file.py}` — stubs for REQ-{XX}
-- [ ] `{tests/conftest.py}` — shared fixtures
-- [ ] `{framework install}` — if no framework detected
+- [ ] `{tests/test_file.py}` — REQ-{XX} 用スタブ
+- [ ] `{tests/conftest.py}` — 共有フィクスチャ
+- [ ] `{framework install}` — フレームワークが検出されない場合
 
-*If none: "Existing infrastructure covers all phase requirements."*
+*該当なしの場合: "既存のインフラストラクチャがすべてのフェーズ要件をカバーしています。"*
 
 ---
 
-## Manual-Only Verifications
+## 手動のみの検証
 
-| Behavior | Requirement | Why Manual | Test Instructions |
+| 動作 | 要件 | 手動の理由 | テスト手順 |
 |----------|-------------|------------|-------------------|
-| {behavior} | REQ-{XX} | {reason} | {steps} |
+| {動作} | REQ-{XX} | {理由} | {手順} |
 
-*If none: "All phase behaviors have automated verification."*
+*該当なしの場合: "すべてのフェーズ動作に自動検証があります。"*
 
 ---
 
-## Validation Sign-Off
+## バリデーション承認
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < {N}s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [ ] すべてのタスクに `<automated>` verify または Wave 0 依存関係がある
+- [ ] サンプリングの連続性: 自動検証なしの連続3タスクがない
+- [ ] Wave 0 がすべてのMISSING参照をカバー
+- [ ] ウォッチモードフラグなし
+- [ ] フィードバック遅延 < {N}s
+- [ ] フロントマターに `nyquist_compliant: true` を設定
 
-**Approval:** {pending / approved YYYY-MM-DD}
+**承認:** {pending / approved YYYY-MM-DD}

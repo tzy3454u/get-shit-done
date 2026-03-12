@@ -1,20 +1,20 @@
 <required_reading>
 
-**Read these files NOW:**
+**今すぐこれらのファイルを読み込んでください：**
 
 1. `.planning/STATE.md`
 2. `.planning/PROJECT.md`
 3. `.planning/ROADMAP.md`
-4. Current phase's plan files (`*-PLAN.md`)
-5. Current phase's summary files (`*-SUMMARY.md`)
+4. 現在のフェーズのプランファイル（`*-PLAN.md`）
+5. 現在のフェーズのサマリーファイル（`*-SUMMARY.md`）
 
 </required_reading>
 
 <purpose>
 
-Mark current phase complete and advance to next. This is the natural point where progress tracking and PROJECT.md evolution happen.
+現在のフェーズを完了としてマークし、次に進みます。これは進捗追跡とPROJECT.mdの進化が行われる自然なポイントです。
 
-"Planning next phase" = "current phase is done"
+「次のフェーズを計画する」=「現在のフェーズは完了」
 
 </purpose>
 
@@ -22,33 +22,33 @@ Mark current phase complete and advance to next. This is the natural point where
 
 <step name="load_project_state" priority="first">
 
-Before transition, read project state:
+移行前にプロジェクトの状態を読み込みます：
 
 ```bash
 cat .planning/STATE.md 2>/dev/null
 cat .planning/PROJECT.md 2>/dev/null
 ```
 
-Parse current position to verify we're transitioning the right phase.
-Note accumulated context that may need updating after transition.
+正しいフェーズを移行していることを確認するため、現在の位置を解析します。
+移行後に更新が必要な蓄積されたコンテキストに注意します。
 
 </step>
 
 <step name="verify_completion">
 
-Check current phase has all plan summaries:
+現在のフェーズにすべてのプランサマリーがあるか確認します：
 
 ```bash
 ls .planning/phases/XX-current/*-PLAN.md 2>/dev/null | sort
 ls .planning/phases/XX-current/*-SUMMARY.md 2>/dev/null | sort
 ```
 
-**Verification logic:**
+**検証ロジック：**
 
-- Count PLAN files
-- Count SUMMARY files
-- If counts match: all plans complete
-- If counts don't match: incomplete
+- PLANファイルをカウント
+- SUMMARYファイルをカウント
+- カウントが一致する場合：すべてのプランが完了
+- カウントが一致しない場合：未完了
 
 <config-check>
 
@@ -58,136 +58,136 @@ cat .planning/config.json 2>/dev/null
 
 </config-check>
 
-**If all plans complete:**
+**すべてのプランが完了している場合：**
 
 <if mode="yolo">
 
 ```
-⚡ Auto-approved: Transition Phase [X] → Phase [X+1]
-Phase [X] complete — all [Y] plans finished.
+⚡ 自動承認: フェーズ [X] → フェーズ [X+1] への移行
+フェーズ [X] 完了 — すべての [Y] プランが終了しました。
 
-Proceeding to mark done and advance...
+完了マークと進行を実行中...
 ```
 
-Proceed directly to cleanup_handoff step.
+cleanup_handoffステップに直接進みます。
 
 </if>
 
 <if mode="interactive" OR="custom with gates.confirm_transition true">
 
-Ask: "Phase [X] complete — all [Y] plans finished. Ready to mark done and move to Phase [X+1]?"
+質問: 「フェーズ [X] 完了 — すべての [Y] プランが終了しました。完了としてマークしてフェーズ [X+1] に進みますか？」
 
-Wait for confirmation before proceeding.
+確認を待ってから進行します。
 
 </if>
 
-**If plans incomplete:**
+**プランが未完了の場合：**
 
-**SAFETY RAIL: always_confirm_destructive applies here.**
-Skipping incomplete plans is destructive — ALWAYS prompt regardless of mode.
+**安全ガードレール: always_confirm_destructiveがここに適用されます。**
+未完了プランのスキップは破壊的操作です — モードに関係なく常にプロンプトを表示します。
 
-Present:
+提示：
 
 ```
-Phase [X] has incomplete plans:
-- {phase}-01-SUMMARY.md ✓ Complete
-- {phase}-02-SUMMARY.md ✗ Missing
-- {phase}-03-SUMMARY.md ✗ Missing
+フェーズ [X] に未完了のプランがあります:
+- {phase}-01-SUMMARY.md ✓ 完了
+- {phase}-02-SUMMARY.md ✗ 欠落
+- {phase}-03-SUMMARY.md ✗ 欠落
 
-⚠️ Safety rail: Skipping plans requires confirmation (destructive action)
+⚠️ 安全ガードレール: プランのスキップには確認が必要です（破壊的操作）
 
-Options:
-1. Continue current phase (execute remaining plans)
-2. Mark complete anyway (skip remaining plans)
-3. Review what's left
+オプション:
+1. 現在のフェーズを続行（残りのプランを実行）
+2. それでも完了としてマーク（残りのプランをスキップ）
+3. 残りの作業を確認
 ```
 
-Wait for user decision.
+ユーザーの決定を待ちます。
 
 </step>
 
 <step name="cleanup_handoff">
 
-Check for lingering handoffs:
+残っているハンドオフを確認します：
 
 ```bash
 ls .planning/phases/XX-current/.continue-here*.md 2>/dev/null
 ```
 
-If found, delete them — phase is complete, handoffs are stale.
+見つかった場合は削除します — フェーズが完了しているため、ハンドオフは古くなっています。
 
 </step>
 
 <step name="update_roadmap_and_state">
 
-**Delegate ROADMAP.md and STATE.md updates to gsd-tools:**
+**ROADMAP.mdとSTATE.mdの更新をgsd-toolsに委譲します：**
 
 ```bash
 TRANSITION=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phase complete "${current_phase}")
 ```
 
-The CLI handles:
-- Marking the phase checkbox as `[x]` complete with today's date
-- Updating plan count to final (e.g., "3/3 plans complete")
-- Updating the Progress table (Status → Complete, adding date)
-- Advancing STATE.md to next phase (Current Phase, Status → Ready to plan, Current Plan → Not started)
-- Detecting if this is the last phase in the milestone
+CLIが処理する内容：
+- フェーズのチェックボックスを本日の日付で`[x]`完了としてマーク
+- プランカウントを最終値に更新（例: 「3/3プラン完了」）
+- Progressテーブルの更新（Status → Complete、日付を追加）
+- STATE.mdを次のフェーズに進める（Current Phase、Status → Ready to plan、Current Plan → Not started）
+- これがマイルストーンの最後のフェーズかどうかを検出
 
-Extract from result: `completed_phase`, `plans_executed`, `next_phase`, `next_phase_name`, `is_last_phase`.
+結果から抽出: `completed_phase`、`plans_executed`、`next_phase`、`next_phase_name`、`is_last_phase`。
 
 </step>
 
 <step name="archive_prompts">
 
-If prompts were generated for the phase, they stay in place.
-The `completed/` subfolder pattern from create-meta-prompts handles archival.
+フェーズ用に生成されたプロンプトがある場合、そのまま残します。
+create-meta-promptsの`completed/`サブフォルダパターンがアーカイブを処理します。
 
 </step>
 
 <step name="evolve_project">
 
-Evolve PROJECT.md to reflect learnings from completed phase.
+完了したフェーズからの学びを反映してPROJECT.mdを進化させます。
 
-**Read phase summaries:**
+**フェーズサマリーを読み込みます：**
 
 ```bash
 cat .planning/phases/XX-current/*-SUMMARY.md
 ```
 
-**Assess requirement changes:**
+**要件の変更を評価します：**
 
-1. **Requirements validated?**
-   - Any Active requirements shipped in this phase?
-   - Move to Validated with phase reference: `- ✓ [Requirement] — Phase X`
+1. **要件が検証されたか？**
+   - このフェーズでアクティブな要件が出荷されたか？
+   - フェーズ参照付きでValidatedに移動: `- ✓ [要件] — Phase X`
 
-2. **Requirements invalidated?**
-   - Any Active requirements discovered to be unnecessary or wrong?
-   - Move to Out of Scope with reason: `- [Requirement] — [why invalidated]`
+2. **要件が無効化されたか？**
+   - アクティブな要件が不要または誤りと判明したか？
+   - 理由付きでOut of Scopeに移動: `- [要件] — [無効化の理由]`
 
-3. **Requirements emerged?**
-   - Any new requirements discovered during building?
-   - Add to Active: `- [ ] [New requirement]`
+3. **要件が出現したか？**
+   - 構築中に新しい要件が発見されたか？
+   - Activeに追加: `- [ ] [新しい要件]`
 
-4. **Decisions to log?**
-   - Extract decisions from SUMMARY.md files
-   - Add to Key Decisions table with outcome if known
+4. **記録すべき決定はあるか？**
+   - SUMMARY.mdファイルから決定事項を抽出
+   - 結果が分かっていればKey Decisionsテーブルに追加
 
-5. **"What This Is" still accurate?**
-   - If the product has meaningfully changed, update the description
-   - Keep it current and accurate
+5. **「What This Is」はまだ正確か？**
+   - プロダクトが大きく変わった場合、説明を更新
+   - 常に最新で正確に保つ
 
-**Update PROJECT.md:**
+**PROJECT.mdを更新します：**
 
-Make the edits inline. Update "Last updated" footer:
+インラインで編集します。「Last updated」フッターを更新：
 
 ```markdown
 ---
 *Last updated: [date] after Phase [X]*
 ```
 
-**Example evolution:**
+**進化の例：**
 
-Before:
+変更前：
 
 ```markdown
 ### Active
@@ -201,7 +201,7 @@ Before:
 - OAuth2 — complexity not needed for v1
 ```
 
-After (Phase 2 shipped JWT auth, discovered rate limiting needed):
+変更後（フェーズ2でJWT認証を出荷し、レート制限が必要と判明）：
 
 ```markdown
 ### Validated
@@ -219,75 +219,75 @@ After (Phase 2 shipped JWT auth, discovered rate limiting needed):
 - OAuth2 — complexity not needed for v1
 ```
 
-**Step complete when:**
+**ステップ完了条件：**
 
-- [ ] Phase summaries reviewed for learnings
-- [ ] Validated requirements moved from Active
-- [ ] Invalidated requirements moved to Out of Scope with reason
-- [ ] Emerged requirements added to Active
-- [ ] New decisions logged with rationale
-- [ ] "What This Is" updated if product changed
-- [ ] "Last updated" footer reflects this transition
+- [ ] フェーズサマリーから学びが確認された
+- [ ] 検証済み要件がActiveから移動された
+- [ ] 無効化された要件が理由付きでOut of Scopeに移動された
+- [ ] 出現した要件がActiveに追加された
+- [ ] 新しい決定事項が理由とともに記録された
+- [ ] プロダクトが変更された場合「What This Is」が更新された
+- [ ] 「Last updated」フッターがこの移行を反映している
 
 </step>
 
 <step name="update_current_position_after_transition">
 
-**Note:** Basic position updates (Current Phase, Status, Current Plan, Last Activity) were already handled by `gsd-tools phase complete` in the update_roadmap_and_state step.
+**注意:** 基本的な位置更新（Current Phase、Status、Current Plan、Last Activity）は、update_roadmap_and_stateステップの`gsd-tools phase complete`で既に処理されています。
 
-Verify the updates are correct by reading STATE.md. If the progress bar needs updating, use:
+STATE.mdを読み込んで更新が正しいか確認します。プログレスバーの更新が必要な場合は以下を使用：
 
 ```bash
 PROGRESS=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" progress bar --raw)
 ```
 
-Update the progress bar line in STATE.md with the result.
+STATE.mdのプログレスバー行を結果で更新します。
 
-**Step complete when:**
+**ステップ完了条件：**
 
-- [ ] Phase number incremented to next phase (done by phase complete)
-- [ ] Plan status reset to "Not started" (done by phase complete)
-- [ ] Status shows "Ready to plan" (done by phase complete)
-- [ ] Progress bar reflects total completed plans
+- [ ] フェーズ番号が次のフェーズに増加された（phase completeで処理済み）
+- [ ] プランステータスが「Not started」にリセットされた（phase completeで処理済み）
+- [ ] ステータスが「Ready to plan」を表示している（phase completeで処理済み）
+- [ ] プログレスバーが完了プランの合計を反映している
 
 </step>
 
 <step name="update_project_reference">
 
-Update Project Reference section in STATE.md.
+STATE.mdのProject Referenceセクションを更新します。
 
 ```markdown
 ## Project Reference
 
 See: .planning/PROJECT.md (updated [today])
 
-**Core value:** [Current core value from PROJECT.md]
-**Current focus:** [Next phase name]
+**Core value:** [PROJECT.mdからの現在のコアバリュー]
+**Current focus:** [次のフェーズ名]
 ```
 
-Update the date and current focus to reflect the transition.
+移行を反映するよう日付と現在のフォーカスを更新します。
 
 </step>
 
 <step name="review_accumulated_context">
 
-Review and update Accumulated Context section in STATE.md.
+STATE.mdのAccumulated Contextセクションを確認・更新します。
 
-**Decisions:**
+**決定事項：**
 
-- Note recent decisions from this phase (3-5 max)
-- Full log lives in PROJECT.md Key Decisions table
+- このフェーズからの最近の決定事項を記載（最大3-5件）
+- 完全なログはPROJECT.mdのKey Decisionsテーブルにある
 
-**Blockers/Concerns:**
+**ブロッカー/懸念事項：**
 
-- Review blockers from completed phase
-- If addressed in this phase: Remove from list
-- If still relevant for future: Keep with "Phase X" prefix
-- Add any new concerns from completed phase's summaries
+- 完了したフェーズからのブロッカーを確認
+- このフェーズで対処された場合：リストから削除
+- 将来も関連がある場合：「Phase X」プレフィックス付きで保持
+- 完了したフェーズのサマリーからの新しい懸念事項を追加
 
-**Example:**
+**例：**
 
-Before:
+変更前：
 
 ```markdown
 ### Blockers/Concerns
@@ -296,7 +296,7 @@ Before:
 - ⚠️ [Phase 2] WebSocket reconnection behavior on flaky networks unknown
 ```
 
-After (if database indexing was addressed in Phase 2):
+変更後（フェーズ2でデータベースインデックスが対処された場合）：
 
 ```markdown
 ### Blockers/Concerns
@@ -304,20 +304,20 @@ After (if database indexing was addressed in Phase 2):
 - ⚠️ [Phase 2] WebSocket reconnection behavior on flaky networks unknown
 ```
 
-**Step complete when:**
+**ステップ完了条件：**
 
-- [ ] Recent decisions noted (full log in PROJECT.md)
-- [ ] Resolved blockers removed from list
-- [ ] Unresolved blockers kept with phase prefix
-- [ ] New concerns from completed phase added
+- [ ] 最近の決定事項が記載された（完全なログはPROJECT.mdに）
+- [ ] 解決済みブロッカーがリストから削除された
+- [ ] 未解決のブロッカーがフェーズプレフィックス付きで保持された
+- [ ] 完了したフェーズからの新しい懸念事項が追加された
 
 </step>
 
 <step name="update_session_continuity_after_transition">
 
-Update Session Continuity section in STATE.md to reflect transition completion.
+移行完了を反映するためSTATE.mdのSession Continuityセクションを更新します。
 
-**Format:**
+**フォーマット：**
 
 ```markdown
 Last session: [today]
@@ -325,122 +325,122 @@ Stopped at: Phase [X] complete, ready to plan Phase [X+1]
 Resume file: None
 ```
 
-**Step complete when:**
+**ステップ完了条件：**
 
-- [ ] Last session timestamp updated to current date and time
-- [ ] Stopped at describes phase completion and next phase
-- [ ] Resume file confirmed as None (transitions don't use resume files)
+- [ ] 最終セッションのタイムスタンプが現在の日時に更新された
+- [ ] Stopped atにフェーズ完了と次のフェーズが記述された
+- [ ] ResumeファイルがNoneであることが確認された（移行ではresumeファイルを使用しない）
 
 </step>
 
 <step name="offer_next_phase">
 
-**MANDATORY: Verify milestone status before presenting next steps.**
+**必須: 次のステップを提示する前にマイルストーンステータスを確認してください。**
 
-**Use the transition result from `gsd-tools phase complete`:**
+**`gsd-tools phase complete`からの移行結果を使用します：**
 
-The `is_last_phase` field from the phase complete result tells you directly:
-- `is_last_phase: false` → More phases remain → Go to **Route A**
-- `is_last_phase: true` → Milestone complete → Go to **Route B**
+phase completeの結果の`is_last_phase`フィールドが直接教えてくれます：
+- `is_last_phase: false` → さらにフェーズがある → **ルートA**へ
+- `is_last_phase: true` → マイルストーン完了 → **ルートB**へ
 
-The `next_phase` and `next_phase_name` fields give you the next phase details.
+`next_phase`と`next_phase_name`フィールドが次のフェーズの詳細を提供します。
 
-If you need additional context, use:
+追加のコンテキストが必要な場合は以下を使用：
 ```bash
 ROADMAP=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap analyze)
 ```
 
-This returns all phases with goals, disk status, and completion info.
+すべてのフェーズの目標、ディスクステータス、完了情報を返します。
 
 ---
 
-**Route A: More phases remain in milestone**
+**ルートA: マイルストーンにさらにフェーズが残っている**
 
-Read ROADMAP.md to get the next phase's name and goal.
+ROADMAP.mdを読み込んで次のフェーズの名前と目標を取得します。
 
-**Check if next phase has CONTEXT.md:**
+**次のフェーズにCONTEXT.mdがあるか確認：**
 
 ```bash
 ls .planning/phases/*[X+1]*/*-CONTEXT.md 2>/dev/null
 ```
 
-**If next phase exists:**
+**次のフェーズが存在する場合：**
 
 <if mode="yolo">
 
-**If CONTEXT.md exists:**
+**CONTEXT.mdが存在する場合：**
 
 ```
-Phase [X] marked complete.
+フェーズ [X] を完了としてマークしました。
 
-Next: Phase [X+1] — [Name]
+次: フェーズ [X+1] — [Name]
 
-⚡ Auto-continuing: Plan Phase [X+1] in detail
+⚡ 自動続行: フェーズ [X+1] を詳細に計画
 ```
 
-Exit skill and invoke SlashCommand("/gsd:plan-phase [X+1] --auto")
+スキルを終了しSlashCommand("/gsd:plan-phase [X+1] --auto")を呼び出します
 
-**If CONTEXT.md does NOT exist:**
+**CONTEXT.mdが存在しない場合：**
 
 ```
-Phase [X] marked complete.
+フェーズ [X] を完了としてマークしました。
 
-Next: Phase [X+1] — [Name]
+次: フェーズ [X+1] — [Name]
 
-⚡ Auto-continuing: Discuss Phase [X+1] first
+⚡ 自動続行: まずフェーズ [X+1] を議論
 ```
 
-Exit skill and invoke SlashCommand("/gsd:discuss-phase [X+1] --auto")
+スキルを終了しSlashCommand("/gsd:discuss-phase [X+1] --auto")を呼び出します
 
 </if>
 
 <if mode="interactive" OR="custom with gates.confirm_transition true">
 
-**If CONTEXT.md does NOT exist:**
+**CONTEXT.mdが存在しない場合：**
 
 ```
-## ✓ Phase [X] Complete
+## ✓ フェーズ [X] 完了
 
 ---
 
-## ▶ Next Up
+## ▶ 次のステップ
 
-**Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
+**フェーズ [X+1]: [Name]** — [ROADMAP.mdからの目標]
 
-`/gsd:discuss-phase [X+1]` — gather context and clarify approach
+`/gsd:discuss-phase [X+1]` — コンテキストを収集しアプローチを明確化
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>先に`/clear` → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:plan-phase [X+1]` — skip discussion, plan directly
-- `/gsd:research-phase [X+1]` — investigate unknowns
+**その他のオプション:**
+- `/gsd:plan-phase [X+1]` — 議論をスキップし直接計画
+- `/gsd:research-phase [X+1]` — 不明点を調査
 
 ---
 ```
 
-**If CONTEXT.md exists:**
+**CONTEXT.mdが存在する場合：**
 
 ```
-## ✓ Phase [X] Complete
+## ✓ フェーズ [X] 完了
 
 ---
 
-## ▶ Next Up
+## ▶ 次のステップ
 
-**Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
-<sub>✓ Context gathered, ready to plan</sub>
+**フェーズ [X+1]: [Name]** — [ROADMAP.mdからの目標]
+<sub>✓ コンテキスト収集済み、計画準備完了</sub>
 
 `/gsd:plan-phase [X+1]`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>先に`/clear` → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:discuss-phase [X+1]` — revisit context
-- `/gsd:research-phase [X+1]` — investigate unknowns
+**その他のオプション:**
+- `/gsd:discuss-phase [X+1]` — コンテキストを再確認
+- `/gsd:research-phase [X+1]` — 不明点を調査
 
 ---
 ```
@@ -449,9 +449,9 @@ Exit skill and invoke SlashCommand("/gsd:discuss-phase [X+1] --auto")
 
 ---
 
-**Route B: Milestone complete (all phases done)**
+**ルートB: マイルストーン完了（すべてのフェーズが完了）**
 
-**Clear auto-advance chain flag** — milestone boundary is the natural stopping point:
+**自動進行チェーンフラグをクリア** — マイルストーン境界が自然な停止ポイントです：
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_chain_active false
 ```
@@ -459,38 +459,38 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_c
 <if mode="yolo">
 
 ```
-Phase {X} marked complete.
+フェーズ {X} を完了としてマークしました。
 
-🎉 Milestone {version} is 100% complete — all {N} phases finished!
+🎉 マイルストーン {version} が100%完了 — すべての {N} フェーズが終了しました！
 
-⚡ Auto-continuing: Complete milestone and archive
+⚡ 自動続行: マイルストーンを完了しアーカイブ
 ```
 
-Exit skill and invoke SlashCommand("/gsd:complete-milestone {version}")
+スキルを終了しSlashCommand("/gsd:complete-milestone {version}")を呼び出します
 
 </if>
 
 <if mode="interactive" OR="custom with gates.confirm_transition true">
 
 ```
-## ✓ Phase {X}: {Phase Name} Complete
+## ✓ フェーズ {X}: {Phase Name} 完了
 
-🎉 Milestone {version} is 100% complete — all {N} phases finished!
+🎉 マイルストーン {version} が100%完了 — すべての {N} フェーズが終了しました！
 
 ---
 
-## ▶ Next Up
+## ▶ 次のステップ
 
-**Complete Milestone {version}** — archive and prepare for next
+**マイルストーン {version} を完了** — アーカイブして次の準備
 
 `/gsd:complete-milestone {version}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>先に`/clear` → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- Review accomplishments before archiving
+**その他のオプション:**
+- アーカイブ前に成果を確認
 
 ---
 ```
@@ -502,43 +502,43 @@ Exit skill and invoke SlashCommand("/gsd:complete-milestone {version}")
 </process>
 
 <implicit_tracking>
-Progress tracking is IMPLICIT: planning phase N implies phases 1-(N-1) complete. No separate progress step—forward motion IS progress.
+進捗追跡は暗黙的です：フェーズNの計画はフェーズ1-(N-1)の完了を意味します。個別の進捗ステップはありません — 前進すること自体が進捗です。
 </implicit_tracking>
 
 <partial_completion>
 
-If user wants to move on but phase isn't fully complete:
+ユーザーが先に進みたいがフェーズが完全に完了していない場合：
 
 ```
-Phase [X] has incomplete plans:
-- {phase}-02-PLAN.md (not executed)
-- {phase}-03-PLAN.md (not executed)
+フェーズ [X] に未完了のプランがあります:
+- {phase}-02-PLAN.md（未実行）
+- {phase}-03-PLAN.md（未実行）
 
-Options:
-1. Mark complete anyway (plans weren't needed)
-2. Defer work to later phase
-3. Stay and finish current phase
+オプション:
+1. それでも完了としてマーク（プランは不要だった）
+2. 作業を後のフェーズに延期
+3. 現在のフェーズに留まり完了させる
 ```
 
-Respect user judgment — they know if work matters.
+ユーザーの判断を尊重してください — 作業が重要かどうかは本人が分かっています。
 
-**If marking complete with incomplete plans:**
+**未完了のプランで完了としてマークする場合：**
 
-- Update ROADMAP: "2/3 plans complete" (not "3/3")
-- Note in transition message which plans were skipped
+- ROADMAPを更新: 「2/3プラン完了」（「3/3」ではなく）
+- 移行メッセージにどのプランがスキップされたか記載
 
 </partial_completion>
 
 <success_criteria>
 
-Transition is complete when:
+移行は以下の条件を満たした時に完了です：
 
-- [ ] Current phase plan summaries verified (all exist or user chose to skip)
-- [ ] Any stale handoffs deleted
-- [ ] ROADMAP.md updated with completion status and plan count
-- [ ] PROJECT.md evolved (requirements, decisions, description if needed)
-- [ ] STATE.md updated (position, project reference, context, session)
-- [ ] Progress table updated
-- [ ] User knows next steps
+- [ ] 現在のフェーズのプランサマリーが検証された（すべて存在するか、ユーザーがスキップを選択）
+- [ ] 古いハンドオフが削除された
+- [ ] ROADMAP.mdが完了ステータスとプランカウントで更新された
+- [ ] PROJECT.mdが進化した（要件、決定事項、必要に応じて説明）
+- [ ] STATE.mdが更新された（位置、プロジェクト参照、コンテキスト、セッション）
+- [ ] Progressテーブルが更新された
+- [ ] ユーザーが次のステップを把握した
 
 </success_criteria>

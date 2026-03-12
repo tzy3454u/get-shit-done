@@ -1,134 +1,134 @@
 <purpose>
-Remove an unstarted future phase from the project roadmap, delete its directory, renumber all subsequent phases to maintain a clean linear sequence, and commit the change. The git commit serves as the historical record of removal.
+未開始の将来フェーズをプロジェクトロードマップから削除し、そのディレクトリを削除し、後続のすべてのフェーズを再番号付けしてクリーンな連番を維持し、変更をコミットします。gitコミットが削除の履歴記録として機能します。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込んでください。
 </required_reading>
 
 <process>
 
 <step name="parse_arguments">
-Parse the command arguments:
-- Argument is the phase number to remove (integer or decimal)
-- Example: `/gsd:remove-phase 17` → phase = 17
-- Example: `/gsd:remove-phase 16.1` → phase = 16.1
+コマンド引数を解析します：
+- 引数は削除するフェーズ番号（整数または小数）
+- 例: `/gsd:remove-phase 17` → phase = 17
+- 例: `/gsd:remove-phase 16.1` → phase = 16.1
 
-If no argument provided:
+引数が指定されていない場合：
 
 ```
-ERROR: Phase number required
-Usage: /gsd:remove-phase <phase-number>
-Example: /gsd:remove-phase 17
+ERROR: フェーズ番号が必要です
+使用方法: /gsd:remove-phase <phase-number>
+例: /gsd:remove-phase 17
 ```
 
-Exit.
+終了します。
 </step>
 
 <step name="init_context">
-Load phase operation context:
+フェーズ操作コンテキストを読み込みます：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init phase-op "${target}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract: `phase_found`, `phase_dir`, `phase_number`, `commit_docs`, `roadmap_exists`.
+抽出: `phase_found`、`phase_dir`、`phase_number`、`commit_docs`、`roadmap_exists`。
 
-Also read STATE.md and ROADMAP.md content for parsing current position.
+STATE.mdとROADMAP.mdの内容も読み込んで、現在の位置を解析します。
 </step>
 
 <step name="validate_future_phase">
-Verify the phase is a future phase (not started):
+対象が将来のフェーズ（未開始）であることを確認します：
 
-1. Compare target phase to current phase from STATE.md
-2. Target must be > current phase number
+1. STATE.mdから現在のフェーズとターゲットフェーズを比較
+2. ターゲットは現在のフェーズ番号より大きい必要がある
 
-If target <= current phase:
+ターゲットが現在のフェーズ以下の場合：
 
 ```
-ERROR: Cannot remove Phase {target}
+ERROR: フェーズ {target} を削除できません
 
-Only future phases can be removed:
-- Current phase: {current}
-- Phase {target} is current or completed
+将来のフェーズのみ削除可能です:
+- 現在のフェーズ: {current}
+- フェーズ {target} は現在または完了済みです
 
-To abandon current work, use /gsd:pause-work instead.
+現在の作業を中断するには、代わりに /gsd:pause-work を使用してください。
 ```
 
-Exit.
+終了します。
 </step>
 
 <step name="confirm_removal">
-Present removal summary and confirm:
+削除の概要を提示して確認します：
 
 ```
-Removing Phase {target}: {Name}
+フェーズ {target}: {Name} を削除します
 
-This will:
-- Delete: .planning/phases/{target}-{slug}/
-- Renumber all subsequent phases
-- Update: ROADMAP.md, STATE.md
+以下の処理が実行されます:
+- 削除: .planning/phases/{target}-{slug}/
+- 後続のすべてのフェーズを再番号付け
+- 更新: ROADMAP.md、STATE.md
 
-Proceed? (y/n)
+続行しますか？ (y/n)
 ```
 
-Wait for confirmation.
+確認を待ちます。
 </step>
 
 <step name="execute_removal">
-**Delegate the entire removal operation to gsd-tools:**
+**削除操作全体をgsd-toolsに委譲します：**
 
 ```bash
 RESULT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phase remove "${target}")
 ```
 
-If the phase has executed plans (SUMMARY.md files), gsd-tools will error. Use `--force` only if the user confirms:
+フェーズに実行済みプラン（SUMMARY.mdファイル）がある場合、gsd-toolsはエラーを返します。ユーザーが確認した場合のみ`--force`を使用してください：
 
 ```bash
 RESULT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phase remove "${target}" --force)
 ```
 
-The CLI handles:
-- Deleting the phase directory
-- Renumbering all subsequent directories (in reverse order to avoid conflicts)
-- Renaming all files inside renumbered directories (PLAN.md, SUMMARY.md, etc.)
-- Updating ROADMAP.md (removing section, renumbering all phase references, updating dependencies)
-- Updating STATE.md (decrementing phase count)
+CLIが処理する内容：
+- フェーズディレクトリの削除
+- 後続のすべてのディレクトリの再番号付け（競合を避けるため逆順で）
+- 再番号付けされたディレクトリ内のすべてのファイルの名前変更（PLAN.md、SUMMARY.mdなど）
+- ROADMAP.mdの更新（セクションの削除、すべてのフェーズ参照の再番号付け、依存関係の更新）
+- STATE.mdの更新（フェーズカウントの減少）
 
-Extract from result: `removed`, `directory_deleted`, `renamed_directories`, `renamed_files`, `roadmap_updated`, `state_updated`.
+結果から抽出: `removed`、`directory_deleted`、`renamed_directories`、`renamed_files`、`roadmap_updated`、`state_updated`。
 </step>
 
 <step name="commit">
-Stage and commit the removal:
+削除をステージングしてコミットします：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: remove phase {target} ({original-phase-name})" --files .planning/
 ```
 
-The commit message preserves the historical record of what was removed.
+コミットメッセージに削除された内容の履歴記録を保存します。
 </step>
 
 <step name="completion">
-Present completion summary:
+完了の概要を提示します：
 
 ```
-Phase {target} ({original-name}) removed.
+フェーズ {target} ({original-name}) を削除しました。
 
-Changes:
-- Deleted: .planning/phases/{target}-{slug}/
-- Renumbered: {N} directories and {M} files
-- Updated: ROADMAP.md, STATE.md
-- Committed: chore: remove phase {target} ({original-name})
+変更内容:
+- 削除: .planning/phases/{target}-{slug}/
+- 再番号付け: {N} ディレクトリ、{M} ファイル
+- 更新: ROADMAP.md、STATE.md
+- コミット: chore: remove phase {target} ({original-name})
 
 ---
 
-## What's Next
+## 次のステップ
 
-Would you like to:
-- `/gsd:progress` — see updated roadmap status
-- Continue with current phase
-- Review roadmap
+以下から選択してください:
+- `/gsd:progress` — 更新されたロードマップステータスを確認
+- 現在のフェーズを継続
+- ロードマップを確認
 
 ---
 ```
@@ -138,18 +138,18 @@ Would you like to:
 
 <anti_patterns>
 
-- Don't remove completed phases (have SUMMARY.md files) without --force
-- Don't remove current or past phases
-- Don't manually renumber — use `gsd-tools phase remove` which handles all renumbering
-- Don't add "removed phase" notes to STATE.md — git commit is the record
-- Don't modify completed phase directories
+- 完了済みフェーズ（SUMMARY.mdファイルあり）を--forceなしで削除しない
+- 現在または過去のフェーズを削除しない
+- 手動で再番号付けしない — すべての再番号付けを処理する`gsd-tools phase remove`を使用する
+- STATE.mdに「削除されたフェーズ」のメモを追加しない — gitコミットが記録です
+- 完了済みフェーズディレクトリを変更しない
 </anti_patterns>
 
 <success_criteria>
-Phase removal is complete when:
+フェーズ削除は以下の条件を満たした時に完了です：
 
-- [ ] Target phase validated as future/unstarted
-- [ ] `gsd-tools phase remove` executed successfully
-- [ ] Changes committed with descriptive message
-- [ ] User informed of changes
+- [ ] ターゲットフェーズが将来/未開始として検証された
+- [ ] `gsd-tools phase remove`が正常に実行された
+- [ ] 説明的なメッセージで変更がコミットされた
+- [ ] ユーザーに変更が通知された
 </success_criteria>

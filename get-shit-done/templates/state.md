@@ -1,176 +1,176 @@
-# State Template
+# ステートテンプレート
 
-Template for `.planning/STATE.md` — the project's living memory.
+`.planning/STATE.md` 用テンプレート — プロジェクトのリビングメモリ。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
-# Project State
+# プロジェクトステート
 
-## Project Reference
+## プロジェクト参照
 
 See: .planning/PROJECT.md (updated [date])
 
-**Core value:** [One-liner from PROJECT.md Core Value section]
-**Current focus:** [Current phase name]
+**Core value:** [PROJECT.mdのコアバリューセクションからの一行]
+**Current focus:** [現在のフェーズ名]
 
-## Current Position
+## 現在の位置
 
-Phase: [X] of [Y] ([Phase name])
+Phase: [X] of [Y] ([フェーズ名])
 Plan: [A] of [B] in current phase
 Status: [Ready to plan / Planning / Ready to execute / In progress / Phase complete]
-Last activity: [YYYY-MM-DD] — [What happened]
+Last activity: [YYYY-MM-DD] — [行われたこと]
 
 Progress: [░░░░░░░░░░] 0%
 
-## Performance Metrics
+## パフォーマンスメトリクス
 
-**Velocity:**
-- Total plans completed: [N]
-- Average duration: [X] min
-- Total execution time: [X.X] hours
+**速度:**
+- 完了プラン合計: [N]
+- 平均所要時間: [X] min
+- 総実行時間: [X.X] hours
 
-**By Phase:**
+**フェーズ別:**
 
-| Phase | Plans | Total | Avg/Plan |
+| フェーズ | プラン | 合計 | プランあたり平均 |
 |-------|-------|-------|----------|
 | - | - | - | - |
 
-**Recent Trend:**
-- Last 5 plans: [durations]
-- Trend: [Improving / Stable / Degrading]
+**最近のトレンド:**
+- 直近5プラン: [所要時間]
+- トレンド: [Improving / Stable / Degrading]
 
-*Updated after each plan completion*
+*各プラン完了後に更新*
 
-## Accumulated Context
+## 蓄積されたコンテキスト
 
-### Decisions
+### 決定事項
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+決定事項はPROJECT.mdの主要決定テーブルに記録されます。
+現在の作業に影響する最近の決定事項:
 
-- [Phase X]: [Decision summary]
-- [Phase Y]: [Decision summary]
+- [Phase X]: [決定の概要]
+- [Phase Y]: [決定の概要]
 
-### Pending Todos
+### 保留中のTodo
 
-[From .planning/todos/pending/ — ideas captured during sessions]
+[.planning/todos/pending/ から — セッション中にキャプチャされたアイデア]
 
-None yet.
+まだありません。
 
-### Blockers/Concerns
+### ブロッカー/懸念事項
 
-[Issues that affect future work]
+[将来の作業に影響する課題]
 
-None yet.
+まだありません。
 
-## Session Continuity
+## セッション継続性
 
 Last session: [YYYY-MM-DD HH:MM]
-Stopped at: [Description of last completed action]
-Resume file: [Path to .continue-here*.md if exists, otherwise "None"]
+Stopped at: [最後に完了したアクションの説明]
+Resume file: [.continue-here*.md が存在する場合はそのパス、なければ "None"]
 ```
 
 <purpose>
 
-STATE.md is the project's short-term memory spanning all phases and sessions.
+STATE.mdはすべてのフェーズとセッションにまたがるプロジェクトの短期メモリです。
 
-**Problem it solves:** Information is captured in summaries, issues, and decisions but not systematically consumed. Sessions start without context.
+**解決する問題:** 情報はサマリー、イシュー、決定事項に記録されるが、体系的に消費されない。セッションはコンテキストなしで開始される。
 
-**Solution:** A single, small file that's:
-- Read first in every workflow
-- Updated after every significant action
-- Contains digest of accumulated context
-- Enables instant session restoration
+**解決策:** 以下の特徴を持つ単一の小さなファイル:
+- すべてのワークフローで最初に読み込まれる
+- すべての重要なアクションの後に更新される
+- 蓄積されたコンテキストのダイジェストを含む
+- セッションの即時復元を可能にする
 
 </purpose>
 
 <lifecycle>
 
-**Creation:** After ROADMAP.md is created (during init)
-- Reference PROJECT.md (read it for current context)
-- Initialize empty accumulated context sections
-- Set position to "Phase 1 ready to plan"
+**作成:** ROADMAP.md作成後（init中）
+- PROJECT.mdを参照（現在のコンテキストを読み取る）
+- 蓄積コンテキストセクションを空で初期化
+- 位置を「Phase 1 ready to plan」に設定
 
-**Reading:** First step of every workflow
-- progress: Present status to user
-- plan: Inform planning decisions
-- execute: Know current position
-- transition: Know what's complete
+**読み取り:** すべてのワークフローの最初のステップ
+- progress: ユーザーにステータスを提示
+- plan: 計画の意思決定に活用
+- execute: 現在の位置を把握
+- transition: 完了事項を把握
 
-**Writing:** After every significant action
-- execute: After SUMMARY.md created
-  - Update position (phase, plan, status)
-  - Note new decisions (detail in PROJECT.md)
-  - Add blockers/concerns
-- transition: After phase marked complete
-  - Update progress bar
-  - Clear resolved blockers
-  - Refresh Project Reference date
+**書き込み:** すべての重要なアクションの後
+- execute: SUMMARY.md作成後
+  - 位置を更新（フェーズ、プラン、ステータス）
+  - 新しい決定事項を記録（詳細はPROJECT.mdに）
+  - ブロッカー/懸念事項を追加
+- transition: フェーズ完了マーク後
+  - 進捗バーを更新
+  - 解決済みブロッカーをクリア
+  - プロジェクト参照の日付を更新
 
 </lifecycle>
 
 <sections>
 
-### Project Reference
-Points to PROJECT.md for full context. Includes:
-- Core value (the ONE thing that matters)
-- Current focus (which phase)
-- Last update date (triggers re-read if stale)
+### プロジェクト参照
+完全なコンテキストのためPROJECT.mdを指す。以下を含む:
+- コアバリュー（最も重要なこと）
+- 現在のフォーカス（どのフェーズか）
+- 最終更新日（古い場合は再読み込みをトリガー）
 
-Claude reads PROJECT.md directly for requirements, constraints, and decisions.
+ClaudeはPROJECT.mdを直接読んで要件、制約、決定事項を取得します。
 
-### Current Position
-Where we are right now:
-- Phase X of Y — which phase
-- Plan A of B — which plan within phase
-- Status — current state
-- Last activity — what happened most recently
-- Progress bar — visual indicator of overall completion
+### 現在の位置
+現在の状態:
+- Phase X of Y — どのフェーズか
+- Plan A of B — フェーズ内のどのプランか
+- Status — 現在のステート
+- Last activity — 最近行われたこと
+- Progress bar — 全体完了度のビジュアル指標
 
-Progress calculation: (completed plans) / (total plans across all phases) × 100%
+進捗計算: (完了プラン) / (全フェーズの総プラン数) × 100%
 
-### Performance Metrics
-Track velocity to understand execution patterns:
-- Total plans completed
-- Average duration per plan
-- Per-phase breakdown
-- Recent trend (improving/stable/degrading)
+### パフォーマンスメトリクス
+実行パターンを理解するための速度追跡:
+- 完了プラン合計
+- プランあたりの平均所要時間
+- フェーズ別内訳
+- 最近のトレンド（改善中/安定/低下中）
 
-Updated after each plan completion.
+各プラン完了後に更新。
 
-### Accumulated Context
+### 蓄積されたコンテキスト
 
-**Decisions:** Reference to PROJECT.md Key Decisions table, plus recent decisions summary for quick access. Full decision log lives in PROJECT.md.
+**決定事項:** PROJECT.mdの主要決定テーブルへの参照と、素早いアクセスのための最近の決定事項サマリー。完全な決定ログはPROJECT.mdにあります。
 
-**Pending Todos:** Ideas captured via /gsd:add-todo
-- Count of pending todos
-- Reference to .planning/todos/pending/
-- Brief list if few, count if many (e.g., "5 pending todos — see /gsd:check-todos")
+**保留中のTodo:** /gsd:add-todoで記録されたアイデア
+- 保留中のtodoの数
+- .planning/todos/pending/ への参照
+- 少数の場合は簡単なリスト、多数の場合はカウント（例: "5個の保留中todo — /gsd:check-todosを参照"）
 
-**Blockers/Concerns:** From "Next Phase Readiness" sections
-- Issues that affect future work
-- Prefix with originating phase
-- Cleared when addressed
+**ブロッカー/懸念事項:** "Next Phase Readiness"セクションから
+- 将来の作業に影響する課題
+- 発生元フェーズをプレフィックスとして付与
+- 対処済みになったらクリア
 
-### Session Continuity
-Enables instant resumption:
-- When was last session
-- What was last completed
-- Is there a .continue-here file to resume from
+### セッション継続性
+即時再開を可能にする:
+- 前回のセッションはいつか
+- 最後に完了したことは何か
+- 再開用の.continue-hereファイルがあるか
 
 </sections>
 
 <size_constraint>
 
-Keep STATE.md under 100 lines.
+STATE.mdを100行以下に保つこと。
 
-It's a DIGEST, not an archive. If accumulated context grows too large:
-- Keep only 3-5 recent decisions in summary (full log in PROJECT.md)
-- Keep only active blockers, remove resolved ones
+これはアーカイブではなくダイジェストです。蓄積コンテキストが大きくなりすぎた場合:
+- サマリーには最近の3〜5件の決定事項のみ保持（完全なログはPROJECT.mdに）
+- アクティブなブロッカーのみ保持、解決済みは削除
 
-The goal is "read once, know where we are" — if it's too long, that fails.
+目標は「一度読めば現在地がわかる」こと — 長すぎるとそれが失敗します。
 
 </size_constraint>
