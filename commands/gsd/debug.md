@@ -10,7 +10,7 @@ allowed-tools:
 ---
 
 <objective>
-サブエージェント分離による科学的手法でissueをデバッグする。
+サブエージェント分離による科学的手法でイシューをデバッグする。
 
 **オーケストレーターの役割:** 症状の収集、gsd-debuggerエージェントの起動、チェックポイントの処理、継続の起動。
 
@@ -18,7 +18,7 @@ allowed-tools:
 </objective>
 
 <context>
-ユーザーのissue: $ARGUMENTS
+ユーザーのイシュー: $ARGUMENTS
 
 アクティブセッションの確認:
 ```bash
@@ -44,12 +44,12 @@ debugger_model=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" resolve-mo
 
 アクティブセッションが存在し、$ARGUMENTSがない場合:
 - ステータス、仮説、次のアクションとともにセッション一覧を表示
-- ユーザーが再開する番号を選択するか、新しいissueを説明
+- ユーザーが再開する番号を選択するか、新しいイシューを説明
 
-$ARGUMENTSが指定されている場合、またはユーザーが新しいissueを説明した場合:
+$ARGUMENTSが指定されている場合、またはユーザーが新しいイシューを説明した場合:
 - 症状収集に進む
 
-## 2. 症状の収集（新しいissueの場合）
+## 2. 症状の収集（新しいイシューの場合）
 
 各項目にAskUserQuestionを使用:
 
@@ -67,7 +67,7 @@ $ARGUMENTSが指定されている場合、またはユーザーが新しいissu
 
 ```markdown
 <objective>
-issueの調査: {slug}
+イシューの調査: {slug}
 
 **概要:** {trigger}
 </objective>
@@ -161,7 +161,7 @@ Task(
 
 <success_criteria>
 - [ ] アクティブセッションを確認済み
-- [ ] 症状を収集済み（新しいissueの場合）
+- [ ] 症状を収集済み（新しいイシューの場合）
 - [ ] gsd-debuggerをコンテキスト付きで起動済み
 - [ ] チェックポイントを正しく処理済み
 - [ ] 修正前に根本原因を確認済み

@@ -64,7 +64,7 @@
 | [選択] | [なぜ] | [✓ 良好 / ⚠️ 要再検討 / — 保留中] |
 
 ---
-*Last updated: [date] after [trigger]*
+*最終更新: [date] — [trigger]*
 ```
 
 </template>

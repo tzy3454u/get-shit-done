@@ -57,7 +57,7 @@ npx get-shit-done-cc@latest
 
 これがGSDです。エンタープライズのロールプレイは不要。Claude Codeで継続的に良いものを作るための、非常に実用的なシステムです。
 
-— **TACHES**
+— **TÂCHES**
 
 ---
 
@@ -273,7 +273,7 @@ claude --dangerously-skip-permissions
 
 **How Wave Execution Works:**
 
-プランは依存関係に基づいて「wave」に分類されます。同一wave内は並列、wave間は直列です。
+プランは依存関係に基づいて「ウェーブ」に分類されます。同一wave内は並列、wave間は直列です。
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -468,7 +468,7 @@ lmn012o feat(08-02): create registration endpoint
 | `/gsd:new-project [--auto]` | 初期化フルフロー: 質問 -> 調査 -> 要件 -> ロードマップ |
 | `/gsd:discuss-phase [N] [--auto]` | 計画前に実装意思決定を確定 |
 | `/gsd:plan-phase [N] [--auto]` | フェーズ単位で調査 + 計画 + 検証 |
-| `/gsd:execute-phase <N>` | Wave並列で実行、完了時に検証 |
+| `/gsd:execute-phase <N>` | ウェーブ並列で実行、完了時に検証 |
 | `/gsd:verify-work [N]` | 手動受け入れテスト（UAT）¹ |
 | `/gsd:audit-milestone` | マイルストーンのDefinition of Doneを監査 |
 | `/gsd:complete-milestone` | マイルストーンをアーカイブし、リリースタグ付け |

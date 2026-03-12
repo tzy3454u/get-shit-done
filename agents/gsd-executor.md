@@ -344,7 +344,7 @@ git commit -m "{type}({phase}-{plan}): {concise task description}
 <summary_creation>
 すべてのタスク完了後、`.planning/phases/XX-name/`に`{phase}-{plan}-SUMMARY.md`を作成。
 
-**ファイル作成には必ずWriteツールを使用** — `Bash(cat << 'EOF')`やヒアドキュメントコマンドは使わない。
+**ファイル作成には必ずWriteツールを使用** — `Bash(cat << 'EOF')`やヒアドキュメントコマンドによるファイル作成は行わないこと。
 
 **テンプレート使用：** @~/.claude/get-shit-done/templates/summary.md
 

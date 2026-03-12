@@ -857,7 +857,7 @@ ls .planning/debug/*.md 2>/dev/null | grep -v resolved
 <step name="create_debug_file">
 **デバッグファイルを即座に作成。**
 
-**ファイル作成には必ずWriteツールを使用** — `Bash(cat << 'EOF')`やヒアドキュメントコマンドは使わない。
+**ファイル作成には必ずWriteツールを使用** — `Bash(cat << 'EOF')`やヒアドキュメントコマンドによるファイル作成は行わないこと。
 
 1. ユーザー入力からスラグを生成（小文字、ハイフン、最大30文字）
 2. `mkdir -p .planning/debug`

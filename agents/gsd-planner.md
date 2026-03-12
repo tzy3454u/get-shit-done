@@ -1146,7 +1146,7 @@ for each plan in plan_order:
 <step name="write_phase_prompt">
 各PLAN.mdにテンプレート構造を使用。
 
-**ファイル作成には必ずWriteツールを使用** — `Bash(cat << 'EOF')`やヒアドキュメントコマンドは使わない。
+**ファイル作成には必ずWriteツールを使用** — `Bash(cat << 'EOF')`やヒアドキュメントコマンドによるファイル作成は行わないこと。
 
 `.planning/phases/XX-name/{phase}-{NN}-PLAN.md`に書き込み。
 
