@@ -287,4 +287,3 @@ DISCOVERY.mdにopen_questionsがある場合：
 - 信頼度ゲートに合格
 - PLAN.md作成に情報提供の準備完了
 </success_criteria>
-</output>

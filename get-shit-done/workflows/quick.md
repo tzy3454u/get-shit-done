@@ -32,7 +32,7 @@ AskUserQuestion(
 
 応答を`$DESCRIPTION`として保存。
 
-それでも空の場合、再確認: "タスクの説明を入力してください。"
+それでも空の場合、再確認: "タスクの説明を入力すること。"
 
 有効なフラグに基づいてバナーを表示:
 
@@ -74,7 +74,7 @@ if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 
 JSONをパース: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`。
 
-**`roadmap_exists`がfalseの場合:** エラー — クイックモードにはROADMAP.mdを持つアクティブなプロジェクトが必要です。先に`/gsd:new-project`を実行してください。
+**`roadmap_exists`がfalseの場合:** エラー — クイックモードにはROADMAP.mdを持つアクティブなプロジェクトが必要。先に`/gsd:new-project`を実行すること。
 
 クイックタスクはフェーズ途中でも実行可能 - バリデーションはROADMAP.mdの存在のみを確認し、フェーズの状態は確認しない。
 
@@ -379,7 +379,7 @@ Task(
 
 **iteration_count >= 2の場合:**
 
-表示: `最大反復回数に達しました。${N}件の問題が残っています:` + 問題リスト
+表示: `最大反復回数に達した。${N}件の問題が残っている:` + 問題リスト
 
 提示: 1) 強制続行, 2) 中止
 
@@ -599,4 +599,4 @@ GSD > QUICK TASK COMPLETE
 - [ ] STATE.mdにクイックタスク行を更新（--fullの場合はStatusカラム）
 - [ ] 成果物をコミット
 </success_criteria>
-</output>
+

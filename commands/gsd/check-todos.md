@@ -43,4 +43,4 @@ Todoの状態とロードマップの相関は、`init todos` と対象を絞っ
 7. STATE.mdの更新
 8. Gitコミット
 </process>
-</output>
+

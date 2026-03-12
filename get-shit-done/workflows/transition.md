@@ -1,6 +1,6 @@
 <required_reading>
 
-**今すぐこれらのファイルを読み込んでください：**
+**今すぐこれらのファイルを読み込むこと：**
 
 1. `.planning/STATE.md`
 2. `.planning/PROJECT.md`
@@ -12,7 +12,7 @@
 
 <purpose>
 
-現在のフェーズを完了としてマークし、次に進みます。これは進捗追跡とPROJECT.mdの進化が行われる自然なポイントです。
+現在のフェーズを完了としてマークし、次に進む。これは進捗追跡とPROJECT.mdの進化が行われる自然なポイント。
 
 「次のフェーズを計画する」=「現在のフェーズは完了」
 
@@ -22,21 +22,21 @@
 
 <step name="load_project_state" priority="first">
 
-移行前にプロジェクトの状態を読み込みます：
+移行前にプロジェクトの状態を読み込む：
 
 ```bash
 cat .planning/STATE.md 2>/dev/null
 cat .planning/PROJECT.md 2>/dev/null
 ```
 
-正しいフェーズを移行していることを確認するため、現在の位置を解析します。
-移行後に更新が必要な蓄積されたコンテキストに注意します。
+正しいフェーズを移行していることを確認するため、現在の位置を解析する。
+移行後に更新が必要な蓄積されたコンテキストに注意する。
 
 </step>
 
 <step name="verify_completion">
 
-現在のフェーズにすべてのプランサマリーがあるか確認します：
+現在のフェーズにすべてのプランサマリーがあるか確認する：
 
 ```bash
 ls .planning/phases/XX-current/*-PLAN.md 2>/dev/null | sort
@@ -69,7 +69,7 @@ cat .planning/config.json 2>/dev/null
 完了マークと進行を実行中...
 ```
 
-cleanup_handoffステップに直接進みます。
+cleanup_handoffステップに直接進む。
 
 </if>
 
@@ -77,24 +77,24 @@ cleanup_handoffステップに直接進みます。
 
 質問: 「フェーズ [X] 完了 — すべての [Y] プランが終了しました。完了としてマークしてフェーズ [X+1] に進みますか？」
 
-確認を待ってから進行します。
+確認を待ってから進行する。
 
 </if>
 
 **プランが未完了の場合：**
 
-**安全ガードレール: always_confirm_destructiveがここに適用されます。**
-未完了プランのスキップは破壊的操作です — モードに関係なく常にプロンプトを表示します。
+**安全ガードレール: always_confirm_destructiveがここに適用される。**
+未完了プランのスキップは破壊的操作 — モードに関係なく常にプロンプトを表示する。
 
 提示：
 
 ```
-フェーズ [X] に未完了のプランがあります:
+フェーズ [X] に未完了のプランがある:
 - {phase}-01-SUMMARY.md ✓ 完了
 - {phase}-02-SUMMARY.md ✗ 欠落
 - {phase}-03-SUMMARY.md ✗ 欠落
 
-⚠️ 安全ガードレール: プランのスキップには確認が必要です（破壊的操作）
+⚠️ 安全ガードレール: プランのスキップには確認が必要（破壊的操作）
 
 オプション:
 1. 現在のフェーズを続行（残りのプランを実行）
@@ -102,25 +102,25 @@ cleanup_handoffステップに直接進みます。
 3. 残りの作業を確認
 ```
 
-ユーザーの決定を待ちます。
+ユーザーの決定を待つ。
 
 </step>
 
 <step name="cleanup_handoff">
 
-残っているハンドオフを確認します：
+残っているハンドオフを確認する：
 
 ```bash
 ls .planning/phases/XX-current/.continue-here*.md 2>/dev/null
 ```
 
-見つかった場合は削除します — フェーズが完了しているため、ハンドオフは古くなっています。
+見つかった場合は削除する — フェーズが完了しているため、ハンドオフは古くなっている。
 
 </step>
 
 <step name="update_roadmap_and_state">
 
-**ROADMAP.mdとSTATE.mdの更新をgsd-toolsに委譲します：**
+**ROADMAP.mdとSTATE.mdの更新をgsd-toolsに委譲する：**
 
 ```bash
 TRANSITION=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phase complete "${current_phase}")
@@ -139,22 +139,22 @@ CLIが処理する内容：
 
 <step name="archive_prompts">
 
-フェーズ用に生成されたプロンプトがある場合、そのまま残します。
-create-meta-promptsの`completed/`サブフォルダパターンがアーカイブを処理します。
+フェーズ用に生成されたプロンプトがある場合、そのまま残す。
+create-meta-promptsの`completed/`サブフォルダパターンがアーカイブを処理する。
 
 </step>
 
 <step name="evolve_project">
 
-完了したフェーズからの学びを反映してPROJECT.mdを進化させます。
+完了したフェーズからの学びを反映してPROJECT.mdを進化させる。
 
-**フェーズサマリーを読み込みます：**
+**フェーズサマリーを読み込む：**
 
 ```bash
 cat .planning/phases/XX-current/*-SUMMARY.md
 ```
 
-**要件の変更を評価します：**
+**要件の変更を評価する：**
 
 1. **要件が検証されたか？**
    - このフェーズでアクティブな要件が出荷されたか？
@@ -176,9 +176,9 @@ cat .planning/phases/XX-current/*-SUMMARY.md
    - プロダクトが大きく変わった場合、説明を更新
    - 常に最新で正確に保つ
 
-**PROJECT.mdを更新します：**
+**PROJECT.mdを更新する：**
 
-インラインで編集します。「Last updated」フッターを更新：
+インラインで編集する。「Last updated」フッターを更新：
 
 ```markdown
 ---
@@ -233,15 +233,15 @@ cat .planning/phases/XX-current/*-SUMMARY.md
 
 <step name="update_current_position_after_transition">
 
-**注意:** 基本的な位置更新（Current Phase、Status、Current Plan、Last Activity）は、update_roadmap_and_stateステップの`gsd-tools phase complete`で既に処理されています。
+**注意:** 基本的な位置更新（Current Phase、Status、Current Plan、Last Activity）は、update_roadmap_and_stateステップの`gsd-tools phase complete`で既に処理されている。
 
-STATE.mdを読み込んで更新が正しいか確認します。プログレスバーの更新が必要な場合は以下を使用：
+STATE.mdを読み込んで更新が正しいか確認する。プログレスバーの更新が必要な場合は以下を使用：
 
 ```bash
 PROGRESS=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" progress bar --raw)
 ```
 
-STATE.mdのプログレスバー行を結果で更新します。
+STATE.mdのプログレスバー行を結果で更新する。
 
 **ステップ完了条件：**
 
@@ -254,7 +254,7 @@ STATE.mdのプログレスバー行を結果で更新します。
 
 <step name="update_project_reference">
 
-STATE.mdのProject Referenceセクションを更新します。
+STATE.mdのProject Referenceセクションを更新する。
 
 ```markdown
 ## Project Reference
@@ -265,13 +265,13 @@ See: .planning/PROJECT.md (updated [today])
 **Current focus:** [次のフェーズ名]
 ```
 
-移行を反映するよう日付と現在のフォーカスを更新します。
+移行を反映するよう日付と現在のフォーカスを更新する。
 
 </step>
 
 <step name="review_accumulated_context">
 
-STATE.mdのAccumulated Contextセクションを確認・更新します。
+STATE.mdのAccumulated Contextセクションを確認・更新する。
 
 **決定事項：**
 
@@ -315,7 +315,7 @@ STATE.mdのAccumulated Contextセクションを確認・更新します。
 
 <step name="update_session_continuity_after_transition">
 
-移行完了を反映するためSTATE.mdのSession Continuityセクションを更新します。
+移行完了を反映するためSTATE.mdのSession Continuityセクションを更新する。
 
 **フォーマット：**
 
@@ -335,28 +335,28 @@ Resume file: None
 
 <step name="offer_next_phase">
 
-**必須: 次のステップを提示する前にマイルストーンステータスを確認してください。**
+**必須: 次のステップを提示する前にマイルストーンステータスを確認すること。**
 
-**`gsd-tools phase complete`からの移行結果を使用します：**
+**`gsd-tools phase complete`からの移行結果を使用する：**
 
-phase completeの結果の`is_last_phase`フィールドが直接教えてくれます：
+phase completeの結果の`is_last_phase`フィールドが直接教えてくれる：
 - `is_last_phase: false` → さらにフェーズがある → **ルートA**へ
 - `is_last_phase: true` → マイルストーン完了 → **ルートB**へ
 
-`next_phase`と`next_phase_name`フィールドが次のフェーズの詳細を提供します。
+`next_phase`と`next_phase_name`フィールドが次のフェーズの詳細を提供する。
 
 追加のコンテキストが必要な場合は以下を使用：
 ```bash
 ROADMAP=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap analyze)
 ```
 
-すべてのフェーズの目標、ディスクステータス、完了情報を返します。
+すべてのフェーズの目標、ディスクステータス、完了情報を返す。
 
 ---
 
 **ルートA: マイルストーンにさらにフェーズが残っている**
 
-ROADMAP.mdを読み込んで次のフェーズの名前と目標を取得します。
+ROADMAP.mdを読み込んで次のフェーズの名前と目標を取得する。
 
 **次のフェーズにCONTEXT.mdがあるか確認：**
 
@@ -378,7 +378,7 @@ ls .planning/phases/*[X+1]*/*-CONTEXT.md 2>/dev/null
 ⚡ 自動続行: フェーズ [X+1] を詳細に計画
 ```
 
-スキルを終了しSlashCommand("/gsd:plan-phase [X+1] --auto")を呼び出します
+スキルを終了しSlashCommand("/gsd:plan-phase [X+1] --auto")を呼び出す
 
 **CONTEXT.mdが存在しない場合：**
 
@@ -390,7 +390,7 @@ ls .planning/phases/*[X+1]*/*-CONTEXT.md 2>/dev/null
 ⚡ 自動続行: まずフェーズ [X+1] を議論
 ```
 
-スキルを終了しSlashCommand("/gsd:discuss-phase [X+1] --auto")を呼び出します
+スキルを終了しSlashCommand("/gsd:discuss-phase [X+1] --auto")を呼び出す
 
 </if>
 
@@ -451,7 +451,7 @@ ls .planning/phases/*[X+1]*/*-CONTEXT.md 2>/dev/null
 
 **ルートB: マイルストーン完了（すべてのフェーズが完了）**
 
-**自動進行チェーンフラグをクリア** — マイルストーン境界が自然な停止ポイントです：
+**自動進行チェーンフラグをクリア** — マイルストーン境界が自然な停止ポイント：
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_chain_active false
 ```
@@ -466,7 +466,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_c
 ⚡ 自動続行: マイルストーンを完了しアーカイブ
 ```
 
-スキルを終了しSlashCommand("/gsd:complete-milestone {version}")を呼び出します
+スキルを終了しSlashCommand("/gsd:complete-milestone {version}")を呼び出す
 
 </if>
 
@@ -502,7 +502,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_c
 </process>
 
 <implicit_tracking>
-進捗追跡は暗黙的です：フェーズNの計画はフェーズ1-(N-1)の完了を意味します。個別の進捗ステップはありません — 前進すること自体が進捗です。
+進捗追跡は暗黙的：フェーズNの計画はフェーズ1-(N-1)の完了を意味する。個別の進捗ステップはない — 前進すること自体が進捗。
 </implicit_tracking>
 
 <partial_completion>
@@ -510,7 +510,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_c
 ユーザーが先に進みたいがフェーズが完全に完了していない場合：
 
 ```
-フェーズ [X] に未完了のプランがあります:
+フェーズ [X] に未完了のプランがある:
 - {phase}-02-PLAN.md（未実行）
 - {phase}-03-PLAN.md（未実行）
 
@@ -520,7 +520,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_c
 3. 現在のフェーズに留まり完了させる
 ```
 
-ユーザーの判断を尊重してください — 作業が重要かどうかは本人が分かっています。
+ユーザーの判断を尊重すること — 作業が重要かどうかは本人が分かっている。
 
 **未完了のプランで完了としてマークする場合：**
 
@@ -531,7 +531,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_c
 
 <success_criteria>
 
-移行は以下の条件を満たした時に完了です：
+移行は以下の条件を満たした時に完了：
 
 - [ ] 現在のフェーズのプランサマリーが検証された（すべて存在するか、ユーザーがスキップを選択）
 - [ ] 古いハンドオフが削除された

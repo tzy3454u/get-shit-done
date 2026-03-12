@@ -11,7 +11,7 @@ allowed-tools:
 ---
 <context>
 **フラグ:**
-- `--auto` — 自動モード。設定の質問後、追加のやり取りなしでリサーチ → 要件定義 → ロードマップを実行します。@参照でアイデアドキュメントを指定してください。
+- `--auto` — 自動モード。設定の質問後、追加のやり取りなしでリサーチ → 要件定義 → ロードマップを実行する。@参照でアイデアドキュメントを指定すること。
 </context>
 
 <objective>
@@ -25,7 +25,7 @@ allowed-tools:
 - `.planning/ROADMAP.md` — フェーズ構成
 - `.planning/STATE.md` — プロジェクトメモリ
 
-**このコマンドの後:** `/gsd:plan-phase 1` を実行して実行を開始してください。
+**このコマンドの後:** `/gsd:plan-phase 1` を実行して実行を開始すること。
 </objective>
 
 <execution_context>
@@ -37,7 +37,7 @@ allowed-tools:
 </execution_context>
 
 <process>
-@~/.claude/get-shit-done/workflows/new-project.md のnew-projectワークフローをエンドツーエンドで実行します。
-すべてのワークフローゲート（バリデーション、承認、commit、ルーティング）を維持してください。
+@~/.claude/get-shit-done/workflows/new-project.md のnew-projectワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲート（バリデーション、承認、commit、ルーティング）を維持すること。
 </process>
-</output>
+

@@ -10,11 +10,11 @@ allowed-tools:
 ---
 
 <objective>
-サブエージェント分離による科学的手法でissueをデバッグします。
+サブエージェント分離による科学的手法でissueをデバッグする。
 
 **オーケストレーターの役割:** 症状の収集、gsd-debuggerエージェントの起動、チェックポイントの処理、継続の起動。
 
-**サブエージェントを使う理由:** 調査はコンテキストを急速に消費します（ファイルの読み取り、仮説の構築、テスト）。調査ごとにフレッシュな200kコンテキストを確保。メインコンテキストはユーザーとのやり取りのためにスリムに保ちます。
+**サブエージェントを使う理由:** 調査はコンテキストを急速に消費する（ファイルの読み取り、仮説の構築、テスト）。調査ごとにフレッシュな200kコンテキストを確保。メインコンテキストはユーザーとのやり取りのためにスリムに保つ。
 </objective>
 
 <context>
@@ -35,7 +35,7 @@ INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state load)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-init JSONから`commit_docs`を抽出します。debuggerモデルを解決:
+init JSONから`commit_docs`を抽出する。debuggerモデルを解決:
 ```bash
 debugger_model=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" resolve-model gsd-debugger --raw)
 ```
@@ -59,7 +59,7 @@ $ARGUMENTSが指定されている場合、またはユーザーが新しいissu
 4. **タイムライン** - いつから始まったか？以前は動作していたか？
 5. **再現方法** - どうやってトリガーするか？
 
-すべて収集後、調査を開始する準備ができたことを確認します。
+すべて収集後、調査を開始する準備ができたことを確認する。
 
 ## 3. gsd-debuggerエージェントの起動
 
@@ -129,7 +129,7 @@ Task(
 
 ```markdown
 <objective>
-{slug}のデバッグを継続。証拠はデバッグファイルにあります。
+{slug}のデバッグを継続。証拠はデバッグファイルにある。
 </objective>
 
 <prior_state>
@@ -166,4 +166,4 @@ Task(
 - [ ] チェックポイントを正しく処理済み
 - [ ] 修正前に根本原因を確認済み
 </success_criteria>
-</output>
+

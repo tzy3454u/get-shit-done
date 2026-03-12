@@ -1,7 +1,7 @@
 <purpose>
 フェーズの実装方法を調査する。フェーズコンテキストを持つgsd-phase-researcherを生成する。
 
-独立した調査コマンド。ほとんどのワークフローでは、調査を自動的に統合する`/gsd:plan-phase`を使用してください。
+独立した調査コマンド。ほとんどのワークフローでは、調査を自動的に統合する`/gsd:plan-phase`を使用すること。
 </purpose>
 
 <process>
@@ -59,7 +59,7 @@ Phase description: {description}
 
 <output>
 Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
-</output>",
+</output>
   subagent_type="gsd-phase-researcher",
   model="{researcher_model}"
 )
@@ -72,4 +72,4 @@ Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
 - `## RESEARCH INCONCLUSIVE` — 試行内容を表示し、次のオプションを提示: コンテキスト追加/別モードで試行/手動
 
 </process>
-</output>
+

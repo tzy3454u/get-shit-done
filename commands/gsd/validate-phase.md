@@ -33,4 +33,4 @@ allowed-tools:
 @~/.claude/get-shit-done/workflows/validate-phase.md を実行する。
 すべてのワークフローゲートを保持する。
 </process>
-</output>
+

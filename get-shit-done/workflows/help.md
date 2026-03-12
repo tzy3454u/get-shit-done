@@ -487,4 +487,3 @@ GSD Discordコミュニティに参加する。
 - `.planning/ROADMAP.md`を確認してフェーズステータスを確認
 - `/gsd:progress`を実行して現在の進捗を確認
 </reference>
-</output>

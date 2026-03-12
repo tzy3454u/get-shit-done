@@ -22,7 +22,7 @@ AUDITOR_MODEL=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" resolve-mod
 NYQUIST_CFG=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config get workflow.nyquist_validation --raw)
 ```
 
-`NYQUIST_CFG`が`false`の場合: "Nyquist検証は無効です。/gsd:settingsで有効にしてください。"と表示して終了。
+`NYQUIST_CFG`が`false`の場合: "Nyquist検証は無効。/gsd:settingsで有効にすること。"と表示して終了。
 
 バナーを表示: `GSD > VALIDATE PHASE {N}: {name}`
 
@@ -35,7 +35,7 @@ SUMMARY_FILES=$(ls "${PHASE_DIR}"/*-SUMMARY.md 2>/dev/null)
 
 - **状態A** (`VALIDATION_FILE`が空でない): 既存を監査
 - **状態B** (`VALIDATION_FILE`が空、`SUMMARY_FILES`が空でない): 成果物から再構築
-- **状態C** (`SUMMARY_FILES`が空): 終了 — "フェーズ{N}は未実行です。先に/gsd:execute-phase {N}を実行してください。"
+- **状態C** (`SUMMARY_FILES`が空): 終了 — "フェーズ{N}は未実行。先に/gsd:execute-phase {N}を実行すること。"
 
 ## 2. ディスカバリー
 
@@ -136,7 +136,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit-docs "docs(phase-${P
 **準拠:**
 ```
 GSD > PHASE {N} IS NYQUIST-COMPLIANT
-すべての要件に自動検証があります。
+すべての要件に自動検証がある。
 ▶ Next: /gsd:audit-milestone
 ```
 
@@ -165,4 +165,4 @@ GSD > PHASE {N} VALIDATED (PARTIAL)
 - [ ] テストファイルを個別にコミット
 - [ ] ルーティング付きの結果を提示
 </success_criteria>
-</output>
+

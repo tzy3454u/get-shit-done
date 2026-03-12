@@ -17,9 +17,9 @@
 引数が指定されていない場合:
 
 ```
-ERROR: フェーズの説明が必要です
-Usage: /gsd:add-phase <description>
-Example: /gsd:add-phase Add authentication system
+ERROR: フェーズの説明が必要
+使い方: /gsd:add-phase <description>
+例: /gsd:add-phase Add authentication system
 ```
 
 終了。
@@ -36,7 +36,7 @@ if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 init JSONから`roadmap_exists`を確認。falseの場合:
 ```
 ERROR: ロードマップが見つかりません (.planning/ROADMAP.md)
-/gsd:new-projectを実行して初期化してください。
+/gsd:new-projectを実行して初期化すること。
 ```
 終了。
 </step>
@@ -110,4 +110,4 @@ CLIが処理する内容:
 - [ ] ロードマップの変更メモでSTATE.mdが更新された
 - [ ] 次のステップをユーザーに通知した
 </success_criteria>
-</output>
+

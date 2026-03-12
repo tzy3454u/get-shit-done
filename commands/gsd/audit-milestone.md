@@ -34,4 +34,4 @@ Glob: .planning/phases/*/*-VERIFICATION.md
 @~/.claude/get-shit-done/workflows/audit-milestone.md のaudit-milestoneワークフローをエンドツーエンドで実行する。
 すべてのワークフローゲートを保持する（スコープ決定、検証読み取り、統合チェック、要件カバレッジ、ルーティング）。
 </process>
-</output>
+

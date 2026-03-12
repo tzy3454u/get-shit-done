@@ -68,7 +68,7 @@ gaps = [
 2. 自律的に調査（コードを読む、仮説を立てる、テスト）
 3. 根本原因を返す
 
-これは並列実行されます - すべてのギャップが同時に調査されます。
+これは並列実行される - すべてのギャップが同時に調査される。
 ```
 </step>
 
@@ -179,7 +179,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs({phase_num}): 
 
 デバッグセッション: ${DEBUG_DIR}/
 
-修正プランの作成に進みます...
+修正プランの作成に進む...
 ```
 
 自動計画のためにverify-workオーケストレーターに返す。
@@ -217,4 +217,3 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs({phase_num}): 
 - [ ] デバッグセッションが${DEBUG_DIR}/に保存された
 - [ ] 自動計画のためにverify-workにハンドオフ
 </success_criteria>
-</output>

@@ -13,7 +13,7 @@
 <process>
 
 <step name="initialize" priority="first">
-1回の呼び出しですべてのコンテキストを読み込む：
+1回の呼び出しで全コンテキストを読み込む：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init execute-phase "${PHASE_ARG}")
@@ -168,12 +168,12 @@ JSONをパース：`phase`, `plans[]`（各々`id`, `wave`, `autonomous`, `objec
    ---
    ```
 
-   - 悪い例：「Wave 2完了。Wave 3に進みます。」
+   - 悪い例：「Wave 2完了。Wave 3に進む。」
    - 良い例：「地形システム完了 — 3つのバイオームタイプ、高さベースのテクスチャリング、物理衝突メッシュ。車両物理（Wave 3）が地面サーフェスを参照可能に。」
 
 5. **失敗を処理：**
 
-   **既知のClaude Codeバグ（classifyHandoffIfNeeded）：** エージェントが「failed」と報告し、エラーに`classifyHandoffIfNeeded is not defined`が含まれる場合、これはClaude Codeのランタイムバグであり、GSDやエージェントの問題ではない。エラーは完了ハンドラーですべてのツール呼び出しが終了した後に発生する。この場合：ステップ4と同じスポットチェックを実行（SUMMARY.mdが存在、gitコミットが存在、Self-Check: FAILEDなし）。スポットチェックが合格 → **成功**として扱う。スポットチェックが不合格 → 以下の実際の失敗として扱う。
+   **既知のClaude Codeバグ（classifyHandoffIfNeeded）：** エージェントが「failed」と報告し、エラーに`classifyHandoffIfNeeded is not defined`が含まれる場合、これはClaude Codeのランタイムバグであり、GSDやエージェントの問題ではない。エラーは、完了ハンドラーで全ツール呼び出しが終了した後に発生する。この場合：ステップ4と同じスポットチェックを実行（SUMMARY.mdが存在、gitコミットが存在、Self-Check: FAILEDなし）。スポットチェックが合格 → **成功**として扱う。スポットチェックが不合格 → 以下の実際の失敗として扱う。
 
    実際の失敗の場合：どのプランが失敗したか報告 → 「続行しますか？」または「停止しますか？」→ 続行の場合、依存プランも失敗する可能性がある。停止の場合、部分的な完了報告。
 
@@ -332,7 +332,7 @@ grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 ```
 ## ✓ Phase {X}: {Name} — ヒューマン検証が必要
 
-自動チェックはすべて合格。{N}項目がヒューマンテストを必要としています：
+自動チェックはすべて合格。{N}項目がヒューマンテストを必要としている：
 
 {VERIFICATION.mdのhuman_verificationセクションから}
 
@@ -457,4 +457,3 @@ Verification: {Passed | Gaps Found}
 
 STATE.mdが追跡：最後に完了したプラン、現在のウェーブ、保留中のチェックポイント。
 </resumption>
-</output>

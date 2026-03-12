@@ -10,7 +10,7 @@
 
 <step name="parse_arguments">
 コマンド引数をパースする：
-- 第1引数：挿入する位置の後の整数フェーズ番号
+- 第1引数：挿入先の基準となる整数フェーズ番号（この番号の直後に挿入）
 - 残りの引数：フェーズの説明
 
 例：`/gsd:insert-phase 72 Fix critical auth bug`
@@ -20,7 +20,7 @@
 引数が不足している場合：
 
 ```
-ERROR: フェーズ番号と説明の両方が必要です
+ERROR: フェーズ番号と説明の両方が必要
 使い方: /gsd:insert-phase <after> <description>
 例: /gsd:insert-phase 72 Fix critical auth bug
 ```
@@ -128,4 +128,4 @@ Phase {decimal_phase} をPhase {after_phase} の後に挿入しました：
 - [ ] STATE.mdがロードマップ進化メモで更新されている
 - [ ] ユーザーに次のステップと依存関係への影響が通知されている
 </success_criteria>
-</output>
+

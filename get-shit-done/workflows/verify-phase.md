@@ -241,4 +241,4 @@ human_neededの場合: 人間のテストが必要な項目を記載。
 - [ ] 完全なレポートを含むVERIFICATION.mdを作成
 - [ ] オーケストレーターに結果を返す
 </success_criteria>
-</output>
+

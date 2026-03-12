@@ -1,15 +1,15 @@
 <purpose>
-GSDワークフローエージェント（research、plan_check、verifier）のインタラクティブな設定と、複数質問プロンプトによるモデルプロファイルの選択。ユーザーの設定で.planning/config.jsonを更新します。オプションで設定をグローバルデフォルト（~/.gsd/defaults.json）として保存し、将来のプロジェクトに適用できます。
+GSDワークフローエージェント（research、plan_check、verifier）のインタラクティブな設定と、複数質問プロンプトによるモデルプロファイルの選択。ユーザーの設定で.planning/config.jsonを更新する。オプションで設定をグローバルデフォルト（~/.gsd/defaults.json）として保存し、将来のプロジェクトに適用できる。
 </purpose>
 
 <required_reading>
-開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込んでください。
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <process>
 
 <step name="ensure_and_load_config">
-設定が存在することを確認し、現在の状態を読み込みます：
+設定が存在することを確認し、現在の状態を読み込む：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-ensure-section
@@ -17,7 +17,7 @@ INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state load)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-`.planning/config.json`が存在しない場合はデフォルトで作成し、現在の設定値を読み込みます。
+`.planning/config.json`が存在しない場合はデフォルトで作成し、現在の設定値を読み込む。
 </step>
 
 <step name="read_current">
@@ -25,7 +25,7 @@ if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 cat .planning/config.json
 ```
 
-現在の値を解析します（存在しない場合はデフォルトで`true`）：
+現在の値を解析する（存在しない場合はデフォルトで`true`）：
 - `workflow.research` — plan-phase中にリサーチャーを生成
 - `workflow.plan_check` — plan-phase中にプランチェッカーを生成
 - `workflow.verifier` — execute-phase中にベリファイアを生成
@@ -35,7 +35,7 @@ cat .planning/config.json
 </step>
 
 <step name="present_settings">
-現在の値が事前選択されたAskUserQuestionを使用します：
+現在の値が事前選択されたAskUserQuestionを使用する：
 
 ```
 AskUserQuestion([
@@ -109,7 +109,7 @@ AskUserQuestion([
 </step>
 
 <step name="update_config">
-新しい設定を既存のconfig.jsonにマージします：
+新しい設定を既存のconfig.jsonにマージする：
 
 ```json
 {
@@ -128,11 +128,11 @@ AskUserQuestion([
 }
 ```
 
-更新された設定を`.planning/config.json`に書き込みます。
+更新された設定を`.planning/config.json`に書き込む。
 </step>
 
 <step name="save_as_defaults">
-これらの設定を将来のプロジェクトのグローバルデフォルトとして保存するか確認します：
+これらの設定を将来のプロジェクトのグローバルデフォルトとして保存するか確認する：
 
 ```
 AskUserQuestion([
@@ -148,7 +148,7 @@ AskUserQuestion([
 ])
 ```
 
-「はい」の場合：同じ設定オブジェクト（`brave_search`などのプロジェクト固有フィールドを除く）を`~/.gsd/defaults.json`に書き込みます：
+「はい」の場合：同じ設定オブジェクト（`brave_search`などのプロジェクト固有フィールドを除く）を`~/.gsd/defaults.json`に書き込む：
 
 ```bash
 mkdir -p ~/.gsd
@@ -193,7 +193,7 @@ Write `~/.gsd/defaults.json` with:
 | Gitブランチ            | {なし/フェーズごと/マイルストーンごと} |
 | デフォルトとして保存     | {はい/いいえ} |
 
-これらの設定は今後の /gsd:plan-phase と /gsd:execute-phase の実行に適用されます。
+これらの設定は今後の /gsd:plan-phase と /gsd:execute-phase の実行に適用される。
 
 クイックコマンド:
 - /gsd:set-profile <profile> — モデルプロファイルを切り替え

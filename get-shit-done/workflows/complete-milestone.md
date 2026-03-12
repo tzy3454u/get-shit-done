@@ -98,7 +98,7 @@ cat .planning/config.json 2>/dev/null
 ```
 ⚡ 自動承認: マイルストーンスコープの検証
 [プロンプトなしで内訳サマリーを表示]
-統計情報の収集に進みます...
+統計情報の収集に進む...
 ```
 
 gather_statsに進む。
@@ -640,7 +640,7 @@ if [ "$BRANCHING_STRATEGY" = "milestone" ]; then
 fi
 ```
 
-**ブランチを保持：** "ブランチは手動処理のために保持されています" と報告する
+**ブランチを保持：** "ブランチは手動処理のために保持されている" と報告する
 
 </step>
 
@@ -762,4 +762,4 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: complete v[X
 - [ ] ユーザーが次のステップを知っている (/gsd:new-milestone)
 
 </success_criteria>
-</output>
+

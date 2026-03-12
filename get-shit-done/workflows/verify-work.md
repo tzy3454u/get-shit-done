@@ -52,7 +52,7 @@ find .planning/phases -name "*-UAT.md" -type f 2>/dev/null | head -5
 | 1 | 04-comments | testing | 3. Reply to Comment | 2/6 |
 | 2 | 05-auth | testing | 1. Login Form | 0/4 |
 
-番号を入力して再開するか、フェーズ番号を入力して新規開始してください。
+番号を入力して再開するか、フェーズ番号を入力して新規開始すること。
 ```
 
 ユーザーの応答を待つ。
@@ -70,7 +70,7 @@ find .planning/phases -name "*-UAT.md" -type f 2>/dev/null | head -5
 ```
 アクティブなUATセッションはありません。
 
-フェーズ番号を指定してテストを開始してください（例: /gsd:verify-work 4）
+フェーズ番号を指定してテストを開始すること（例: /gsd:verify-work 4）
 ```
 
 **アクティブなセッションがなく、$ARGUMENTSが指定されている場合:**
@@ -192,7 +192,7 @@ UATファイルのCurrent Testセクションを読み取る。
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  CHECKPOINT: 検証が必要です                                    ║
+║  CHECKPOINT: 検証が必要                                    ║
 ╚══════════════════════════════════════════════════════════════╝
 
 **テスト {number}: {name}**
@@ -200,7 +200,7 @@ UATファイルのCurrent Testセクションを読み取る。
 {expected}
 
 ──────────────────────────────────────────────────────────────
-→ "pass"と入力するか、問題点を記述してください
+→ "pass"と入力するか、問題点を記述すること
 ──────────────────────────────────────────────────────────────
 ```
 
@@ -329,7 +329,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "test({phase_num}): 
 
 **issues == 0の場合:**
 ```
-すべてのテストが合格しました。続行する準備ができています。
+すべてのテストが合格。続行する準備ができている。
 
 - `/gsd:plan-phase {next}` — 次のフェーズを計画
 - `/gsd:execute-phase {next}` — 次のフェーズを実行
@@ -344,7 +344,7 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "test({phase_num}): 
 
 {N}件の問題が見つかりました。根本原因を診断中...
 
-各問題を調査するために並列デバッグエージェントを生成します。
+各問題を調査するために並列デバッグエージェントを生成する。
 ```
 
 - diagnose-issuesワークフローを読み込む
@@ -388,7 +388,7 @@ Task(
 </planning_context>
 
 <downstream_consumer>
-出力は/gsd:execute-phaseで使用されます。
+出力は/gsd:execute-phaseで使用される。
 計画は実行可能なプロンプトでなければなりません。
 </downstream_consumer>
 """,
@@ -492,7 +492,7 @@ iteration_countをインクリメント
 
 **iteration_count >= 3の場合:**
 
-表示: `最大反復回数に達しました。{N}件の問題が残っています。`
+表示: `最大反復回数に達した。{N}件の問題が残っている。`
 
 オプションを提示:
 1. 強制続行（問題があっても実行）
@@ -517,7 +517,7 @@ iteration_countをインクリメント
 | {truth 1} | {root_cause} | {phase}-04 |
 | {truth 2} | {root_cause} | {phase}-04 |
 
-計画は検証済みで実行の準備ができています。
+計画は検証済みで実行の準備ができている。
 
 ───────────────────────────────────────────────────────────────
 
@@ -581,4 +581,4 @@ iteration_countをインクリメント
 - [ ] 問題がある場合: 計画が合格するまで修正ループ（最大3回の反復）
 - [ ] 完了時に`/gsd:execute-phase --gaps-only`の準備完了
 </success_criteria>
-</output>
+

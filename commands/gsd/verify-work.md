@@ -36,4 +36,4 @@ allowed-tools:
 @~/.claude/get-shit-done/workflows/verify-work.md のverify-workワークフローをエンドツーエンドで実行する。
 すべてのワークフローゲートを保持する（セッション管理、テスト提示、診断、修正計画、ルーティング）。
 </process>
-</output>
+

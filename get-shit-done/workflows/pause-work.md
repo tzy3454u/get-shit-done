@@ -1,26 +1,26 @@
 <purpose>
-`.continue-here.md`ハンドオフファイルを作成し、セッション間で完全な作業状態を保存します。完全なコンテキスト復元によるシームレスな再開を可能にします。
+`.continue-here.md`ハンドオフファイルを作成し、セッション間で完全な作業状態を保存する。完全なコンテキスト復元によるシームレスな再開を可能にする。
 </purpose>
 
 <required_reading>
-開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込んでください。
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <process>
 
 <step name="detect">
-最近変更されたファイルから現在のフェーズディレクトリを見つけます：
+最近変更されたファイルから現在のフェーズディレクトリを見つける：
 
 ```bash
 # Find most recent phase directory with work
 ls -lt .planning/phases/*/PLAN.md 2>/dev/null | head -1 | grep -oP 'phases/\K[^/]+'
 ```
 
-アクティブなフェーズが検出されない場合、ユーザーにどのフェーズの作業を一時停止するか確認してください。
+アクティブなフェーズが検出されない場合、ユーザーにどのフェーズの作業を一時停止するか確認すること。
 </step>
 
 <step name="gather">
-**ハンドオフのために完全な状態を収集します：**
+**ハンドオフのために完全な状態を収集する：**
 
 1. **現在の位置**: どのフェーズ、どのプラン、どのタスク
 2. **完了した作業**: このセッションで完了したこと
@@ -30,11 +30,11 @@ ls -lt .planning/phases/*/PLAN.md 2>/dev/null | head -1 | grep -oP 'phases/\K[^/
 6. **メンタルコンテキスト**: アプローチ、次のステップ、「雰囲気」
 7. **変更されたファイル**: コミットされていない変更
 
-必要に応じて、対話的な質問でユーザーに確認してください。
+必要に応じて、対話的な質問でユーザーに確認すること。
 </step>
 
 <step name="write">
-**`.planning/phases/XX-name/.continue-here.md`にハンドオフを書き込みます：**
+**`.planning/phases/XX-name/.continue-here.md`にハンドオフを書き込む：**
 
 ```markdown
 ---
@@ -82,9 +82,9 @@ last_updated: [timestamp from current-timestamp]
 </next_action>
 ```
 
-新しいClaudeがすぐに理解できるよう、十分に具体的に記述してください。
+新しいClaudeがすぐに理解できるよう、十分に具体的に記述すること。
 
-last_updatedフィールドには`current-timestamp`を使用してください。init todos（タイムスタンプを提供）を使用するか、直接呼び出すことができます：
+last_updatedフィールドには`current-timestamp`を使用すること。init todos（タイムスタンプを提供）を使用するか、直接呼び出すことができる：
 ```bash
 timestamp=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" current-timestamp full --raw)
 ```

@@ -1,9 +1,9 @@
 <purpose>
-`/gsd:audit-milestone`で特定されたギャップを埋めるために必要なすべてのフェーズを作成します。MILESTONE-AUDIT.mdを読み込み、ギャップを論理的なフェーズにグループ化し、ROADMAP.mdにフェーズエントリを作成し、各フェーズの計画を提案します。1つのコマンドですべての修正フェーズを作成します — ギャップごとに手動で`/gsd:add-phase`を実行する必要はありません。
+`/gsd:audit-milestone`で特定されたギャップを埋めるために必要なすべてのフェーズを作成する。MILESTONE-AUDIT.mdを読み込み、ギャップを論理的なフェーズにグループ化し、ROADMAP.mdにフェーズエントリを作成し、各フェーズの計画を提案する。1つのコマンドで全修正フェーズを作成する — ギャップごとに手動で`/gsd:add-phase`を実行する必要はない。
 </purpose>
 
 <required_reading>
-開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込んでください。
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <process>
@@ -15,19 +15,19 @@
 ls -t .planning/v*-MILESTONE-AUDIT.md 2>/dev/null | head -1
 ```
 
-YAMLフロントマターを解析して構造化されたギャップを抽出します：
+YAMLフロントマターを解析して構造化されたギャップを抽出する：
 - `gaps.requirements` — 未達成の要件
 - `gaps.integration` — 欠落しているフェーズ間接続
 - `gaps.flows` — 壊れたE2Eフロー
 
 監査ファイルが存在しないか、ギャップがない場合はエラー：
 ```
-監査ギャップが見つかりません。先に`/gsd:audit-milestone`を実行してください。
+監査ギャップが見つかりません。先に`/gsd:audit-milestone`を実行すること。
 ```
 
 ## 2. ギャップの優先順位付け
 
-REQUIREMENTS.mdの優先度でギャップをグループ化します：
+REQUIREMENTS.mdの優先度でギャップをグループ化する：
 
 | 優先度 | アクション |
 |----------|--------|
@@ -35,11 +35,11 @@ REQUIREMENTS.mdの優先度でギャップをグループ化します：
 | `should` | フェーズを作成、推奨 |
 | `nice` | ユーザーに確認：含めるか延期するか？ |
 
-インテグレーション/フローのギャップについては、影響を受ける要件から優先度を推測します。
+インテグレーション/フローのギャップについては、影響を受ける要件から優先度を推測する。
 
 ## 3. ギャップをフェーズにグループ化
 
-関連するギャップを論理的なフェーズにまとめます：
+関連するギャップを論理的なフェーズにまとめる：
 
 **グループ化ルール：**
 - 同じ影響フェーズ → 1つの修正フェーズに統合
@@ -62,15 +62,15 @@ Gap: Flow "View dashboard" broken at data fetch
 
 ## 4. フェーズ番号の決定
 
-最も高い既存フェーズを見つけます：
+最も高い既存フェーズを見つける：
 ```bash
 # Get sorted phase list, extract last one
 PHASES=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phases list)
 HIGHEST=$(printf '%s\n' "$PHASES" | jq -r '.directories[-1]')
 ```
 
-新しいフェーズはそこから続きます：
-- フェーズ5が最高の場合、ギャップはフェーズ6、7、8...になります
+新しいフェーズはそこから続く：
+- フェーズ5が最高の場合、ギャップはフェーズ6、7、8...になる
 
 ## 5. ギャップ解消プランの提示
 
@@ -107,11 +107,11 @@ HIGHEST=$(printf '%s\n' "$PHASES" | jq -r '.directories[-1]')
 これら{X}個のフェーズを作成しますか？（yes / adjust / defer all optional）
 ```
 
-ユーザーの確認を待ちます。
+ユーザーの確認を待つ。
 
 ## 6. ROADMAP.mdの更新
 
-現在のマイルストーンに新しいフェーズを追加します：
+現在のマイルストーンに新しいフェーズを追加する：
 
 ```markdown
 ### Phase {N}: {Name}
@@ -129,7 +129,7 @@ HIGHEST=$(printf '%s\n' "$PHASES" | jq -r '.directories[-1]')
 - Phaseカラムを新しいギャップ解消フェーズに更新
 - Statusを`Pending`にリセット
 
-監査で未達成と判定されたチェック済み要件をリセットします：
+監査で未達成と判定されたチェック済み要件をリセットする：
 - 監査で未達成とされた要件の`[x]` → `[ ]`に変更
 - REQUIREMENTS.md上部のカバレッジカウントを更新
 

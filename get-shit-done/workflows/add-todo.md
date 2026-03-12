@@ -137,7 +137,7 @@ Todo保存済み: .planning/todos/pending/[filename]
 
 ---
 
-次に何をしますか:
+次に何をするか:
 
 1. 現在の作業を続行
 2. 別のtodoを追加
@@ -156,4 +156,4 @@ Todo保存済み: .planning/todos/pending/[filename]
 - [ ] STATE.mdが存在する場合は更新
 - [ ] todoと状態がgitにコミットされた
 </success_criteria>
-</output>
+

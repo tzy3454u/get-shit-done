@@ -9,9 +9,9 @@ allowed-tools:
   - SlashCommand
 ---
 <objective>
-プロジェクトの進捗を確認し、最近の作業とこれからの作業を要約した後、次のアクション（既存の計画の実行または次の計画の作成）にインテリジェントにルーティングします。
+プロジェクトの進捗を確認し、最近の作業とこれからの作業を要約した後、次のアクション（既存の計画の実行または次の計画の作成）にインテリジェントにルーティングする。
 
-作業を継続する前に状況認識を提供します。
+作業を継続する前に状況認識を提供する。
 </objective>
 
 <execution_context>
@@ -19,7 +19,7 @@ allowed-tools:
 </execution_context>
 
 <process>
-@~/.claude/get-shit-done/workflows/progress.md のprogressワークフローをエンドツーエンドで実行します。
-すべてのルーティングロジック（ルートAからF）とエッジケースの処理を維持してください。
+@~/.claude/get-shit-done/workflows/progress.md のprogressワークフローをエンドツーエンドで実行する。
+すべてのルーティングロジック（ルートAからF）とエッジケースの処理を維持すること。
 </process>
-</output>
+

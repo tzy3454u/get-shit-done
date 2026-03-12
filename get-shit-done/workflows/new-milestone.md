@@ -382,4 +382,4 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: create milest
 
 **アトミックコミット：** 各フェーズはアーティファクトを即座にコミットする。
 </success_criteria>
-</output>
+

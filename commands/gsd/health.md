@@ -9,7 +9,7 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-`.planning/` ディレクトリの整合性を検証し、対処可能な問題を報告します。ファイルの欠落、無効な設定、状態の不整合、孤立した計画をチェックします。
+`.planning/` ディレクトリの整合性を検証し、対処可能な問題を報告する。ファイルの欠落、無効な設定、状態の不整合、孤立した計画をチェックする。
 </objective>
 
 <execution_context>
@@ -17,6 +17,6 @@ allowed-tools:
 </execution_context>
 
 <process>
-@~/.claude/get-shit-done/workflows/health.md のヘルスワークフローをエンドツーエンドで実行します。
-引数から --repair フラグを解析し、ワークフローに渡します。
+@~/.claude/get-shit-done/workflows/health.md のヘルスワークフローをエンドツーエンドで実行する。
+引数から --repair フラグを解析し、ワークフローに渡す。
 </process>

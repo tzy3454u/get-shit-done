@@ -4,7 +4,7 @@ description: GSD Discordコミュニティに参加する
 ---
 
 <objective>
-GSDコミュニティサーバーのDiscord招待リンクを表示します。
+GSDコミュニティサーバーのDiscord招待リンクを表示する。
 </objective>
 
 <output>
@@ -14,5 +14,5 @@ GSDコミュニティサーバーのDiscord招待リンクを表示します。
 
 **招待リンク:** https://discord.gg/gsd
 
-リンクをクリックするか、ブラウザに貼り付けて参加してください。
+リンクをクリックするか、ブラウザに貼り付けて参加すること。
 </output>

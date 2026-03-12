@@ -39,4 +39,4 @@ argument-instructions: |
 @~/.claude/get-shit-done/workflows/add-tests.md のadd-testsワークフローをエンドツーエンドで実行する。
 すべてのワークフローゲートを保持する（分類承認、テスト計画承認、RED-GREEN検証、ギャップ報告）。
 </process>
-</output>
+

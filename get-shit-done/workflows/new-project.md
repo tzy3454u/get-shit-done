@@ -567,7 +567,7 @@ Task(prompt="<research_type>
 </files_to_read>
 
 <downstream_consumer>
-あなたのSTACK.mdはロードマップ作成に供給されます。具体的に記述してください：
+あなたのSTACK.mdはロードマップ作成に供給される。具体的に記述すること：
 - バージョン付きの特定のライブラリ
 - 各選択の明確な根拠
 - 使用すべきでないものとその理由
@@ -605,7 +605,7 @@ Task(prompt="<research_type>
 </files_to_read>
 
 <downstream_consumer>
-あなたのFEATURES.mdは要件定義に供給されます。明確にカテゴリ分けしてください：
+あなたのFEATURES.mdは要件定義に供給される。明確にカテゴリ分けすること：
 - テーブルステークス（なければユーザーが離れる必須機能）
 - 差別化要因（競争優位性）
 - アンチフィーチャー（意図的に作らないもの）
@@ -643,7 +643,7 @@ Task(prompt="<research_type>
 </files_to_read>
 
 <downstream_consumer>
-あなたのARCHITECTURE.mdはロードマップのフェーズ構造に影響します。以下を含めてください：
+あなたのARCHITECTURE.mdはロードマップのフェーズ構造に影響する。以下を含めること：
 - コンポーネント境界（何が何と通信するか）
 - データフロー（情報がどのように移動するか）
 - 推奨構築順序（コンポーネント間の依存関係）
@@ -681,7 +681,7 @@ Task(prompt="<research_type>
 </files_to_read>
 
 <downstream_consumer>
-あなたのPITFALLS.mdはロードマップ/計画でのミスを防ぎます。各落とし穴について：
+あなたのPITFALLS.mdはロードマップ/計画でのミスを防ぐ。各落とし穴について：
 - 警告サイン（早期に検出する方法）
 - 予防戦略（回避する方法）
 - どのフェーズが対処すべきか
@@ -770,7 +770,7 @@ PROJECT.mdを読み、以下を抽出：
 **カテゴリ別に機能を提示（インタラクティブモードのみ）：**
 
 ```
-[domain]の機能は以下の通りです：
+[domain]の機能は以下の通り：
 
 ## 認証
 **テーブルステークス：**
@@ -1109,4 +1109,3 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: create roadma
 **アトミックコミット：** 各フェーズはアーティファクトを直ちにコミットする。コンテキストが失われても、アーティファクトは永続化される。
 
 </success_criteria>
-</output>

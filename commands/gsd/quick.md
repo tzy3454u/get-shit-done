@@ -43,4 +43,4 @@ $ARGUMENTS
 @~/.claude/get-shit-done/workflows/quick.md のクイックワークフローをエンドツーエンドで実行する。
 すべてのワークフローゲートを保持する（バリデーション、タスク説明、計画、実行、状態更新、コミット）。
 </process>
-</output>
+

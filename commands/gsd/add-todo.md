@@ -45,4 +45,4 @@ add-todoワークフローにルーティングし、以下を処理する:
 7. STATE.mdの更新
 8. Gitコミット
 </process>
-</output>
+

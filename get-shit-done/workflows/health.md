@@ -72,7 +72,7 @@ JSON出力をパースする：
 ```
 ## 警告
 
-- [W001] STATE.md がフェーズ5を参照していますが、フェーズ1-3のみ存在します
+- [W001] STATE.md がフェーズ5を参照しているが、フェーズ1-3のみ存在する
   修正方法: /gsd:health --repair を実行して再生成
 
 - [W005] フェーズディレクトリ "1-setup" がNN-name形式に従っていません
@@ -84,13 +84,13 @@ JSON出力をパースする：
 ## 情報
 
 - [I001] 02-implementation/02-01-PLAN.md に対応するSUMMARY.mdがありません
-  備考: 進行中の可能性があります
+  備考: 進行中の可能性がある
 ```
 
 **フッター（修復可能な問題があり--repairが使用されていない場合）：**
 ```
 ---
-N 件の問題を自動修復できます。実行: /gsd:health --repair
+N 件の問題を自動修復できる。実行: /gsd:health --repair
 ```
 </step>
 
@@ -130,14 +130,14 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" validate health
 | E004 | error | STATE.md が見つかりません | Yes |
 | E005 | error | config.json パースエラー | Yes |
 | W001 | warning | PROJECT.md に必要なセクションがありません | No |
-| W002 | warning | STATE.md が無効なフェーズを参照しています | Yes |
+| W002 | warning | STATE.md が無効なフェーズを参照している | Yes |
 | W003 | warning | config.json が見つかりません | Yes |
-| W004 | warning | config.json のフィールド値が無効です | No |
-| W005 | warning | フェーズディレクトリの命名が不一致です | No |
+| W004 | warning | config.json のフィールド値が無効 | No |
+| W005 | warning | フェーズディレクトリの命名が不一致 | No |
 | W006 | warning | ROADMAPにあるフェーズのディレクトリがありません | No |
 | W007 | warning | ディスク上にあるフェーズがROADMAPにありません | No |
-| W008 | warning | config.json: workflow.nyquist_validation が未設定（デフォルトは有効ですがエージェントがスキップする場合があります） | Yes |
-| W009 | warning | フェーズのRESEARCH.mdにValidation Architectureがありますが、VALIDATION.mdがありません | No |
+| W008 | warning | config.json: workflow.nyquist_validation が未設定（デフォルトは有効だがエージェントがスキップする場合がある） | Yes |
+| W009 | warning | フェーズのRESEARCH.mdにValidation Architectureがあるが、VALIDATION.mdがない | No |
 | I001 | info | SUMMARYのない計画（進行中の可能性） | No |
 
 </error_codes>
@@ -157,4 +157,4 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" validate health
 - 孤立した計画のクリーンアップ
 
 </repair_actions>
-</output>
+

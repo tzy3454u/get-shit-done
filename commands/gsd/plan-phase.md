@@ -14,7 +14,7 @@ allowed-tools:
   - mcp__context7__*
 ---
 <objective>
-ロードマップフェーズに対して、リサーチと検証を統合した実行可能なフェーズプロンプト（PLAN.mdファイル）を作成します。
+ロードマップフェーズに対して、リサーチと検証を統合した実行可能なフェーズプロンプト（PLAN.mdファイル）を作成する。
 
 **デフォルトフロー:** リサーチ（必要な場合） → 計画 → 検証 → 完了
 
@@ -34,13 +34,13 @@ allowed-tools:
 - `--skip-research` — リサーチをスキップし、直接計画に進む
 - `--gaps` — ギャップ解消モード（VERIFICATION.mdを読み込み、リサーチをスキップ）
 - `--skip-verify` — 検証ループをスキップ
-- `--prd <file>` — discuss-phaseの代わりにPRD/受入基準ファイルを使用。要件を自動的にCONTEXT.mdに解析します。discuss-phaseを完全にスキップします。
+- `--prd <file>` — discuss-phaseの代わりにPRD/受入基準ファイルを使用。要件を自動的にCONTEXT.mdに解析する。discuss-phaseを完全にスキップする。
 
-ステップ2でディレクトリ検索を行う前にフェーズ入力を正規化してください。
+ステップ2でディレクトリ検索を行う前にフェーズ入力を正規化すること。
 </context>
 
 <process>
-@~/.claude/get-shit-done/workflows/plan-phase.md のplan-phaseワークフローをエンドツーエンドで実行します。
-すべてのワークフローゲート（バリデーション、リサーチ、計画、検証ループ、ルーティング）を維持してください。
+@~/.claude/get-shit-done/workflows/plan-phase.md のplan-phaseワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲート（バリデーション、リサーチ、計画、検証ループ、ルーティング）を維持すること。
 </process>
-</output>
+
