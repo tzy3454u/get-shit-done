@@ -2,9 +2,9 @@
 
 # GET SHIT DONE
 
-**A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code, OpenCode, Gemini CLI, and Codex.**
+**Claude Code、OpenCode、Gemini CLI、Codex向けの、軽量かつ強力なメタプロンプティング / コンテキストエンジニアリング / 仕様駆動開発システム。**
 
-**Solves context rot — the quality degradation that happens as Claude fills its context window.**
+**Claudeのコンテキストウィンドウが埋まるにつれて起きる品質劣化（context rot）を解決します。**
 
 [![npm version](https://img.shields.io/npm/v/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
 [![npm downloads](https://img.shields.io/npm/dm/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
@@ -21,7 +21,7 @@
 npx get-shit-done-cc@latest
 ```
 
-**Works on Mac, Windows, and Linux.**
+**Mac / Windows / Linux で動作します。**
 
 <br>
 
@@ -29,15 +29,15 @@ npx get-shit-done-cc@latest
 
 <br>
 
-*"If you know clearly what you want, this WILL build it for you. No bs."*
+*"何を作りたいかが明確なら、これはそれを作ってくれる。余計なことなし。"*
 
-*"I've done SpecKit, OpenSpec and Taskmaster — this has produced the best results for me."*
+*"SpecKit、OpenSpec、Taskmasterも使ったけど、個人的に一番結果が良かった。"*
 
-*"By far the most powerful addition to my Claude Code. Nothing over-engineered. Literally just gets shit done."*
+*"Claude Codeへの追加で圧倒的に強力。過剰設計なし。文字通り、ただ仕事が進む。"*
 
 <br>
 
-**Trusted by engineers at Amazon, Google, Shopify, and Webflow.**
+**Amazon、Google、Shopify、Webflowのエンジニアにも使われています。**
 
 [Why I Built This](#why-i-built-this) · [How It Works](#how-it-works) · [Commands](#commands) · [Why It Works](#why-it-works) · [User Guide](docs/USER-GUIDE.md)
 
@@ -47,29 +47,29 @@ npx get-shit-done-cc@latest
 
 ## Why I Built This
 
-I'm a solo developer. I don't write code — Claude Code does.
+私はソロ開発者です。コードを書くのは私ではなくClaude Codeです。
 
-Other spec-driven development tools exist; BMAD, Speckit... But they all seem to make things way more complicated than they need to be (sprint ceremonies, story points, stakeholder syncs, retrospectives, Jira workflows) or lack real big picture understanding of what you're building. I'm not a 50-person software company. I don't want to play enterprise theater. I'm just a creative person trying to build great things that work.
+仕様駆動開発ツールは他にもあります。BMAD、Speckitなど。ただ、多くは必要以上に複雑です（スプリント儀式、ストーリーポイント、ステークホルダー同期、レトロ、Jira運用など）。あるいは、作るもの全体への理解が浅い。私は50人規模のソフトウェア会社ではありません。エンタープライズごっこはしたくない。ただ、ちゃんと動く良いものを作りたいだけです。
 
-So I built GSD. The complexity is in the system, not in your workflow. Behind the scenes: context engineering, XML prompt formatting, subagent orchestration, state management. What you see: a few commands that just work.
+だからGSDを作りました。複雑さはあなたの運用ではなく、システム側に閉じ込めています。裏側では、コンテキストエンジニアリング、XMLプロンプト整形、サブエージェントオーケストレーション、状態管理をやっています。あなたが見るのは「ちゃんと動く数個のコマンド」だけです。
 
-The system gives Claude everything it needs to do the work *and* verify it. I trust the workflow. It just does a good job.
+システムは、Claudeが作業するために必要な情報と検証手段の両方を渡します。私はこのワークフローを信頼しています。実際にうまく機能します。
 
-That's what this is. No enterprise roleplay bullshit. Just an incredibly effective system for building cool stuff consistently using Claude Code.
+これがGSDです。エンタープライズのロールプレイは不要。Claude Codeで継続的に良いものを作るための、非常に実用的なシステムです。
 
-— **TÂCHES**
+— **TACHES**
 
 ---
 
-Vibecoding has a bad reputation. You describe what you want, AI generates code, and you get inconsistent garbage that falls apart at scale.
+Vibecodingは評判が悪くなりがちです。欲しいものを説明するとAIがコードを生成するが、結果は不安定で、規模が大きくなると破綻する。
 
-GSD fixes that. It's the context engineering layer that makes Claude Code reliable. Describe your idea, let the system extract everything it needs to know, and let Claude Code get to work.
+GSDはそこを直します。Claude Codeを信頼できる形で動かすためのコンテキストエンジニアリング層です。アイデアを説明すれば、システムが必要情報を抽出し、Claude Codeが実装を進めます。
 
 ---
 
 ## Who This Is For
 
-People who want to describe what they want and have it built correctly — without pretending they're running a 50-person engineering org.
+「欲しいものを説明したら、正しく形になる」ことを求める人向けです。50人規模の開発組織を運営しているフリをする必要はありません。
 
 ---
 
@@ -79,21 +79,21 @@ People who want to describe what they want and have it built correctly — witho
 npx get-shit-done-cc@latest
 ```
 
-The installer prompts you to choose:
-1. **Runtime** — Claude Code, OpenCode, Gemini, Codex, or all
-2. **Location** — Global (all projects) or local (current project only)
+インストーラーで次を選びます:
+1. **Runtime** — Claude Code、OpenCode、Gemini、Codex、またはすべて
+2. **Location** — Global（全プロジェクト）または Local（現在のプロジェクトのみ）
 
-Verify with:
+確認コマンド:
 - Claude Code / Gemini: `/gsd:help`
 - OpenCode: `/gsd-help`
 - Codex: `$gsd-help`
 
 > [!NOTE]
-> Codex installation uses skills (`skills/gsd-*/SKILL.md`) rather than custom prompts.
+> Codex へのインストールは、カスタムプロンプトではなく skills（`skills/gsd-*/SKILL.md`）方式です。
 
 ### Staying Updated
 
-GSD evolves fast. Update periodically:
+GSDは高速に進化しています。定期的に更新してください:
 
 ```bash
 npx get-shit-done-cc@latest
@@ -121,15 +121,15 @@ npx get-shit-done-cc --codex --local     # Install to ./.codex/
 npx get-shit-done-cc --all --global      # Install to all directories
 ```
 
-Use `--global` (`-g`) or `--local` (`-l`) to skip the location prompt.
-Use `--claude`, `--opencode`, `--gemini`, `--codex`, or `--all` to skip the runtime prompt.
+ロケーション選択をスキップするには `--global`（`-g`）または `--local`（`-l`）を使います。
+ランタイム選択をスキップするには `--claude`、`--opencode`、`--gemini`、`--codex`、`--all` を使います。
 
 </details>
 
 <details>
 <summary><strong>Development Installation</strong></summary>
 
-Clone the repository and run the installer locally:
+リポジトリをクローンして、ローカルでインストーラーを実行します:
 
 ```bash
 git clone https://github.com/glittercowboy/get-shit-done.git
@@ -137,25 +137,25 @@ cd get-shit-done
 node bin/install.js --claude --local
 ```
 
-Installs to `./.claude/` for testing modifications before contributing.
+`./.claude/` にインストールされるので、コントリビュート前に変更を検証できます。
 
 </details>
 
 ### Recommended: Skip Permissions Mode
 
-GSD is designed for frictionless automation. Run Claude Code with:
+GSDは摩擦の少ない自動化を前提に設計されています。Claude Codeは次で実行してください:
 
 ```bash
 claude --dangerously-skip-permissions
 ```
 
 > [!TIP]
-> This is how GSD is intended to be used — stopping to approve `date` and `git commit` 50 times defeats the purpose.
+> これがGSDの想定運用です。`date` や `git commit` の承認を毎回求められる状態だと、目的を達成できません。
 
 <details>
 <summary><strong>Alternative: Granular Permissions</strong></summary>
 
-If you prefer not to use that flag, add this to your project's `.claude/settings.json`:
+このフラグを使いたくない場合は、プロジェクトの `.claude/settings.json` に次を追加してください:
 
 ```json
 {
@@ -189,7 +189,7 @@ If you prefer not to use that flag, add this to your project's `.claude/settings
 
 ## How It Works
 
-> **Already have code?** Run `/gsd:map-codebase` first. It spawns parallel agents to analyze your stack, architecture, conventions, and concerns. Then `/gsd:new-project` knows your codebase — questions focus on what you're adding, and planning automatically loads your patterns.
+> **既存コードがある場合** は、まず `/gsd:map-codebase` を実行してください。スタック、アーキテクチャ、規約、懸念点を並列エージェントで分析します。その後の `/gsd:new-project` は既存コードを理解した状態で進むため、質問は「何を追加するか」に集中し、計画時には既存パターンが自動読み込みされます。
 
 ### 1. Initialize Project
 
@@ -197,14 +197,14 @@ If you prefer not to use that flag, add this to your project's `.claude/settings
 /gsd:new-project
 ```
 
-One command, one flow. The system:
+1コマンドで1フロー。システムは次を行います:
 
-1. **Questions** — Asks until it understands your idea completely (goals, constraints, tech preferences, edge cases)
-2. **Research** — Spawns parallel agents to investigate the domain (optional but recommended)
-3. **Requirements** — Extracts what's v1, v2, and out of scope
-4. **Roadmap** — Creates phases mapped to requirements
+1. **Questions** — 目標、制約、技術選好、エッジケースまで、必要な情報が揃うまで質問
+2. **Research** — ドメイン調査を並列エージェントで実施（任意だが推奨）
+3. **Requirements** — v1 / v2 / スコープ外を抽出
+4. **Roadmap** — 要件にマップされたフェーズを作成
 
-You approve the roadmap. Now you're ready to build.
+ロードマップを承認したら実装開始です。
 
 **Creates:** `PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `STATE.md`, `.planning/research/`
 
@@ -216,23 +216,23 @@ You approve the roadmap. Now you're ready to build.
 /gsd:discuss-phase 1
 ```
 
-**This is where you shape the implementation.**
+**実装の方向性を固める最重要ステップです。**
 
-Your roadmap has a sentence or two per phase. That's not enough context to build something the way *you* imagine it. This step captures your preferences before anything gets researched or planned.
+ロードマップ上の各フェーズ説明は1〜2文程度です。それだけでは「あなたが望む形」で作るには情報不足です。このステップでは、調査や計画の前に好みと判断を明確化します。
 
-The system analyzes the phase and identifies gray areas based on what's being built:
+システムは、フェーズ内容から曖昧になりやすい領域を特定します:
 
-- **Visual features** → Layout, density, interactions, empty states
-- **APIs/CLIs** → Response format, flags, error handling, verbosity
-- **Content systems** → Structure, tone, depth, flow
-- **Organization tasks** → Grouping criteria, naming, duplicates, exceptions
+- **Visual features** → レイアウト、密度、インタラクション、空状態
+- **APIs/CLIs** → レスポンス形式、フラグ、エラーハンドリング、詳細度
+- **Content systems** → 構造、トーン、深さ、流れ
+- **Organization tasks** → グルーピング基準、命名、重複処理、例外
 
-For each area you select, it asks until you're satisfied. The output — `CONTEXT.md` — feeds directly into the next two steps:
+選択した領域について、納得するまで対話します。出力される `CONTEXT.md` は次の2ステップに直接使われます:
 
-1. **Researcher reads it** — Knows what patterns to investigate ("user wants card layout" → research card component libraries)
-2. **Planner reads it** — Knows what decisions are locked ("infinite scroll decided" → plan includes scroll handling)
+1. **Researcherが読む** — 何を調べるべきかを理解（例: カードレイアウト希望 -> カードUIパターンを調査）
+2. **Plannerが読む** — 何が固定決定かを理解（例: 無限スクロール決定済み -> それを前提に計画）
 
-The deeper you go here, the more the system builds what you actually want. Skip it and you get reasonable defaults. Use it and you get *your* vision.
+ここで具体化するほど、実装結果はあなたのイメージに近づきます。スキップすれば妥当なデフォルトで進みます。使えば「あなたの設計意図」が反映されます。
 
 **Creates:** `{phase_num}-CONTEXT.md`
 
@@ -244,13 +244,13 @@ The deeper you go here, the more the system builds what you actually want. Skip 
 /gsd:plan-phase 1
 ```
 
-The system:
+システムは次を実行します:
 
-1. **Researches** — Investigates how to implement this phase, guided by your CONTEXT.md decisions
-2. **Plans** — Creates 2-3 atomic task plans with XML structure
-3. **Verifies** — Checks plans against requirements, loops until they pass
+1. **Researches** — CONTEXT.md の決定を反映して実装方法を調査
+2. **Plans** — 2〜3タスク単位のアトミックなXMLプランを作成
+3. **Verifies** — 要件照合で自己検証し、通るまで反復
 
-Each plan is small enough to execute in a fresh context window. No degradation, no "I'll be more concise now."
+各プランは新しいコンテキストウィンドウで実行できる粒度です。劣化せず、途中から簡略化されることもありません。
 
 **Creates:** `{phase_num}-RESEARCH.md`, `{phase_num}-{N}-PLAN.md`
 
@@ -262,18 +262,18 @@ Each plan is small enough to execute in a fresh context window. No degradation, 
 /gsd:execute-phase 1
 ```
 
-The system:
+システムは次を実行します:
 
-1. **Runs plans in waves** — Parallel where possible, sequential when dependent
-2. **Fresh context per plan** — 200k tokens purely for implementation, zero accumulated garbage
-3. **Commits per task** — Every task gets its own atomic commit
-4. **Verifies against goals** — Checks the codebase delivers what the phase promised
+1. **Runs plans in waves** — 依存関係に応じて並列 / 直列を切り替え
+2. **Fresh context per plan** — 各プランを独立した新規コンテキストで実行
+3. **Commits per task** — 各タスクをアトミックコミット
+4. **Verifies against goals** — フェーズの約束を実際のコードで検証
 
-Walk away, come back to completed work with clean git history.
+離席して戻れば、作業は完了し、履歴もきれいな状態です。
 
 **How Wave Execution Works:**
 
-Plans are grouped into "waves" based on dependencies. Within each wave, plans run in parallel. Waves run sequentially.
+プランは依存関係に基づいて「wave」に分類されます。同一wave内は並列、wave間は直列です。
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -297,11 +297,11 @@ Plans are grouped into "waves" based on dependencies. Within each wave, plans ru
 ```
 
 **Why waves matter:**
-- Independent plans → Same wave → Run in parallel
-- Dependent plans → Later wave → Wait for dependencies
-- File conflicts → Sequential plans or same plan
+- Independent plans -> Same wave -> Run in parallel
+- Dependent plans -> Later wave -> Wait for dependencies
+- File conflicts -> Sequential plans or same plan
 
-This is why "vertical slices" (Plan 01: User feature end-to-end) parallelize better than "horizontal layers" (Plan 01: All models, Plan 02: All APIs).
+そのため、「縦割りスライス（例: Plan 01 で User機能をエンドツーエンド実装）」は「横割りレイヤー（例: Plan 01 で全モデル、Plan 02 で全API）」より並列化しやすくなります。
 
 **Creates:** `{phase_num}-{N}-SUMMARY.md`, `{phase_num}-VERIFICATION.md`
 
@@ -313,24 +313,24 @@ This is why "vertical slices" (Plan 01: User feature end-to-end) parallelize bet
 /gsd:verify-work 1
 ```
 
-**This is where you confirm it actually works.**
+**実際に期待通り動くかを確定する工程です。**
 
-Automated verification checks that code exists and tests pass. But does the feature *work* the way you expected? This is your chance to use it.
+自動検証は「コードがあるか」「テストが通るか」は確認できますが、「望んだ体験か」はあなたの確認が必要です。
 
-The system:
+システムは次を実行します:
 
-1. **Extracts testable deliverables** — What you should be able to do now
-2. **Walks you through one at a time** — "Can you log in with email?" Yes/no, or describe what's wrong
-3. **Diagnoses failures automatically** — Spawns debug agents to find root causes
-4. **Creates verified fix plans** — Ready for immediate re-execution
+1. **Extracts testable deliverables** — 今できるはずのことを抽出
+2. **Walks you through one at a time** — 1項目ずつ Yes/No で確認
+3. **Diagnoses failures automatically** — 失敗時はデバッグエージェントで原因特定
+4. **Creates verified fix plans** — すぐ再実行できる修正プランを生成
 
-If everything passes, you move on. If something's broken, you don't manually debug — you just run `/gsd:execute-phase` again with the fix plans it created.
+すべて通れば次へ。問題があっても手動デバッグは不要で、生成された修正プランを `/gsd:execute-phase` で再実行できます。
 
-**Creates:** `{phase_num}-UAT.md`, fix plans if issues found
+**Creates:** `{phase_num}-UAT.md`, 問題があれば修正プラン
 
 ---
 
-### 6. Repeat → Complete → Next Milestone
+### 6. Repeat -> Complete -> Next Milestone
 
 ```
 /gsd:discuss-phase 2
@@ -342,13 +342,12 @@ If everything passes, you move on. If something's broken, you don't manually deb
 /gsd:new-milestone
 ```
 
-Loop **discuss → plan → execute → verify** until milestone complete.
+**discuss -> plan -> execute -> verify** をマイルストーン完了まで繰り返します。
 
-Each phase gets your input (discuss), proper research (plan), clean execution (execute), and human verification (verify). Context stays fresh. Quality stays high.
+各フェーズで、意思決定（discuss）、調査（plan）、実装（execute）、人間確認（verify）を揃えることで、コンテキストを新鮮に保ちながら品質を維持します。
 
-When all phases are done, `/gsd:complete-milestone` archives the milestone and tags the release.
-
-Then `/gsd:new-milestone` starts the next version — same flow as `new-project` but for your existing codebase. You describe what you want to build next, the system researches the domain, you scope requirements, and it creates a fresh roadmap. Each milestone is a clean cycle: define → build → ship.
+全フェーズ完了後、`/gsd:complete-milestone` でアーカイブとリリースタグ付けを実施。
+次に `/gsd:new-milestone` で次バージョンを開始します。`new-project` と同じ流れを既存コード向けに適用します。各マイルストーンは「定義 -> 構築 -> 出荷」の独立したサイクルになります。
 
 ---
 
@@ -358,15 +357,15 @@ Then `/gsd:new-milestone` starts the next version — same flow as `new-project`
 /gsd:quick
 ```
 
-**For ad-hoc tasks that don't need full planning.**
+**フル計画が不要なスポット作業向け。**
 
-Quick mode gives you GSD guarantees (atomic commits, state tracking) with a faster path:
+Quick mode は高速ですが、GSDの保証（アトミックコミット、状態追跡）は維持します:
 
-- **Same agents** — Planner + executor, same quality
-- **Skips optional steps** — No research, no plan checker, no verifier
-- **Separate tracking** — Lives in `.planning/quick/`, not phases
+- **Same agents** — Planner + Executor で品質を維持
+- **Skips optional steps** — 調査 / plan checker / verifier を省略
+- **Separate tracking** — `.planning/quick/` で管理（フェーズ管理とは分離）
 
-Use for: bug fixes, small features, config changes, one-off tasks.
+用途: バグ修正、小機能追加、設定変更、単発タスク
 
 ```
 /gsd:quick
@@ -381,26 +380,26 @@ Use for: bug fixes, small features, config changes, one-off tasks.
 
 ### Context Engineering
 
-Claude Code is incredibly powerful *if* you give it the context it needs. Most people don't.
+Claude Code は、必要なコンテキストを正しく渡せば非常に強力です。多くの失敗はここで起きます。
 
-GSD handles it for you:
+GSDはこれを自動で処理します:
 
 | File | What it does |
 |------|--------------|
-| `PROJECT.md` | Project vision, always loaded |
-| `research/` | Ecosystem knowledge (stack, features, architecture, pitfalls) |
-| `REQUIREMENTS.md` | Scoped v1/v2 requirements with phase traceability |
-| `ROADMAP.md` | Where you're going, what's done |
-| `STATE.md` | Decisions, blockers, position — memory across sessions |
-| `PLAN.md` | Atomic task with XML structure, verification steps |
-| `SUMMARY.md` | What happened, what changed, committed to history |
-| `todos/` | Captured ideas and tasks for later work |
+| `PROJECT.md` | プロジェクトのビジョン（常時読み込み） |
+| `research/` | エコシステム知識（スタック、機能、設計、落とし穴） |
+| `REQUIREMENTS.md` | v1/v2のスコープ要件とフェーズ追跡 |
+| `ROADMAP.md` | 現在地と到達点の可視化 |
+| `STATE.md` | 決定事項、ブロッカー、進行位置のセッション記憶 |
+| `PLAN.md` | XML構造のアトミックタスク + 検証手順 |
+| `SUMMARY.md` | 実施内容と変更履歴を記録 |
+| `todos/` | 後で扱うアイデア / タスクを保存 |
 
-Size limits based on where Claude's quality degrades. Stay under, get consistent excellence.
+サイズ制約は、Claudeの品質低下が始まる地点を基準に設計されています。閾値内に保つことで、一貫した品質が得られます。
 
 ### XML Prompt Formatting
 
-Every plan is structured XML optimized for Claude:
+各プランはClaude向けに最適化した構造化XMLです:
 
 ```xml
 <task type="auto">
@@ -416,26 +415,26 @@ Every plan is structured XML optimized for Claude:
 </task>
 ```
 
-Precise instructions. No guessing. Verification built in.
+曖昧さが少なく、推測を減らし、検証まで内包しています。
 
 ### Multi-Agent Orchestration
 
-Every stage uses the same pattern: a thin orchestrator spawns specialized agents, collects results, and routes to the next step.
+各段階は同じ構造です。薄いオーケストレーターが専門エージェントを起動し、結果を統合して次へ渡します。
 
 | Stage | Orchestrator does | Agents do |
 |-------|------------------|-----------|
-| Research | Coordinates, presents findings | 4 parallel researchers investigate stack, features, architecture, pitfalls |
-| Planning | Validates, manages iteration | Planner creates plans, checker verifies, loop until pass |
-| Execution | Groups into waves, tracks progress | Executors implement in parallel, each with fresh 200k context |
-| Verification | Presents results, routes next | Verifier checks codebase against goals, debuggers diagnose failures |
+| Research | 進行管理と結果提示 | 4つの並列研究エージェントがスタック、機能、設計、落とし穴を調査 |
+| Planning | 検証と反復管理 | Plannerが計画作成、Checkerが検証し、合格まで反復 |
+| Execution | Wave実行と進捗管理 | Executorが並列実装（各自が新規コンテキスト） |
+| Verification | 結果提示と分岐制御 | Verifierが目標達成を検証し、Debuggerが失敗原因を特定 |
 
-The orchestrator never does heavy lifting. It spawns agents, waits, integrates results.
+オーケストレーターは重い処理を行わず、起動・待機・統合に専念します。
 
-**The result:** You can run an entire phase — deep research, multiple plans created and verified, thousands of lines of code written across parallel executors, automated verification against goals — and your main context window stays at 30-40%. The work happens in fresh subagent contexts. Your session stays fast and responsive.
+**結果:** 深い調査、複数プラン作成・検証、並列実装、大量コード生成、目標照合まで実行しても、メインセッションのコンテキストは軽いまま保てます。
 
 ### Atomic Git Commits
 
-Each task gets its own commit immediately after completion:
+各タスク完了直後に個別コミットします:
 
 ```bash
 abc123f docs(08-02): complete user registration plan
@@ -445,18 +444,18 @@ lmn012o feat(08-02): create registration endpoint
 ```
 
 > [!NOTE]
-> **Benefits:** Git bisect finds exact failing task. Each task independently revertable. Clear history for Claude in future sessions. Better observability in AI-automated workflow.
+> **Benefits:** `git bisect` で失敗地点を即特定。タスク単位でリバート可能。将来セッションでClaudeが履歴を読みやすい。AI自動化ワークフローの可観測性が向上。
 
-Every commit is surgical, traceable, and meaningful.
+履歴は常に外科的で追跡可能、意味のある単位になります。
 
 ### Modular by Design
 
-- Add phases to current milestone
-- Insert urgent work between phases
-- Complete milestones and start fresh
-- Adjust plans without rebuilding everything
+- 現在のマイルストーンにフェーズ追加
+- フェーズ間へ緊急作業を挿入
+- マイルストーン完了後に新規開始
+- 全体を壊さず計画だけ調整
 
-You're never locked in. The system adapts.
+固定化されず、状況に合わせて進化できます。
 
 ---
 
@@ -466,58 +465,58 @@ You're never locked in. The system adapts.
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:new-project [--auto]` | Full initialization: questions → research → requirements → roadmap |
-| `/gsd:discuss-phase [N] [--auto]` | Capture implementation decisions before planning |
-| `/gsd:plan-phase [N] [--auto]` | Research + plan + verify for a phase |
-| `/gsd:execute-phase <N>` | Execute all plans in parallel waves, verify when complete |
-| `/gsd:verify-work [N]` | Manual user acceptance testing ¹ |
-| `/gsd:audit-milestone` | Verify milestone achieved its definition of done |
-| `/gsd:complete-milestone` | Archive milestone, tag release |
-| `/gsd:new-milestone [name]` | Start next version: questions → research → requirements → roadmap |
+| `/gsd:new-project [--auto]` | 初期化フルフロー: 質問 -> 調査 -> 要件 -> ロードマップ |
+| `/gsd:discuss-phase [N] [--auto]` | 計画前に実装意思決定を確定 |
+| `/gsd:plan-phase [N] [--auto]` | フェーズ単位で調査 + 計画 + 検証 |
+| `/gsd:execute-phase <N>` | Wave並列で実行、完了時に検証 |
+| `/gsd:verify-work [N]` | 手動受け入れテスト（UAT）¹ |
+| `/gsd:audit-milestone` | マイルストーンのDefinition of Doneを監査 |
+| `/gsd:complete-milestone` | マイルストーンをアーカイブし、リリースタグ付け |
+| `/gsd:new-milestone [name]` | 次バージョン開始: 質問 -> 調査 -> 要件 -> ロードマップ |
 
 ### Navigation
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:progress` | Where am I? What's next? |
-| `/gsd:help` | Show all commands and usage guide |
-| `/gsd:update` | Update GSD with changelog preview |
-| `/gsd:join-discord` | Join the GSD Discord community |
+| `/gsd:progress` | 現在地と次アクションを表示 |
+| `/gsd:help` | 全コマンドと使い方を表示 |
+| `/gsd:update` | 変更履歴プレビュー付きで更新 |
+| `/gsd:join-discord` | GSD Discord コミュニティへ参加 |
 
 ### Brownfield
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:map-codebase` | Analyze existing codebase before new-project |
+| `/gsd:map-codebase` | 既存コードベースを分析してからnew-projectへ |
 
 ### Phase Management
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:add-phase` | Append phase to roadmap |
-| `/gsd:insert-phase [N]` | Insert urgent work between phases |
-| `/gsd:remove-phase [N]` | Remove future phase, renumber |
-| `/gsd:list-phase-assumptions [N]` | See Claude's intended approach before planning |
-| `/gsd:plan-milestone-gaps` | Create phases to close gaps from audit |
+| `/gsd:add-phase` | ロードマップ末尾にフェーズ追加 |
+| `/gsd:insert-phase [N]` | フェーズ間に緊急作業を挿入 |
+| `/gsd:remove-phase [N]` | 未来フェーズを削除して再採番 |
+| `/gsd:list-phase-assumptions [N]` | 計画前の想定アプローチを確認 |
+| `/gsd:plan-milestone-gaps` | 監査で見つかった不足を埋めるフェーズを生成 |
 
 ### Session
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:pause-work` | Create handoff when stopping mid-phase |
-| `/gsd:resume-work` | Restore from last session |
+| `/gsd:pause-work` | フェーズ途中で中断用ハンドオフを作成 |
+| `/gsd:resume-work` | 前回セッション状態から再開 |
 
 ### Utilities
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:settings` | Configure model profile and workflow agents |
-| `/gsd:set-profile <profile>` | Switch model profile (quality/balanced/budget) |
-| `/gsd:add-todo [desc]` | Capture idea for later |
-| `/gsd:check-todos` | List pending todos |
-| `/gsd:debug [desc]` | Systematic debugging with persistent state |
-| `/gsd:quick [--full] [--discuss]` | Execute ad-hoc task with GSD guarantees (`--full` adds plan-checking and verification, `--discuss` gathers context first) |
-| `/gsd:health [--repair]` | Validate `.planning/` directory integrity, auto-repair with `--repair` |
+| `/gsd:settings` | モデルプロファイルとワークフローエージェントを設定 |
+| `/gsd:set-profile <profile>` | モデルプロファイル切替（quality/balanced/budget） |
+| `/gsd:add-todo [desc]` | 後でやるタスクを記録 |
+| `/gsd:check-todos` | 保留Todoを一覧表示 |
+| `/gsd:debug [desc]` | 永続状態付きの体系的デバッグ |
+| `/gsd:quick [--full] [--discuss]` | スポットタスクをGSD保証で実行（`--full`で計画検証 + 検証追加、`--discuss`で先に文脈収集） |
+| `/gsd:health [--repair]` | `.planning/` 整合性を検証し、`--repair`で自動修復 |
 
 <sup>¹ Contributed by reddit user OracleGreyBeard</sup>
 
@@ -525,18 +524,18 @@ You're never locked in. The system adapts.
 
 ## Configuration
 
-GSD stores project settings in `.planning/config.json`. Configure during `/gsd:new-project` or update later with `/gsd:settings`. For the full config schema, workflow toggles, git branching options, and per-agent model breakdown, see the [User Guide](docs/USER-GUIDE.md#configuration-reference).
+GSDのプロジェクト設定は `.planning/config.json` に保存されます。`/gsd:new-project` 時に設定するか、後で `/gsd:settings` で更新できます。完全なスキーマ、ワークフロートグル、gitブランチ設定、エージェント別モデル内訳は [User Guide](docs/USER-GUIDE.md#configuration-reference) を参照してください。
 
 ### Core Settings
 
 | Setting | Options | Default | What it controls |
 |---------|---------|---------|------------------|
-| `mode` | `yolo`, `interactive` | `interactive` | Auto-approve vs confirm at each step |
-| `granularity` | `coarse`, `standard`, `fine` | `standard` | Phase granularity — how finely scope is sliced (phases × plans) |
+| `mode` | `yolo`, `interactive` | `interactive` | 自動承認か、各ステップ確認か |
+| `granularity` | `coarse`, `standard`, `fine` | `standard` | フェーズ粒度（フェーズ x プランの分割細かさ） |
 
 ### Model Profiles
 
-Control which Claude model each agent uses. Balance quality vs token spend.
+各エージェントが使うモデルを制御します。品質とトークンコストのバランスを調整します。
 
 | Profile | Planning | Execution | Verification |
 |---------|----------|-----------|--------------|
@@ -544,25 +543,25 @@ Control which Claude model each agent uses. Balance quality vs token spend.
 | `balanced` (default) | Opus | Sonnet | Sonnet |
 | `budget` | Sonnet | Sonnet | Haiku |
 
-Switch profiles:
+切り替え:
 ```
 /gsd:set-profile budget
 ```
 
-Or configure via `/gsd:settings`.
+または `/gsd:settings` から設定してください。
 
 ### Workflow Agents
 
-These spawn additional agents during planning/execution. They improve quality but add tokens and time.
+これらは計画 / 実行中に追加エージェントを起動します。品質は上がりますが、トークンと時間は増えます。
 
 | Setting | Default | What it does |
 |---------|---------|--------------|
-| `workflow.research` | `true` | Researches domain before planning each phase |
-| `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |
-| `workflow.verifier` | `true` | Confirms must-haves were delivered after execution |
-| `workflow.auto_advance` | `false` | Auto-chain discuss → plan → execute without stopping |
+| `workflow.research` | `true` | 各フェーズの計画前にドメイン調査 |
+| `workflow.plan_check` | `true` | 実行前に計画がフェーズ目標を満たすか検証 |
+| `workflow.verifier` | `true` | 実行後にmust-haves達成を確認 |
+| `workflow.auto_advance` | `false` | discuss -> plan -> execute を自動連鎖 |
 
-Use `/gsd:settings` to toggle these, or override per-invocation:
+`/gsd:settings` で切り替えるか、実行時に上書き可能:
 - `/gsd:plan-phase --skip-research`
 - `/gsd:plan-phase --skip-verify`
 
@@ -570,25 +569,25 @@ Use `/gsd:settings` to toggle these, or override per-invocation:
 
 | Setting | Default | What it controls |
 |---------|---------|------------------|
-| `parallelization.enabled` | `true` | Run independent plans simultaneously |
-| `planning.commit_docs` | `true` | Track `.planning/` in git |
+| `parallelization.enabled` | `true` | 独立プランを同時実行 |
+| `planning.commit_docs` | `true` | `.planning/` を git で追跡 |
 
 ### Git Branching
 
-Control how GSD handles branches during execution.
+実行中のブランチ運用を制御します。
 
 | Setting | Options | Default | What it does |
 |---------|---------|---------|--------------|
-| `git.branching_strategy` | `none`, `phase`, `milestone` | `none` | Branch creation strategy |
-| `git.phase_branch_template` | string | `gsd/phase-{phase}-{slug}` | Template for phase branches |
-| `git.milestone_branch_template` | string | `gsd/{milestone}-{slug}` | Template for milestone branches |
+| `git.branching_strategy` | `none`, `phase`, `milestone` | `none` | ブランチ作成戦略 |
+| `git.phase_branch_template` | string | `gsd/phase-{phase}-{slug}` | フェーズブランチ名テンプレート |
+| `git.milestone_branch_template` | string | `gsd/{milestone}-{slug}` | マイルストーンブランチ名テンプレート |
 
 **Strategies:**
-- **`none`** — Commits to current branch (default GSD behavior)
-- **`phase`** — Creates a branch per phase, merges at phase completion
-- **`milestone`** — Creates one branch for entire milestone, merges at completion
+- **`none`** — 現在のブランチにコミット（GSDデフォルト）
+- **`phase`** — フェーズごとにブランチを作成し、フェーズ完了時にマージ
+- **`milestone`** — マイルストーン全体で1ブランチを作成し、完了時にマージ
 
-At milestone completion, GSD offers squash merge (recommended) or merge with history.
+マイルストーン完了時には squash merge（推奨）または履歴保持マージを選べます。
 
 ---
 
@@ -596,10 +595,10 @@ At milestone completion, GSD offers squash merge (recommended) or merge with his
 
 ### Protecting Sensitive Files
 
-GSD's codebase mapping and analysis commands read files to understand your project. **Protect files containing secrets** by adding them to Claude Code's deny list:
+GSDのコードベース分析コマンドは、プロジェクト理解のためにファイルを読み取ります。**シークレットを含むファイルは保護してください**。Claude Codeの deny list に追加します:
 
-1. Open Claude Code settings (`.claude/settings.json` or global)
-2. Add sensitive file patterns to the deny list:
+1. Claude Code設定（`.claude/settings.json` またはグローバル）を開く
+2. deny list に機密ファイルパターンを追加
 
 ```json
 {
@@ -616,40 +615,40 @@ GSD's codebase mapping and analysis commands read files to understand your proje
 }
 ```
 
-This prevents Claude from reading these files entirely, regardless of what commands you run.
+これで、どのコマンドを実行しても対象ファイルの読み取りを防げます。
 
 > [!IMPORTANT]
-> GSD includes built-in protections against committing secrets, but defense-in-depth is best practice. Deny read access to sensitive files as a first line of defense.
+> GSDにはシークレット誤コミット防止が組み込まれていますが、多層防御がベストプラクティスです。まずは機密ファイルの読み取り拒否を設定してください。
 
 ---
 
 ## Troubleshooting
 
-**Commands not found after install?**
-- Restart your runtime to reload commands/skills
-- Verify files exist in `~/.claude/commands/gsd/` (global) or `./.claude/commands/gsd/` (local)
-- For Codex, verify skills exist in `~/.codex/skills/gsd-*/SKILL.md` (global) or `./.codex/skills/gsd-*/SKILL.md` (local)
+**インストール後にコマンドが見つからない場合**
+- ランタイムを再起動してコマンド/skillsを再読み込み
+- Claude向けなら `~/.claude/commands/gsd/`（global）または `./.claude/commands/gsd/`（local）を確認
+- Codex向けなら `~/.codex/skills/gsd-*/SKILL.md`（global）または `./.codex/skills/gsd-*/SKILL.md`（local）を確認
 
-**Commands not working as expected?**
-- Run `/gsd:help` to verify installation
-- Re-run `npx get-shit-done-cc` to reinstall
+**コマンドが期待通り動かない場合**
+- `/gsd:help` で導入状態を確認
+- `npx get-shit-done-cc` を再実行して再インストール
 
-**Updating to the latest version?**
+**最新版に更新する場合**
 ```bash
 npx get-shit-done-cc@latest
 ```
 
-**Using Docker or containerized environments?**
+**Docker / コンテナ環境で使う場合**
 
-If file reads fail with tilde paths (`~/.claude/...`), set `CLAUDE_CONFIG_DIR` before installing:
+チルダパス（`~/.claude/...`）で読み取り失敗する場合は、インストール前に `CLAUDE_CONFIG_DIR` を設定してください:
 ```bash
 CLAUDE_CONFIG_DIR=/home/youruser/.claude npx get-shit-done-cc --global
 ```
-This ensures absolute paths are used instead of `~` which may not expand correctly in containers.
+これで `~` ではなく絶対パスが使われ、コンテナ環境でも安定します。
 
 ### Uninstalling
 
-To remove GSD completely:
+GSDを完全に削除する場合:
 
 ```bash
 # Global installs
@@ -663,15 +662,15 @@ npx get-shit-done-cc --opencode --local --uninstall
 npx get-shit-done-cc --codex --local --uninstall
 ```
 
-This removes all GSD commands, agents, hooks, and settings while preserving your other configurations.
+これにより、GSDのコマンド、エージェント、フック、設定が削除され、他の設定は保持されます。
 
 ---
 
 ## Community Ports
 
-OpenCode, Gemini CLI, and Codex are now natively supported via `npx get-shit-done-cc`.
+OpenCode、Gemini CLI、Codex は現在 `npx get-shit-done-cc` でネイティブ対応しています。
 
-These community ports pioneered multi-runtime support:
+マルチランタイム対応を先行して切り開いたコミュニティポート:
 
 | Project | Platform | Description |
 |---------|----------|-------------|
@@ -694,12 +693,12 @@ These community ports pioneered multi-runtime support:
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. 詳細は [LICENSE](LICENSE) を参照してください。
 
 ---
 
 <div align="center">
 
-**Claude Code is powerful. GSD makes it reliable.**
+**Claude Code は強力。GSD はそれを信頼できる開発体験にします。**
 
 </div>
