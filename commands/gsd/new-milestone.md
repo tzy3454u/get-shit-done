@@ -1,7 +1,7 @@
 ---
 name: gsd:new-milestone
-description: Start a new milestone cycle — update PROJECT.md and route to requirements
-argument-hint: "[milestone name, e.g., 'v1.1 Notifications']"
+description: 新しいマイルストーンサイクルを開始する — PROJECT.md を更新し要件定義に進む
+argument-hint: "[マイルストーン名、例: 'v1.1 Notifications']"
 allowed-tools:
   - Read
   - Write
@@ -10,18 +10,18 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Start a new milestone: questioning → research (optional) → requirements → roadmap.
+新しいマイルストーンを開始: 質問 → 調査（オプション） → 要件 → ロードマップ。
 
-Brownfield equivalent of new-project. Project exists, PROJECT.md has history. Gathers "what's next", updates PROJECT.md, then runs requirements → roadmap cycle.
+new-project のブラウンフィールド版。プロジェクトは存在し、PROJECT.md に履歴がある状態。「次に何をするか」を収集し、PROJECT.md を更新してから、要件 → ロードマップサイクルを実行する。
 
-**Creates/Updates:**
-- `.planning/PROJECT.md` — updated with new milestone goals
-- `.planning/research/` — domain research (optional, NEW features only)
-- `.planning/REQUIREMENTS.md` — scoped requirements for this milestone
-- `.planning/ROADMAP.md` — phase structure (continues numbering)
-- `.planning/STATE.md` — reset for new milestone
+**作成/更新するもの:**
+- `.planning/PROJECT.md` — 新しいマイルストーン目標で更新
+- `.planning/research/` — ドメインリサーチ（オプション、新機能の場合のみ）
+- `.planning/REQUIREMENTS.md` — このマイルストーンのスコープ付き要件
+- `.planning/ROADMAP.md` — フェーズ構造（番号を継続）
+- `.planning/STATE.md` — 新しいマイルストーン用にリセット
 
-**After:** `/gsd:plan-phase [N]` to start execution.
+**完了後:** `/gsd:plan-phase [N]` で実行を開始。
 </objective>
 
 <execution_context>
@@ -33,12 +33,12 @@ Brownfield equivalent of new-project. Project exists, PROJECT.md has history. Ga
 </execution_context>
 
 <context>
-Milestone name: $ARGUMENTS (optional - will prompt if not provided)
+マイルストーン名: $ARGUMENTS（オプション — 未指定の場合はプロンプトで確認）
 
-Project and milestone context files are resolved inside the workflow (`init new-milestone`) and delegated via `<files_to_read>` blocks where subagents are used.
+プロジェクトとマイルストーンのコンテキストファイルはワークフロー内（`init new-milestone`）で解決され、サブエージェントが使用される場合は `<files_to_read>` ブロックを通じて委任される。
 </context>
 
 <process>
-Execute the new-milestone workflow from @~/.claude/get-shit-done/workflows/new-milestone.md end-to-end.
-Preserve all workflow gates (validation, questioning, research, requirements, roadmap approval, commits).
+@~/.claude/get-shit-done/workflows/new-milestone.md の new-milestone ワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲート（バリデーション、質問、調査、要件、ロードマップ承認、コミット）を維持する。
 </process>

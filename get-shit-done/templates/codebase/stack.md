@@ -1,186 +1,186 @@
-# Technology Stack Template
+# 技術スタックテンプレート
 
-Template for `.planning/codebase/STACK.md` - captures the technology foundation.
+`.planning/codebase/STACK.md` 用テンプレート - 技術基盤を記録します。
 
-**Purpose:** Document what technologies run this codebase. Focused on "what executes when you run the code."
+**目的:** このコードベースを動かす技術を文書化します。「コードを実行した時に何が動作するか」に焦点を当てています。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
-# Technology Stack
+# 技術スタック
 
-**Analysis Date:** [YYYY-MM-DD]
+**分析日:** [YYYY-MM-DD]
 
-## Languages
+## 言語
 
-**Primary:**
-- [Language] [Version] - [Where used: e.g., "all application code"]
+**プライマリ:**
+- [言語] [バージョン] - [使用箇所: 例: "すべてのアプリケーションコード"]
 
-**Secondary:**
-- [Language] [Version] - [Where used: e.g., "build scripts, tooling"]
+**セカンダリ:**
+- [言語] [バージョン] - [使用箇所: 例: "ビルドスクリプト、ツール"]
 
-## Runtime
+## ランタイム
 
-**Environment:**
-- [Runtime] [Version] - [e.g., "Node.js 20.x"]
-- [Additional requirements if any]
+**環境:**
+- [ランタイム] [バージョン] - [例: "Node.js 20.x"]
+- [追加要件（あれば）]
 
-**Package Manager:**
-- [Manager] [Version] - [e.g., "npm 10.x"]
-- Lockfile: [e.g., "package-lock.json present"]
+**パッケージマネージャー:**
+- [マネージャー] [バージョン] - [例: "npm 10.x"]
+- Lockfile: [例: "package-lock.json あり"]
 
-## Frameworks
+## フレームワーク
 
-**Core:**
-- [Framework] [Version] - [Purpose: e.g., "web server", "UI framework"]
+**コア:**
+- [フレームワーク] [バージョン] - [目的: 例: "Webサーバー", "UIフレームワーク"]
 
-**Testing:**
-- [Framework] [Version] - [e.g., "Jest for unit tests"]
-- [Framework] [Version] - [e.g., "Playwright for E2E"]
+**テスト:**
+- [フレームワーク] [バージョン] - [例: "ユニットテスト用Jest"]
+- [フレームワーク] [バージョン] - [例: "E2E用Playwright"]
 
-**Build/Dev:**
-- [Tool] [Version] - [e.g., "Vite for bundling"]
-- [Tool] [Version] - [e.g., "TypeScript compiler"]
+**ビルド/開発:**
+- [ツール] [バージョン] - [例: "バンドル用Vite"]
+- [ツール] [バージョン] - [例: "TypeScriptコンパイラ"]
 
-## Key Dependencies
+## 主要な依存関係
 
-[Only include dependencies critical to understanding the stack - limit to 5-10 most important]
+[スタックの理解に重要な依存関係のみ含める - 最重要の5〜10個に限定]
 
-**Critical:**
-- [Package] [Version] - [Why it matters: e.g., "authentication", "database access"]
-- [Package] [Version] - [Why it matters]
+**クリティカル:**
+- [パッケージ] [バージョン] - [重要な理由: 例: "認証", "データベースアクセス"]
+- [パッケージ] [バージョン] - [重要な理由]
 
-**Infrastructure:**
-- [Package] [Version] - [e.g., "Express for HTTP routing"]
-- [Package] [Version] - [e.g., "PostgreSQL client"]
+**インフラストラクチャ:**
+- [パッケージ] [バージョン] - [例: "HTTPルーティング用Express"]
+- [パッケージ] [バージョン] - [例: "PostgreSQLクライアント"]
 
-## Configuration
+## 設定
 
-**Environment:**
-- [How configured: e.g., ".env files", "environment variables"]
-- [Key configs: e.g., "DATABASE_URL, API_KEY required"]
+**環境:**
+- [設定方法: 例: ".envファイル", "環境変数"]
+- [主要設定: 例: "DATABASE_URL, API_KEYが必要"]
 
-**Build:**
-- [Build config files: e.g., "vite.config.ts, tsconfig.json"]
+**ビルド:**
+- [ビルド設定ファイル: 例: "vite.config.ts, tsconfig.json"]
 
-## Platform Requirements
+## プラットフォーム要件
 
-**Development:**
-- [OS requirements or "any platform"]
-- [Additional tooling: e.g., "Docker for local DB"]
+**開発:**
+- [OS要件または"任意のプラットフォーム"]
+- [追加ツール: 例: "ローカルDB用Docker"]
 
-**Production:**
-- [Deployment target: e.g., "Vercel", "AWS Lambda", "Docker container"]
-- [Version requirements]
+**本番:**
+- [デプロイ先: 例: "Vercel", "AWS Lambda", "Dockerコンテナ"]
+- [バージョン要件]
 
 ---
 
-*Stack analysis: [date]*
-*Update after major dependency changes*
+*スタック分析: [日付]*
+*主要な依存関係の変更後に更新*
 ```
 
 <good_examples>
 ```markdown
-# Technology Stack
+# 技術スタック
 
-**Analysis Date:** 2025-01-20
+**分析日:** 2025-01-20
 
-## Languages
+## 言語
 
-**Primary:**
-- TypeScript 5.3 - All application code
+**プライマリ:**
+- TypeScript 5.3 - すべてのアプリケーションコード
 
-**Secondary:**
-- JavaScript - Build scripts, config files
+**セカンダリ:**
+- JavaScript - ビルドスクリプト、設定ファイル
 
-## Runtime
+## ランタイム
 
-**Environment:**
+**環境:**
 - Node.js 20.x (LTS)
-- No browser runtime (CLI tool only)
+- ブラウザランタイムなし（CLIツールのみ）
 
-**Package Manager:**
+**パッケージマネージャー:**
 - npm 10.x
-- Lockfile: `package-lock.json` present
+- Lockfile: `package-lock.json` あり
 
-## Frameworks
+## フレームワーク
 
-**Core:**
-- None (vanilla Node.js CLI)
+**コア:**
+- なし（バニラNode.js CLI）
 
-**Testing:**
-- Vitest 1.0 - Unit tests
-- tsx - TypeScript execution without build step
+**テスト:**
+- Vitest 1.0 - ユニットテスト
+- tsx - ビルドステップなしのTypeScript実行
 
-**Build/Dev:**
-- TypeScript 5.3 - Compilation to JavaScript
-- esbuild - Used by Vitest for fast transforms
+**ビルド/開発:**
+- TypeScript 5.3 - JavaScriptへのコンパイル
+- esbuild - Vitestが高速変換に使用
 
-## Key Dependencies
+## 主要な依存関係
 
-**Critical:**
-- commander 11.x - CLI argument parsing and command structure
-- chalk 5.x - Terminal output styling
-- fs-extra 11.x - Extended file system operations
+**クリティカル:**
+- commander 11.x - CLI引数解析とコマンド構造
+- chalk 5.x - ターミナル出力のスタイリング
+- fs-extra 11.x - 拡張ファイルシステム操作
 
-**Infrastructure:**
-- Node.js built-ins - fs, path, child_process for file operations
+**インフラストラクチャ:**
+- Node.js組み込みモジュール - ファイル操作用fs, path, child_process
 
-## Configuration
+## 設定
 
-**Environment:**
-- No environment variables required
-- Configuration via CLI flags only
+**環境:**
+- 環境変数不要
+- CLIフラグのみで設定
 
-**Build:**
-- `tsconfig.json` - TypeScript compiler options
-- `vitest.config.ts` - Test runner configuration
+**ビルド:**
+- `tsconfig.json` - TypeScriptコンパイラオプション
+- `vitest.config.ts` - テストランナー設定
 
-## Platform Requirements
+## プラットフォーム要件
 
-**Development:**
-- macOS/Linux/Windows (any platform with Node.js)
-- No external dependencies
+**開発:**
+- macOS/Linux/Windows（Node.jsが動作する任意のプラットフォーム）
+- 外部依存関係なし
 
-**Production:**
-- Distributed as npm package
-- Installed globally via npm install -g
-- Runs on user's Node.js installation
+**本番:**
+- npmパッケージとして配布
+- npm install -gでグローバルインストール
+- ユーザーのNode.jsインストール上で実行
 
 ---
 
-*Stack analysis: 2025-01-20*
-*Update after major dependency changes*
+*スタック分析: 2025-01-20*
+*主要な依存関係の変更後に更新*
 ```
 </good_examples>
 
 <guidelines>
-**What belongs in STACK.md:**
-- Languages and versions
-- Runtime requirements (Node, Bun, Deno, browser)
-- Package manager and lockfile
-- Framework choices
-- Critical dependencies (limit to 5-10 most important)
-- Build tooling
-- Platform/deployment requirements
+**STACK.mdに含めるもの:**
+- 言語とバージョン
+- ランタイム要件（Node, Bun, Deno, ブラウザ）
+- パッケージマネージャーとロックファイル
+- フレームワーク選定
+- クリティカルな依存関係（最重要の5〜10個に限定）
+- ビルドツール
+- プラットフォーム/デプロイ要件
 
-**What does NOT belong here:**
-- File structure (that's STRUCTURE.md)
-- Architectural patterns (that's ARCHITECTURE.md)
-- Every dependency in package.json (only critical ones)
-- Implementation details (defer to code)
+**ここに含めないもの:**
+- ファイル構造（STRUCTURE.mdの範囲）
+- アーキテクチャパターン（ARCHITECTURE.mdの範囲）
+- package.jsonのすべての依存関係（クリティカルなもののみ）
+- 実装詳細（コードに委ねる）
 
-**When filling this template:**
-- Check package.json for dependencies
-- Note runtime version from .nvmrc or package.json engines
-- Include only dependencies that affect understanding (not every utility)
-- Specify versions only when version matters (breaking changes, compatibility)
+**このテンプレートを記入する際:**
+- package.jsonで依存関係を確認
+- .nvmrcまたはpackage.json enginesでランタイムバージョンを確認
+- 理解に影響する依存関係のみ含める（すべてのユーティリティではない）
+- バージョンが重要な場合のみバージョンを指定（破壊的変更、互換性）
 
-**Useful for phase planning when:**
-- Adding new dependencies (check compatibility)
-- Upgrading frameworks (know what's in use)
-- Choosing implementation approach (must work with existing stack)
-- Understanding build requirements
+**フェーズ計画で役立つ場面:**
+- 新しい依存関係の追加（互換性チェック）
+- フレームワークのアップグレード（使用中のものを把握）
+- 実装アプローチの選択（既存スタックとの互換性が必要）
+- ビルド要件の理解
 </guidelines>

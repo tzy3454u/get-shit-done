@@ -1,6 +1,6 @@
 ---
 name: gsd:settings
-description: Configure GSD workflow toggles and model profile
+description: GSD ワークフローのトグルとモデルプロファイルを設定する
 allowed-tools:
   - Read
   - Write
@@ -9,14 +9,14 @@ allowed-tools:
 ---
 
 <objective>
-Interactive configuration of GSD workflow agents and model profile via multi-question prompt.
+複数の質問プロンプトによる GSD ワークフローエージェントとモデルプロファイルのインタラクティブな設定。
 
-Routes to the settings workflow which handles:
-- Config existence ensuring
-- Current settings reading and parsing
-- Interactive 5-question prompt (model, research, plan_check, verifier, branching)
-- Config merging and writing
-- Confirmation display with quick command references
+settings ワークフローにルーティングし、以下を処理する：
+- 設定ファイルの存在確認
+- 現在の設定の読み取りと解析
+- インタラクティブな5問のプロンプト（model、research、plan_check、verifier、branching）
+- 設定のマージと書き込み
+- クイックコマンドリファレンス付きの確認表示
 </objective>
 
 <execution_context>
@@ -24,13 +24,13 @@ Routes to the settings workflow which handles:
 </execution_context>
 
 <process>
-**Follow the settings workflow** from `@~/.claude/get-shit-done/workflows/settings.md`.
+`@~/.claude/get-shit-done/workflows/settings.md` の **settings ワークフローに従うこと**。
 
-The workflow handles all logic including:
-1. Config file creation with defaults if missing
-2. Current config reading
-3. Interactive settings presentation with pre-selection
-4. Answer parsing and config merging
-5. File writing
-6. Confirmation display
+ワークフローは以下のすべてのロジックを処理する：
+1. デフォルト値での設定ファイル作成（存在しない場合）
+2. 現在の設定の読み取り
+3. 事前選択付きのインタラクティブな設定表示
+4. 回答の解析と設定のマージ
+5. ファイルの書き込み
+6. 確認表示
 </process>

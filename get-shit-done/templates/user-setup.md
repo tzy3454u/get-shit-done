@@ -1,79 +1,79 @@
-# User Setup Template
+# ユーザーセットアップテンプレート
 
-Template for `.planning/phases/XX-name/{phase}-USER-SETUP.md` - human-required configuration that Claude cannot automate.
+`.planning/phases/XX-name/{phase}-USER-SETUP.md` 用テンプレート - Claudeが自動化できない人手による設定。
 
-**Purpose:** Document setup tasks that literally require human action - account creation, dashboard configuration, secret retrieval. Claude automates everything possible; this file captures only what remains.
+**目的:** 文字通り人手が必要なセットアップタスクを記録 - アカウント作成、ダッシュボード設定、シークレット取得。Claudeは可能なすべてを自動化します。このファイルは残った作業のみを記録します。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
-# Phase {X}: User Setup Required
+# Phase {X}: ユーザーセットアップが必要
 
-**Generated:** [YYYY-MM-DD]
+**生成日:** [YYYY-MM-DD]
 **Phase:** {phase-name}
 **Status:** Incomplete
 
-Complete these items for the integration to function. Claude automated everything possible; these items require human access to external dashboards/accounts.
+以下の項目を完了してインテグレーションを機能させてください。Claudeは可能なすべてを自動化しました。これらの項目は外部ダッシュボード/アカウントへの人手によるアクセスが必要です。
 
-## Environment Variables
+## 環境変数
 
 | Status | Variable | Source | Add to |
 |--------|----------|--------|--------|
-| [ ] | `ENV_VAR_NAME` | [Service Dashboard → Path → To → Value] | `.env.local` |
-| [ ] | `ANOTHER_VAR` | [Service Dashboard → Path → To → Value] | `.env.local` |
+| [ ] | `ENV_VAR_NAME` | [サービスダッシュボード → パス → 値] | `.env.local` |
+| [ ] | `ANOTHER_VAR` | [サービスダッシュボード → パス → 値] | `.env.local` |
 
-## Account Setup
+## アカウントセットアップ
 
-[Only if new account creation is required]
+[新しいアカウント作成が必要な場合のみ]
 
-- [ ] **Create [Service] account**
-  - URL: [signup URL]
-  - Skip if: Already have account
+- [ ] **[サービス]アカウントを作成**
+  - URL: [サインアップURL]
+  - スキップ条件: 既にアカウントがある場合
 
-## Dashboard Configuration
+## ダッシュボード設定
 
-[Only if dashboard configuration is required]
+[ダッシュボード設定が必要な場合のみ]
 
-- [ ] **[Configuration task]**
-  - Location: [Service Dashboard → Path → To → Setting]
-  - Set to: [Required value or configuration]
-  - Notes: [Any important details]
+- [ ] **[設定タスク]**
+  - 場所: [サービスダッシュボード → パス → 設定]
+  - 設定値: [必要な値や設定]
+  - 備考: [重要な詳細]
 
-## Verification
+## 検証
 
-After completing setup, verify with:
+セットアップ完了後、以下で検証:
 
 ```bash
-# [Verification commands]
+# [検証コマンド]
 ```
 
-Expected results:
-- [What success looks like]
+期待される結果:
+- [成功した場合の表示]
 
 ---
 
-**Once all items complete:** Mark status as "Complete" at top of file.
+**すべての項目が完了したら:** ファイル先頭のステータスを "Complete" に変更してください。
 ```
 
 ---
 
-## When to Generate
+## 生成タイミング
 
-Generate `{phase}-USER-SETUP.md` when plan frontmatter contains `user_setup` field.
+プランのフロントマターに `user_setup` フィールドがある場合に `{phase}-USER-SETUP.md` を生成します。
 
-**Trigger:** `user_setup` exists in PLAN.md frontmatter and has items.
+**トリガー:** PLAN.mdフロントマターに `user_setup` が存在し項目がある場合。
 
-**Location:** Same directory as PLAN.md and SUMMARY.md.
+**場所:** PLAN.mdおよびSUMMARY.mdと同じディレクトリ。
 
-**Timing:** Generated during execute-plan.md after tasks complete, before SUMMARY.md creation.
+**タイミング:** execute-plan.md中、タスク完了後、SUMMARY.md作成前に生成。
 
 ---
 
-## Frontmatter Schema
+## フロントマタースキーマ
 
-In PLAN.md, `user_setup` declares human-required configuration:
+PLAN.mdで `user_setup` は人手による設定を宣言します:
 
 ```yaml
 user_setup:
@@ -95,38 +95,38 @@ user_setup:
 
 ---
 
-## The Automation-First Rule
+## オートメーションファーストルール
 
-**USER-SETUP.md contains ONLY what Claude literally cannot do.**
+**USER-SETUP.mdにはClaudeが文字通りできないことのみを含めます。**
 
-| Claude CAN Do (not in USER-SETUP) | Claude CANNOT Do (→ USER-SETUP) |
+| Claudeができること（USER-SETUPに含めない） | Claudeができないこと（→ USER-SETUP） |
 |-----------------------------------|--------------------------------|
-| `npm install stripe` | Create Stripe account |
-| Write webhook handler code | Get API keys from dashboard |
-| Create `.env.local` file structure | Copy actual secret values |
-| Run `stripe listen` | Authenticate Stripe CLI (browser OAuth) |
-| Configure package.json | Access external service dashboards |
-| Write any code | Retrieve secrets from third-party systems |
+| `npm install stripe` | Stripeアカウント作成 |
+| Webhookハンドラーコードの作成 | ダッシュボードからAPIキーを取得 |
+| `.env.local` ファイル構造の作成 | 実際のシークレット値のコピー |
+| `stripe listen` の実行 | Stripe CLIの認証（ブラウザOAuth） |
+| package.jsonの設定 | 外部サービスダッシュボードへのアクセス |
+| あらゆるコードの作成 | サードパーティシステムからのシークレット取得 |
 
-**The test:** "Does this require a human in a browser, accessing an account Claude doesn't have credentials for?"
-- Yes → USER-SETUP.md
-- No → Claude does it automatically
+**判定基準:** "これはブラウザで人間が、Claudeが認証情報を持たないアカウントにアクセスする必要があるか？"
+- はい → USER-SETUP.md
+- いいえ → Claudeが自動的に実行
 
 ---
 
-## Service-Specific Examples
+## サービス固有の例
 
 <stripe_example>
 ```markdown
-# Phase 10: User Setup Required
+# Phase 10: ユーザーセットアップが必要
 
-**Generated:** 2025-01-14
+**生成日:** 2025-01-14
 **Phase:** 10-monetization
 **Status:** Incomplete
 
-Complete these items for Stripe integration to function.
+Stripeインテグレーションを機能させるために以下の項目を完了してください。
 
-## Environment Variables
+## 環境変数
 
 | Status | Variable | Source | Add to |
 |--------|----------|--------|--------|
@@ -134,74 +134,74 @@ Complete these items for Stripe integration to function.
 | [ ] | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe Dashboard → Developers → API keys → Publishable key | `.env.local` |
 | [ ] | `STRIPE_WEBHOOK_SECRET` | Stripe Dashboard → Developers → Webhooks → [endpoint] → Signing secret | `.env.local` |
 
-## Account Setup
+## アカウントセットアップ
 
-- [ ] **Create Stripe account** (if needed)
+- [ ] **Stripeアカウントを作成**（必要な場合）
   - URL: https://dashboard.stripe.com/register
-  - Skip if: Already have Stripe account
+  - スキップ条件: 既にStripeアカウントがある場合
 
-## Dashboard Configuration
+## ダッシュボード設定
 
-- [ ] **Create webhook endpoint**
-  - Location: Stripe Dashboard → Developers → Webhooks → Add endpoint
-  - Endpoint URL: `https://[your-domain]/api/webhooks/stripe`
-  - Events to send:
+- [ ] **Webhookエンドポイントを作成**
+  - 場所: Stripe Dashboard → Developers → Webhooks → Add endpoint
+  - エンドポイントURL: `https://[your-domain]/api/webhooks/stripe`
+  - 送信するイベント:
     - `checkout.session.completed`
     - `customer.subscription.created`
     - `customer.subscription.updated`
     - `customer.subscription.deleted`
 
-- [ ] **Create products and prices** (if using subscription tiers)
-  - Location: Stripe Dashboard → Products → Add product
-  - Create each subscription tier
-  - Copy Price IDs to:
+- [ ] **商品と価格を作成**（サブスクリプションティアを使用する場合）
+  - 場所: Stripe Dashboard → Products → Add product
+  - 各サブスクリプションティアを作成
+  - 価格IDを以下にコピー:
     - `STRIPE_STARTER_PRICE_ID`
     - `STRIPE_PRO_PRICE_ID`
 
-## Local Development
+## ローカル開発
 
-For local webhook testing:
+ローカルWebhookテスト用:
 ```bash
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
-Use the webhook signing secret from CLI output (starts with `whsec_`).
+CLI出力のWebhook署名シークレット（`whsec_` で始まる）を使用してください。
 
-## Verification
+## 検証
 
-After completing setup:
+セットアップ完了後:
 
 ```bash
-# Check env vars are set
+# 環境変数の確認
 grep STRIPE .env.local
 
-# Verify build passes
+# ビルドの確認
 npm run build
 
-# Test webhook endpoint (should return 400 bad signature, not 500 crash)
+# Webhookエンドポイントのテスト（400 bad signatureが返れば正常、500 crashではない）
 curl -X POST http://localhost:3000/api/webhooks/stripe \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
 
-Expected: Build passes, webhook returns 400 (signature validation working).
+期待される結果: ビルド通過、Webhookが400を返す（署名バリデーションが機能）。
 
 ---
 
-**Once all items complete:** Mark status as "Complete" at top of file.
+**すべての項目が完了したら:** ファイル先頭のステータスを "Complete" に変更してください。
 ```
 </stripe_example>
 
 <supabase_example>
 ```markdown
-# Phase 2: User Setup Required
+# Phase 2: ユーザーセットアップが必要
 
-**Generated:** 2025-01-14
+**生成日:** 2025-01-14
 **Phase:** 02-authentication
 **Status:** Incomplete
 
-Complete these items for Supabase Auth to function.
+Supabase Authを機能させるために以下の項目を完了してください。
 
-## Environment Variables
+## 環境変数
 
 | Status | Variable | Source | Add to |
 |--------|----------|--------|--------|
@@ -209,86 +209,86 @@ Complete these items for Supabase Auth to function.
 | [ ] | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Dashboard → Settings → API → anon public | `.env.local` |
 | [ ] | `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard → Settings → API → service_role | `.env.local` |
 
-## Account Setup
+## アカウントセットアップ
 
-- [ ] **Create Supabase project**
+- [ ] **Supabaseプロジェクトを作成**
   - URL: https://supabase.com/dashboard/new
-  - Skip if: Already have project for this app
+  - スキップ条件: このアプリ用のプロジェクトが既にある場合
 
-## Dashboard Configuration
+## ダッシュボード設定
 
-- [ ] **Enable Email Auth**
-  - Location: Supabase Dashboard → Authentication → Providers
-  - Enable: Email provider
-  - Configure: Confirm email (on/off based on preference)
+- [ ] **メール認証を有効化**
+  - 場所: Supabase Dashboard → Authentication → Providers
+  - 有効化: メールプロバイダー
+  - 設定: メール確認（好みに応じてオン/オフ）
 
-- [ ] **Configure OAuth providers** (if using social login)
-  - Location: Supabase Dashboard → Authentication → Providers
-  - For Google: Add Client ID and Secret from Google Cloud Console
-  - For GitHub: Add Client ID and Secret from GitHub OAuth Apps
+- [ ] **OAuthプロバイダーを設定**（ソーシャルログインを使用する場合）
+  - 場所: Supabase Dashboard → Authentication → Providers
+  - Google: Google Cloud ConsoleからClient IDとSecretを追加
+  - GitHub: GitHub OAuth AppsからClient IDとSecretを追加
 
-## Verification
+## 検証
 
-After completing setup:
+セットアップ完了後:
 
 ```bash
-# Check env vars
+# 環境変数の確認
 grep SUPABASE .env.local
 
-# Verify connection (run in project directory)
+# 接続の確認（プロジェクトディレクトリで実行）
 npx supabase status
 ```
 
 ---
 
-**Once all items complete:** Mark status as "Complete" at top of file.
+**すべての項目が完了したら:** ファイル先頭のステータスを "Complete" に変更してください。
 ```
 </supabase_example>
 
 <sendgrid_example>
 ```markdown
-# Phase 5: User Setup Required
+# Phase 5: ユーザーセットアップが必要
 
-**Generated:** 2025-01-14
+**生成日:** 2025-01-14
 **Phase:** 05-notifications
 **Status:** Incomplete
 
-Complete these items for SendGrid email to function.
+SendGridメールを機能させるために以下の項目を完了してください。
 
-## Environment Variables
+## 環境変数
 
 | Status | Variable | Source | Add to |
 |--------|----------|--------|--------|
 | [ ] | `SENDGRID_API_KEY` | SendGrid Dashboard → Settings → API Keys → Create API Key | `.env.local` |
-| [ ] | `SENDGRID_FROM_EMAIL` | Your verified sender email address | `.env.local` |
+| [ ] | `SENDGRID_FROM_EMAIL` | 確認済みの送信者メールアドレス | `.env.local` |
 
-## Account Setup
+## アカウントセットアップ
 
-- [ ] **Create SendGrid account**
+- [ ] **SendGridアカウントを作成**
   - URL: https://signup.sendgrid.com/
-  - Skip if: Already have account
+  - スキップ条件: 既にアカウントがある場合
 
-## Dashboard Configuration
+## ダッシュボード設定
 
-- [ ] **Verify sender identity**
-  - Location: SendGrid Dashboard → Settings → Sender Authentication
-  - Option 1: Single Sender Verification (quick, for dev)
-  - Option 2: Domain Authentication (production)
+- [ ] **送信者IDを確認**
+  - 場所: SendGrid Dashboard → Settings → Sender Authentication
+  - オプション1: Single Sender Verification（簡易、開発用）
+  - オプション2: Domain Authentication（本番用）
 
-- [ ] **Create API Key**
-  - Location: SendGrid Dashboard → Settings → API Keys → Create API Key
-  - Permission: Restricted Access → Mail Send (Full Access)
-  - Copy key immediately (shown only once)
+- [ ] **APIキーを作成**
+  - 場所: SendGrid Dashboard → Settings → API Keys → Create API Key
+  - 権限: Restricted Access → Mail Send (Full Access)
+  - キーをすぐにコピー（一度だけ表示されます）
 
-## Verification
+## 検証
 
-After completing setup:
+セットアップ完了後:
 
 ```bash
-# Check env var
+# 環境変数の確認
 grep SENDGRID .env.local
 
-# Test email sending (replace with your test email)
+# メール送信テスト（テスト用メールアドレスに置き換え）
 curl -X POST http://localhost:3000/api/test-email \
   -H "Content-Type: application/json" \
   -d '{"to": "your@email.com"}'
@@ -296,16 +296,16 @@ curl -X POST http://localhost:3000/api/test-email \
 
 ---
 
-**Once all items complete:** Mark status as "Complete" at top of file.
+**すべての項目が完了したら:** ファイル先頭のステータスを "Complete" に変更してください。
 ```
 </sendgrid_example>
 
 ---
 
-## Guidelines
+## ガイドライン
 
-**Never include:** Actual secret values. Steps Claude can automate (package installs, code changes).
+**含めないもの:** 実際のシークレット値。Claudeが自動化できる手順（パッケージインストール、コード変更）。
 
-**Naming:** `{phase}-USER-SETUP.md` matches the phase number pattern.
-**Status tracking:** User marks checkboxes and updates status line when complete.
-**Searchability:** `grep -r "USER-SETUP" .planning/` finds all phases with user requirements.
+**命名規則:** `{phase}-USER-SETUP.md` はフェーズ番号パターンに一致。
+**ステータス追跡:** ユーザーがチェックボックスをマークし、完了時にステータス行を更新。
+**検索性:** `grep -r "USER-SETUP" .planning/` でユーザー要件があるすべてのフェーズを検索可能。

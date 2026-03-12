@@ -1,6 +1,6 @@
 ---
 name: gsd:set-profile
-description: Switch model profile for GSD agents (quality/balanced/budget)
+description: GSD エージェントのモデルプロファイルを切り替える（quality/balanced/budget）
 argument-hint: <profile>
 allowed-tools:
   - Read
@@ -9,13 +9,13 @@ allowed-tools:
 ---
 
 <objective>
-Switch the model profile used by GSD agents. Controls which Claude model each agent uses, balancing quality vs token spend.
+GSD エージェントが使用するモデルプロファイルを切り替える。各エージェントが使用する Claude モデルを制御し、品質とトークンコストのバランスを調整する。
 
-Routes to the set-profile workflow which handles:
-- Argument validation (quality/balanced/budget)
-- Config file creation if missing
-- Profile update in config.json
-- Confirmation with model table display
+set-profile ワークフローにルーティングし、以下を処理する：
+- 引数のバリデーション（quality/balanced/budget）
+- 設定ファイルが存在しない場合の作成
+- config.json のプロファイル更新
+- モデルテーブル表示による確認
 </objective>
 
 <execution_context>
@@ -23,12 +23,12 @@ Routes to the set-profile workflow which handles:
 </execution_context>
 
 <process>
-**Follow the set-profile workflow** from `@~/.claude/get-shit-done/workflows/set-profile.md`.
+`@~/.claude/get-shit-done/workflows/set-profile.md` の **set-profile ワークフローに従うこと**。
 
-The workflow handles all logic including:
-1. Profile argument validation
-2. Config file ensuring
-3. Config reading and updating
-4. Model table generation from MODEL_PROFILES
-5. Confirmation display
+ワークフローは以下のすべてのロジックを処理する：
+1. プロファイル引数のバリデーション
+2. 設定ファイルの確認
+3. 設定の読み取りと更新
+4. MODEL_PROFILES からのモデルテーブル生成
+5. 確認表示
 </process>

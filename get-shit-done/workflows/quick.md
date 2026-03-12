@@ -1,86 +1,86 @@
 <purpose>
-Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking). Quick mode spawns gsd-planner (quick mode) + gsd-executor(s), tracks tasks in `.planning/quick/`, and updates STATE.md's "Quick Tasks Completed" table.
+GSDの保証（アトミックコミット、STATE.md追跡）を持つ小規模なアドホックタスクを実行する。クイックモードはgsd-planner（クイックモード）+ gsd-executor(s)を生成し、タスクを`.planning/quick/`で追跡し、STATE.mdの"Quick Tasks Completed"テーブルを更新する。
 
-With `--discuss` flag: lightweight discussion phase before planning. Surfaces assumptions, clarifies gray areas, captures decisions in CONTEXT.md so the planner treats them as locked.
+`--discuss`フラグ: 計画前の軽量ディスカッションフェーズ。前提を明らかにし、曖昧な点を明確にし、決定をCONTEXT.mdに記録してプランナーがそれを確定として扱うようにする。
 
-With `--full` flag: enables plan-checking (max 2 iterations) and post-execution verification for quality guarantees without full milestone ceremony.
+`--full`フラグ: フルマイルストーンの儀式なしに品質保証のための計画チェック（最大2回の反復）と実行後の検証を有効にする。
 
-Flags are composable: `--discuss --full` gives discussion + plan-checking + verification.
+フラグは組み合わせ可能: `--discuss --full`でディスカッション + 計画チェック + 検証が行われる。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されるすべてのファイルを読み取ること。
 </required_reading>
 
 <process>
-**Step 1: Parse arguments and get task description**
+**Step 1: 引数の解析とタスク説明の取得**
 
-Parse `$ARGUMENTS` for:
-- `--full` flag → store as `$FULL_MODE` (true/false)
-- `--discuss` flag → store as `$DISCUSS_MODE` (true/false)
-- Remaining text → use as `$DESCRIPTION` if non-empty
+`$ARGUMENTS`を以下についてパース:
+- `--full`フラグ → `$FULL_MODE`として保存（true/false）
+- `--discuss`フラグ → `$DISCUSS_MODE`として保存（true/false）
+- 残りのテキスト → 空でなければ`$DESCRIPTION`として使用
 
-If `$DESCRIPTION` is empty after parsing, prompt user interactively:
+パース後に`$DESCRIPTION`が空の場合、ユーザーに対話的に確認:
 
 ```
 AskUserQuestion(
-  header: "Quick Task",
-  question: "What do you want to do?",
+  header: "クイックタスク",
+  question: "何をしたいですか？",
   followUp: null
 )
 ```
 
-Store response as `$DESCRIPTION`.
+応答を`$DESCRIPTION`として保存。
 
-If still empty, re-prompt: "Please provide a task description."
+それでも空の場合、再確認: "タスクの説明を入力すること。"
 
-Display banner based on active flags:
+有効なフラグに基づいてバナーを表示:
 
-If `$DISCUSS_MODE` and `$FULL_MODE`:
+`$DISCUSS_MODE`かつ`$FULL_MODE`の場合:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► QUICK TASK (DISCUSS + FULL)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Discussion + plan checking + verification enabled
+◆ ディスカッション + 計画チェック + 検証が有効
 ```
 
-If `$DISCUSS_MODE` only:
+`$DISCUSS_MODE`のみの場合:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► QUICK TASK (DISCUSS)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Discussion phase enabled — surfacing gray areas before planning
+◆ ディスカッションフェーズが有効 — 計画前に曖昧な点を明確化
 ```
 
-If `$FULL_MODE` only:
+`$FULL_MODE`のみの場合:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► QUICK TASK (FULL MODE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Plan checking + verification enabled
+◆ 計画チェック + 検証が有効
 ```
 
 ---
 
-**Step 2: Initialize**
+**Step 2: 初期化**
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init quick "$DESCRIPTION")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Parse JSON for: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`.
+JSONをパース: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`。
 
-**If `roadmap_exists` is false:** Error — Quick mode requires an active project with ROADMAP.md. Run `/gsd:new-project` first.
+**`roadmap_exists`がfalseの場合:** エラー — クイックモードにはROADMAP.mdを持つアクティブなプロジェクトが必要。先に`/gsd:new-project`を実行すること。
 
-Quick tasks can run mid-phase - validation only checks ROADMAP.md exists, not phase status.
+クイックタスクはフェーズ途中でも実行可能 - バリデーションはROADMAP.mdの存在のみを確認し、フェーズの状態は確認しない。
 
 ---
 
-**Step 3: Create task directory**
+**Step 3: タスクディレクトリの作成**
 
 ```bash
 mkdir -p "${task_dir}"
@@ -88,99 +88,99 @@ mkdir -p "${task_dir}"
 
 ---
 
-**Step 4: Create quick task directory**
+**Step 4: クイックタスクディレクトリの作成**
 
-Create the directory for this quick task:
+このクイックタスクのディレクトリを作成:
 
 ```bash
 QUICK_DIR=".planning/quick/${next_num}-${slug}"
 mkdir -p "$QUICK_DIR"
 ```
 
-Report to user:
+ユーザーに報告:
 ```
-Creating quick task ${next_num}: ${DESCRIPTION}
-Directory: ${QUICK_DIR}
+クイックタスク ${next_num} を作成中: ${DESCRIPTION}
+ディレクトリ: ${QUICK_DIR}
 ```
 
-Store `$QUICK_DIR` for use in orchestration.
+オーケストレーションで使用するために`$QUICK_DIR`を保存。
 
 ---
 
-**Step 4.5: Discussion phase (only when `$DISCUSS_MODE`)**
+**Step 4.5: ディスカッションフェーズ（`$DISCUSS_MODE`の場合のみ）**
 
-Skip this step entirely if NOT `$DISCUSS_MODE`.
+`$DISCUSS_MODE`でない場合はこのステップを完全にスキップ。
 
-Display banner:
+バナーを表示:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► DISCUSSING QUICK TASK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Surfacing gray areas for: ${DESCRIPTION}
+◆ 曖昧な点を明確化中: ${DESCRIPTION}
 ```
 
-**4.5a. Identify gray areas**
+**4.5a. 曖昧な点の特定**
 
-Analyze `$DESCRIPTION` to identify 2-4 gray areas — implementation decisions that would change the outcome and that the user should weigh in on.
+`$DESCRIPTION`を分析して、2-4の曖昧な点を特定 — 結果を変える可能性がある実装上の決定でユーザーの意見が必要なもの。
 
-Use the domain-aware heuristic to generate phase-specific (not generic) gray areas:
-- Something users **SEE** → layout, density, interactions, states
-- Something users **CALL** → responses, errors, auth, versioning
-- Something users **RUN** → output format, flags, modes, error handling
-- Something users **READ** → structure, tone, depth, flow
-- Something being **ORGANIZED** → criteria, grouping, naming, exceptions
+ドメイン対応ヒューリスティックを使用して、フェーズ固有の（汎用的でない）曖昧な点を生成:
+- ユーザーが**見る**もの → レイアウト、密度、インタラクション、状態
+- ユーザーが**呼び出す**もの → レスポンス、エラー、認証、バージョニング
+- ユーザーが**実行する**もの → 出力形式、フラグ、モード、エラーハンドリング
+- ユーザーが**読む**もの → 構造、トーン、深さ、フロー
+- **整理される**もの → 基準、グループ化、命名、例外
 
-Each gray area should be a concrete decision point, not a vague category. Example: "Loading behavior" not "UX".
+各曖昧な点は具体的な決定ポイントであるべきで、漠然としたカテゴリではない。例: "UX"ではなく"読み込み時の動作"。
 
-**4.5b. Present gray areas**
+**4.5b. 曖昧な点の提示**
 
 ```
 AskUserQuestion(
-  header: "Gray Areas",
-  question: "Which areas need clarification before planning?",
+  header: "曖昧な点",
+  question: "計画前にどの領域を明確にする必要がありますか？",
   options: [
     { label: "${area_1}", description: "${why_it_matters_1}" },
     { label: "${area_2}", description: "${why_it_matters_2}" },
     { label: "${area_3}", description: "${why_it_matters_3}" },
-    { label: "All clear", description: "Skip discussion — I know what I want" }
+    { label: "すべて明確", description: "ディスカッションをスキップ — 必要なものはわかっている" }
   ],
   multiSelect: true
 )
 ```
 
-If user selects "All clear" → skip to Step 5 (no CONTEXT.md written).
+ユーザーが"すべて明確"を選択した場合 → Step 5にスキップ（CONTEXT.mdは書き込まない）。
 
-**4.5c. Discuss selected areas**
+**4.5c. 選択された領域のディスカッション**
 
-For each selected area, ask 1-2 focused questions via AskUserQuestion:
+選択された各領域について、AskUserQuestionで1-2の焦点を絞った質問をする:
 
 ```
 AskUserQuestion(
   header: "${area_name}",
-  question: "${specific_question_about_this_area}",
+  question: "${この領域に関する具体的な質問}",
   options: [
     { label: "${concrete_choice_1}", description: "${what_this_means}" },
     { label: "${concrete_choice_2}", description: "${what_this_means}" },
     { label: "${concrete_choice_3}", description: "${what_this_means}" },
-    { label: "You decide", description: "Claude's discretion" }
+    { label: "おまかせ", description: "Claudeの裁量" }
   ],
   multiSelect: false
 )
 ```
 
-Rules:
-- Options must be concrete choices, not abstract categories
-- Highlight recommended choice where you have a clear opinion
-- If user selects "Other" with freeform text, switch to plain text follow-up (per questioning.md freeform rule)
-- If user selects "You decide", capture as Claude's Discretion in CONTEXT.md
-- Max 2 questions per area — this is lightweight, not a deep dive
+ルール:
+- オプションは具体的な選択肢でなければならず、抽象的なカテゴリではない
+- 明確な意見がある場合は推奨される選択肢をハイライト
+- ユーザーが自由記述テキストで"その他"を選択した場合、プレーンテキストのフォローアップに切り替える（questioning.mdの自由記述ルールに従う）
+- ユーザーが"おまかせ"を選択した場合、CONTEXT.mdにClaudeの裁量として記録
+- 各領域で最大2つの質問 — これは軽量であり、深掘りではない
 
-Collect all decisions into `$DECISIONS`.
+すべての決定を`$DECISIONS`に収集。
 
-**4.5d. Write CONTEXT.md**
+**4.5d. CONTEXT.mdの書き込み**
 
-Write `${QUICK_DIR}/${next_num}-CONTEXT.md` using the standard context template structure:
+標準的なコンテキストテンプレート構造を使用して`${QUICK_DIR}/${next_num}-CONTEXT.md`を書き込む:
 
 ```markdown
 # Quick Task ${next_num}: ${DESCRIPTION} - Context
@@ -205,31 +205,31 @@ ${DESCRIPTION}
 - ${decision_from_discussion}
 
 ### Claude's Discretion
-${areas_where_user_said_you_decide_or_areas_not_discussed}
+${ユーザーがおまかせと言った領域、またはディスカッションされなかった領域}
 
 </decisions>
 
 <specifics>
 ## Specific Ideas
 
-${any_specific_references_or_examples_from_discussion}
+${ディスカッションからの具体的な参照や例}
 
-[If none: "No specific requirements — open to standard approaches"]
+[なし: "特定の要件なし — 標準的なアプローチで可"]
 
 </specifics>
 ```
 
-Note: Quick task CONTEXT.md omits `<code_context>` and `<deferred>` sections (no codebase scouting, no phase scope to defer to). Keep it lean.
+注: クイックタスクのCONTEXT.mdは`<code_context>`と`<deferred>`セクションを省略（コードベーススカウティングなし、フェーズスコープへの延期なし）。簡潔に保つ。
 
-Report: `Context captured: ${QUICK_DIR}/${next_num}-CONTEXT.md`
+報告: `コンテキストを記録: ${QUICK_DIR}/${next_num}-CONTEXT.md`
 
 ---
 
-**Step 5: Spawn planner (quick mode)**
+**Step 5: プランナーの生成（クイックモード）**
 
-**If `$FULL_MODE`:** Use `quick-full` mode with stricter constraints.
+**`$FULL_MODE`の場合:** より厳格な制約で`quick-full`モードを使用。
 
-**If NOT `$FULL_MODE`:** Use standard `quick` mode.
+**`$FULL_MODE`でない場合:** 標準の`quick`モードを使用。
 
 ```
 Task(
@@ -241,27 +241,27 @@ Task(
 **Description:** ${DESCRIPTION}
 
 <files_to_read>
-- .planning/STATE.md (Project State)
-- ./CLAUDE.md (if exists — follow project-specific guidelines)
-${DISCUSS_MODE ? '- ' + QUICK_DIR + '/' + next_num + '-CONTEXT.md (User decisions — locked, do not revisit)' : ''}
+- .planning/STATE.md (プロジェクト状態)
+- ./CLAUDE.md (存在する場合 — プロジェクト固有のガイドラインに従う)
+${DISCUSS_MODE ? '- ' + QUICK_DIR + '/' + next_num + '-CONTEXT.md (ユーザーの決定 — 確定済み、再検討しない)' : ''}
 </files_to_read>
 
-**Project skills:** Check .claude/skills/ or .agents/skills/ directory (if either exists) — read SKILL.md files, plans should account for project skill rules
+**Project skills:** .claude/skills/または.agents/skills/ディレクトリを確認（存在する場合） — SKILL.mdファイルを読み、計画はプロジェクトスキルのルールを考慮すべき
 
 </planning_context>
 
 <constraints>
-- Create a SINGLE plan with 1-3 focused tasks
-- Quick tasks should be atomic and self-contained
-- No research phase
-${FULL_MODE ? '- Target ~40% context usage (structured for verification)' : '- Target ~30% context usage (simple, focused)'}
-${FULL_MODE ? '- MUST generate `must_haves` in plan frontmatter (truths, artifacts, key_links)' : ''}
-${FULL_MODE ? '- Each task MUST have `files`, `action`, `verify`, `done` fields' : ''}
+- 1-3の焦点を絞ったタスクで単一の計画を作成
+- クイックタスクはアトミックで自己完結的であるべき
+- 調査フェーズなし
+${FULL_MODE ? '- コンテキスト使用量の約40%を目標（検証用に構造化）' : '- コンテキスト使用量の約30%を目標（シンプル、焦点を絞る）'}
+${FULL_MODE ? '- 計画のフロントマターに`must_haves`を生成すること必須（truths, artifacts, key_links）' : ''}
+${FULL_MODE ? '- 各タスクに`files`, `action`, `verify`, `done`フィールドが必須' : ''}
 </constraints>
 
 <output>
-Write plan to: ${QUICK_DIR}/${next_num}-PLAN.md
-Return: ## PLANNING COMPLETE with plan path
+計画の書き込み先: ${QUICK_DIR}/${next_num}-PLAN.md
+返却: ## PLANNING COMPLETEと計画パス
 </output>
 ",
   subagent_type="gsd-planner",
@@ -270,29 +270,29 @@ Return: ## PLANNING COMPLETE with plan path
 )
 ```
 
-After planner returns:
-1. Verify plan exists at `${QUICK_DIR}/${next_num}-PLAN.md`
-2. Extract plan count (typically 1 for quick tasks)
-3. Report: "Plan created: ${QUICK_DIR}/${next_num}-PLAN.md"
+プランナーが返った後:
+1. `${QUICK_DIR}/${next_num}-PLAN.md`に計画が存在することを確認
+2. 計画数を抽出（クイックタスクでは通常1）
+3. 報告: "計画を作成: ${QUICK_DIR}/${next_num}-PLAN.md"
 
-If plan not found, error: "Planner failed to create ${next_num}-PLAN.md"
+計画が見つからない場合、エラー: "プランナーが${next_num}-PLAN.mdの作成に失敗"
 
 ---
 
-**Step 5.5: Plan-checker loop (only when `$FULL_MODE`)**
+**Step 5.5: 計画チェッカーループ（`$FULL_MODE`の場合のみ）**
 
-Skip this step entirely if NOT `$FULL_MODE`.
+`$FULL_MODE`でない場合はこのステップを完全にスキップ。
 
-Display banner:
+バナーを表示:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► CHECKING PLAN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning plan checker...
+◆ プランチェッカーを生成中...
 ```
 
-Checker prompt:
+チェッカープロンプト:
 
 ```markdown
 <verification_context>
@@ -300,26 +300,26 @@ Checker prompt:
 **Task Description:** ${DESCRIPTION}
 
 <files_to_read>
-- ${QUICK_DIR}/${next_num}-PLAN.md (Plan to verify)
+- ${QUICK_DIR}/${next_num}-PLAN.md (検証する計画)
 </files_to_read>
 
-**Scope:** This is a quick task, not a full phase. Skip checks that require a ROADMAP phase goal.
+**Scope:** これはクイックタスクであり、フルフェーズではない。ROADMAPフェーズゴールが必要なチェックはスキップ。
 </verification_context>
 
 <check_dimensions>
-- Requirement coverage: Does the plan address the task description?
-- Task completeness: Do tasks have files, action, verify, done fields?
-- Key links: Are referenced files real?
-- Scope sanity: Is this appropriately sized for a quick task (1-3 tasks)?
-- must_haves derivation: Are must_haves traceable to the task description?
+- 要件カバレッジ: 計画はタスクの説明に対応しているか？
+- タスクの完全性: タスクにfiles, action, verify, doneフィールドがあるか？
+- キーリンク: 参照されているファイルは実在するか？
+- スコープの妥当性: クイックタスクとして適切なサイズか（1-3タスク）？
+- must_havesの導出: must_havesはタスク説明に遡及可能か？
 
-Skip: cross-plan deps (single plan), ROADMAP alignment
-${DISCUSS_MODE ? '- Context compliance: Does the plan honor locked decisions from CONTEXT.md?' : '- Skip: context compliance (no CONTEXT.md)'}
+スキップ: クロスプラン依存（単一計画）、ROADMAPとの整合性
+${DISCUSS_MODE ? '- コンテキスト準拠: 計画はCONTEXT.mdの確定された決定を遵守しているか？' : '- スキップ: コンテキスト準拠（CONTEXT.mdなし）'}
 </check_dimensions>
 
 <expected_output>
-- ## VERIFICATION PASSED — all checks pass
-- ## ISSUES FOUND — structured issue list
+- ## VERIFICATION PASSED — すべてのチェックが合格
+- ## ISSUES FOUND — 構造化された問題リスト
 </expected_output>
 ```
 
@@ -332,37 +332,37 @@ Task(
 )
 ```
 
-**Handle checker return:**
+**チェッカーの戻り値の処理:**
 
-- **`## VERIFICATION PASSED`:** Display confirmation, proceed to step 6.
-- **`## ISSUES FOUND`:** Display issues, check iteration count, enter revision loop.
+- **`## VERIFICATION PASSED`:** 確認を表示、Step 6に進む。
+- **`## ISSUES FOUND`:** 問題を表示、反復回数を確認、修正ループに入る。
 
-**Revision loop (max 2 iterations):**
+**修正ループ（最大2回の反復）:**
 
-Track `iteration_count` (starts at 1 after initial plan + check).
+`iteration_count`を追跡（初期計画 + チェック後に1から開始）。
 
-**If iteration_count < 2:**
+**iteration_count < 2の場合:**
 
-Display: `Sending back to planner for revision... (iteration ${N}/2)`
+表示: `修正のためプランナーに差し戻し中... (反復 ${N}/2)`
 
-Revision prompt:
+修正プロンプト:
 
 ```markdown
 <revision_context>
 **Mode:** quick-full (revision)
 
 <files_to_read>
-- ${QUICK_DIR}/${next_num}-PLAN.md (Existing plan)
+- ${QUICK_DIR}/${next_num}-PLAN.md (既存の計画)
 </files_to_read>
 
-**Checker issues:** ${structured_issues_from_checker}
+**チェッカーの問題:** ${structured_issues_from_checker}
 
 </revision_context>
 
 <instructions>
-Make targeted updates to address checker issues.
-Do NOT replan from scratch unless issues are fundamental.
-Return what changed.
+チェッカーの問題に対処するためのターゲットを絞った更新を行う。
+問題が根本的でない限り、ゼロから再計画しないこと。
+変更点を返すこと。
 </instructions>
 ```
 
@@ -375,37 +375,37 @@ Task(
 )
 ```
 
-After planner returns → spawn checker again, increment iteration_count.
+プランナーが返った後 → チェッカーを再度生成、iteration_countをインクリメント。
 
-**If iteration_count >= 2:**
+**iteration_count >= 2の場合:**
 
-Display: `Max iterations reached. ${N} issues remain:` + issue list
+表示: `最大反復回数に達した。${N}件の問題が残っている:` + 問題リスト
 
-Offer: 1) Force proceed, 2) Abort
+提示: 1) 強制続行, 2) 中止
 
 ---
 
-**Step 6: Spawn executor**
+**Step 6: エクゼキューターの生成**
 
-Spawn gsd-executor with plan reference:
+計画参照付きでgsd-executorを生成:
 
 ```
 Task(
   prompt="
-Execute quick task ${next_num}.
+クイックタスク ${next_num} を実行。
 
 <files_to_read>
-- ${QUICK_DIR}/${next_num}-PLAN.md (Plan)
-- .planning/STATE.md (Project state)
-- ./CLAUDE.md (Project instructions, if exists)
-- .claude/skills/ or .agents/skills/ (Project skills, if either exists — list skills, read SKILL.md for each, follow relevant rules during implementation)
+- ${QUICK_DIR}/${next_num}-PLAN.md (計画)
+- .planning/STATE.md (プロジェクト状態)
+- ./CLAUDE.md (プロジェクト指示、存在する場合)
+- .claude/skills/または.agents/skills/ (プロジェクトスキル、いずれかが存在する場合 — スキルを一覧し、各SKILL.mdを読み、実装中に関連するルールに従う)
 </files_to_read>
 
 <constraints>
-- Execute all tasks in the plan
-- Commit each task atomically
-- Create summary at: ${QUICK_DIR}/${next_num}-SUMMARY.md
-- Do NOT update ROADMAP.md (quick tasks are separate from planned phases)
+- 計画のすべてのタスクを実行
+- 各タスクをアトミックにコミット
+- サマリーを作成: ${QUICK_DIR}/${next_num}-SUMMARY.md
+- ROADMAP.mdを更新しないこと（クイックタスクは計画されたフェーズとは別）
 </constraints>
 ",
   subagent_type="gsd-executor",
@@ -414,77 +414,77 @@ Execute quick task ${next_num}.
 )
 ```
 
-After executor returns:
-1. Verify summary exists at `${QUICK_DIR}/${next_num}-SUMMARY.md`
-2. Extract commit hash from executor output
-3. Report completion status
+エクゼキューターが返った後:
+1. `${QUICK_DIR}/${next_num}-SUMMARY.md`にサマリーが存在することを確認
+2. エクゼキューターの出力からコミットハッシュを抽出
+3. 完了ステータスを報告
 
-**Known Claude Code bug (classifyHandoffIfNeeded):** If executor reports "failed" with error `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a real failure. Check if summary file exists and git log shows commits. If so, treat as successful.
+**既知のClaude Codeバグ (classifyHandoffIfNeeded):** エクゼキューターが`classifyHandoffIfNeeded is not defined`エラーで"failed"と報告した場合、これはClaude Codeのランタイムバグであり、実際の失敗ではない。サマリーファイルが存在し、git logにコミットが表示されるか確認。そうであれば成功として扱う。
 
-If summary not found, error: "Executor failed to create ${next_num}-SUMMARY.md"
+サマリーが見つからない場合、エラー: "エクゼキューターが${next_num}-SUMMARY.mdの作成に失敗"
 
-Note: For quick tasks producing multiple plans (rare), spawn executors in parallel waves per execute-phase patterns.
+注: 複数の計画を生成するクイックタスク（まれ）の場合、execute-phaseパターンに従ってエクゼキューターを並列ウェーブで生成。
 
 ---
 
-**Step 6.5: Verification (only when `$FULL_MODE`)**
+**Step 6.5: 検証（`$FULL_MODE`の場合のみ）**
 
-Skip this step entirely if NOT `$FULL_MODE`.
+`$FULL_MODE`でない場合はこのステップを完全にスキップ。
 
-Display banner:
+バナーを表示:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► VERIFYING RESULTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning verifier...
+◆ ベリファイアを生成中...
 ```
 
 ```
 Task(
-  prompt="Verify quick task goal achievement.
-Task directory: ${QUICK_DIR}
-Task goal: ${DESCRIPTION}
+  prompt="クイックタスクのゴール達成を検証。
+タスクディレクトリ: ${QUICK_DIR}
+タスクゴール: ${DESCRIPTION}
 
 <files_to_read>
-- ${QUICK_DIR}/${next_num}-PLAN.md (Plan)
+- ${QUICK_DIR}/${next_num}-PLAN.md (計画)
 </files_to_read>
 
-Check must_haves against actual codebase. Create VERIFICATION.md at ${QUICK_DIR}/${next_num}-VERIFICATION.md.",
+must_havesを実際のコードベースに対してチェック。${QUICK_DIR}/${next_num}-VERIFICATION.mdにVERIFICATION.mdを作成。",
   subagent_type="gsd-verifier",
   model="{verifier_model}",
   description="Verify: ${DESCRIPTION}"
 )
 ```
 
-Read verification status:
+検証ステータスを読み取る:
 ```bash
 grep "^status:" "${QUICK_DIR}/${next_num}-VERIFICATION.md" | cut -d: -f2 | tr -d ' '
 ```
 
-Store as `$VERIFICATION_STATUS`.
+`$VERIFICATION_STATUS`として保存。
 
-| Status | Action |
+| ステータス | アクション |
 |--------|--------|
-| `passed` | Store `$VERIFICATION_STATUS = "Verified"`, continue to step 7 |
-| `human_needed` | Display items needing manual check, store `$VERIFICATION_STATUS = "Needs Review"`, continue |
-| `gaps_found` | Display gap summary, offer: 1) Re-run executor to fix gaps, 2) Accept as-is. Store `$VERIFICATION_STATUS = "Gaps"` |
+| `passed` | `$VERIFICATION_STATUS = "Verified"`を保存、Step 7に続行 |
+| `human_needed` | 手動チェックが必要な項目を表示、`$VERIFICATION_STATUS = "Needs Review"`を保存、続行 |
+| `gaps_found` | ギャップサマリーを表示、提示: 1) ギャップ修正のためにエクゼキューターを再実行, 2) そのまま受け入れ。`$VERIFICATION_STATUS = "Gaps"`を保存 |
 
 ---
 
-**Step 7: Update STATE.md**
+**Step 7: STATE.mdの更新**
 
-Update STATE.md with quick task completion record.
+クイックタスクの完了記録でSTATE.mdを更新。
 
-**7a. Check if "Quick Tasks Completed" section exists:**
+**7a. "Quick Tasks Completed"セクションの存在確認:**
 
-Read STATE.md and check for `### Quick Tasks Completed` section.
+STATE.mdを読み取り、`### Quick Tasks Completed`セクションを確認。
 
-**7b. If section doesn't exist, create it:**
+**7b. セクションが存在しない場合、作成:**
 
-Insert after `### Blockers/Concerns` section:
+`### Blockers/Concerns`セクションの後に挿入:
 
-**If `$FULL_MODE`:**
+**`$FULL_MODE`の場合:**
 ```markdown
 ### Quick Tasks Completed
 
@@ -492,7 +492,7 @@ Insert after `### Blockers/Concerns` section:
 |---|-------------|------|--------|--------|-----------|
 ```
 
-**If NOT `$FULL_MODE`:**
+**`$FULL_MODE`でない場合:**
 ```markdown
 ### Quick Tasks Completed
 
@@ -500,102 +500,103 @@ Insert after `### Blockers/Concerns` section:
 |---|-------------|------|--------|-----------|
 ```
 
-**Note:** If the table already exists, match its existing column format. If adding `--full` to a project that already has quick tasks without a Status column, add the Status column to the header and separator rows, and leave Status empty for the new row's predecessors.
+**注:** テーブルが既に存在する場合、既存のカラム形式に合わせる。Statusカラムのないクイックタスクが既にあるプロジェクトに`--full`を追加する場合、ヘッダー行とセパレーター行にStatusカラムを追加し、新しい行の前の既存行のStatusは空のままにする。
 
-**7c. Append new row to table:**
+**7c. テーブルに新しい行を追記:**
 
-Use `date` from init:
+initからの`date`を使用:
 
-**If `$FULL_MODE` (or table has Status column):**
+**`$FULL_MODE`の場合（またはテーブルにStatusカラムがある場合）:**
 ```markdown
 | ${next_num} | ${DESCRIPTION} | ${date} | ${commit_hash} | ${VERIFICATION_STATUS} | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
 ```
 
-**If NOT `$FULL_MODE` (and table has no Status column):**
+**`$FULL_MODE`でない場合（かつテーブルにStatusカラムがない場合）:**
 ```markdown
 | ${next_num} | ${DESCRIPTION} | ${date} | ${commit_hash} | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
 ```
 
-**7d. Update "Last activity" line:**
+**7d. "Last activity"行の更新:**
 
-Use `date` from init:
+initからの`date`を使用:
 ```
 Last activity: ${date} - Completed quick task ${next_num}: ${DESCRIPTION}
 ```
 
-Use Edit tool to make these changes atomically
+Editツールを使用してこれらの変更をアトミックに行う
 
 ---
 
-**Step 8: Final commit and completion**
+**Step 8: 最終コミットと完了**
 
-Stage and commit quick task artifacts:
+クイックタスクの成果物をステージングしてコミット:
 
-Build file list:
+ファイルリストを構築:
 - `${QUICK_DIR}/${next_num}-PLAN.md`
 - `${QUICK_DIR}/${next_num}-SUMMARY.md`
 - `.planning/STATE.md`
-- If `$DISCUSS_MODE` and context file exists: `${QUICK_DIR}/${next_num}-CONTEXT.md`
-- If `$FULL_MODE` and verification file exists: `${QUICK_DIR}/${next_num}-VERIFICATION.md`
+- `$DISCUSS_MODE`でコンテキストファイルが存在する場合: `${QUICK_DIR}/${next_num}-CONTEXT.md`
+- `$FULL_MODE`で検証ファイルが存在する場合: `${QUICK_DIR}/${next_num}-VERIFICATION.md`
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(quick-${next_num}): ${DESCRIPTION}" --files ${file_list}
 ```
 
-Get final commit hash:
+最終コミットハッシュを取得:
 ```bash
 commit_hash=$(git rev-parse --short HEAD)
 ```
 
-Display completion output:
+完了出力を表示:
 
-**If `$FULL_MODE`:**
+**`$FULL_MODE`の場合:**
 ```
 ---
 
 GSD > QUICK TASK COMPLETE (FULL MODE)
 
-Quick Task ${next_num}: ${DESCRIPTION}
+クイックタスク ${next_num}: ${DESCRIPTION}
 
-Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
-Verification: ${QUICK_DIR}/${next_num}-VERIFICATION.md (${VERIFICATION_STATUS})
-Commit: ${commit_hash}
+サマリー: ${QUICK_DIR}/${next_num}-SUMMARY.md
+検証: ${QUICK_DIR}/${next_num}-VERIFICATION.md (${VERIFICATION_STATUS})
+コミット: ${commit_hash}
 
 ---
 
-Ready for next task: /gsd:quick
+次のタスクの準備完了: /gsd:quick
 ```
 
-**If NOT `$FULL_MODE`:**
+**`$FULL_MODE`でない場合:**
 ```
 ---
 
 GSD > QUICK TASK COMPLETE
 
-Quick Task ${next_num}: ${DESCRIPTION}
+クイックタスク ${next_num}: ${DESCRIPTION}
 
-Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
-Commit: ${commit_hash}
+サマリー: ${QUICK_DIR}/${next_num}-SUMMARY.md
+コミット: ${commit_hash}
 
 ---
 
-Ready for next task: /gsd:quick
+次のタスクの準備完了: /gsd:quick
 ```
 
 </process>
 
 <success_criteria>
-- [ ] ROADMAP.md validation passes
-- [ ] User provides task description
-- [ ] `--full` and `--discuss` flags parsed from arguments when present
-- [ ] Slug generated (lowercase, hyphens, max 40 chars)
-- [ ] Next number calculated (001, 002, 003...)
-- [ ] Directory created at `.planning/quick/NNN-slug/`
-- [ ] (--discuss) Gray areas identified and presented, decisions captured in `${next_num}-CONTEXT.md`
-- [ ] `${next_num}-PLAN.md` created by planner (honors CONTEXT.md decisions when --discuss)
-- [ ] (--full) Plan checker validates plan, revision loop capped at 2
-- [ ] `${next_num}-SUMMARY.md` created by executor
-- [ ] (--full) `${next_num}-VERIFICATION.md` created by verifier
-- [ ] STATE.md updated with quick task row (Status column when --full)
-- [ ] Artifacts committed
+- [ ] ROADMAP.mdのバリデーションが合格
+- [ ] ユーザーがタスクの説明を提供
+- [ ] 引数に存在する場合、`--full`と`--discuss`フラグをパース
+- [ ] スラグを生成（小文字、ハイフン、最大40文字）
+- [ ] 次の番号を計算（001, 002, 003...）
+- [ ] `.planning/quick/NNN-slug/`にディレクトリを作成
+- [ ] (--discuss) 曖昧な点を特定して提示、決定を`${next_num}-CONTEXT.md`に記録
+- [ ] プランナーが`${next_num}-PLAN.md`を作成（--discussの場合はCONTEXT.mdの決定を遵守）
+- [ ] (--full) プランチェッカーが計画を検証、修正ループは最大2回
+- [ ] エクゼキューターが`${next_num}-SUMMARY.md`を作成
+- [ ] (--full) ベリファイアが`${next_num}-VERIFICATION.md`を作成
+- [ ] STATE.mdにクイックタスク行を更新（--fullの場合はStatusカラム）
+- [ ] 成果物をコミット
 </success_criteria>
+

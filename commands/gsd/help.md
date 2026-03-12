@@ -1,15 +1,15 @@
 ---
 name: gsd:help
-description: Show available GSD commands and usage guide
+description: 利用可能なGSDコマンドと使い方ガイドを表示
 ---
 <objective>
-Display the complete GSD command reference.
+完全なGSDコマンドリファレンスを表示する。
 
-Output ONLY the reference content below. Do NOT add:
-- Project-specific analysis
-- Git status or file context
-- Next-step suggestions
-- Any commentary beyond the reference
+以下の内容のみを出力すること。以下を追加しないこと:
+- プロジェクト固有の分析
+- Gitステータスやファイルコンテキスト
+- 次のステップの提案
+- リファレンス以外のコメント
 </objective>
 
 <execution_context>
@@ -17,6 +17,7 @@ Output ONLY the reference content below. Do NOT add:
 </execution_context>
 
 <process>
-Output the complete GSD command reference from @~/.claude/get-shit-done/workflows/help.md.
-Display the reference content directly — no additions or modifications.
+@~/.claude/get-shit-done/workflows/help.md の完全なGSDコマンドリファレンスを出力する。
+リファレンスの内容をそのまま表示すること — 追加や変更はしないこと。
 </process>
+

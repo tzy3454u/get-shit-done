@@ -1,50 +1,50 @@
-# Testing Patterns Template
+# テストパターンテンプレート
 
-Template for `.planning/codebase/TESTING.md` - captures test framework and patterns.
+`.planning/codebase/TESTING.md` 用テンプレート - テストフレームワークとパターンを記録します。
 
-**Purpose:** Document how tests are written and run. Guide for adding tests that match existing patterns.
+**目的:** テストの書き方と実行方法を文書化します。既存のパターンに合ったテストを追加するためのガイド。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
-# Testing Patterns
+# テストパターン
 
-**Analysis Date:** [YYYY-MM-DD]
+**分析日:** [YYYY-MM-DD]
 
-## Test Framework
+## テストフレームワーク
 
-**Runner:**
-- [Framework: e.g., "Jest 29.x", "Vitest 1.x"]
-- [Config: e.g., "jest.config.js in project root"]
+**ランナー:**
+- [フレームワーク: 例: "Jest 29.x", "Vitest 1.x"]
+- [設定: 例: "プロジェクトルートのjest.config.js"]
 
-**Assertion Library:**
-- [Library: e.g., "built-in expect", "chai"]
-- [Matchers: e.g., "toBe, toEqual, toThrow"]
+**アサーションライブラリ:**
+- [ライブラリ: 例: "組み込みexpect", "chai"]
+- [マッチャー: 例: "toBe, toEqual, toThrow"]
 
-**Run Commands:**
+**実行コマンド:**
 ```bash
-[e.g., "npm test" or "npm run test"]              # Run all tests
-[e.g., "npm test -- --watch"]                     # Watch mode
-[e.g., "npm test -- path/to/file.test.ts"]       # Single file
-[e.g., "npm run test:coverage"]                   # Coverage report
+[例: "npm test"または"npm run test"]              # すべてのテストを実行
+[例: "npm test -- --watch"]                       # ウォッチモード
+[例: "npm test -- path/to/file.test.ts"]          # 単一ファイル
+[例: "npm run test:coverage"]                     # カバレッジレポート
 ```
 
-## Test File Organization
+## テストファイルの構成
 
-**Location:**
-- [Pattern: e.g., "*.test.ts alongside source files"]
-- [Alternative: e.g., "__tests__/ directory" or "separate tests/ tree"]
+**場所:**
+- [パターン: 例: "ソースファイルと並んで*.test.ts"]
+- [代替: 例: "__tests__/ディレクトリ"または"別のtests/ツリー"]
 
-**Naming:**
-- [Unit tests: e.g., "module-name.test.ts"]
-- [Integration: e.g., "feature-name.integration.test.ts"]
-- [E2E: e.g., "user-flow.e2e.test.ts"]
+**命名:**
+- [ユニットテスト: 例: "module-name.test.ts"]
+- [統合テスト: 例: "feature-name.integration.test.ts"]
+- [E2E: 例: "user-flow.e2e.test.ts"]
 
-**Structure:**
+**構造:**
 ```
-[Show actual directory pattern, e.g.:
+[実際のディレクトリパターンを表示、例:
 src/
   lib/
     utils.ts
@@ -55,11 +55,11 @@ src/
 ]
 ```
 
-## Test Structure
+## テスト構造
 
-**Suite Organization:**
+**スイートの構成:**
 ```typescript
-[Show actual pattern used, e.g.:
+[実際に使用されているパターンを表示、例:
 
 describe('ModuleName', () => {
   describe('functionName', () => {
@@ -70,55 +70,55 @@ describe('ModuleName', () => {
     });
 
     it('should handle error case', () => {
-      // test code
+      // テストコード
     });
   });
 });
 ]
 ```
 
-**Patterns:**
-- [Setup: e.g., "beforeEach for shared setup, avoid beforeAll"]
-- [Teardown: e.g., "afterEach to clean up, restore mocks"]
-- [Structure: e.g., "arrange/act/assert pattern required"]
+**パターン:**
+- [セットアップ: 例: "共有セットアップにbeforeEach、beforeAllは避ける"]
+- [ティアダウン: 例: "クリーンアップとモック復元にafterEach"]
+- [構造: 例: "arrange/act/assertパターン必須"]
 
-## Mocking
+## モッキング
 
-**Framework:**
-- [Tool: e.g., "Jest built-in mocking", "Vitest vi", "Sinon"]
-- [Import mocking: e.g., "vi.mock() at top of file"]
+**フレームワーク:**
+- [ツール: 例: "Jest組み込みモッキング", "Vitest vi", "Sinon"]
+- [インポートモッキング: 例: "ファイル先頭でvi.mock()"]
 
-**Patterns:**
+**パターン:**
 ```typescript
-[Show actual mocking pattern, e.g.:
+[実際のモッキングパターンを表示、例:
 
-// Mock external dependency
+// 外部依存関係のモック
 vi.mock('./external-service', () => ({
   fetchData: vi.fn()
 }));
 
-// Mock in test
+// テスト内でのモック
 const mockFetch = vi.mocked(fetchData);
 mockFetch.mockResolvedValue({ data: 'test' });
 ]
 ```
 
-**What to Mock:**
-- [e.g., "External APIs, file system, database"]
-- [e.g., "Time/dates (use vi.useFakeTimers)"]
-- [e.g., "Network calls (use mock fetch)"]
+**モックすべきもの:**
+- [例: "外部API、ファイルシステム、データベース"]
+- [例: "時間/日付（vi.useFakeTimersを使用）"]
+- [例: "ネットワーク呼び出し（モックfetchを使用）"]
 
-**What NOT to Mock:**
-- [e.g., "Pure functions, utilities"]
-- [e.g., "Internal business logic"]
+**モックすべきでないもの:**
+- [例: "純粋関数、ユーティリティ"]
+- [例: "内部ビジネスロジック"]
 
-## Fixtures and Factories
+## フィクスチャとファクトリ
 
-**Test Data:**
+**テストデータ:**
 ```typescript
-[Show pattern for creating test data, e.g.:
+[テストデータ作成パターンを表示、例:
 
-// Factory pattern
+// ファクトリパターン
 function createTestUser(overrides?: Partial<User>): User {
   return {
     id: 'test-id',
@@ -128,54 +128,54 @@ function createTestUser(overrides?: Partial<User>): User {
   };
 }
 
-// Fixture file
+// フィクスチャファイル
 // tests/fixtures/users.ts
 export const mockUsers = [/* ... */];
 ]
 ```
 
-**Location:**
-- [e.g., "tests/fixtures/ for shared fixtures"]
-- [e.g., "factory functions in test file or tests/factories/"]
+**場所:**
+- [例: "共有フィクスチャはtests/fixtures/"]
+- [例: "ファクトリ関数はテストファイルまたはtests/factories/内"]
 
-## Coverage
+## カバレッジ
 
-**Requirements:**
-- [Target: e.g., "80% line coverage", "no specific target"]
-- [Enforcement: e.g., "CI blocks <80%", "coverage for awareness only"]
+**要件:**
+- [目標: 例: "80%行カバレッジ", "特定の目標なし"]
+- [施行: 例: "CIが80%未満でブロック", "認識のためのカバレッジのみ"]
 
-**Configuration:**
-- [Tool: e.g., "built-in coverage via --coverage flag"]
-- [Exclusions: e.g., "exclude *.test.ts, config files"]
+**設定:**
+- [ツール: 例: "--coverageフラグによる組み込みカバレッジ"]
+- [除外: 例: "*.test.ts、設定ファイルを除外"]
 
-**View Coverage:**
+**カバレッジの確認:**
 ```bash
-[e.g., "npm run test:coverage"]
-[e.g., "open coverage/index.html"]
+[例: "npm run test:coverage"]
+[例: "open coverage/index.html"]
 ```
 
-## Test Types
+## テストの種類
 
-**Unit Tests:**
-- [Scope: e.g., "test single function/class in isolation"]
-- [Mocking: e.g., "mock all external dependencies"]
-- [Speed: e.g., "must run in <1s per test"]
+**ユニットテスト:**
+- [スコープ: 例: "単一の関数/クラスを分離してテスト"]
+- [モッキング: 例: "すべての外部依存関係をモック"]
+- [速度: 例: "テストごとに1秒未満で実行必須"]
 
-**Integration Tests:**
-- [Scope: e.g., "test multiple modules together"]
-- [Mocking: e.g., "mock external services, use real internal modules"]
-- [Setup: e.g., "use test database, seed data"]
+**統合テスト:**
+- [スコープ: 例: "複数のモジュールを組み合わせてテスト"]
+- [モッキング: 例: "外部サービスをモック、内部モジュールは実物を使用"]
+- [セットアップ: 例: "テストデータベースを使用、データをシード"]
 
-**E2E Tests:**
-- [Framework: e.g., "Playwright for E2E"]
-- [Scope: e.g., "test full user flows"]
-- [Location: e.g., "e2e/ directory separate from unit tests"]
+**E2Eテスト:**
+- [フレームワーク: 例: "E2E用Playwright"]
+- [スコープ: 例: "完全なユーザーフローをテスト"]
+- [場所: 例: "ユニットテストとは別のe2e/ディレクトリ"]
 
-## Common Patterns
+## 一般的なパターン
 
-**Async Testing:**
+**非同期テスト:**
 ```typescript
-[Show pattern, e.g.:
+[パターンを表示、例:
 
 it('should handle async operation', async () => {
   const result = await asyncFunction();
@@ -184,66 +184,66 @@ it('should handle async operation', async () => {
 ]
 ```
 
-**Error Testing:**
+**エラーテスト:**
 ```typescript
-[Show pattern, e.g.:
+[パターンを表示、例:
 
 it('should throw on invalid input', () => {
   expect(() => functionCall()).toThrow('error message');
 });
 
-// Async error
+// 非同期エラー
 it('should reject on failure', async () => {
   await expect(asyncCall()).rejects.toThrow('error message');
 });
 ]
 ```
 
-**Snapshot Testing:**
-- [Usage: e.g., "for React components only" or "not used"]
-- [Location: e.g., "__snapshots__/ directory"]
+**スナップショットテスト:**
+- [使用法: 例: "Reactコンポーネントのみ"または"使用していない"]
+- [場所: 例: "__snapshots__/ディレクトリ"]
 
 ---
 
-*Testing analysis: [date]*
-*Update when test patterns change*
+*テスト分析: [日付]*
+*テストパターンが変更された際に更新*
 ```
 
 <good_examples>
 ```markdown
-# Testing Patterns
+# テストパターン
 
-**Analysis Date:** 2025-01-20
+**分析日:** 2025-01-20
 
-## Test Framework
+## テストフレームワーク
 
-**Runner:**
+**ランナー:**
 - Vitest 1.0.4
-- Config: vitest.config.ts in project root
+- 設定: プロジェクトルートのvitest.config.ts
 
-**Assertion Library:**
-- Vitest built-in expect
-- Matchers: toBe, toEqual, toThrow, toMatchObject
+**アサーションライブラリ:**
+- Vitest組み込みexpect
+- マッチャー: toBe, toEqual, toThrow, toMatchObject
 
-**Run Commands:**
+**実行コマンド:**
 ```bash
-npm test                              # Run all tests
-npm test -- --watch                   # Watch mode
-npm test -- path/to/file.test.ts     # Single file
-npm run test:coverage                 # Coverage report
+npm test                              # すべてのテストを実行
+npm test -- --watch                   # ウォッチモード
+npm test -- path/to/file.test.ts     # 単一ファイル
+npm run test:coverage                 # カバレッジレポート
 ```
 
-## Test File Organization
+## テストファイルの構成
 
-**Location:**
-- *.test.ts alongside source files
-- No separate tests/ directory
+**場所:**
+- ソースファイルと並んで*.test.ts
+- 別のtests/ディレクトリなし
 
-**Naming:**
-- unit-name.test.ts for all tests
-- No distinction between unit/integration in filename
+**命名:**
+- すべてのテストにunit-name.test.ts
+- ファイル名でユニット/統合の区別なし
 
-**Structure:**
+**構造:**
 ```
 src/
   lib/
@@ -254,19 +254,19 @@ src/
     install-service.test.ts
   bin/
     install.ts
-    (no test - integration tested via CLI)
+    （テストなし - CLI経由の統合テスト）
 ```
 
-## Test Structure
+## テスト構造
 
-**Suite Organization:**
+**スイートの構成:**
 ```typescript
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 describe('ModuleName', () => {
   describe('functionName', () => {
     beforeEach(() => {
-      // reset state
+      // 状態をリセット
     });
 
     it('should handle valid input', () => {
@@ -287,24 +287,24 @@ describe('ModuleName', () => {
 });
 ```
 
-**Patterns:**
-- Use beforeEach for per-test setup, avoid beforeAll
-- Use afterEach to restore mocks: vi.restoreAllMocks()
-- Explicit arrange/act/assert comments in complex tests
-- One assertion focus per test (but multiple expects OK)
+**パターン:**
+- テストごとのセットアップにbeforeEachを使用、beforeAllは避ける
+- モック復元にafterEachを使用: vi.restoreAllMocks()
+- 複雑なテストでは明示的なarrange/act/assertコメント
+- テストごとに1つのアサーションフォーカス（複数のexpectは可）
 
-## Mocking
+## モッキング
 
-**Framework:**
-- Vitest built-in mocking (vi)
-- Module mocking via vi.mock() at top of test file
+**フレームワーク:**
+- Vitest組み込みモッキング（vi）
+- テストファイル先頭でvi.mock()によるモジュールモッキング
 
-**Patterns:**
+**パターン:**
 ```typescript
 import { vi } from 'vitest';
 import { externalFunction } from './external';
 
-// Mock module
+// モジュールをモック
 vi.mock('./external', () => ({
   externalFunction: vi.fn()
 }));
@@ -314,29 +314,29 @@ describe('test suite', () => {
     const mockFn = vi.mocked(externalFunction);
     mockFn.mockReturnValue('mocked result');
 
-    // test code using mocked function
+    // モックされた関数を使用するテストコード
 
     expect(mockFn).toHaveBeenCalledWith('expected arg');
   });
 });
 ```
 
-**What to Mock:**
-- File system operations (fs-extra)
-- Child process execution (child_process.exec)
-- External API calls
-- Environment variables (process.env)
+**モックすべきもの:**
+- ファイルシステム操作（fs-extra）
+- 子プロセス実行（child_process.exec）
+- 外部APIコール
+- 環境変数（process.env）
 
-**What NOT to Mock:**
-- Internal pure functions
-- Simple utilities (string manipulation, array helpers)
-- TypeScript types
+**モックすべきでないもの:**
+- 内部の純粋関数
+- シンプルなユーティリティ（文字列操作、配列ヘルパー）
+- TypeScriptの型
 
-## Fixtures and Factories
+## フィクスチャとファクトリ
 
-**Test Data:**
+**テストデータ:**
 ```typescript
-// Factory functions in test file
+// テストファイル内のファクトリ関数
 function createTestConfig(overrides?: Partial<Config>): Config {
   return {
     targetDir: '/tmp/test',
@@ -345,7 +345,7 @@ function createTestConfig(overrides?: Partial<Config>): Config {
   };
 }
 
-// Shared fixtures in tests/fixtures/
+// tests/fixtures/内の共有フィクスチャ
 // tests/fixtures/sample-command.md
 export const sampleCommand = `---
 description: Test command
@@ -353,48 +353,48 @@ description: Test command
 Content here`;
 ```
 
-**Location:**
-- Factory functions: define in test file near usage
-- Shared fixtures: tests/fixtures/ (for multi-file test data)
-- Mock data: inline in test when simple, factory when complex
+**場所:**
+- ファクトリ関数: 使用箇所近くのテストファイル内で定義
+- 共有フィクスチャ: tests/fixtures/（複数ファイルのテストデータ用）
+- モックデータ: シンプルな場合はテスト内にインライン、複雑な場合はファクトリ
 
-## Coverage
+## カバレッジ
 
-**Requirements:**
-- No enforced coverage target
-- Coverage tracked for awareness
-- Focus on critical paths (parsers, service logic)
+**要件:**
+- 施行されるカバレッジ目標なし
+- 認識のためにカバレッジを追跡
+- クリティカルパスに焦点（パーサー、サービスロジック）
 
-**Configuration:**
-- Vitest coverage via c8 (built-in)
-- Excludes: *.test.ts, bin/install.ts, config files
+**設定:**
+- c8経由のVitestカバレッジ（組み込み）
+- 除外: *.test.ts, bin/install.ts, 設定ファイル
 
-**View Coverage:**
+**カバレッジの確認:**
 ```bash
 npm run test:coverage
 open coverage/index.html
 ```
 
-## Test Types
+## テストの種類
 
-**Unit Tests:**
-- Test single function in isolation
-- Mock all external dependencies (fs, child_process)
-- Fast: each test <100ms
-- Examples: parser.test.ts, validator.test.ts
+**ユニットテスト:**
+- 単一の関数を分離してテスト
+- すべての外部依存関係をモック（fs, child_process）
+- 高速: 各テスト100ms未満
+- 例: parser.test.ts, validator.test.ts
 
-**Integration Tests:**
-- Test multiple modules together
-- Mock only external boundaries (file system, process)
-- Examples: install-service.test.ts (tests service + parser)
+**統合テスト:**
+- 複数のモジュールを組み合わせてテスト
+- 外部境界のみモック（ファイルシステム、プロセス）
+- 例: install-service.test.ts（サービス + パーサーをテスト）
 
-**E2E Tests:**
-- Not currently used
-- CLI integration tested manually
+**E2Eテスト:**
+- 現在は使用していない
+- CLI統合テストは手動で実施
 
-## Common Patterns
+## 一般的なパターン
 
-**Async Testing:**
+**非同期テスト:**
 ```typescript
 it('should handle async operation', async () => {
   const result = await asyncFunction();
@@ -402,19 +402,19 @@ it('should handle async operation', async () => {
 });
 ```
 
-**Error Testing:**
+**エラーテスト:**
 ```typescript
 it('should throw on invalid input', () => {
   expect(() => parse(null)).toThrow('Cannot parse null');
 });
 
-// Async error
+// 非同期エラー
 it('should reject on file not found', async () => {
   await expect(readConfig('invalid.txt')).rejects.toThrow('ENOENT');
 });
 ```
 
-**File System Mocking:**
+**ファイルシステムのモッキング:**
 ```typescript
 import { vi } from 'vitest';
 import * as fs from 'fs-extra';
@@ -423,58 +423,58 @@ vi.mock('fs-extra');
 
 it('mocks file system', () => {
   vi.mocked(fs.readFile).mockResolvedValue('file content');
-  // test code
+  // テストコード
 });
 ```
 
-**Snapshot Testing:**
-- Not used in this codebase
-- Prefer explicit assertions for clarity
+**スナップショットテスト:**
+- このコードベースでは使用していない
+- 明確性のために明示的なアサーションを優先
 
 ---
 
-*Testing analysis: 2025-01-20*
-*Update when test patterns change*
+*テスト分析: 2025-01-20*
+*テストパターンが変更された際に更新*
 ```
 </good_examples>
 
 <guidelines>
-**What belongs in TESTING.md:**
-- Test framework and runner configuration
-- Test file location and naming patterns
-- Test structure (describe/it, beforeEach patterns)
-- Mocking approach and examples
-- Fixture/factory patterns
-- Coverage requirements
-- How to run tests (commands)
-- Common testing patterns in actual code
+**TESTING.mdに含めるもの:**
+- テストフレームワークとランナーの設定
+- テストファイルの場所と命名パターン
+- テスト構造（describe/it、beforeEachパターン）
+- モッキングアプローチと例
+- フィクスチャ/ファクトリパターン
+- カバレッジ要件
+- テストの実行方法（コマンド）
+- 実際のコードでの一般的なテストパターン
 
-**What does NOT belong here:**
-- Specific test cases (defer to actual test files)
-- Technology choices (that's STACK.md)
-- CI/CD setup (that's deployment docs)
+**ここに含めないもの:**
+- 個別のテストケース（実際のテストファイルに委ねる）
+- 技術選定（STACK.mdの範囲）
+- CI/CDセットアップ（デプロイドキュメントの範囲）
 
-**When filling this template:**
-- Check package.json scripts for test commands
-- Find test config file (jest.config.js, vitest.config.ts)
-- Read 3-5 existing test files to identify patterns
-- Look for test utilities in tests/ or test-utils/
-- Check for coverage configuration
-- Document actual patterns used, not ideal patterns
+**このテンプレートを記入する際:**
+- package.jsonスクリプトでテストコマンドを確認
+- テスト設定ファイルを見つける（jest.config.js, vitest.config.ts）
+- 3〜5の既存テストファイルを読んでパターンを特定
+- tests/またはtest-utils/のテストユーティリティを探す
+- カバレッジ設定を確認
+- 理想的なパターンではなく、実際に使用されているパターンを文書化
 
-**Useful for phase planning when:**
-- Adding new features (write matching tests)
-- Refactoring (maintain test patterns)
-- Fixing bugs (add regression tests)
-- Understanding verification approach
-- Setting up test infrastructure
+**フェーズ計画で役立つ場面:**
+- 新機能の追加（マッチするテストを書く）
+- リファクタリング（テストパターンを維持）
+- バグ修正（リグレッションテストを追加）
+- 検証アプローチの理解
+- テストインフラストラクチャのセットアップ
 
-**Analysis approach:**
-- Check package.json for test framework and scripts
-- Read test config file for coverage, setup
-- Examine test file organization (collocated vs separate)
-- Review 5 test files for patterns (mocking, structure, assertions)
-- Look for test utilities, fixtures, factories
-- Note any test types (unit, integration, e2e)
-- Document commands for running tests
+**分析アプローチ:**
+- package.jsonでテストフレームワークとスクリプトを確認
+- テスト設定ファイルでカバレッジ、セットアップを読む
+- テストファイルの構成を調査（併置か分離か）
+- 5つのテストファイルでパターンを確認（モッキング、構造、アサーション）
+- テストユーティリティ、フィクスチャ、ファクトリを探す
+- テストの種類に注目（ユニット、統合、E2E）
+- テスト実行コマンドを文書化
 </guidelines>

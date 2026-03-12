@@ -1,8 +1,8 @@
-# Model Profiles
+# モデルプロファイル
 
-Model profiles control which Claude model each GSD agent uses. This allows balancing quality vs token spend.
+モデルプロファイルは、各GSDエージェントが使用するClaudeモデルを制御します。品質とトークン消費のバランスを調整できます。
 
-## Profile Definitions
+## プロファイル定義
 
 | Agent | `quality` | `balanced` | `budget` |
 |-------|-----------|------------|----------|
@@ -19,38 +19,38 @@ Model profiles control which Claude model each GSD agent uses. This allows balan
 | gsd-integration-checker | sonnet | sonnet | haiku |
 | gsd-nyquist-auditor | sonnet | sonnet | haiku |
 
-## Profile Philosophy
+## プロファイルの思想
 
-**quality** - Maximum reasoning power
-- Opus for all decision-making agents
-- Sonnet for read-only verification
-- Use when: quota available, critical architecture work
+**quality** - 最大の推論能力
+- すべての意思決定エージェントにOpusを使用
+- 読み取り専用の検証にSonnetを使用
+- 使用タイミング: クォータに余裕がある場合、重要なアーキテクチャ作業
 
-**balanced** (default) - Smart allocation
-- Opus only for planning (where architecture decisions happen)
-- Sonnet for execution and research (follows explicit instructions)
-- Sonnet for verification (needs reasoning, not just pattern matching)
-- Use when: normal development, good balance of quality and cost
+**balanced**（デフォルト）- スマートな配分
+- 計画にのみOpus（アーキテクチャの意思決定が行われる場所）
+- 実行とリサーチにSonnet（明示的な指示に従う）
+- 検証にSonnet（パターンマッチングだけでなく推論が必要）
+- 使用タイミング: 通常の開発、品質とコストの良いバランス
 
-**budget** - Minimal Opus usage
-- Sonnet for anything that writes code
-- Haiku for research and verification
-- Use when: conserving quota, high-volume work, less critical phases
+**budget** - 最小限のOpus使用
+- コードを書くすべてにSonnet
+- リサーチと検証にHaiku
+- 使用タイミング: クォータの節約、大量の作業、重要度の低いフェーズ
 
-## Resolution Logic
+## 解決ロジック
 
-Orchestrators resolve model before spawning:
+オーケストレーターはスポーン前にモデルを解決します:
 
 ```
-1. Read .planning/config.json
-2. Check model_overrides for agent-specific override
-3. If no override, look up agent in profile table
-4. Pass model parameter to Task call
+1. .planning/config.jsonを読み取る
+2. エージェント固有のオーバーライドのmodel_overridesを確認
+3. オーバーライドがなければ、プロファイルテーブルでエージェントを検索
+4. Task呼び出しにmodelパラメータを渡す
 ```
 
-## Per-Agent Overrides
+## エージェントごとのオーバーライド
 
-Override specific agents without changing the entire profile:
+プロファイル全体を変更せずに特定のエージェントをオーバーライドします:
 
 ```json
 {
@@ -62,32 +62,32 @@ Override specific agents without changing the entire profile:
 }
 ```
 
-Overrides take precedence over the profile. Valid values: `opus`, `sonnet`, `haiku`.
+オーバーライドはプロファイルよりも優先されます。有効な値: `opus`, `sonnet`, `haiku`。
 
-## Switching Profiles
+## プロファイルの切り替え
 
-Runtime: `/gsd:set-profile <profile>`
+ランタイム: `/gsd:set-profile <profile>`
 
-Per-project default: Set in `.planning/config.json`:
+プロジェクトごとのデフォルト: `.planning/config.json`で設定:
 ```json
 {
   "model_profile": "balanced"
 }
 ```
 
-## Design Rationale
+## 設計の根拠
 
-**Why Opus for gsd-planner?**
-Planning involves architecture decisions, goal decomposition, and task design. This is where model quality has the highest impact.
+**なぜgsd-plannerにOpus?**
+計画にはアーキテクチャの意思決定、目標の分解、タスク設計が含まれます。ここがモデル品質の影響が最も大きい場所です。
 
-**Why Sonnet for gsd-executor?**
-Executors follow explicit PLAN.md instructions. The plan already contains the reasoning; execution is implementation.
+**なぜgsd-executorにSonnet?**
+エグゼキューターは明示的なPLAN.mdの指示に従います。プランには既に推論が含まれており、実行は実装です。
 
-**Why Sonnet (not Haiku) for verifiers in balanced?**
-Verification requires goal-backward reasoning - checking if code *delivers* what the phase promised, not just pattern matching. Sonnet handles this well; Haiku may miss subtle gaps.
+**なぜbalancedで検証にSonnet（Haikuではない）?**
+検証にはゴール逆引き推論が必要です - コードがフェーズの約束した内容を本当に実現しているかを確認する、単なるパターンマッチングではありません。Sonnetはこれを適切に処理しますが、Haikuは微妙なギャップを見逃す可能性があります。
 
-**Why Haiku for gsd-codebase-mapper?**
-Read-only exploration and pattern extraction. No reasoning required, just structured output from file contents.
+**なぜgsd-codebase-mapperにHaiku?**
+読み取り専用の探索とパターン抽出。推論は不要で、ファイル内容からの構造化された出力のみ。
 
-**Why `inherit` instead of passing `opus` directly?**
-Claude Code's `"opus"` alias maps to a specific model version. Organizations may block older opus versions while allowing newer ones. GSD returns `"inherit"` for opus-tier agents, causing them to use whatever opus version the user has configured in their session. This avoids version conflicts and silent fallbacks to Sonnet.
+**なぜ`opus`を直接渡すのではなく`inherit`?**
+Claude Codeの`"opus"`エイリアスは特定のモデルバージョンにマッピングされます。組織は古いopusバージョンをブロックしながら新しいバージョンを許可する場合があります。GSDはopusティアのエージェントに`"inherit"`を返し、ユーザーのセッションで設定されているopusバージョンを使用させます。これによりバージョンの競合やSonnetへのサイレントフォールバックを回避します。

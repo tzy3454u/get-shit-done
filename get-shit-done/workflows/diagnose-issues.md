@@ -1,32 +1,32 @@
 <purpose>
-Orchestrate parallel debug agents to investigate UAT gaps and find root causes.
+並列デバッグエージェントをオーケストレーションしてUATギャップを調査し、根本原因を特定する。
 
-After UAT finds gaps, spawn one debug agent per gap. Each agent investigates autonomously with symptoms pre-filled from UAT. Collect root causes, update UAT.md gaps with diagnosis, then hand off to plan-phase --gaps with actual diagnoses.
+UATがギャップを発見した後、ギャップごとに1つのデバッグエージェントを生成する。各エージェントはUATからの症状を事前入力された状態で自律的に調査する。根本原因を収集し、UAT.mdのギャップを診断で更新し、実際の診断に基づいてplan-phase --gapsにハンドオフする。
 
-Orchestrator stays lean: parse gaps, spawn agents, collect results, update UAT.
+オーケストレーターは軽量に保つ：ギャップをパース、エージェントを生成、結果を収集、UATを更新。
 </purpose>
 
 <paths>
 DEBUG_DIR=.planning/debug
 
-Debug files use the `.planning/debug/` path (hidden directory with leading dot).
+デバッグファイルは`.planning/debug/`パスを使用する（先頭にドットを持つ隠しディレクトリ）。
 </paths>
 
 <core_principle>
-**Diagnose before planning fixes.**
+**修正を計画する前に診断する。**
 
-UAT tells us WHAT is broken (symptoms). Debug agents find WHY (root cause). plan-phase --gaps then creates targeted fixes based on actual causes, not guesses.
+UATはWHATが壊れているか（症状）を教えてくれる。デバッグエージェントがWHY（根本原因）を見つける。plan-phase --gapsは推測ではなく実際の原因に基づいて的確な修正を作成する。
 
-Without diagnosis: "Comment doesn't refresh" → guess at fix → maybe wrong
-With diagnosis: "Comment doesn't refresh" → "useEffect missing dependency" → precise fix
+診断なし：「コメントが更新されない」→ 修正を推測 → 間違っている可能性
+診断あり：「コメントが更新されない」→「useEffectの依存関係が不足」→ 正確な修正
 </core_principle>
 
 <process>
 
 <step name="parse_gaps">
-**Extract gaps from UAT.md:**
+**UAT.mdからギャップを抽出：**
 
-Read the "Gaps" section (YAML format):
+「Gaps」セクション（YAML形式）を読む：
 ```yaml
 - truth: "Comment appears immediately after submission"
   status: failed
@@ -37,9 +37,9 @@ Read the "Gaps" section (YAML format):
   missing: []
 ```
 
-For each gap, also read the corresponding test from "Tests" section to get full context.
+各ギャップについて、完全なコンテキストを取得するために「Tests」セクションから対応するテストも読む。
 
-Build gap list:
+ギャップリストを構築：
 ```
 gaps = [
   {truth: "Comment appears immediately...", severity: "major", test_num: 2, reason: "..."},
@@ -50,32 +50,32 @@ gaps = [
 </step>
 
 <step name="report_plan">
-**Report diagnosis plan to user:**
+**診断計画をユーザーに報告：**
 
 ```
-## Diagnosing {N} Gaps
+## {N}個のギャップを診断中
 
-Spawning parallel debug agents to investigate root causes:
+根本原因を調査するために並列デバッグエージェントを生成中：
 
-| Gap (Truth) | Severity |
+| ギャップ（Truth） | 重大度 |
 |-------------|----------|
-| Comment appears immediately after submission | major |
-| Reply button positioned correctly | minor |
-| Delete removes comment | blocker |
+| コメント送信後即座に表示 | major |
+| 返信ボタンが正しく配置 | minor |
+| 削除でコメントが削除される | blocker |
 
-Each agent will:
-1. Create DEBUG-{slug}.md with symptoms pre-filled
-2. Investigate autonomously (read code, form hypotheses, test)
-3. Return root cause
+各エージェントが行うこと：
+1. 症状を事前入力したDEBUG-{slug}.mdを作成
+2. 自律的に調査（コードを読む、仮説を立てる、テスト）
+3. 根本原因を返す
 
-This runs in parallel - all gaps investigated simultaneously.
+これは並列実行される - すべてのギャップが同時に調査される。
 ```
 </step>
 
 <step name="spawn_agents">
-**Spawn debug agents in parallel:**
+**デバッグエージェントを並列で生成：**
 
-For each gap, fill the debug-subagent-prompt template and spawn:
+各ギャップについて、debug-subagent-promptテンプレートを埋めて生成：
 
 ```
 Task(
@@ -85,58 +85,58 @@ Task(
 )
 ```
 
-**All agents spawn in single message** (parallel execution).
+**すべてのエージェントを1つのメッセージで生成**（並列実行）。
 
-Template placeholders:
-- `{truth}`: The expected behavior that failed
-- `{expected}`: From UAT test
-- `{actual}`: Verbatim user description from reason field
-- `{errors}`: Any error messages from UAT (or "None reported")
-- `{reproduction}`: "Test {test_num} in UAT"
-- `{timeline}`: "Discovered during UAT"
-- `{goal}`: `find_root_cause_only` (UAT flow - plan-phase --gaps handles fixes)
-- `{slug}`: Generated from truth
+テンプレートのプレースホルダー：
+- `{truth}`: 失敗した期待される動作
+- `{expected}`: UATテストから
+- `{actual}`: reasonフィールドからのユーザー説明の引用
+- `{errors}`: UATからのエラーメッセージ（または「None reported」）
+- `{reproduction}`: 「Test {test_num} in UAT」
+- `{timeline}`: 「Discovered during UAT」
+- `{goal}`: `find_root_cause_only`（UATフロー - plan-phase --gapsが修正を処理）
+- `{slug}`: truthから生成
 </step>
 
 <step name="collect_results">
-**Collect root causes from agents:**
+**エージェントから根本原因を収集：**
 
-Each agent returns with:
+各エージェントが以下を返す：
 ```
 ## ROOT CAUSE FOUND
 
 **Debug Session:** ${DEBUG_DIR}/{slug}.md
 
-**Root Cause:** {specific cause with evidence}
+**Root Cause:** {証拠付きの具体的な原因}
 
 **Evidence Summary:**
-- {key finding 1}
-- {key finding 2}
-- {key finding 3}
+- {主要な発見1}
+- {主要な発見2}
+- {主要な発見3}
 
 **Files Involved:**
-- {file1}: {what's wrong}
-- {file2}: {related issue}
+- {file1}: {何が問題か}
+- {file2}: {関連する問題}
 
-**Suggested Fix Direction:** {brief hint for plan-phase --gaps}
+**Suggested Fix Direction:** {plan-phase --gaps向けの簡単なヒント}
 ```
 
-Parse each return to extract:
-- root_cause: The diagnosed cause
-- files: Files involved
-- debug_path: Path to debug session file
-- suggested_fix: Hint for gap closure plan
+各返却値をパースして抽出：
+- root_cause: 診断された原因
+- files: 関連するファイル
+- debug_path: デバッグセッションファイルへのパス
+- suggested_fix: ギャップクロージャープラン向けのヒント
 
-If agent returns `## INVESTIGATION INCONCLUSIVE`:
-- root_cause: "Investigation inconclusive - manual review needed"
-- Note which issue needs manual attention
-- Include remaining possibilities from agent return
+エージェントが`## INVESTIGATION INCONCLUSIVE`を返した場合：
+- root_cause: 「調査が不確定 - 手動レビューが必要」
+- どの問題が手動対応を必要とするか記載
+- エージェントの返却値から残りの可能性を含める
 </step>
 
 <step name="update_uat">
-**Update UAT.md gaps with diagnosis:**
+**UAT.mdのギャップを診断で更新：**
 
-For each gap in the Gaps section, add artifacts and missing fields:
+Gapsセクションの各ギャップについて、artifactsとmissingフィールドを追加：
 
 ```yaml
 - truth: "Comment appears immediately after submission"
@@ -154,66 +154,66 @@ For each gap in the Gaps section, add artifacts and missing fields:
   debug_session: .planning/debug/comment-not-refreshing.md
 ```
 
-Update status in frontmatter to "diagnosed".
+フロントマターのステータスを「diagnosed」に更新。
 
-Commit the updated UAT.md:
+更新されたUAT.mdをコミット：
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs({phase_num}): add root causes from diagnosis" --files ".planning/phases/XX-name/{phase_num}-UAT.md"
 ```
 </step>
 
 <step name="report_results">
-**Report diagnosis results and hand off:**
+**診断結果を報告してハンドオフ：**
 
-Display:
+表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► DIAGNOSIS COMPLETE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-| Gap (Truth) | Root Cause | Files |
+| ギャップ（Truth） | 根本原因 | ファイル |
 |-------------|------------|-------|
-| Comment appears immediately | useEffect missing dependency | CommentList.tsx |
-| Reply button positioned correctly | CSS flex order incorrect | ReplyButton.tsx |
-| Delete removes comment | API missing auth header | api/comments.ts |
+| コメント即座に表示 | useEffectの依存関係不足 | CommentList.tsx |
+| 返信ボタンの位置 | CSSのflex orderが不正 | ReplyButton.tsx |
+| 削除でコメント削除 | APIに認証ヘッダーが不足 | api/comments.ts |
 
-Debug sessions: ${DEBUG_DIR}/
+デバッグセッション: ${DEBUG_DIR}/
 
-Proceeding to plan fixes...
+修正プランの作成に進む...
 ```
 
-Return to verify-work orchestrator for automatic planning.
-Do NOT offer manual next steps - verify-work handles the rest.
+自動計画のためにverify-workオーケストレーターに返す。
+手動の次ステップを提案しないこと - verify-workが残りを処理する。
 </step>
 
 </process>
 
 <context_efficiency>
-Agents start with symptoms pre-filled from UAT (no symptom gathering).
-Agents only diagnose—plan-phase --gaps handles fixes (no fix application).
+エージェントはUATから事前入力された症状で開始する（症状収集なし）。
+エージェントは診断のみ — plan-phase --gapsが修正を処理する（修正適用なし）。
 </context_efficiency>
 
 <failure_handling>
-**Agent fails to find root cause:**
-- Mark gap as "needs manual review"
-- Continue with other gaps
-- Report incomplete diagnosis
+**エージェントが根本原因を見つけられない場合：**
+- ギャップを「手動レビューが必要」とマーク
+- 他のギャップで続行
+- 不完全な診断を報告
 
-**Agent times out:**
-- Check DEBUG-{slug}.md for partial progress
-- Can resume with /gsd:debug
+**エージェントがタイムアウトした場合：**
+- DEBUG-{slug}.mdの部分的な進捗を確認
+- /gsd:debugで再開可能
 
-**All agents fail:**
-- Something systemic (permissions, git, etc.)
-- Report for manual investigation
-- Fall back to plan-phase --gaps without root causes (less precise)
+**すべてのエージェントが失敗した場合：**
+- システム的な問題（権限、git等）
+- 手動調査のために報告
+- 根本原因なしでplan-phase --gapsにフォールバック（精度は低下）
 </failure_handling>
 
 <success_criteria>
-- [ ] Gaps parsed from UAT.md
-- [ ] Debug agents spawned in parallel
-- [ ] Root causes collected from all agents
-- [ ] UAT.md gaps updated with artifacts and missing
-- [ ] Debug sessions saved to ${DEBUG_DIR}/
-- [ ] Hand off to verify-work for automatic planning
+- [ ] UAT.mdからギャップがパースされた
+- [ ] デバッグエージェントが並列で生成された
+- [ ] すべてのエージェントから根本原因が収集された
+- [ ] UAT.mdのギャップがartifactsとmissingで更新された
+- [ ] デバッグセッションが${DEBUG_DIR}/に保存された
+- [ ] 自動計画のためにverify-workにハンドオフ
 </success_criteria>

@@ -1,6 +1,6 @@
 ---
 name: gsd:plan-phase
-description: Create detailed phase plan (PLAN.md) with verification loop
+description: 検証ループ付きの詳細フェーズ計画（PLAN.md）を作成
 argument-hint: "[phase] [--auto] [--research] [--skip-research] [--gaps] [--skip-verify] [--prd <file>]"
 agent: gsd-planner
 allowed-tools:
@@ -14,11 +14,11 @@ allowed-tools:
   - mcp__context7__*
 ---
 <objective>
-Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification.
+ロードマップフェーズに対して、リサーチと検証を統合した実行可能なフェーズプロンプト（PLAN.mdファイル）を作成する。
 
-**Default flow:** Research (if needed) → Plan → Verify → Done
+**デフォルトフロー:** リサーチ（必要な場合） → 計画 → 検証 → 完了
 
-**Orchestrator role:** Parse arguments, validate phase, research domain (unless skipped), spawn gsd-planner, verify with gsd-plan-checker, iterate until pass or max iterations, present results.
+**オーケストレーターの役割:** 引数の解析、フェーズの検証、ドメインリサーチ（スキップされない場合）、gsd-plannerの起動、gsd-plan-checkerによる検証、合格または最大反復回数まで繰り返し、結果の提示。
 </objective>
 
 <execution_context>
@@ -27,19 +27,20 @@ Create executable phase prompts (PLAN.md files) for a roadmap phase with integra
 </execution_context>
 
 <context>
-Phase number: $ARGUMENTS (optional — auto-detects next unplanned phase if omitted)
+フェーズ番号: $ARGUMENTS（任意 — 省略時は次の未計画フェーズを自動検出）
 
-**Flags:**
-- `--research` — Force re-research even if RESEARCH.md exists
-- `--skip-research` — Skip research, go straight to planning
-- `--gaps` — Gap closure mode (reads VERIFICATION.md, skips research)
-- `--skip-verify` — Skip verification loop
-- `--prd <file>` — Use a PRD/acceptance criteria file instead of discuss-phase. Parses requirements into CONTEXT.md automatically. Skips discuss-phase entirely.
+**フラグ:**
+- `--research` — RESEARCH.mdが存在していても強制的にリサーチを再実行
+- `--skip-research` — リサーチをスキップし、直接計画に進む
+- `--gaps` — ギャップ解消モード（VERIFICATION.mdを読み込み、リサーチをスキップ）
+- `--skip-verify` — 検証ループをスキップ
+- `--prd <file>` — discuss-phaseの代わりにPRD/受入基準ファイルを使用。要件を自動的にCONTEXT.mdに解析する。discuss-phaseを完全にスキップする。
 
-Normalize phase input in step 2 before any directory lookups.
+ステップ2でディレクトリ検索を行う前にフェーズ入力を正規化すること。
 </context>
 
 <process>
-Execute the plan-phase workflow from @~/.claude/get-shit-done/workflows/plan-phase.md end-to-end.
-Preserve all workflow gates (validation, research, planning, verification loop, routing).
+@~/.claude/get-shit-done/workflows/plan-phase.md のplan-phaseワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲート（バリデーション、リサーチ、計画、検証ループ、ルーティング）を維持すること。
 </process>
+

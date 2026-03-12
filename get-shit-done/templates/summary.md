@@ -1,34 +1,34 @@
-# Summary Template
+# サマリーテンプレート
 
-Template for `.planning/phases/XX-name/{phase}-{plan}-SUMMARY.md` - phase completion documentation.
+`.planning/phases/XX-name/{phase}-{plan}-SUMMARY.md` 用テンプレート - フェーズ完了ドキュメント。
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
 ---
 phase: XX-name
 plan: YY
-subsystem: [primary category: auth, payments, ui, api, database, infra, testing, etc.]
-tags: [searchable tech: jwt, stripe, react, postgres, prisma]
+subsystem: [主要カテゴリ: auth, payments, ui, api, database, infra, testing, etc.]
+tags: [検索可能な技術: jwt, stripe, react, postgres, prisma]
 
-# Dependency graph
+# 依存関係グラフ
 requires:
-  - phase: [prior phase this depends on]
-    provides: [what that phase built that this uses]
+  - phase: [依存する先行フェーズ]
+    provides: [そのフェーズが構築し本フェーズで使用するもの]
 provides:
-  - [bullet list of what this phase built/delivered]
-affects: [list of phase names or keywords that will need this context]
+  - [本フェーズで構築/提供したもののリスト]
+affects: [このコンテキストを必要とするフェーズ名やキーワードのリスト]
 
-# Tech tracking
+# 技術追跡
 tech-stack:
-  added: [libraries/tools added in this phase]
-  patterns: [architectural/code patterns established]
+  added: [このフェーズで追加したライブラリ/ツール]
+  patterns: [確立したアーキテクチャ/コードパターン]
 
 key-files:
-  created: [important files created]
-  modified: [important files modified]
+  created: [作成した重要ファイル]
+  modified: [変更した重要ファイル]
 
 key-decisions:
   - "Decision 1"
@@ -38,91 +38,91 @@ patterns-established:
   - "Pattern 1: description"
   - "Pattern 2: description"
 
-requirements-completed: []  # REQUIRED — Copy ALL requirement IDs from this plan's `requirements` frontmatter field.
+requirements-completed: []  # 必須 — このプランの `requirements` フロントマターフィールドからすべての要件IDをコピー。
 
-# Metrics
+# メトリクス
 duration: Xmin
 completed: YYYY-MM-DD
 ---
 
-# Phase [X]: [Name] Summary
+# Phase [X]: [名前] サマリー
 
-**[Substantive one-liner describing outcome - NOT "phase complete" or "implementation finished"]**
+**[成果を説明する実質的な一行 - "フェーズ完了" や "実装完了" ではなく]**
 
-## Performance
+## パフォーマンス
 
-- **Duration:** [time] (e.g., 23 min, 1h 15m)
-- **Started:** [ISO timestamp]
-- **Completed:** [ISO timestamp]
-- **Tasks:** [count completed]
-- **Files modified:** [count]
+- **所要時間:** [時間]（例: 23 min, 1h 15m）
+- **開始:** [ISOタイムスタンプ]
+- **完了:** [ISOタイムスタンプ]
+- **タスク:** [完了数]
+- **変更ファイル:** [数]
 
-## Accomplishments
-- [Most important outcome]
-- [Second key accomplishment]
-- [Third if applicable]
+## 成果
+- [最も重要な成果]
+- [2番目の主要な達成事項]
+- [該当する場合3番目]
 
-## Task Commits
+## タスクコミット
 
-Each task was committed atomically:
+各タスクはアトミックにコミットされました:
 
-1. **Task 1: [task name]** - `abc123f` (feat/fix/test/refactor)
-2. **Task 2: [task name]** - `def456g` (feat/fix/test/refactor)
-3. **Task 3: [task name]** - `hij789k` (feat/fix/test/refactor)
+1. **Task 1: [タスク名]** - `abc123f` (feat/fix/test/refactor)
+2. **Task 2: [タスク名]** - `def456g` (feat/fix/test/refactor)
+3. **Task 3: [タスク名]** - `hij789k` (feat/fix/test/refactor)
 
 **Plan metadata:** `lmn012o` (docs: complete plan)
 
-_Note: TDD tasks may have multiple commits (test → feat → refactor)_
+_備考: TDDタスクは複数のコミットを持つ場合があります（test → feat → refactor）_
 
-## Files Created/Modified
-- `path/to/file.ts` - What it does
-- `path/to/another.ts` - What it does
+## 作成/変更ファイル
+- `path/to/file.ts` - 役割
+- `path/to/another.ts` - 役割
 
-## Decisions Made
-[Key decisions with brief rationale, or "None - followed plan as specified"]
+## 行われた決定
+[重要な決定と簡単な根拠、または "None - followed plan as specified"]
 
-## Deviations from Plan
+## プランからの逸脱
 
-[If no deviations: "None - plan executed exactly as written"]
+[逸脱がない場合: "None - plan executed exactly as written"]
 
-[If deviations occurred:]
+[逸脱があった場合:]
 
-### Auto-fixed Issues
+### 自動修正された問題
 
-**1. [Rule X - Category] Brief description**
-- **Found during:** Task [N] ([task name])
-- **Issue:** [What was wrong]
-- **Fix:** [What was done]
-- **Files modified:** [file paths]
-- **Verification:** [How it was verified]
-- **Committed in:** [hash] (part of task commit)
+**1. [Rule X - カテゴリ] 簡単な説明**
+- **発見時点:** Task [N] ([タスク名])
+- **問題:** [何が問題だったか]
+- **修正:** [何を行ったか]
+- **変更ファイル:** [ファイルパス]
+- **検証:** [どのように検証したか]
+- **コミット先:** [ハッシュ]（タスクコミットの一部）
 
-[... repeat for each auto-fix ...]
+[... 各自動修正について繰り返し ...]
 
 ---
 
-**Total deviations:** [N] auto-fixed ([breakdown by rule])
-**Impact on plan:** [Brief assessment - e.g., "All auto-fixes necessary for correctness/security. No scope creep."]
+**逸脱合計:** [N] 件自動修正（[ルール別内訳]）
+**プランへの影響:** [簡単な評価 - 例: "すべての自動修正は正確性/セキュリティのために必要。スコープクリープなし。"]
 
-## Issues Encountered
-[Problems and how they were resolved, or "None"]
+## 発生した問題
+[問題とその解決方法、または "None"]
 
-[Note: "Deviations from Plan" documents unplanned work that was handled automatically via deviation rules. "Issues Encountered" documents problems during planned work that required problem-solving.]
+[備考: "プランからの逸脱"は逸脱ルールにより自動的に処理された計画外の作業を記録します。"発生した問題"は計画された作業中に発生し問題解決が必要だった問題を記録します。]
 
-## User Setup Required
+## ユーザーセットアップが必要
 
-[If USER-SETUP.md was generated:]
-**External services require manual configuration.** See [{phase}-USER-SETUP.md](./{phase}-USER-SETUP.md) for:
-- Environment variables to add
-- Dashboard configuration steps
-- Verification commands
+[USER-SETUP.mdが生成された場合:]
+**外部サービスの手動設定が必要です。** [{phase}-USER-SETUP.md](./{phase}-USER-SETUP.md) を参照:
+- 追加する環境変数
+- ダッシュボード設定手順
+- 検証コマンド
 
-[If no USER-SETUP.md:]
-None - no external service configuration required.
+[USER-SETUP.mdがない場合:]
+なし - 外部サービスの設定は不要です。
 
-## Next Phase Readiness
-[What's ready for next phase]
-[Any blockers or concerns]
+## 次フェーズの準備状況
+[次のフェーズに向けて準備できていること]
+[ブロッカーや懸念事項]
 
 ---
 *Phase: XX-name*
@@ -130,103 +130,103 @@ None - no external service configuration required.
 ```
 
 <frontmatter_guidance>
-**Purpose:** Enable automatic context assembly via dependency graph. Frontmatter makes summary metadata machine-readable so plan-phase can scan all summaries quickly and select relevant ones based on dependencies.
+**目的:** 依存関係グラフによる自動コンテキスト組み立てを可能にする。フロントマターはサマリーのメタデータを機械可読にし、plan-phaseが依存関係に基づいてすべてのサマリーを素早くスキャンし関連するものを選択できるようにします。
 
-**Fast scanning:** Frontmatter is first ~25 lines, cheap to scan across all summaries without reading full content.
+**高速スキャン:** フロントマターは最初の約25行で、全サマリーのフルコンテンツを読まずに安価にスキャンできます。
 
-**Dependency graph:** `requires`/`provides`/`affects` create explicit links between phases, enabling transitive closure for context selection.
+**依存関係グラフ:** `requires`/`provides`/`affects`がフェーズ間の明示的なリンクを作成し、コンテキスト選択のための推移的閉包を可能にします。
 
-**Subsystem:** Primary categorization (auth, payments, ui, api, database, infra, testing) for detecting related phases.
+**Subsystem:** 関連フェーズを検出するための主要カテゴリ分類（auth, payments, ui, api, database, infra, testing）。
 
-**Tags:** Searchable technical keywords (libraries, frameworks, tools) for tech stack awareness.
+**Tags:** 技術スタック認識のための検索可能な技術キーワード（ライブラリ、フレームワーク、ツール）。
 
-**Key-files:** Important files for @context references in PLAN.md.
+**Key-files:** PLAN.mdでの@contextリファレンス用の重要ファイル。
 
-**Patterns:** Established conventions future phases should maintain.
+**Patterns:** 将来のフェーズが維持すべき確立された規約。
 
-**Population:** Frontmatter is populated during summary creation in execute-plan.md. See `<step name="create_summary">` for field-by-field guidance.
+**Population:** フロントマターはexecute-plan.mdでのサマリー作成時に入力されます。フィールドごとのガイダンスは `<step name="create_summary">` を参照してください。
 </frontmatter_guidance>
 
 <one_liner_rules>
-The one-liner MUST be substantive:
+一行説明は実質的でなければなりません:
 
-**Good:**
+**良い例:**
 - "JWT auth with refresh rotation using jose library"
 - "Prisma schema with User, Session, and Product models"
 - "Dashboard with real-time metrics via Server-Sent Events"
 
-**Bad:**
+**悪い例:**
 - "Phase complete"
 - "Authentication implemented"
 - "Foundation finished"
 - "All tasks done"
 
-The one-liner should tell someone what actually shipped.
+一行説明は実際に何がリリースされたかを伝えるべきです。
 </one_liner_rules>
 
 <example>
 ```markdown
-# Phase 1: Foundation Summary
+# Phase 1: Foundation サマリー
 
-**JWT auth with refresh rotation using jose library, Prisma User model, and protected API middleware**
+**joseライブラリを使用したリフレッシュローテーション付きJWT認証、Prisma Userモデル、保護APIミドルウェア**
 
-## Performance
+## パフォーマンス
 
-- **Duration:** 28 min
-- **Started:** 2025-01-15T14:22:10Z
-- **Completed:** 2025-01-15T14:50:33Z
-- **Tasks:** 5
-- **Files modified:** 8
+- **所要時間:** 28 min
+- **開始:** 2025-01-15T14:22:10Z
+- **完了:** 2025-01-15T14:50:33Z
+- **タスク:** 5
+- **変更ファイル:** 8
 
-## Accomplishments
-- User model with email/password auth
-- Login/logout endpoints with httpOnly JWT cookies
-- Protected route middleware checking token validity
-- Refresh token rotation on each request
+## 成果
+- メール/パスワード認証のUserモデル
+- httpOnly JWTクッキーを使用したログイン/ログアウトエンドポイント
+- トークンの有効性をチェックする保護ルートミドルウェア
+- リクエストごとのリフレッシュトークンローテーション
 
-## Files Created/Modified
-- `prisma/schema.prisma` - User and Session models
-- `src/app/api/auth/login/route.ts` - Login endpoint
-- `src/app/api/auth/logout/route.ts` - Logout endpoint
-- `src/middleware.ts` - Protected route checks
-- `src/lib/auth.ts` - JWT helpers using jose
+## 作成/変更ファイル
+- `prisma/schema.prisma` - UserとSessionモデル
+- `src/app/api/auth/login/route.ts` - ログインエンドポイント
+- `src/app/api/auth/logout/route.ts` - ログアウトエンドポイント
+- `src/middleware.ts` - 保護ルートチェック
+- `src/lib/auth.ts` - joseを使用したJWTヘルパー
 
-## Decisions Made
-- Used jose instead of jsonwebtoken (ESM-native, Edge-compatible)
-- 15-min access tokens with 7-day refresh tokens
-- Storing refresh tokens in database for revocation capability
+## 行われた決定
+- jsonwebtokenの代わりにjoseを使用（ESMネイティブ、Edge互換）
+- 15分アクセストークンと7日間リフレッシュトークン
+- 失効機能のためリフレッシュトークンをデータベースに保存
 
-## Deviations from Plan
+## プランからの逸脱
 
-### Auto-fixed Issues
+### 自動修正された問題
 
-**1. [Rule 2 - Missing Critical] Added password hashing with bcrypt**
-- **Found during:** Task 2 (Login endpoint implementation)
-- **Issue:** Plan didn't specify password hashing - storing plaintext would be critical security flaw
-- **Fix:** Added bcrypt hashing on registration, comparison on login with salt rounds 10
-- **Files modified:** src/app/api/auth/login/route.ts, src/lib/auth.ts
-- **Verification:** Password hash test passes, plaintext never stored
-- **Committed in:** abc123f (Task 2 commit)
+**1. [Rule 2 - 重大な欠落] bcryptによるパスワードハッシュ化を追加**
+- **発見時点:** Task 2（ログインエンドポイント実装）
+- **問題:** プランにパスワードハッシュ化が明記されていなかった - 平文保存は重大なセキュリティ欠陥
+- **修正:** 登録時にbcryptハッシュ化、ログイン時にソルトラウンド10で比較を追加
+- **変更ファイル:** src/app/api/auth/login/route.ts, src/lib/auth.ts
+- **検証:** パスワードハッシュテスト合格、平文は一切保存されない
+- **コミット先:** abc123f（Task 2コミット）
 
-**2. [Rule 3 - Blocking] Installed missing jose dependency**
-- **Found during:** Task 4 (JWT token generation)
-- **Issue:** jose package not in package.json, import failing
-- **Fix:** Ran `npm install jose`
-- **Files modified:** package.json, package-lock.json
-- **Verification:** Import succeeds, build passes
-- **Committed in:** def456g (Task 4 commit)
+**2. [Rule 3 - ブロッキング] 不足していたjose依存関係をインストール**
+- **発見時点:** Task 4（JWTトークン生成）
+- **問題:** joseパッケージがpackage.jsonになく、インポート失敗
+- **修正:** `npm install jose` を実行
+- **変更ファイル:** package.json, package-lock.json
+- **検証:** インポート成功、ビルド通過
+- **コミット先:** def456g（Task 4コミット）
 
 ---
 
-**Total deviations:** 2 auto-fixed (1 missing critical, 1 blocking)
-**Impact on plan:** Both auto-fixes essential for security and functionality. No scope creep.
+**逸脱合計:** 2件自動修正（1件重大な欠落、1件ブロッキング）
+**プランへの影響:** 両方の自動修正はセキュリティと機能性のために不可欠。スコープクリープなし。
 
-## Issues Encountered
-- jsonwebtoken CommonJS import failed in Edge runtime - switched to jose (planned library change, worked as expected)
+## 発生した問題
+- jsonwebtokenのCommonJSインポートがEdgeランタイムで失敗 - joseに切り替え（計画通りのライブラリ変更、期待通りに動作）
 
-## Next Phase Readiness
-- Auth foundation complete, ready for feature development
-- User registration endpoint needed before public launch
+## 次フェーズの準備状況
+- 認証基盤完了、機能開発の準備完了
+- パブリックローンチ前にユーザー登録エンドポイントが必要
 
 ---
 *Phase: 01-foundation*
@@ -235,14 +235,14 @@ The one-liner should tell someone what actually shipped.
 </example>
 
 <guidelines>
-**Frontmatter:** MANDATORY - complete all fields. Enables automatic context assembly for future planning.
+**フロントマター:** 必須 - すべてのフィールドを完成させること。将来の計画のための自動コンテキスト組み立てを可能にします。
 
-**One-liner:** Must be substantive. "JWT auth with refresh rotation using jose library" not "Authentication implemented".
+**一行説明:** 実質的であること。"Authentication implemented" ではなく "JWT auth with refresh rotation using jose library"。
 
-**Decisions section:**
-- Key decisions made during execution with rationale
-- Extracted to STATE.md accumulated context
-- Use "None - followed plan as specified" if no deviations
+**決定セクション:**
+- 実行中に行われた主要な決定と根拠
+- STATE.mdの蓄積コンテキストに抽出
+- 逸脱がない場合は "None - followed plan as specified" を使用
 
-**After creation:** STATE.md updated with position, decisions, issues.
+**作成後:** STATE.mdが位置、決定事項、問題で更新されます。
 </guidelines>

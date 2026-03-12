@@ -1,147 +1,147 @@
-# Features Research Template
+# 機能リサーチテンプレート
 
-Template for `.planning/research/FEATURES.md` — feature landscape for the project domain.
+`.planning/research/FEATURES.md` 用テンプレート — プロジェクトドメインの機能ランドスケープ。
 
 <template>
 
 ```markdown
-# Feature Research
+# 機能リサーチ
 
-**Domain:** [domain type]
-**Researched:** [date]
+**Domain:** [ドメインの種類]
+**Researched:** [日付]
 **Confidence:** [HIGH/MEDIUM/LOW]
 
-## Feature Landscape
+## 機能ランドスケープ
 
-### Table Stakes (Users Expect These)
+### テーブルステークス（ユーザーが当然期待する機能）
 
-Features users assume exist. Missing these = product feels incomplete.
+ユーザーが存在を前提とする機能。これらが欠けている = プロダクトが不完全に感じられる。
 
-| Feature | Why Expected | Complexity | Notes |
+| 機能 | 期待される理由 | 複雑さ | 備考 |
 |---------|--------------|------------|-------|
-| [feature] | [user expectation] | LOW/MEDIUM/HIGH | [implementation notes] |
-| [feature] | [user expectation] | LOW/MEDIUM/HIGH | [implementation notes] |
-| [feature] | [user expectation] | LOW/MEDIUM/HIGH | [implementation notes] |
+| [機能] | [ユーザーの期待] | LOW/MEDIUM/HIGH | [実装に関する注記] |
+| [機能] | [ユーザーの期待] | LOW/MEDIUM/HIGH | [実装に関する注記] |
+| [機能] | [ユーザーの期待] | LOW/MEDIUM/HIGH | [実装に関する注記] |
 
-### Differentiators (Competitive Advantage)
+### 差別化要因（競争優位性）
 
-Features that set the product apart. Not required, but valuable.
+プロダクトを際立たせる機能。必須ではないが価値がある。
 
-| Feature | Value Proposition | Complexity | Notes |
+| 機能 | 価値提案 | 複雑さ | 備考 |
 |---------|-------------------|------------|-------|
-| [feature] | [why it matters] | LOW/MEDIUM/HIGH | [implementation notes] |
-| [feature] | [why it matters] | LOW/MEDIUM/HIGH | [implementation notes] |
-| [feature] | [why it matters] | LOW/MEDIUM/HIGH | [implementation notes] |
+| [機能] | [なぜ重要か] | LOW/MEDIUM/HIGH | [実装に関する注記] |
+| [機能] | [なぜ重要か] | LOW/MEDIUM/HIGH | [実装に関する注記] |
+| [機能] | [なぜ重要か] | LOW/MEDIUM/HIGH | [実装に関する注記] |
 
-### Anti-Features (Commonly Requested, Often Problematic)
+### アンチフィーチャー（よく要望されるが問題を引き起こすもの）
 
-Features that seem good but create problems.
+良さそうに見えるが問題を引き起こす機能。
 
-| Feature | Why Requested | Why Problematic | Alternative |
+| 機能 | 要望される理由 | 問題になる理由 | 代替案 |
 |---------|---------------|-----------------|-------------|
-| [feature] | [surface appeal] | [actual problems] | [better approach] |
-| [feature] | [surface appeal] | [actual problems] | [better approach] |
+| [機能] | [表面的な魅力] | [実際の問題] | [より良いアプローチ] |
+| [機能] | [表面的な魅力] | [実際の問題] | [より良いアプローチ] |
 
-## Feature Dependencies
+## 機能の依存関係
 
 ```
-[Feature A]
-    └──requires──> [Feature B]
-                       └──requires──> [Feature C]
+[機能A]
+    └──requires──> [機能B]
+                       └──requires──> [機能C]
 
-[Feature D] ──enhances──> [Feature A]
+[機能D] ──enhances──> [機能A]
 
-[Feature E] ──conflicts──> [Feature F]
+[機能E] ──conflicts──> [機能F]
 ```
 
-### Dependency Notes
+### 依存関係の注記
 
-- **[Feature A] requires [Feature B]:** [why the dependency exists]
-- **[Feature D] enhances [Feature A]:** [how they work together]
-- **[Feature E] conflicts with [Feature F]:** [why they're incompatible]
+- **[機能A]は[機能B]を必要:** [依存関係が存在する理由]
+- **[機能D]は[機能A]を強化:** [どのように連携するか]
+- **[機能E]は[機能F]と競合:** [なぜ両立しないか]
 
-## MVP Definition
+## MVP定義
 
-### Launch With (v1)
+### ローンチ時に含めるもの（v1）
 
-Minimum viable product — what's needed to validate the concept.
+最小限の実用的プロダクト — コンセプトを検証するために必要なもの。
 
-- [ ] [Feature] — [why essential]
-- [ ] [Feature] — [why essential]
-- [ ] [Feature] — [why essential]
+- [ ] [機能] — [なぜ必須か]
+- [ ] [機能] — [なぜ必須か]
+- [ ] [機能] — [なぜ必須か]
 
-### Add After Validation (v1.x)
+### 検証後に追加（v1.x）
 
-Features to add once core is working.
+コアが動作してから追加する機能。
 
-- [ ] [Feature] — [trigger for adding]
-- [ ] [Feature] — [trigger for adding]
+- [ ] [機能] — [追加のトリガー]
+- [ ] [機能] — [追加のトリガー]
 
-### Future Consideration (v2+)
+### 将来の検討事項（v2+）
 
-Features to defer until product-market fit is established.
+プロダクトマーケットフィットが確立されるまで延期する機能。
 
-- [ ] [Feature] — [why defer]
-- [ ] [Feature] — [why defer]
+- [ ] [機能] — [延期する理由]
+- [ ] [機能] — [延期する理由]
 
-## Feature Prioritization Matrix
+## 機能優先順位マトリクス
 
-| Feature | User Value | Implementation Cost | Priority |
+| 機能 | ユーザー価値 | 実装コスト | 優先度 |
 |---------|------------|---------------------|----------|
-| [feature] | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | P1/P2/P3 |
-| [feature] | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | P1/P2/P3 |
-| [feature] | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | P1/P2/P3 |
+| [機能] | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | P1/P2/P3 |
+| [機能] | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | P1/P2/P3 |
+| [機能] | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | P1/P2/P3 |
 
-**Priority key:**
-- P1: Must have for launch
-- P2: Should have, add when possible
-- P3: Nice to have, future consideration
+**優先度の意味:**
+- P1: ローンチに必須
+- P2: あるべき、可能な時に追加
+- P3: あると良い、将来の検討事項
 
-## Competitor Feature Analysis
+## 競合分析
 
-| Feature | Competitor A | Competitor B | Our Approach |
+| 機能 | 競合A | 競合B | 我々のアプローチ |
 |---------|--------------|--------------|--------------|
-| [feature] | [how they do it] | [how they do it] | [our plan] |
-| [feature] | [how they do it] | [how they do it] | [our plan] |
+| [機能] | [どう実装しているか] | [どう実装しているか] | [我々の計画] |
+| [機能] | [どう実装しているか] | [どう実装しているか] | [我々の計画] |
 
-## Sources
+## 情報源
 
-- [Competitor products analyzed]
-- [User research or feedback sources]
-- [Industry standards referenced]
+- [分析した競合プロダクト]
+- [ユーザーリサーチまたはフィードバックソース]
+- [参考にした業界標準]
 
 ---
-*Feature research for: [domain]*
-*Researched: [date]*
+*機能リサーチ対象: [ドメイン]*
+*リサーチ日: [日付]*
 ```
 
 </template>
 
 <guidelines>
 
-**Table Stakes:**
-- These are non-negotiable for launch
-- Users don't give credit for having them, but penalize for missing them
-- Example: A community platform without user profiles is broken
+**テーブルステークス:**
+- ローンチに必須の機能
+- ユーザーはあっても評価しないが、なければ減点する
+- 例: ユーザープロフィールのないコミュニティプラットフォームは不完全
 
-**Differentiators:**
-- These are where you compete
-- Should align with the Core Value from PROJECT.md
-- Don't try to differentiate on everything
+**差別化要因:**
+- 競争の場所
+- PROJECT.mdのコアバリューと一致すべき
+- すべてで差別化しようとしない
 
-**Anti-Features:**
-- Prevent scope creep by documenting what seems good but isn't
-- Include the alternative approach
-- Example: "Real-time everything" often creates complexity without value
+**アンチフィーチャー:**
+- 良さそうに見えるが実はそうでないものを文書化してスコープクリープを防ぐ
+- 代替アプローチを含める
+- 例: 「すべてをリアルタイムに」は価値なく複雑さだけ生むことが多い
 
-**Feature Dependencies:**
-- Critical for roadmap phase ordering
-- If A requires B, B must be in an earlier phase
-- Conflicts inform what NOT to combine in same phase
+**機能の依存関係:**
+- ロードマップのフェーズ順序に重要
+- AがBを必要とするなら、Bはより早いフェーズに必要
+- 競合は同じフェーズに組み合わせるべきでないものを示す
 
-**MVP Definition:**
-- Be ruthless about what's truly minimum
-- "Nice to have" is not MVP
-- Launch with less, validate, then expand
+**MVP定義:**
+- 本当に最小限なものについて厳格に
+- 「あると良い」はMVPではない
+- 少なくローンチし、検証してから拡張
 
 </guidelines>

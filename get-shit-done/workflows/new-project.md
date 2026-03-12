@@ -1,32 +1,32 @@
 <purpose>
-Initialize a new project through unified flow: questioning, research (optional), requirements, roadmap. This is the most leveraged moment in any project — deep questioning here means better plans, better execution, better outcomes. One workflow takes you from idea to ready-for-planning.
+統合フローを通じて新しいプロジェクトを初期化する：質問、リサーチ（任意）、要件定義、ロードマップ。これはプロジェクトにおける最も重要な瞬間であり、ここでの深い質問がより良い計画、より良い実行、より良い成果につながる。1つのワークフローでアイデアから計画準備完了まで導く。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出し元プロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <auto_mode>
-## Auto Mode Detection
+## 自動モード検出
 
-Check if `--auto` flag is present in $ARGUMENTS.
+$ARGUMENTSに`--auto`フラグが存在するか確認する。
 
-**If auto mode:**
-- Skip brownfield mapping offer (assume greenfield)
-- Skip deep questioning (extract context from provided document)
-- Config: YOLO mode is implicit (skip that question), but ask granularity/git/agents FIRST (Step 2a)
-- After config: run Steps 6-9 automatically with smart defaults:
-  - Research: Always yes
-  - Requirements: Include all table stakes + features from provided document
-  - Requirements approval: Auto-approve
-  - Roadmap approval: Auto-approve
+**自動モードの場合：**
+- ブラウンフィールドマッピングの提案をスキップ（グリーンフィールドを想定）
+- 深い質問をスキップ（提供されたドキュメントからコンテキストを抽出）
+- 設定：YOLOモードは暗黙的（その質問はスキップ）、ただし粒度/git/エージェントを最初に確認（ステップ2a）
+- 設定後：ステップ6-9をスマートデフォルトで自動実行：
+  - リサーチ：常にはい
+  - 要件：提供されたドキュメントからすべてのテーブルステークス＋機能を含む
+  - 要件承認：自動承認
+  - ロードマップ承認：自動承認
 
-**Document requirement:**
-Auto mode requires an idea document — either:
-- File reference: `/gsd:new-project --auto @prd.md`
-- Pasted/written text in the prompt
+**ドキュメント要件：**
+自動モードにはアイデアドキュメントが必要 — 以下のいずれか：
+- ファイル参照：`/gsd:new-project --auto @prd.md`
+- プロンプトに貼り付けまたは記述されたテキスト
 
-If no document content provided, error:
+ドキュメントコンテンツが提供されていない場合、エラー：
 
 ```
 Error: --auto requires an idea document.
@@ -41,131 +41,131 @@ The document should describe what you want to build.
 
 <process>
 
-## 1. Setup
+## 1. セットアップ
 
-**MANDATORY FIRST STEP — Execute these checks before ANY user interaction:**
+**必須の最初のステップ — ユーザーとのやり取りの前にこれらのチェックを実行すること：**
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init new-project)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Parse JSON for: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `project_exists`, `has_codebase_map`, `planning_exists`, `has_existing_code`, `has_package_file`, `is_brownfield`, `needs_codebase_map`, `has_git`, `project_path`.
+JSONをパース：`researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `project_exists`, `has_codebase_map`, `planning_exists`, `has_existing_code`, `has_package_file`, `is_brownfield`, `needs_codebase_map`, `has_git`, `project_path`。
 
-**If `project_exists` is true:** Error — project already initialized. Use `/gsd:progress`.
+**`project_exists`がtrueの場合：** エラー — プロジェクトは既に初期化済み。`/gsd:progress`を使用すること。
 
-**If `has_git` is false:** Initialize git:
+**`has_git`がfalseの場合：** gitを初期化：
 ```bash
 git init
 ```
 
-## 2. Brownfield Offer
+## 2. ブラウンフィールド提案
 
-**If auto mode:** Skip to Step 4 (assume greenfield, synthesize PROJECT.md from provided document).
+**自動モードの場合：** ステップ4にスキップ（グリーンフィールドを想定し、提供されたドキュメントからPROJECT.mdを合成）。
 
-**If `needs_codebase_map` is true** (from init — existing code detected but no codebase map):
+**`needs_codebase_map`がtrueの場合**（initから — 既存のコードが検出されたがコードベースマップがない）：
 
-Use AskUserQuestion:
+AskUserQuestionを使用：
 - header: "Codebase"
-- question: "I detected existing code in this directory. Would you like to map the codebase first?"
+- question: "このディレクトリに既存のコードを検出しました。先にコードベースをマッピングしますか？"
 - options:
-  - "Map codebase first" — Run /gsd:map-codebase to understand existing architecture (Recommended)
-  - "Skip mapping" — Proceed with project initialization
+  - "Map codebase first" — 既存のアーキテクチャを理解するために/gsd:map-codebaseを実行（推奨）
+  - "Skip mapping" — プロジェクト初期化を続行
 
-**If "Map codebase first":**
+**"Map codebase first"の場合：**
 ```
-Run `/gsd:map-codebase` first, then return to `/gsd:new-project`
+先に`/gsd:map-codebase`を実行し、その後`/gsd:new-project`に戻る
 ```
-Exit command.
+コマンドを終了。
 
-**If "Skip mapping" OR `needs_codebase_map` is false:** Continue to Step 3.
+**"Skip mapping"の場合 または `needs_codebase_map`がfalseの場合：** ステップ3へ続行。
 
-## 2a. Auto Mode Config (auto mode only)
+## 2a. 自動モード設定（自動モードのみ）
 
-**If auto mode:** Collect config settings upfront before processing the idea document.
+**自動モードの場合：** アイデアドキュメントの処理前に設定を事前に収集する。
 
-YOLO mode is implicit (auto = YOLO). Ask remaining config questions:
+YOLOモードは暗黙的（auto = YOLO）。残りの設定質問を確認：
 
-**Round 1 — Core settings (3 questions, no Mode question):**
+**ラウンド1 — コア設定（3つの質問、モード質問なし）：**
 
 ```
 AskUserQuestion([
   {
     header: "Granularity",
-    question: "How finely should scope be sliced into phases?",
+    question: "スコープをどの程度細かくフェーズに分割しますか？",
     multiSelect: false,
     options: [
-      { label: "Coarse (Recommended)", description: "Fewer, broader phases (3-5 phases, 1-3 plans each)" },
-      { label: "Standard", description: "Balanced phase size (5-8 phases, 3-5 plans each)" },
-      { label: "Fine", description: "Many focused phases (8-12 phases, 5-10 plans each)" }
+      { label: "Coarse (Recommended)", description: "少数の広いフェーズ（3-5フェーズ、各1-3プラン）" },
+      { label: "Standard", description: "バランスの取れたフェーズサイズ（5-8フェーズ、各3-5プラン）" },
+      { label: "Fine", description: "多数の集中フェーズ（8-12フェーズ、各5-10プラン）" }
     ]
   },
   {
     header: "Execution",
-    question: "Run plans in parallel?",
+    question: "プランを並列実行しますか？",
     multiSelect: false,
     options: [
-      { label: "Parallel (Recommended)", description: "Independent plans run simultaneously" },
-      { label: "Sequential", description: "One plan at a time" }
+      { label: "Parallel (Recommended)", description: "独立したプランを同時に実行" },
+      { label: "Sequential", description: "一度に1つのプラン" }
     ]
   },
   {
     header: "Git Tracking",
-    question: "Commit planning docs to git?",
+    question: "計画ドキュメントをgitにコミットしますか？",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Planning docs tracked in version control" },
-      { label: "No", description: "Keep .planning/ local-only (add to .gitignore)" }
+      { label: "Yes (Recommended)", description: "計画ドキュメントをバージョン管理で追跡" },
+      { label: "No", description: ".planning/をローカル専用に保持（.gitignoreに追加）" }
     ]
   }
 ])
 ```
 
-**Round 2 — Workflow agents (same as Step 5):**
+**ラウンド2 — ワークフローエージェント（ステップ5と同じ）：**
 
 ```
 AskUserQuestion([
   {
     header: "Research",
-    question: "Research before planning each phase? (adds tokens/time)",
+    question: "各フェーズの計画前にリサーチしますか？（トークン/時間が追加されます）",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Investigate domain, find patterns, surface gotchas" },
-      { label: "No", description: "Plan directly from requirements" }
+      { label: "Yes (Recommended)", description: "ドメインを調査し、パターンを発見し、落とし穴を浮き彫りにする" },
+      { label: "No", description: "要件から直接計画する" }
     ]
   },
   {
     header: "Plan Check",
-    question: "Verify plans will achieve their goals? (adds tokens/time)",
+    question: "プランが目標を達成するか検証しますか？（トークン/時間が追加されます）",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Catch gaps before execution starts" },
-      { label: "No", description: "Execute plans without verification" }
+      { label: "Yes (Recommended)", description: "実行開始前にギャップを検出" },
+      { label: "No", description: "検証なしでプランを実行" }
     ]
   },
   {
     header: "Verifier",
-    question: "Verify work satisfies requirements after each phase? (adds tokens/time)",
+    question: "各フェーズ後に作業が要件を満たしているか検証しますか？（トークン/時間が追加されます）",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Confirm deliverables match phase goals" },
-      { label: "No", description: "Trust execution, skip verification" }
+      { label: "Yes (Recommended)", description: "成果物がフェーズ目標に合致していることを確認" },
+      { label: "No", description: "実行を信頼し、検証をスキップ" }
     ]
   },
   {
     header: "AI Models",
-    question: "Which AI models for planning agents?",
+    question: "計画エージェントにどのAIモデルを使用しますか？",
     multiSelect: false,
     options: [
-      { label: "Balanced (Recommended)", description: "Sonnet for most agents — good quality/cost ratio" },
-      { label: "Quality", description: "Opus for research/roadmap — higher cost, deeper analysis" },
-      { label: "Budget", description: "Haiku where possible — fastest, lowest cost" }
+      { label: "Balanced (Recommended)", description: "ほとんどのエージェントにSonnet — 品質/コストのバランスが良い" },
+      { label: "Quality", description: "リサーチ/ロードマップにOpus — 高コスト、より深い分析" },
+      { label: "Budget", description: "可能な場合Haiku — 最速、最低コスト" }
     ]
   }
 ])
 ```
 
-Create `.planning/config.json` with mode set to "yolo":
+`.planning/config.json`を作成し、modeを"yolo"に設定：
 
 ```json
 {
@@ -184,28 +184,28 @@ Create `.planning/config.json` with mode set to "yolo":
 }
 ```
 
-**If commit_docs = No:** Add `.planning/` to `.gitignore`.
+**commit_docs = Noの場合：** `.planning/`を`.gitignore`に追加。
 
-**Commit config.json:**
+**config.jsonをコミット：**
 
 ```bash
 mkdir -p .planning
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: add project config" --files .planning/config.json
 ```
 
-**Persist auto-advance chain flag to config (survives context compaction):**
+**auto-advanceチェーンフラグを設定に永続化（コンテキスト圧縮を生き残る）：**
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_chain_active true
 ```
 
-Proceed to Step 4 (skip Steps 3 and 5).
+ステップ4に進む（ステップ3と5をスキップ）。
 
-## 3. Deep Questioning
+## 3. 深い質問
 
-**If auto mode:** Skip (already handled in Step 2a). Extract project context from provided document instead and proceed to Step 4.
+**自動モードの場合：** スキップ（ステップ2aで既に処理済み）。代わりに提供されたドキュメントからプロジェクトコンテキストを抽出し、ステップ4に進む。
 
-**Display stage banner:**
+**ステージバナーを表示：**
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -213,59 +213,59 @@ Proceed to Step 4 (skip Steps 3 and 5).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**Open the conversation:**
+**会話を開始する：**
 
-Ask inline (freeform, NOT AskUserQuestion):
+インラインで質問（自由形式、AskUserQuestionではない）：
 
-"What do you want to build?"
+「何を作りたいですか？」
 
-Wait for their response. This gives you the context needed to ask intelligent follow-up questions.
+応答を待つ。これにより、知的なフォローアップ質問をするために必要なコンテキストが得られる。
 
-**Follow the thread:**
+**スレッドを追う：**
 
-Based on what they said, ask follow-up questions that dig into their response. Use AskUserQuestion with options that probe what they mentioned — interpretations, clarifications, concrete examples.
+相手が言ったことに基づいて、応答を深掘りするフォローアップ質問をする。AskUserQuestionを使用して、言及された内容を調査するオプションを提示する — 解釈、明確化、具体例。
 
-Keep following threads. Each answer opens new threads to explore. Ask about:
-- What excited them
-- What problem sparked this
-- What they mean by vague terms
-- What it would actually look like
-- What's already decided
+スレッドを追い続ける。各回答が探求すべき新しいスレッドを開く。以下について質問する：
+- 何に興奮しているか
+- どんな問題がきっかけか
+- 曖昧な用語の意味
+- 実際にどのように見えるか
+- 既に決まっていること
 
-Consult `questioning.md` for techniques:
-- Challenge vagueness
-- Make abstract concrete
-- Surface assumptions
-- Find edges
-- Reveal motivation
+テクニックについては`questioning.md`を参照：
+- 曖昧さに挑戦する
+- 抽象的なものを具体的にする
+- 前提を浮き彫りにする
+- 境界を見つける
+- 動機を明らかにする
 
-**Check context (background, not out loud):**
+**コンテキストの確認（バックグラウンドで、声に出さない）：**
 
-As you go, mentally check the context checklist from `questioning.md`. If gaps remain, weave questions naturally. Don't suddenly switch to checklist mode.
+進行中に、`questioning.md`のコンテキストチェックリストを頭の中で確認する。ギャップが残っている場合、自然に質問を織り込む。突然チェックリストモードに切り替えないこと。
 
-**Decision gate:**
+**判断ゲート：**
 
-When you could write a clear PROJECT.md, use AskUserQuestion:
+明確なPROJECT.mdを書けると判断したら、AskUserQuestionを使用：
 
 - header: "Ready?"
-- question: "I think I understand what you're after. Ready to create PROJECT.md?"
+- question: "あなたが目指しているものを理解できたと思います。PROJECT.mdを作成しますか？"
 - options:
-  - "Create PROJECT.md" — Let's move forward
-  - "Keep exploring" — I want to share more / ask me more
+  - "Create PROJECT.md" — 先に進みましょう
+  - "Keep exploring" — もっと共有したい / もっと質問して
 
-If "Keep exploring" — ask what they want to add, or identify gaps and probe naturally.
+"Keep exploring"の場合 — 何を追加したいか聞くか、ギャップを特定して自然に深掘りする。
 
-Loop until "Create PROJECT.md" selected.
+"Create PROJECT.md"が選択されるまでループ。
 
-## 4. Write PROJECT.md
+## 4. PROJECT.mdの作成
 
-**If auto mode:** Synthesize from provided document. No "Ready?" gate was shown — proceed directly to commit.
+**自動モードの場合：** 提供されたドキュメントから合成する。"Ready?"ゲートは表示されなかった — 直接コミットに進む。
 
-Synthesize all context into `.planning/PROJECT.md` using the template from `templates/project.md`.
+すべてのコンテキストを`templates/project.md`のテンプレートを使用して`.planning/PROJECT.md`に合成する。
 
-**For greenfield projects:**
+**グリーンフィールドプロジェクトの場合：**
 
-Initialize requirements as hypotheses:
+要件を仮説として初期化：
 
 ```markdown
 ## Requirements
@@ -286,15 +286,15 @@ Initialize requirements as hypotheses:
 - [Exclusion 2] — [why]
 ```
 
-All Active requirements are hypotheses until shipped and validated.
+すべてのActive要件は、出荷して検証されるまで仮説である。
 
-**For brownfield projects (codebase map exists):**
+**ブラウンフィールドプロジェクトの場合（コードベースマップが存在する）：**
 
-Infer Validated requirements from existing code:
+既存のコードからValidated要件を推論：
 
-1. Read `.planning/codebase/ARCHITECTURE.md` and `STACK.md`
-2. Identify what the codebase already does
-3. These become the initial Validated set
+1. `.planning/codebase/ARCHITECTURE.md`と`STACK.md`を読む
+2. コードベースが既に行っていることを特定する
+3. これらが初期のValidatedセットになる
 
 ```markdown
 ## Requirements
@@ -315,9 +315,9 @@ Infer Validated requirements from existing code:
 - [Exclusion 1] — [why]
 ```
 
-**Key Decisions:**
+**Key Decisions：**
 
-Initialize with any decisions made during questioning:
+質問中に行われた決定で初期化：
 
 ```markdown
 ## Key Decisions
@@ -327,145 +327,145 @@ Initialize with any decisions made during questioning:
 | [Choice from questioning] | [Why] | — Pending |
 ```
 
-**Last updated footer:**
+**最終更新フッター：**
 
 ```markdown
 ---
 *Last updated: [date] after initialization*
 ```
 
-Do not compress. Capture everything gathered.
+圧縮しないこと。収集されたすべてを記録する。
 
-**Commit PROJECT.md:**
+**PROJECT.mdをコミット：**
 
 ```bash
 mkdir -p .planning
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: initialize project" --files .planning/PROJECT.md
 ```
 
-## 5. Workflow Preferences
+## 5. ワークフロー設定
 
-**If auto mode:** Skip — config was collected in Step 2a. Proceed to Step 5.5.
+**自動モードの場合：** スキップ — 設定はステップ2aで収集済み。ステップ5.5に進む。
 
-**Check for global defaults** at `~/.gsd/defaults.json`. If the file exists, offer to use saved defaults:
+`~/.gsd/defaults.json`で**グローバルデフォルトを確認**する。ファイルが存在する場合、保存されたデフォルトの使用を提案：
 
 ```
 AskUserQuestion([
   {
-    question: "Use your saved default settings? (from ~/.gsd/defaults.json)",
+    question: "保存されたデフォルト設定を使用しますか？（~/.gsd/defaults.jsonから）",
     header: "Defaults",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Use saved defaults, skip settings questions" },
-      { label: "No", description: "Configure settings manually" }
+      { label: "Yes (Recommended)", description: "保存されたデフォルトを使用し、設定質問をスキップ" },
+      { label: "No", description: "手動で設定を構成" }
     ]
   }
 ])
 ```
 
-If "Yes": read `~/.gsd/defaults.json`, use those values for config.json, and skip directly to **Commit config.json** below.
+"Yes"の場合：`~/.gsd/defaults.json`を読み、その値をconfig.jsonに使用し、以下の**config.jsonをコミット**に直接スキップ。
 
-If "No" or `~/.gsd/defaults.json` doesn't exist: proceed with the questions below.
+"No"の場合 または `~/.gsd/defaults.json`が存在しない場合：以下の質問に進む。
 
-**Round 1 — Core workflow settings (4 questions):**
+**ラウンド1 — コアワークフロー設定（4つの質問）：**
 
 ```
 questions: [
   {
     header: "Mode",
-    question: "How do you want to work?",
+    question: "どのように作業しますか？",
     multiSelect: false,
     options: [
-      { label: "YOLO (Recommended)", description: "Auto-approve, just execute" },
-      { label: "Interactive", description: "Confirm at each step" }
+      { label: "YOLO (Recommended)", description: "自動承認、実行するだけ" },
+      { label: "Interactive", description: "各ステップで確認" }
     ]
   },
   {
     header: "Granularity",
-    question: "How finely should scope be sliced into phases?",
+    question: "スコープをどの程度細かくフェーズに分割しますか？",
     multiSelect: false,
     options: [
-      { label: "Coarse", description: "Fewer, broader phases (3-5 phases, 1-3 plans each)" },
-      { label: "Standard", description: "Balanced phase size (5-8 phases, 3-5 plans each)" },
-      { label: "Fine", description: "Many focused phases (8-12 phases, 5-10 plans each)" }
+      { label: "Coarse", description: "少数の広いフェーズ（3-5フェーズ、各1-3プラン）" },
+      { label: "Standard", description: "バランスの取れたフェーズサイズ（5-8フェーズ、各3-5プラン）" },
+      { label: "Fine", description: "多数の集中フェーズ（8-12フェーズ、各5-10プラン）" }
     ]
   },
   {
     header: "Execution",
-    question: "Run plans in parallel?",
+    question: "プランを並列実行しますか？",
     multiSelect: false,
     options: [
-      { label: "Parallel (Recommended)", description: "Independent plans run simultaneously" },
-      { label: "Sequential", description: "One plan at a time" }
+      { label: "Parallel (Recommended)", description: "独立したプランを同時に実行" },
+      { label: "Sequential", description: "一度に1つのプラン" }
     ]
   },
   {
     header: "Git Tracking",
-    question: "Commit planning docs to git?",
+    question: "計画ドキュメントをgitにコミットしますか？",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Planning docs tracked in version control" },
-      { label: "No", description: "Keep .planning/ local-only (add to .gitignore)" }
+      { label: "Yes (Recommended)", description: "計画ドキュメントをバージョン管理で追跡" },
+      { label: "No", description: ".planning/をローカル専用に保持（.gitignoreに追加）" }
     ]
   }
 ]
 ```
 
-**Round 2 — Workflow agents:**
+**ラウンド2 — ワークフローエージェント：**
 
-These spawn additional agents during planning/execution. They add tokens and time but improve quality.
+これらは計画/実行中に追加のエージェントを生成する。トークンと時間が追加されるが、品質が向上する。
 
-| Agent | When it runs | What it does |
+| エージェント | 実行タイミング | 機能 |
 |-------|--------------|--------------|
-| **Researcher** | Before planning each phase | Investigates domain, finds patterns, surfaces gotchas |
-| **Plan Checker** | After plan is created | Verifies plan actually achieves the phase goal |
-| **Verifier** | After phase execution | Confirms must-haves were delivered |
+| **Researcher** | 各フェーズの計画前 | ドメインを調査し、パターンを発見し、落とし穴を浮き彫りにする |
+| **Plan Checker** | プラン作成後 | プランが実際にフェーズ目標を達成するか検証する |
+| **Verifier** | フェーズ実行後 | 必須項目が納品されたことを確認する |
 
-All recommended for important projects. Skip for quick experiments.
+重要なプロジェクトにはすべて推奨。簡単な実験にはスキップ可能。
 
 ```
 questions: [
   {
     header: "Research",
-    question: "Research before planning each phase? (adds tokens/time)",
+    question: "各フェーズの計画前にリサーチしますか？（トークン/時間が追加されます）",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Investigate domain, find patterns, surface gotchas" },
-      { label: "No", description: "Plan directly from requirements" }
+      { label: "Yes (Recommended)", description: "ドメインを調査し、パターンを発見し、落とし穴を浮き彫りにする" },
+      { label: "No", description: "要件から直接計画する" }
     ]
   },
   {
     header: "Plan Check",
-    question: "Verify plans will achieve their goals? (adds tokens/time)",
+    question: "プランが目標を達成するか検証しますか？（トークン/時間が追加されます）",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Catch gaps before execution starts" },
-      { label: "No", description: "Execute plans without verification" }
+      { label: "Yes (Recommended)", description: "実行開始前にギャップを検出" },
+      { label: "No", description: "検証なしでプランを実行" }
     ]
   },
   {
     header: "Verifier",
-    question: "Verify work satisfies requirements after each phase? (adds tokens/time)",
+    question: "各フェーズ後に作業が要件を満たしているか検証しますか？（トークン/時間が追加されます）",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Confirm deliverables match phase goals" },
-      { label: "No", description: "Trust execution, skip verification" }
+      { label: "Yes (Recommended)", description: "成果物がフェーズ目標に合致していることを確認" },
+      { label: "No", description: "実行を信頼し、検証をスキップ" }
     ]
   },
   {
     header: "AI Models",
-    question: "Which AI models for planning agents?",
+    question: "計画エージェントにどのAIモデルを使用しますか？",
     multiSelect: false,
     options: [
-      { label: "Balanced (Recommended)", description: "Sonnet for most agents — good quality/cost ratio" },
-      { label: "Quality", description: "Opus for research/roadmap — higher cost, deeper analysis" },
-      { label: "Budget", description: "Haiku where possible — fastest, lowest cost" }
+      { label: "Balanced (Recommended)", description: "ほとんどのエージェントにSonnet — 品質/コストのバランスが良い" },
+      { label: "Quality", description: "リサーチ/ロードマップにOpus — 高コスト、より深い分析" },
+      { label: "Budget", description: "可能な場合Haiku — 最速、最低コスト" }
     ]
   }
 ]
 ```
 
-Create `.planning/config.json` with all settings:
+すべての設定で`.planning/config.json`を作成：
 
 ```json
 {
@@ -483,100 +483,100 @@ Create `.planning/config.json` with all settings:
 }
 ```
 
-**If commit_docs = No:**
-- Set `commit_docs: false` in config.json
-- Add `.planning/` to `.gitignore` (create if needed)
+**commit_docs = Noの場合：**
+- config.jsonに`commit_docs: false`を設定
+- `.planning/`を`.gitignore`に追加（必要に応じて作成）
 
-**If commit_docs = Yes:**
-- No additional gitignore entries needed
+**commit_docs = Yesの場合：**
+- 追加のgitignoreエントリは不要
 
-**Commit config.json:**
+**config.jsonをコミット：**
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: add project config" --files .planning/config.json
 ```
 
-**Note:** Run `/gsd:settings` anytime to update these preferences.
+**注意：** いつでも`/gsd:settings`を実行してこれらの設定を更新可能。
 
-## 5.5. Resolve Model Profile
+## 5.5. モデルプロファイルの解決
 
-Use models from init: `researcher_model`, `synthesizer_model`, `roadmapper_model`.
+initからのモデルを使用：`researcher_model`, `synthesizer_model`, `roadmapper_model`。
 
-## 6. Research Decision
+## 6. リサーチの判断
 
-**If auto mode:** Default to "Research first" without asking.
+**自動モードの場合：** 質問せずに"Research first"をデフォルトにする。
 
-Use AskUserQuestion:
+AskUserQuestionを使用：
 - header: "Research"
-- question: "Research the domain ecosystem before defining requirements?"
+- question: "要件定義の前にドメインエコシステムをリサーチしますか？"
 - options:
-  - "Research first (Recommended)" — Discover standard stacks, expected features, architecture patterns
-  - "Skip research" — I know this domain well, go straight to requirements
+  - "Research first (Recommended)" — 標準スタック、期待される機能、アーキテクチャパターンを発見する
+  - "Skip research" — このドメインに詳しいので、直接要件定義に進む
 
-**If "Research first":**
+**"Research first"の場合：**
 
-Display stage banner:
+ステージバナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► RESEARCHING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Researching [domain] ecosystem...
+[domain]エコシステムをリサーチ中...
 ```
 
-Create research directory:
+リサーチディレクトリを作成：
 ```bash
 mkdir -p .planning/research
 ```
 
-**Determine milestone context:**
+**マイルストーンコンテキストの決定：**
 
-Check if this is greenfield or subsequent milestone:
-- If no "Validated" requirements in PROJECT.md → Greenfield (building from scratch)
-- If "Validated" requirements exist → Subsequent milestone (adding to existing app)
+グリーンフィールドか後続マイルストーンかを確認：
+- PROJECT.mdに"Validated"要件がない場合 → グリーンフィールド（ゼロから構築）
+- "Validated"要件が存在する場合 → 後続マイルストーン（既存アプリに追加）
 
-Display spawning indicator:
+生成インジケーターを表示：
 ```
-◆ Spawning 4 researchers in parallel...
-  → Stack research
-  → Features research
-  → Architecture research
-  → Pitfalls research
+◆ 4つのリサーチャーを並列で生成中...
+  → スタックリサーチ
+  → 機能リサーチ
+  → アーキテクチャリサーチ
+  → 落とし穴リサーチ
 ```
 
-Spawn 4 parallel gsd-project-researcher agents with path references:
+パス参照付きで4つの並列gsd-project-researcherエージェントを生成：
 
 ```
 Task(prompt="<research_type>
-Project Research — Stack dimension for [domain].
+プロジェクトリサーチ — [domain]のスタック次元。
 </research_type>
 
 <milestone_context>
 [greenfield OR subsequent]
 
-Greenfield: Research the standard stack for building [domain] from scratch.
-Subsequent: Research what's needed to add [target features] to an existing [domain] app. Don't re-research the existing system.
+グリーンフィールド：[domain]をゼロから構築するための標準スタックをリサーチする。
+後続：既存の[domain]アプリに[target features]を追加するために必要なものをリサーチする。既存システムの再リサーチは不要。
 </milestone_context>
 
 <question>
-What's the standard 2025 stack for [domain]?
+[domain]の2025年標準スタックは何ですか？
 </question>
 
 <files_to_read>
-- {project_path} (Project context and goals)
+- {project_path} (プロジェクトのコンテキストと目標)
 </files_to_read>
 
 <downstream_consumer>
-Your STACK.md feeds into roadmap creation. Be prescriptive:
-- Specific libraries with versions
-- Clear rationale for each choice
-- What NOT to use and why
+あなたのSTACK.mdはロードマップ作成に供給される。具体的に記述すること：
+- バージョン付きの特定のライブラリ
+- 各選択の明確な根拠
+- 使用すべきでないものとその理由
 </downstream_consumer>
 
 <quality_gate>
-- [ ] Versions are current (verify with Context7/official docs, not training data)
-- [ ] Rationale explains WHY, not just WHAT
-- [ ] Confidence levels assigned to each recommendation
+- [ ] バージョンが最新であること（トレーニングデータではなくContext7/公式ドキュメントで検証）
+- [ ] 根拠がWHATではなくWHYを説明していること
+- [ ] 各推奨に信頼度レベルが割り当てられていること
 </quality_gate>
 
 <output>
@@ -586,35 +586,35 @@ Use template: ~/.claude/get-shit-done/templates/research-project/STACK.md
 ", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Stack research")
 
 Task(prompt="<research_type>
-Project Research — Features dimension for [domain].
+プロジェクトリサーチ — [domain]の機能次元。
 </research_type>
 
 <milestone_context>
 [greenfield OR subsequent]
 
-Greenfield: What features do [domain] products have? What's table stakes vs differentiating?
-Subsequent: How do [target features] typically work? What's expected behavior?
+グリーンフィールド：[domain]製品にはどのような機能がありますか？テーブルステークスと差別化要因は何ですか？
+後続：[target features]は通常どのように動作しますか？期待される動作は何ですか？
 </milestone_context>
 
 <question>
-What features do [domain] products have? What's table stakes vs differentiating?
+[domain]製品にはどのような機能がありますか？テーブルステークスと差別化要因は何ですか？
 </question>
 
 <files_to_read>
-- {project_path} (Project context)
+- {project_path} (プロジェクトコンテキスト)
 </files_to_read>
 
 <downstream_consumer>
-Your FEATURES.md feeds into requirements definition. Categorize clearly:
-- Table stakes (must have or users leave)
-- Differentiators (competitive advantage)
-- Anti-features (things to deliberately NOT build)
+あなたのFEATURES.mdは要件定義に供給される。明確にカテゴリ分けすること：
+- テーブルステークス（なければユーザーが離れる必須機能）
+- 差別化要因（競争優位性）
+- アンチフィーチャー（意図的に作らないもの）
 </downstream_consumer>
 
 <quality_gate>
-- [ ] Categories are clear (table stakes vs differentiators vs anti-features)
-- [ ] Complexity noted for each feature
-- [ ] Dependencies between features identified
+- [ ] カテゴリが明確であること（テーブルステークス vs 差別化要因 vs アンチフィーチャー）
+- [ ] 各機能の複雑さが記載されていること
+- [ ] 機能間の依存関係が特定されていること
 </quality_gate>
 
 <output>
@@ -624,35 +624,35 @@ Use template: ~/.claude/get-shit-done/templates/research-project/FEATURES.md
 ", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Features research")
 
 Task(prompt="<research_type>
-Project Research — Architecture dimension for [domain].
+プロジェクトリサーチ — [domain]のアーキテクチャ次元。
 </research_type>
 
 <milestone_context>
 [greenfield OR subsequent]
 
-Greenfield: How are [domain] systems typically structured? What are major components?
-Subsequent: How do [target features] integrate with existing [domain] architecture?
+グリーンフィールド：[domain]システムは通常どのように構成されますか？主要コンポーネントは何ですか？
+後続：[target features]は既存の[domain]アーキテクチャにどのように統合されますか？
 </milestone_context>
 
 <question>
-How are [domain] systems typically structured? What are major components?
+[domain]システムは通常どのように構成されますか？主要コンポーネントは何ですか？
 </question>
 
 <files_to_read>
-- {project_path} (Project context)
+- {project_path} (プロジェクトコンテキスト)
 </files_to_read>
 
 <downstream_consumer>
-Your ARCHITECTURE.md informs phase structure in roadmap. Include:
-- Component boundaries (what talks to what)
-- Data flow (how information moves)
-- Suggested build order (dependencies between components)
+あなたのARCHITECTURE.mdはロードマップのフェーズ構造に影響する。以下を含めること：
+- コンポーネント境界（何が何と通信するか）
+- データフロー（情報がどのように移動するか）
+- 推奨構築順序（コンポーネント間の依存関係）
 </downstream_consumer>
 
 <quality_gate>
-- [ ] Components clearly defined with boundaries
-- [ ] Data flow direction explicit
-- [ ] Build order implications noted
+- [ ] コンポーネントが境界付きで明確に定義されていること
+- [ ] データフローの方向が明示的であること
+- [ ] 構築順序の影響が記載されていること
 </quality_gate>
 
 <output>
@@ -662,35 +662,35 @@ Use template: ~/.claude/get-shit-done/templates/research-project/ARCHITECTURE.md
 ", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Architecture research")
 
 Task(prompt="<research_type>
-Project Research — Pitfalls dimension for [domain].
+プロジェクトリサーチ — [domain]の落とし穴次元。
 </research_type>
 
 <milestone_context>
 [greenfield OR subsequent]
 
-Greenfield: What do [domain] projects commonly get wrong? Critical mistakes?
-Subsequent: What are common mistakes when adding [target features] to [domain]?
+グリーンフィールド：[domain]プロジェクトがよく間違えることは何ですか？致命的なミスは？
+後続：[domain]に[target features]を追加する際の一般的なミスは何ですか？
 </milestone_context>
 
 <question>
-What do [domain] projects commonly get wrong? Critical mistakes?
+[domain]プロジェクトがよく間違えることは何ですか？致命的なミスは？
 </question>
 
 <files_to_read>
-- {project_path} (Project context)
+- {project_path} (プロジェクトコンテキスト)
 </files_to_read>
 
 <downstream_consumer>
-Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
-- Warning signs (how to detect early)
-- Prevention strategy (how to avoid)
-- Which phase should address it
+あなたのPITFALLS.mdはロードマップ/計画でのミスを防ぐ。各落とし穴について：
+- 警告サイン（早期に検出する方法）
+- 予防戦略（回避する方法）
+- どのフェーズが対処すべきか
 </downstream_consumer>
 
 <quality_gate>
-- [ ] Pitfalls are specific to this domain (not generic advice)
-- [ ] Prevention strategies are actionable
-- [ ] Phase mapping included where relevant
+- [ ] 落とし穴がこのドメインに固有であること（一般的なアドバイスではない）
+- [ ] 予防戦略が実行可能であること
+- [ ] 関連する場合にフェーズマッピングが含まれていること
 </quality_gate>
 
 <output>
@@ -700,12 +700,12 @@ Use template: ~/.claude/get-shit-done/templates/research-project/PITFALLS.md
 ", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Pitfalls research")
 ```
 
-After all 4 agents complete, spawn synthesizer to create SUMMARY.md:
+4つのエージェントがすべて完了した後、シンセサイザーを生成してSUMMARY.mdを作成：
 
 ```
 Task(prompt="
 <task>
-Synthesize research outputs into SUMMARY.md.
+リサーチ出力をSUMMARY.mdに合成する。
 </task>
 
 <files_to_read>
@@ -718,306 +718,306 @@ Synthesize research outputs into SUMMARY.md.
 <output>
 Write to: .planning/research/SUMMARY.md
 Use template: ~/.claude/get-shit-done/templates/research-project/SUMMARY.md
-Commit after writing.
+書き込み後にコミットすること。
 </output>
 ", subagent_type="gsd-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")
 ```
 
-Display research complete banner and key findings:
+リサーチ完了バナーと主要な発見を表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► RESEARCH COMPLETE ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Key Findings
+## 主要な発見
 
-**Stack:** [from SUMMARY.md]
-**Table Stakes:** [from SUMMARY.md]
-**Watch Out For:** [from SUMMARY.md]
+**スタック:** [SUMMARY.mdより]
+**テーブルステークス:** [SUMMARY.mdより]
+**注意事項:** [SUMMARY.mdより]
 
-Files: `.planning/research/`
+ファイル: `.planning/research/`
 ```
 
-**If "Skip research":** Continue to Step 7.
+**"Skip research"の場合：** ステップ7に続行。
 
-## 7. Define Requirements
+## 7. 要件定義
 
-Display stage banner:
+ステージバナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► DEFINING REQUIREMENTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**Load context:**
+**コンテキストの読み込み：**
 
-Read PROJECT.md and extract:
-- Core value (the ONE thing that must work)
-- Stated constraints (budget, timeline, tech limitations)
-- Any explicit scope boundaries
+PROJECT.mdを読み、以下を抽出：
+- コアバリュー（動作しなければならないたった1つのこと）
+- 明示された制約（予算、タイムライン、技術的制限）
+- 明示的なスコープ境界
 
-**If research exists:** Read research/FEATURES.md and extract feature categories.
+**リサーチが存在する場合：** research/FEATURES.mdを読み、機能カテゴリを抽出。
 
-**If auto mode:**
-- Auto-include all table stakes features (users expect these)
-- Include features explicitly mentioned in provided document
-- Auto-defer differentiators not mentioned in document
-- Skip per-category AskUserQuestion loops
-- Skip "Any additions?" question
-- Skip requirements approval gate
-- Generate REQUIREMENTS.md and commit directly
+**自動モードの場合：**
+- すべてのテーブルステークス機能を自動的に含める（ユーザーが期待するもの）
+- 提供されたドキュメントで明示的に言及された機能を含める
+- ドキュメントで言及されていない差別化要因を自動的に延期
+- カテゴリごとのAskUserQuestionループをスキップ
+- 「追加はありますか？」の質問をスキップ
+- 要件承認ゲートをスキップ
+- REQUIREMENTS.mdを生成して直接コミット
 
-**Present features by category (interactive mode only):**
+**カテゴリ別に機能を提示（インタラクティブモードのみ）：**
 
 ```
-Here are the features for [domain]:
+[domain]の機能は以下の通り：
 
-## Authentication
-**Table stakes:**
-- Sign up with email/password
-- Email verification
-- Password reset
-- Session management
+## 認証
+**テーブルステークス：**
+- メール/パスワードでのサインアップ
+- メール認証
+- パスワードリセット
+- セッション管理
 
-**Differentiators:**
-- Magic link login
-- OAuth (Google, GitHub)
+**差別化要因：**
+- マジックリンクログイン
+- OAuth（Google、GitHub）
 - 2FA
 
-**Research notes:** [any relevant notes]
+**リサーチノート:** [関連するメモ]
 
 ---
 
-## [Next Category]
+## [次のカテゴリ]
 ...
 ```
 
-**If no research:** Gather requirements through conversation instead.
+**リサーチがない場合：** 代わりに会話を通じて要件を収集する。
 
-Ask: "What are the main things users need to be able to do?"
+質問：「ユーザーができる必要がある主な操作は何ですか？」
 
-For each capability mentioned:
-- Ask clarifying questions to make it specific
-- Probe for related capabilities
-- Group into categories
+言及された各機能について：
+- 具体的にするための明確化質問
+- 関連する機能の調査
+- カテゴリへのグループ化
 
-**Scope each category:**
+**各カテゴリのスコーピング：**
 
-For each category, use AskUserQuestion:
+各カテゴリについてAskUserQuestionを使用：
 
-- header: "[Category]" (max 12 chars)
-- question: "Which [category] features are in v1?"
+- header: "[Category]" (最大12文字)
+- question: "v1にどの[category]機能を含めますか？"
 - multiSelect: true
 - options:
-  - "[Feature 1]" — [brief description]
-  - "[Feature 2]" — [brief description]
-  - "[Feature 3]" — [brief description]
-  - "None for v1" — Defer entire category
+  - "[Feature 1]" — [簡単な説明]
+  - "[Feature 2]" — [簡単な説明]
+  - "[Feature 3]" — [簡単な説明]
+  - "None for v1" — カテゴリ全体を延期
 
-Track responses:
-- Selected features → v1 requirements
-- Unselected table stakes → v2 (users expect these)
-- Unselected differentiators → out of scope
+応答を追跡：
+- 選択された機能 → v1要件
+- 選択されなかったテーブルステークス → v2（ユーザーが期待するもの）
+- 選択されなかった差別化要因 → スコープ外
 
-**Identify gaps:**
+**ギャップの特定：**
 
-Use AskUserQuestion:
+AskUserQuestionを使用：
 - header: "Additions"
-- question: "Any requirements research missed? (Features specific to your vision)"
+- question: "リサーチが見逃した要件はありますか？（あなたのビジョンに固有の機能）"
 - options:
-  - "No, research covered it" — Proceed
-  - "Yes, let me add some" — Capture additions
+  - "No, research covered it" — 続行
+  - "Yes, let me add some" — 追加を記録
 
-**Validate core value:**
+**コアバリューの検証：**
 
-Cross-check requirements against Core Value from PROJECT.md. If gaps detected, surface them.
+PROJECT.mdのコアバリューに対して要件をクロスチェック。ギャップが検出された場合、浮き彫りにする。
 
-**Generate REQUIREMENTS.md:**
+**REQUIREMENTS.mdの生成：**
 
-Create `.planning/REQUIREMENTS.md` with:
-- v1 Requirements grouped by category (checkboxes, REQ-IDs)
-- v2 Requirements (deferred)
-- Out of Scope (explicit exclusions with reasoning)
-- Traceability section (empty, filled by roadmap)
+`.planning/REQUIREMENTS.md`を以下で作成：
+- カテゴリ別にグループ化されたv1要件（チェックボックス、REQ-ID）
+- v2要件（延期）
+- スコープ外（理由付きの明示的な除外）
+- トレーサビリティセクション（空、ロードマップで記入）
 
-**REQ-ID format:** `[CATEGORY]-[NUMBER]` (AUTH-01, CONTENT-02)
+**REQ-IDフォーマット:** `[CATEGORY]-[NUMBER]` (AUTH-01, CONTENT-02)
 
-**Requirement quality criteria:**
+**要件品質基準：**
 
-Good requirements are:
-- **Specific and testable:** "User can reset password via email link" (not "Handle password reset")
-- **User-centric:** "User can X" (not "System does Y")
-- **Atomic:** One capability per requirement (not "User can login and manage profile")
-- **Independent:** Minimal dependencies on other requirements
+良い要件とは：
+- **具体的でテスト可能：** 「ユーザーはメールリンクでパスワードをリセットできる」（「パスワードリセットを処理する」ではない）
+- **ユーザー中心：** 「ユーザーはXできる」（「システムがYする」ではない）
+- **原子的：** 1要件につき1つの機能（「ユーザーはログインしてプロファイルを管理できる」ではない）
+- **独立的：** 他の要件への依存が最小
 
-Reject vague requirements. Push for specificity:
-- "Handle authentication" → "User can log in with email/password and stay logged in across sessions"
-- "Support sharing" → "User can share post via link that opens in recipient's browser"
+曖昧な要件は拒否する。具体性を求める：
+- 「認証を処理する」→「ユーザーはメール/パスワードでログインし、セッション間でログイン状態を維持できる」
+- 「共有をサポートする」→「ユーザーは受信者のブラウザで開くリンクで投稿を共有できる」
 
-**Present full requirements list (interactive mode only):**
+**完全な要件リストを提示（インタラクティブモードのみ）：**
 
-Show every requirement (not counts) for user confirmation:
+ユーザー確認のためにすべての要件を表示（カウントではない）：
 
 ```
 ## v1 Requirements
 
 ### Authentication
-- [ ] **AUTH-01**: User can create account with email/password
-- [ ] **AUTH-02**: User can log in and stay logged in across sessions
-- [ ] **AUTH-03**: User can log out from any page
+- [ ] **AUTH-01**: ユーザーはメール/パスワードでアカウントを作成できる
+- [ ] **AUTH-02**: ユーザーはログインし、セッション間でログイン状態を維持できる
+- [ ] **AUTH-03**: ユーザーはどのページからでもログアウトできる
 
 ### Content
-- [ ] **CONT-01**: User can create posts with text
-- [ ] **CONT-02**: User can edit their own posts
+- [ ] **CONT-01**: ユーザーはテキストで投稿を作成できる
+- [ ] **CONT-02**: ユーザーは自分の投稿を編集できる
 
-[... full list ...]
+[... 完全なリスト ...]
 
 ---
 
-Does this capture what you're building? (yes / adjust)
+これはあなたが構築しているものを捉えていますか？ (yes / adjust)
 ```
 
-If "adjust": Return to scoping.
+"adjust"の場合：スコーピングに戻る。
 
-**Commit requirements:**
+**要件をコミット：**
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: define v1 requirements" --files .planning/REQUIREMENTS.md
 ```
 
-## 8. Create Roadmap
+## 8. ロードマップの作成
 
-Display stage banner:
+ステージバナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► CREATING ROADMAP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning roadmapper...
+◆ ロードマッパーを生成中...
 ```
 
-Spawn gsd-roadmapper agent with path references:
+パス参照付きでgsd-roadmapperエージェントを生成：
 
 ```
 Task(prompt="
 <planning_context>
 
 <files_to_read>
-- .planning/PROJECT.md (Project context)
-- .planning/REQUIREMENTS.md (v1 Requirements)
-- .planning/research/SUMMARY.md (Research findings - if exists)
-- .planning/config.json (Granularity and mode settings)
+- .planning/PROJECT.md (プロジェクトコンテキスト)
+- .planning/REQUIREMENTS.md (v1要件)
+- .planning/research/SUMMARY.md (リサーチ結果 - 存在する場合)
+- .planning/config.json (粒度とモード設定)
 </files_to_read>
 
 </planning_context>
 
 <instructions>
-Create roadmap:
-1. Derive phases from requirements (don't impose structure)
-2. Map every v1 requirement to exactly one phase
-3. Derive 2-5 success criteria per phase (observable user behaviors)
-4. Validate 100% coverage
-5. Write files immediately (ROADMAP.md, STATE.md, update REQUIREMENTS.md traceability)
-6. Return ROADMAP CREATED with summary
+ロードマップを作成：
+1. 要件からフェーズを導出する（構造を押し付けない）
+2. すべてのv1要件を正確に1つのフェーズにマッピング
+3. フェーズごとに2-5の成功基準を導出（観察可能なユーザー行動）
+4. 100%カバレッジを検証
+5. ファイルを直ちに書き込む（ROADMAP.md、STATE.md、REQUIREMENTS.mdのトレーサビリティを更新）
+6. ROADMAP CREATEDとサマリーを返す
 
-Write files first, then return. This ensures artifacts persist even if context is lost.
+先にファイルを書き込み、その後返す。これにより、コンテキストが失われてもアーティファクトが永続化される。
 </instructions>
 ", subagent_type="gsd-roadmapper", model="{roadmapper_model}", description="Create roadmap")
 ```
 
-**Handle roadmapper return:**
+**ロードマッパーの戻り値を処理：**
 
-**If `## ROADMAP BLOCKED`:**
-- Present blocker information
-- Work with user to resolve
-- Re-spawn when resolved
+**`## ROADMAP BLOCKED`の場合：**
+- ブロッカー情報を提示
+- ユーザーと解決に取り組む
+- 解決後に再生成
 
-**If `## ROADMAP CREATED`:**
+**`## ROADMAP CREATED`の場合：**
 
-Read the created ROADMAP.md and present it nicely inline:
+作成されたROADMAP.mdを読み、インラインできれいに提示：
 
 ```
 ---
 
-## Proposed Roadmap
+## 提案されたロードマップ
 
-**[N] phases** | **[X] requirements mapped** | All v1 requirements covered ✓
+**[N]フェーズ** | **[X]要件マッピング済み** | すべてのv1要件カバー ✓
 
-| # | Phase | Goal | Requirements | Success Criteria |
+| # | フェーズ | 目標 | 要件 | 成功基準 |
 |---|-------|------|--------------|------------------|
 | 1 | [Name] | [Goal] | [REQ-IDs] | [count] |
 | 2 | [Name] | [Goal] | [REQ-IDs] | [count] |
 | 3 | [Name] | [Goal] | [REQ-IDs] | [count] |
 ...
 
-### Phase Details
+### フェーズ詳細
 
 **Phase 1: [Name]**
-Goal: [goal]
-Requirements: [REQ-IDs]
-Success criteria:
+目標: [goal]
+要件: [REQ-IDs]
+成功基準:
 1. [criterion]
 2. [criterion]
 3. [criterion]
 
 **Phase 2: [Name]**
-Goal: [goal]
-Requirements: [REQ-IDs]
-Success criteria:
+目標: [goal]
+要件: [REQ-IDs]
+成功基準:
 1. [criterion]
 2. [criterion]
 
-[... continue for all phases ...]
+[... すべてのフェーズについて続行 ...]
 
 ---
 ```
 
-**If auto mode:** Skip approval gate — auto-approve and commit directly.
+**自動モードの場合：** 承認ゲートをスキップ — 自動承認して直接コミット。
 
-**CRITICAL: Ask for approval before committing (interactive mode only):**
+**重要：コミット前に承認を求める（インタラクティブモードのみ）：**
 
-Use AskUserQuestion:
+AskUserQuestionを使用：
 - header: "Roadmap"
-- question: "Does this roadmap structure work for you?"
+- question: "このロードマップ構造でよいですか？"
 - options:
-  - "Approve" — Commit and continue
-  - "Adjust phases" — Tell me what to change
-  - "Review full file" — Show raw ROADMAP.md
+  - "Approve" — コミットして続行
+  - "Adjust phases" — 変更点を教えてください
+  - "Review full file" — 生のROADMAP.mdを表示
 
-**If "Approve":** Continue to commit.
+**"Approve"の場合：** コミットに続行。
 
-**If "Adjust phases":**
-- Get user's adjustment notes
-- Re-spawn roadmapper with revision context:
+**"Adjust phases"の場合：**
+- ユーザーの調整メモを取得
+- 修正コンテキスト付きでロードマッパーを再生成：
   ```
   Task(prompt="
   <revision>
-  User feedback on roadmap:
+  ロードマップに対するユーザーのフィードバック：
   [user's notes]
 
   <files_to_read>
-  - .planning/ROADMAP.md (Current roadmap to revise)
+  - .planning/ROADMAP.md (修正する現在のロードマップ)
   </files_to_read>
 
-  Update the roadmap based on feedback. Edit files in place.
-  Return ROADMAP REVISED with changes made.
+  フィードバックに基づいてロードマップを更新。ファイルをその場で編集。
+  ROADMAP REVISEDと行った変更を返す。
   </revision>
   ", subagent_type="gsd-roadmapper", model="{roadmapper_model}", description="Revise roadmap")
   ```
-- Present revised roadmap
-- Loop until user approves
+- 修正されたロードマップを提示
+- ユーザーが承認するまでループ
 
-**If "Review full file":** Display raw `cat .planning/ROADMAP.md`, then re-ask.
+**"Review full file"の場合：** 生の`cat .planning/ROADMAP.md`を表示し、再度質問。
 
-**Commit roadmap (after approval or auto mode):**
+**ロードマップをコミット（承認後または自動モード）：**
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: create roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 ```
 
-## 9. Done
+## 9. 完了
 
-Present completion summary:
+完了サマリーを提示：
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1026,7 +1026,7 @@ Present completion summary:
 
 **[Project Name]**
 
-| Artifact       | Location                    |
+| アーティファクト   | 場所                        |
 |----------------|-----------------------------|
 | Project        | `.planning/PROJECT.md`      |
 | Config         | `.planning/config.json`     |
@@ -1034,10 +1034,10 @@ Present completion summary:
 | Requirements   | `.planning/REQUIREMENTS.md` |
 | Roadmap        | `.planning/ROADMAP.md`      |
 
-**[N] phases** | **[X] requirements** | Ready to build ✓
+**[N]フェーズ** | **[X]要件** | 構築準備完了 ✓
 ```
 
-**If auto mode:**
+**自動モードの場合：**
 
 ```
 ╔══════════════════════════════════════════╗
@@ -1045,25 +1045,25 @@ Present completion summary:
 ╚══════════════════════════════════════════╝
 ```
 
-Exit skill and invoke SlashCommand("/gsd:discuss-phase 1 --auto")
+スキルを終了し、SlashCommand("/gsd:discuss-phase 1 --auto")を呼び出す
 
-**If interactive mode:**
+**インタラクティブモードの場合：**
 
 ```
 ───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
-**Phase 1: [Phase Name]** — [Goal from ROADMAP.md]
+**Phase 1: [Phase Name]** — [ROADMAP.mdからの目標]
 
-/gsd:discuss-phase 1 — gather context and clarify approach
+/gsd:discuss-phase 1 — コンテキストを収集しアプローチを明確にする
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear first → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- /gsd:plan-phase 1 — skip discussion, plan directly
+**その他のオプション：**
+- /gsd:plan-phase 1 — ディスカッションをスキップして直接計画
 
 ───────────────────────────────────────────────────────────────
 ```
@@ -1074,7 +1074,7 @@ Exit skill and invoke SlashCommand("/gsd:discuss-phase 1 --auto")
 
 - `.planning/PROJECT.md`
 - `.planning/config.json`
-- `.planning/research/` (if research selected)
+- `.planning/research/` (リサーチを選択した場合)
   - `STACK.md`
   - `FEATURES.md`
   - `ARCHITECTURE.md`
@@ -1088,24 +1088,24 @@ Exit skill and invoke SlashCommand("/gsd:discuss-phase 1 --auto")
 
 <success_criteria>
 
-- [ ] .planning/ directory created
-- [ ] Git repo initialized
-- [ ] Brownfield detection completed
-- [ ] Deep questioning completed (threads followed, not rushed)
-- [ ] PROJECT.md captures full context → **committed**
-- [ ] config.json has workflow mode, granularity, parallelization → **committed**
-- [ ] Research completed (if selected) — 4 parallel agents spawned → **committed**
-- [ ] Requirements gathered (from research or conversation)
-- [ ] User scoped each category (v1/v2/out of scope)
-- [ ] REQUIREMENTS.md created with REQ-IDs → **committed**
-- [ ] gsd-roadmapper spawned with context
-- [ ] Roadmap files written immediately (not draft)
-- [ ] User feedback incorporated (if any)
-- [ ] ROADMAP.md created with phases, requirement mappings, success criteria
-- [ ] STATE.md initialized
-- [ ] REQUIREMENTS.md traceability updated
-- [ ] User knows next step is `/gsd:discuss-phase 1`
+- [ ] .planning/ディレクトリが作成された
+- [ ] Gitリポジトリが初期化された
+- [ ] ブラウンフィールド検出が完了した
+- [ ] 深い質問が完了した（スレッドが追跡され、急がれていない）
+- [ ] PROJECT.mdが完全なコンテキストを記録 → **コミット済み**
+- [ ] config.jsonにワークフローモード、粒度、並列化が含まれる → **コミット済み**
+- [ ] リサーチが完了した（選択された場合）— 4つの並列エージェントが生成された → **コミット済み**
+- [ ] 要件が収集された（リサーチまたは会話から）
+- [ ] ユーザーが各カテゴリのスコープを設定した（v1/v2/スコープ外）
+- [ ] REQ-ID付きのREQUIREMENTS.mdが作成された → **コミット済み**
+- [ ] コンテキスト付きでgsd-roadmapperが生成された
+- [ ] ロードマップファイルが直ちに書き込まれた（ドラフトではない）
+- [ ] ユーザーのフィードバックが反映された（あれば）
+- [ ] フェーズ、要件マッピング、成功基準付きのROADMAP.mdが作成された
+- [ ] STATE.mdが初期化された
+- [ ] REQUIREMENTS.mdのトレーサビリティが更新された
+- [ ] ユーザーが次のステップは`/gsd:discuss-phase 1`であることを認識している
 
-**Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
+**アトミックコミット：** 各フェーズはアーティファクトを直ちにコミットする。コンテキストが失われても、アーティファクトは永続化される。
 
 </success_criteria>

@@ -35,8 +35,16 @@ describe('HDOC: anti-heredoc instruction', () => {
   for (const agent of FILE_WRITING_AGENTS) {
     test(`${agent} has anti-heredoc instruction`, () => {
       const content = fs.readFileSync(path.join(AGENTS_DIR, agent + '.md'), 'utf-8');
+      const hasBashPattern = content.includes("Bash(cat << 'EOF')");
+      const hasHeredocWord = content.includes('heredoc') || content.includes('ヒアドキュメント');
+      const hasDoNotUseInstruction =
+        content.includes('never use') ||
+        content.includes('NEVER') ||
+        content.includes('使わない') ||
+        content.includes('行わない');
+
       assert.ok(
-        content.includes("never use `Bash(cat << 'EOF')` or heredoc"),
+        hasBashPattern && hasHeredocWord && hasDoNotUseInstruction,
         `${agent} missing anti-heredoc instruction`
       );
     });

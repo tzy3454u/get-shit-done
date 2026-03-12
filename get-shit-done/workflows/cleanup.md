@@ -1,14 +1,14 @@
 <purpose>
 
-Archive accumulated phase directories from completed milestones into `.planning/milestones/v{X.Y}-phases/`. Identifies which phases belong to each completed milestone, shows a dry-run summary, and moves directories on confirmation.
+完了したマイルストーンから蓄積されたフェーズディレクトリを `.planning/milestones/v{X.Y}-phases/` にアーカイブする。各フェーズがどの完了マイルストーンに属するかを識別し、ドライランのサマリーを表示し、確認後にディレクトリを移動する。
 
 </purpose>
 
 <required_reading>
 
 1. `.planning/MILESTONES.md`
-2. `.planning/milestones/` directory listing
-3. `.planning/phases/` directory listing
+2. `.planning/milestones/` ディレクトリ一覧
+3. `.planning/phases/` ディレクトリ一覧
 
 </required_reading>
 
@@ -16,110 +16,110 @@ Archive accumulated phase directories from completed milestones into `.planning/
 
 <step name="identify_completed_milestones">
 
-Read `.planning/MILESTONES.md` to identify completed milestones and their versions.
+`.planning/MILESTONES.md` を読み込み、完了したマイルストーンとそのバージョンを識別する。
 
 ```bash
 cat .planning/MILESTONES.md
 ```
 
-Extract each milestone version (e.g., v1.0, v1.1, v2.0).
+各マイルストーンバージョン（例：v1.0、v1.1、v2.0）を抽出する。
 
-Check which milestone archive dirs already exist:
+既存のマイルストーンアーカイブディレクトリを確認する：
 
 ```bash
 ls -d .planning/milestones/v*-phases 2>/dev/null
 ```
 
-Filter to milestones that do NOT already have a `-phases` archive directory.
+まだ `-phases` アーカイブディレクトリを持たないマイルストーンにフィルタする。
 
-If all milestones already have phase archives:
+すべてのマイルストーンが既にフェーズアーカイブを持っている場合：
 
 ```
-All completed milestones already have phase directories archived. Nothing to clean up.
+完了したすべてのマイルストーンのフェーズディレクトリは既にアーカイブ済み。クリーンアップの必要はない。
 ```
 
-Stop here.
+ここで停止する。
 
 </step>
 
 <step name="determine_phase_membership">
 
-For each completed milestone without a `-phases` archive, read the archived ROADMAP snapshot to determine which phases belong to it:
+`-phases` アーカイブを持たない完了マイルストーンごとに、アーカイブされたROADMAPスナップショットを読み込み、どのフェーズが属するかを判定する：
 
 ```bash
 cat .planning/milestones/v{X.Y}-ROADMAP.md
 ```
 
-Extract phase numbers and names from the archived roadmap (e.g., Phase 1: Foundation, Phase 2: Auth).
+アーカイブされたロードマップからフェーズ番号と名前を抽出する（例：Phase 1: Foundation、Phase 2: Auth）。
 
-Check which of those phase directories still exist in `.planning/phases/`:
+`.planning/phases/` にそれらのフェーズディレクトリがまだ存在するか確認する：
 
 ```bash
 ls -d .planning/phases/*/ 2>/dev/null
 ```
 
-Match phase directories to milestone membership. Only include directories that still exist in `.planning/phases/`.
+フェーズディレクトリをマイルストーンのメンバーシップに照合する。`.planning/phases/` にまだ存在するディレクトリのみを含める。
 
 </step>
 
 <step name="show_dry_run">
 
-Present a dry-run summary for each milestone:
+各マイルストーンのドライランサマリーを表示する：
 
 ```
-## Cleanup Summary
+## クリーンアップサマリー
 
-### v{X.Y} — {Milestone Name}
-These phase directories will be archived:
+### v{X.Y} — {マイルストーン名}
+以下のフェーズディレクトリがアーカイブされる：
 - 01-foundation/
 - 02-auth/
 - 03-core-features/
 
-Destination: .planning/milestones/v{X.Y}-phases/
+移動先: .planning/milestones/v{X.Y}-phases/
 
-### v{X.Z} — {Milestone Name}
-These phase directories will be archived:
+### v{X.Z} — {マイルストーン名}
+以下のフェーズディレクトリがアーカイブされる：
 - 04-security/
 - 05-hardening/
 
-Destination: .planning/milestones/v{X.Z}-phases/
+移動先: .planning/milestones/v{X.Z}-phases/
 ```
 
-If no phase directories remain to archive (all already moved or deleted):
+アーカイブするフェーズディレクトリが残っていない場合（すべて移動済みまたは削除済み）：
 
 ```
-No phase directories found to archive. Phases may have been removed or archived previously.
+アーカイブするフェーズディレクトリが見つからない。フェーズは以前に削除またはアーカイブされた可能性がある。
 ```
 
-Stop here.
+ここで停止する。
 
-AskUserQuestion: "Proceed with archiving?" with options: "Yes — archive listed phases" | "Cancel"
+AskUserQuestion: "アーカイブを実行しますか？" オプション："はい — 一覧のフェーズをアーカイブ" | "キャンセル"
 
-If "Cancel": Stop.
+"キャンセル" の場合：停止する。
 
 </step>
 
 <step name="archive_phases">
 
-For each milestone, move phase directories:
+各マイルストーンについて、フェーズディレクトリを移動する：
 
 ```bash
 mkdir -p .planning/milestones/v{X.Y}-phases
 ```
 
-For each phase directory belonging to this milestone:
+このマイルストーンに属する各フェーズディレクトリについて：
 
 ```bash
 mv .planning/phases/{dir} .planning/milestones/v{X.Y}-phases/
 ```
 
-Repeat for all milestones in the cleanup set.
+クリーンアップセットのすべてのマイルストーンについて繰り返す。
 
 </step>
 
 <step name="commit">
 
-Commit the changes:
+変更をコミットする：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: archive phase directories from completed milestones" --files .planning/milestones/ .planning/phases/
@@ -130,11 +130,11 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "chore: archive phas
 <step name="report">
 
 ```
-Archived:
-{For each milestone}
-- v{X.Y}: {N} phase directories → .planning/milestones/v{X.Y}-phases/
+アーカイブ済み:
+{各マイルストーンについて}
+- v{X.Y}: {N} 個のフェーズディレクトリ → .planning/milestones/v{X.Y}-phases/
 
-.planning/phases/ cleaned up.
+.planning/phases/ をクリーンアップしました。
 ```
 
 </step>
@@ -143,10 +143,11 @@ Archived:
 
 <success_criteria>
 
-- [ ] All completed milestones without existing phase archives identified
-- [ ] Phase membership determined from archived ROADMAP snapshots
-- [ ] Dry-run summary shown and user confirmed
-- [ ] Phase directories moved to `.planning/milestones/v{X.Y}-phases/`
-- [ ] Changes committed
+- [ ] 既存のフェーズアーカイブを持たない完了マイルストーンがすべて識別されている
+- [ ] アーカイブされたROADMAPスナップショットからフェーズのメンバーシップが判定されている
+- [ ] ドライランサマリーが表示され、ユーザーが確認している
+- [ ] フェーズディレクトリが `.planning/milestones/v{X.Y}-phases/` に移動されている
+- [ ] 変更がコミットされている
 
 </success_criteria>
+

@@ -1,6 +1,6 @@
 ---
 name: gsd:add-phase
-description: Add phase to end of current milestone in roadmap
+description: 現在のマイルストーンのロードマップ末尾にフェーズを追加する
 argument-hint: <description>
 allowed-tools:
   - Read
@@ -9,13 +9,13 @@ allowed-tools:
 ---
 
 <objective>
-Add a new integer phase to the end of the current milestone in the roadmap.
+ロードマップの現在のマイルストーン末尾に新しい整数フェーズを追加する。
 
-Routes to the add-phase workflow which handles:
-- Phase number calculation (next sequential integer)
-- Directory creation with slug generation
-- Roadmap structure updates
-- STATE.md roadmap evolution tracking
+add-phaseワークフローにルーティングし、以下を処理する:
+- フェーズ番号の計算（次の連番整数）
+- スラグ生成によるディレクトリ作成
+- ロードマップ構造の更新
+- STATE.mdのロードマップ進化追跡
 </objective>
 
 <execution_context>
@@ -23,21 +23,22 @@ Routes to the add-phase workflow which handles:
 </execution_context>
 
 <context>
-Arguments: $ARGUMENTS (phase description)
+引数: $ARGUMENTS (フェーズの説明)
 
-Roadmap and state are resolved in-workflow via `init phase-op` and targeted tool calls.
+ロードマップと状態はワークフロー内で `init phase-op` と対象を絞ったツール呼び出しを通じて解決される。
 </context>
 
 <process>
-**Follow the add-phase workflow** from `@~/.claude/get-shit-done/workflows/add-phase.md`.
+`@~/.claude/get-shit-done/workflows/add-phase.md` の **add-phaseワークフローに従う**。
 
-The workflow handles all logic including:
-1. Argument parsing and validation
-2. Roadmap existence checking
-3. Current milestone identification
-4. Next phase number calculation (ignoring decimals)
-5. Slug generation from description
-6. Phase directory creation
-7. Roadmap entry insertion
-8. STATE.md updates
+ワークフローは以下を含むすべてのロジックを処理する:
+1. 引数の解析とバリデーション
+2. ロードマップの存在確認
+3. 現在のマイルストーンの特定
+4. 次のフェーズ番号の計算（小数を無視）
+5. 説明からのスラグ生成
+6. フェーズディレクトリの作成
+7. ロードマップエントリの挿入
+8. STATE.mdの更新
 </process>
+

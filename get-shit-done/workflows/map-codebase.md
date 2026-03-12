@@ -1,93 +1,93 @@
 <purpose>
-Orchestrate parallel codebase mapper agents to analyze codebase and produce structured documents in .planning/codebase/
+並列のコードベースマッパーエージェントを統率してコードベースを分析し、.planning/codebase/ に構造化ドキュメントを生成する。
 
-Each agent has fresh context, explores a specific focus area, and **writes documents directly**. The orchestrator only receives confirmation + line counts, then writes a summary.
+各エージェントは新しいコンテキストを持ち、特定の焦点領域を探索し、**ドキュメントを直接書き込む**。オーケストレーターは確認と行数のみを受け取り、サマリーを書き込む。
 
-Output: .planning/codebase/ folder with 7 structured documents about the codebase state.
+出力: コードベースの状態に関する7つの構造化ドキュメントを含む .planning/codebase/ フォルダ。
 </purpose>
 
 <philosophy>
-**Why dedicated mapper agents:**
-- Fresh context per domain (no token contamination)
-- Agents write documents directly (no context transfer back to orchestrator)
-- Orchestrator only summarizes what was created (minimal context usage)
-- Faster execution (agents run simultaneously)
+**専用マッパーエージェントを使う理由：**
+- ドメインごとに新しいコンテキスト（トークンの汚染なし）
+- エージェントがドキュメントを直接書き込む（オーケストレーターへのコンテキスト転送なし）
+- オーケストレーターは作成されたものを要約するのみ（最小限のコンテキスト使用）
+- より高速な実行（エージェントが同時に実行される）
 
-**Document quality over length:**
-Include enough detail to be useful as reference. Prioritize practical examples (especially code patterns) over arbitrary brevity.
+**長さよりドキュメントの品質：**
+参考資料として有用な十分な詳細を含める。任意な簡潔さよりも実践的な例（特にコードパターン）を優先する。
 
-**Always include file paths:**
-Documents are reference material for Claude when planning/executing. Always include actual file paths formatted with backticks: `src/services/user.ts`.
+**常にファイルパスを含める：**
+ドキュメントは計画/実行時にClaudeが参照する資料である。バッククォートでフォーマットした実際のファイルパスを常に含める：`src/services/user.ts`。
 </philosophy>
 
 <process>
 
 <step name="init_context" priority="first">
-Load codebase mapping context:
+コードベースマッピングのコンテキストを読み込む：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init map-codebase)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `mapper_model`, `commit_docs`, `codebase_dir`, `existing_maps`, `has_maps`, `codebase_dir_exists`.
+init JSONから抽出する：`mapper_model`、`commit_docs`、`codebase_dir`、`existing_maps`、`has_maps`、`codebase_dir_exists`。
 </step>
 
 <step name="check_existing">
-Check if .planning/codebase/ already exists using `has_maps` from init context.
+initコンテキストの `has_maps` を使用して .planning/codebase/ が既に存在するか確認する。
 
-If `codebase_dir_exists` is true:
+`codebase_dir_exists` がtrueの場合：
 ```bash
 ls -la .planning/codebase/
 ```
 
-**If exists:**
+**存在する場合：**
 
 ```
-.planning/codebase/ already exists with these documents:
-[List files found]
+.planning/codebase/ は既に以下のドキュメントで存在している：
+[見つかったファイルの一覧]
 
-What's next?
-1. Refresh - Delete existing and remap codebase
-2. Update - Keep existing, only update specific documents
-3. Skip - Use existing codebase map as-is
+次のアクション：
+1. リフレッシュ - 既存を削除してコードベースを再マッピング
+2. 更新 - 既存を保持し、特定のドキュメントのみ更新
+3. スキップ - 既存のコードベースマップをそのまま使用
 ```
 
-Wait for user response.
+ユーザーの返信を待つ。
 
-If "Refresh": Delete .planning/codebase/, continue to create_structure
-If "Update": Ask which documents to update, continue to spawn_agents (filtered)
-If "Skip": Exit workflow
+"リフレッシュ" の場合：.planning/codebase/ を削除し、create_structureに進む
+"更新" の場合：どのドキュメントを更新するか確認し、spawn_agents に進む（フィルタ済み）
+"スキップ" の場合：ワークフローを終了する
 
-**If doesn't exist:**
-Continue to create_structure.
+**存在しない場合：**
+create_structureに進む。
 </step>
 
 <step name="create_structure">
-Create .planning/codebase/ directory:
+.planning/codebase/ ディレクトリを作成する：
 
 ```bash
 mkdir -p .planning/codebase
 ```
 
-**Expected output files:**
-- STACK.md (from tech mapper)
-- INTEGRATIONS.md (from tech mapper)
-- ARCHITECTURE.md (from arch mapper)
-- STRUCTURE.md (from arch mapper)
-- CONVENTIONS.md (from quality mapper)
-- TESTING.md (from quality mapper)
-- CONCERNS.md (from concerns mapper)
+**期待される出力ファイル：**
+- STACK.md（techマッパーから）
+- INTEGRATIONS.md（techマッパーから）
+- ARCHITECTURE.md（archマッパーから）
+- STRUCTURE.md（archマッパーから）
+- CONVENTIONS.md（qualityマッパーから）
+- TESTING.md（qualityマッパーから）
+- CONCERNS.md（concernsマッパーから）
 
-Continue to spawn_agents.
+spawn_agentsに進む。
 </step>
 
 <step name="spawn_agents">
-Spawn 4 parallel gsd-codebase-mapper agents.
+4つの並列gsd-codebase-mapperエージェントを生成する。
 
-Use Task tool with `subagent_type="gsd-codebase-mapper"`, `model="{mapper_model}"`, and `run_in_background=true` for parallel execution.
+Task toolを `subagent_type="gsd-codebase-mapper"`、`model="{mapper_model}"`、`run_in_background=true` で使用して並列実行する。
 
-**CRITICAL:** Use the dedicated `gsd-codebase-mapper` agent, NOT `Explore`. The mapper agent writes documents directly.
+**重要：** 専用の `gsd-codebase-mapper` エージェントを使用する。`Explore` ではない。マッパーエージェントはドキュメントを直接書き込む。
 
 **Agent 1: Tech Focus**
 
@@ -99,13 +99,13 @@ Task(
   description="Map codebase tech stack",
   prompt="Focus: tech
 
-Analyze this codebase for technology stack and external integrations.
+このコードベースの技術スタックと外部連携を分析する。
 
-Write these documents to .planning/codebase/:
-- STACK.md - Languages, runtime, frameworks, dependencies, configuration
-- INTEGRATIONS.md - External APIs, databases, auth providers, webhooks
+以下のドキュメントを .planning/codebase/ に書き込む：
+- STACK.md - 言語、ランタイム、フレームワーク、依存関係、設定
+- INTEGRATIONS.md - 外部API、データベース、認証プロバイダー、Webhook
 
-Explore thoroughly. Write documents directly using templates. Return confirmation only."
+徹底的に探索する。テンプレートを使ってドキュメントを直接書き込む。確認のみ返す。"
 )
 ```
 
@@ -119,13 +119,13 @@ Task(
   description="Map codebase architecture",
   prompt="Focus: arch
 
-Analyze this codebase architecture and directory structure.
+このコードベースのアーキテクチャとディレクトリ構造を分析する。
 
-Write these documents to .planning/codebase/:
-- ARCHITECTURE.md - Pattern, layers, data flow, abstractions, entry points
-- STRUCTURE.md - Directory layout, key locations, naming conventions
+以下のドキュメントを .planning/codebase/ に書き込む：
+- ARCHITECTURE.md - パターン、レイヤー、データフロー、抽象化、エントリポイント
+- STRUCTURE.md - ディレクトリレイアウト、主要な場所、命名規則
 
-Explore thoroughly. Write documents directly using templates. Return confirmation only."
+徹底的に探索する。テンプレートを使ってドキュメントを直接書き込む。確認のみ返す。"
 )
 ```
 
@@ -139,13 +139,13 @@ Task(
   description="Map codebase conventions",
   prompt="Focus: quality
 
-Analyze this codebase for coding conventions and testing patterns.
+このコードベースのコーディング規約とテストパターンを分析する。
 
-Write these documents to .planning/codebase/:
-- CONVENTIONS.md - Code style, naming, patterns, error handling
-- TESTING.md - Framework, structure, mocking, coverage
+以下のドキュメントを .planning/codebase/ に書き込む：
+- CONVENTIONS.md - コードスタイル、命名、パターン、エラーハンドリング
+- TESTING.md - フレームワーク、構造、モック、カバレッジ
 
-Explore thoroughly. Write documents directly using templates. Return confirmation only."
+徹底的に探索する。テンプレートを使ってドキュメントを直接書き込む。確認のみ返す。"
 )
 ```
 
@@ -159,132 +159,131 @@ Task(
   description="Map codebase concerns",
   prompt="Focus: concerns
 
-Analyze this codebase for technical debt, known issues, and areas of concern.
+このコードベースの技術的負債、既知の問題、懸念領域を分析する。
 
-Write this document to .planning/codebase/:
-- CONCERNS.md - Tech debt, bugs, security, performance, fragile areas
+以下のドキュメントを .planning/codebase/ に書き込む：
+- CONCERNS.md - 技術的負債、バグ、セキュリティ、パフォーマンス、脆弱な領域
 
-Explore thoroughly. Write document directly using template. Return confirmation only."
+徹底的に探索する。テンプレートを使ってドキュメントを直接書き込む。確認のみ返す。"
 )
 ```
 
-Continue to collect_confirmations.
+collect_confirmationsに進む。
 </step>
 
 <step name="collect_confirmations">
-Wait for all 4 agents to complete.
+4つのエージェントすべてが完了するのを待つ。
 
-Read each agent's output file to collect confirmations.
+各エージェントの出力ファイルを読み込み、確認を収集する。
 
-**Expected confirmation format from each agent:**
+**各エージェントからの期待される確認フォーマット：**
 ```
-## Mapping Complete
+## マッピング完了
 
 **Focus:** {focus}
-**Documents written:**
-- `.planning/codebase/{DOC1}.md` ({N} lines)
-- `.planning/codebase/{DOC2}.md` ({N} lines)
+**書き込まれたドキュメント：**
+- `.planning/codebase/{DOC1}.md` ({N} 行)
+- `.planning/codebase/{DOC2}.md` ({N} 行)
 
-Ready for orchestrator summary.
+オーケストレーターのサマリー準備完了。
 ```
 
-**What you receive:** Just file paths and line counts. NOT document contents.
+**受け取るもの：** ファイルパスと行数のみ。ドキュメントの内容ではない。
 
-If any agent failed, note the failure and continue with successful documents.
+エージェントが失敗した場合、失敗を記録し、成功したドキュメントで続行する。
 
-Continue to verify_output.
+verify_outputに進む。
 </step>
 
 <step name="verify_output">
-Verify all documents created successfully:
+すべてのドキュメントが正常に作成されたか検証する：
 
 ```bash
 ls -la .planning/codebase/
 wc -l .planning/codebase/*.md
 ```
 
-**Verification checklist:**
-- All 7 documents exist
-- No empty documents (each should have >20 lines)
+**検証チェックリスト：**
+- 7つのドキュメントすべてが存在する
+- 空のドキュメントがない（各20行以上であるべき）
 
-If any documents missing or empty, note which agents may have failed.
+ドキュメントが不足または空の場合、どのエージェントが失敗した可能性があるか記録する。
 
-Continue to scan_for_secrets.
+scan_for_secretsに進む。
 </step>
 
 <step name="scan_for_secrets">
-**CRITICAL SECURITY CHECK:** Scan output files for accidentally leaked secrets before committing.
+**重要なセキュリティチェック：** コミット前に生成されたファイルに誤って漏洩したシークレットがないかスキャンする。
 
-Run secret pattern detection:
+シークレットパターン検出を実行する：
 
 ```bash
-# Check for common API key patterns in generated docs
+# 生成されたドキュメント内の一般的なAPIキーパターンを確認
 grep -E '(sk-[a-zA-Z0-9]{20,}|sk_live_[a-zA-Z0-9]+|sk_test_[a-zA-Z0-9]+|ghp_[a-zA-Z0-9]{36}|gho_[a-zA-Z0-9]{36}|glpat-[a-zA-Z0-9_-]+|AKIA[A-Z0-9]{16}|xox[baprs]-[a-zA-Z0-9-]+|-----BEGIN.*PRIVATE KEY|eyJ[a-zA-Z0-9_-]+\.eyJ[a-zA-Z0-9_-]+\.)' .planning/codebase/*.md 2>/dev/null && SECRETS_FOUND=true || SECRETS_FOUND=false
 ```
 
-**If SECRETS_FOUND=true:**
+**SECRETS_FOUND=trueの場合：**
 
 ```
-⚠️  SECURITY ALERT: Potential secrets detected in codebase documents!
+⚠️  セキュリティ警告: コードベースドキュメントに潜在的なシークレットが検出されました！
 
-Found patterns that look like API keys or tokens in:
-[show grep output]
+以下にAPIキーまたはトークンのようなパターンが見つかりました：
+[grep出力を表示]
 
-This would expose credentials if committed.
+コミットすると認証情報が露出する。
 
-**Action required:**
-1. Review the flagged content above
-2. If these are real secrets, they must be removed before committing
-3. Consider adding sensitive files to Claude Code "Deny" permissions
+**必要なアクション：**
+1. 上記のフラグが立ったコンテンツを確認すること
+2. これらが本物のシークレットの場合、コミット前に削除する必要がある
+3. 機密ファイルをClaude Codeの "Deny" パーミッションに追加することを検討すること
 
-Pausing before commit. Reply "safe to proceed" if the flagged content is not actually sensitive, or edit the files first.
+コミット前に一時停止中。フラグが立ったコンテンツが実際には機密でない場合は "safe to proceed" と返信するか、先にファイルを編集すること。
 ```
 
-Wait for user confirmation before continuing to commit_codebase_map.
+続行する前にユーザーの確認を待つ。
 
-**If SECRETS_FOUND=false:**
+**SECRETS_FOUND=falseの場合：**
 
-Continue to commit_codebase_map.
+commit_codebase_mapに進む。
 </step>
 
 <step name="commit_codebase_map">
-Commit the codebase map:
+コードベースマップをコミットする：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: map existing codebase" --files .planning/codebase/*.md
 ```
 
-Continue to offer_next.
+offer_nextに進む。
 </step>
 
 <step name="offer_next">
-Present completion summary and next steps.
+完了サマリーと次のステップを表示する。
 
-**Get line counts:**
+**行数を取得する：**
 ```bash
 wc -l .planning/codebase/*.md
 ```
 
-**Output format:**
+**出力フォーマット：**
 
 ```
-Codebase mapping complete.
+コードベースマッピング完了。
 
-Created .planning/codebase/:
-- STACK.md ([N] lines) - Technologies and dependencies
-- ARCHITECTURE.md ([N] lines) - System design and patterns
-- STRUCTURE.md ([N] lines) - Directory layout and organization
-- CONVENTIONS.md ([N] lines) - Code style and patterns
-- TESTING.md ([N] lines) - Test structure and practices
-- INTEGRATIONS.md ([N] lines) - External services and APIs
-- CONCERNS.md ([N] lines) - Technical debt and issues
-
+.planning/codebase/ を作成しました：
+- STACK.md ([N] 行) - 技術と依存関係
+- ARCHITECTURE.md ([N] 行) - システム設計とパターン
+- STRUCTURE.md ([N] 行) - ディレクトリレイアウトと構成
+- CONVENTIONS.md ([N] 行) - コードスタイルとパターン
+- TESTING.md ([N] 行) - テスト構造とプラクティス
+- INTEGRATIONS.md ([N] 行) - 外部サービスとAPI
+- CONCERNS.md ([N] 行) - 技術的負債と問題
 
 ---
 
 ## ▶ Next Up
 
-**Initialize project** — use codebase context for planning
+**プロジェクトを初期化** — コードベースのコンテキストを計画に活用
 
 `/gsd:new-project`
 
@@ -292,25 +291,26 @@ Created .planning/codebase/:
 
 ---
 
-**Also available:**
-- Re-run mapping: `/gsd:map-codebase`
-- Review specific file: `cat .planning/codebase/STACK.md`
-- Edit any document before proceeding
+**その他のオプション：**
+- マッピングを再実行: `/gsd:map-codebase`
+- 特定のファイルを確認: `cat .planning/codebase/STACK.md`
+- 続行前に任意のドキュメントを編集
 
 ---
 ```
 
-End workflow.
+ワークフローを終了する。
 </step>
 
 </process>
 
 <success_criteria>
-- .planning/codebase/ directory created
-- 4 parallel gsd-codebase-mapper agents spawned with run_in_background=true
-- Agents write documents directly (orchestrator doesn't receive document contents)
-- Read agent output files to collect confirmations
-- All 7 codebase documents exist
-- Clear completion summary with line counts
-- User offered clear next steps in GSD style
+- .planning/codebase/ ディレクトリが作成されている
+- 4つの並列gsd-codebase-mapperエージェントがrun_in_background=trueで生成されている
+- エージェントがドキュメントを直接書き込む（オーケストレーターはドキュメントの内容を受け取らない）
+- エージェントの出力ファイルを読み込み確認を収集する
+- 7つのコードベースドキュメントすべてが存在する
+- 行数付きの明確な完了サマリー
+- GSDスタイルの明確な次のステップがユーザーに提示されている
 </success_criteria>
+

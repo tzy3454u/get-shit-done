@@ -1,120 +1,120 @@
-# Stack Research Template
+# スタックリサーチテンプレート
 
-Template for `.planning/research/STACK.md` — recommended technologies for the project domain.
+`.planning/research/STACK.md` 用テンプレート — プロジェクトドメインの推奨技術。
 
 <template>
 
 ```markdown
-# Stack Research
+# スタックリサーチ
 
-**Domain:** [domain type]
-**Researched:** [date]
+**Domain:** [ドメインの種類]
+**Researched:** [日付]
 **Confidence:** [HIGH/MEDIUM/LOW]
 
-## Recommended Stack
+## 推奨スタック
 
-### Core Technologies
+### コア技術
 
-| Technology | Version | Purpose | Why Recommended |
+| 技術 | バージョン | 目的 | 推奨理由 |
 |------------|---------|---------|-----------------|
-| [name] | [version] | [what it does] | [why experts use it for this domain] |
-| [name] | [version] | [what it does] | [why experts use it for this domain] |
-| [name] | [version] | [what it does] | [why experts use it for this domain] |
+| [名前] | [バージョン] | [何をするか] | [このドメインの専門家がなぜ使うか] |
+| [名前] | [バージョン] | [何をするか] | [このドメインの専門家がなぜ使うか] |
+| [名前] | [バージョン] | [何をするか] | [このドメインの専門家がなぜ使うか] |
 
-### Supporting Libraries
+### サポートライブラリ
 
-| Library | Version | Purpose | When to Use |
+| ライブラリ | バージョン | 目的 | 使用タイミング |
 |---------|---------|---------|-------------|
-| [name] | [version] | [what it does] | [specific use case] |
-| [name] | [version] | [what it does] | [specific use case] |
-| [name] | [version] | [what it does] | [specific use case] |
+| [名前] | [バージョン] | [何をするか] | [具体的なユースケース] |
+| [名前] | [バージョン] | [何をするか] | [具体的なユースケース] |
+| [名前] | [バージョン] | [何をするか] | [具体的なユースケース] |
 
-### Development Tools
+### 開発ツール
 
-| Tool | Purpose | Notes |
+| ツール | 目的 | 備考 |
 |------|---------|-------|
-| [name] | [what it does] | [configuration tips] |
-| [name] | [what it does] | [configuration tips] |
+| [名前] | [何をするか] | [設定のヒント] |
+| [名前] | [何をするか] | [設定のヒント] |
 
-## Installation
+## インストール
 
 ```bash
-# Core
+# コア
 npm install [packages]
 
-# Supporting
+# サポート
 npm install [packages]
 
-# Dev dependencies
+# 開発用依存関係
 npm install -D [packages]
 ```
 
-## Alternatives Considered
+## 検討した代替案
 
-| Recommended | Alternative | When to Use Alternative |
+| 推奨 | 代替案 | 代替案を使うべき場合 |
 |-------------|-------------|-------------------------|
-| [our choice] | [other option] | [conditions where alternative is better] |
-| [our choice] | [other option] | [conditions where alternative is better] |
+| [選択したもの] | [別の選択肢] | [代替案がより良い条件] |
+| [選択したもの] | [別の選択肢] | [代替案がより良い条件] |
 
-## What NOT to Use
+## 使うべきでないもの
 
-| Avoid | Why | Use Instead |
+| 避けるべきもの | 理由 | 代わりに使うもの |
 |-------|-----|-------------|
-| [technology] | [specific problem] | [recommended alternative] |
-| [technology] | [specific problem] | [recommended alternative] |
+| [技術] | [具体的な問題] | [推奨される代替] |
+| [技術] | [具体的な問題] | [推奨される代替] |
 
-## Stack Patterns by Variant
+## バリエーション別スタックパターン
 
-**If [condition]:**
-- Use [variation]
-- Because [reason]
+**[条件]の場合:**
+- [バリエーション]を使用
+- 理由: [理由]
 
-**If [condition]:**
-- Use [variation]
-- Because [reason]
+**[条件]の場合:**
+- [バリエーション]を使用
+- 理由: [理由]
 
-## Version Compatibility
+## バージョン互換性
 
-| Package A | Compatible With | Notes |
+| パッケージA | 互換性のあるもの | 備考 |
 |-----------|-----------------|-------|
-| [package@version] | [package@version] | [compatibility notes] |
+| [package@version] | [package@version] | [互換性に関する注記] |
 
-## Sources
+## 情報源
 
-- [Context7 library ID] — [topics fetched]
-- [Official docs URL] — [what was verified]
-- [Other source] — [confidence level]
+- [Context7ライブラリID] — [取得したトピック]
+- [公式ドキュメントURL] — [検証した内容]
+- [その他のソース] — [信頼度]
 
 ---
-*Stack research for: [domain]*
-*Researched: [date]*
+*スタックリサーチ対象: [ドメイン]*
+*リサーチ日: [日付]*
 ```
 
 </template>
 
 <guidelines>
 
-**Core Technologies:**
-- Include specific version numbers
-- Explain why this is the standard choice, not just what it does
-- Focus on technologies that affect architecture decisions
+**コア技術:**
+- 具体的なバージョン番号を含める
+- 何をするかだけでなく、なぜ標準的な選択なのかを説明
+- アーキテクチャ上の決定に影響する技術に焦点
 
-**Supporting Libraries:**
-- Include libraries commonly needed for this domain
-- Note when each is needed (not all projects need all libraries)
+**サポートライブラリ:**
+- このドメインでよく必要になるライブラリを含める
+- 各ライブラリがいつ必要かを注記（すべてのプロジェクトがすべてのライブラリを必要とするわけではない）
 
-**Alternatives:**
-- Don't just dismiss alternatives
-- Explain when alternatives make sense
-- Helps user make informed decisions if they disagree
+**代替案:**
+- 代替案を単に却下しない
+- 代替案が合理的な場合を説明
+- ユーザーが同意しない場合に情報に基づく決定を助ける
 
-**What NOT to Use:**
-- Actively warn against outdated or problematic choices
-- Explain the specific problem, not just "it's old"
-- Provide the recommended alternative
+**使うべきでないもの:**
+- 古いまたは問題のある選択に対して積極的に警告
+- 「古い」だけでなく、具体的な問題を説明
+- 推奨される代替を提供
 
-**Version Compatibility:**
-- Note any known compatibility issues
-- Critical for avoiding debugging time later
+**バージョン互換性:**
+- 既知の互換性問題を注記
+- 後のデバッグ時間を避けるために重要
 
 </guidelines>

@@ -1,53 +1,53 @@
 <purpose>
-Create all phases necessary to close gaps identified by `/gsd:audit-milestone`. Reads MILESTONE-AUDIT.md, groups gaps into logical phases, creates phase entries in ROADMAP.md, and offers to plan each phase. One command creates all fix phases — no manual `/gsd:add-phase` per gap.
+`/gsd:audit-milestone`で特定されたギャップを埋めるために必要なすべてのフェーズを作成する。MILESTONE-AUDIT.mdを読み込み、ギャップを論理的なフェーズにグループ化し、ROADMAP.mdにフェーズエントリを作成し、各フェーズの計画を提案する。1つのコマンドで全修正フェーズを作成する — ギャップごとに手動で`/gsd:add-phase`を実行する必要はない。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <process>
 
-## 1. Load Audit Results
+## 1. 監査結果の読み込み
 
 ```bash
 # Find the most recent audit file
 ls -t .planning/v*-MILESTONE-AUDIT.md 2>/dev/null | head -1
 ```
 
-Parse YAML frontmatter to extract structured gaps:
-- `gaps.requirements` — unsatisfied requirements
-- `gaps.integration` — missing cross-phase connections
-- `gaps.flows` — broken E2E flows
+YAMLフロントマターを解析して構造化されたギャップを抽出する：
+- `gaps.requirements` — 未達成の要件
+- `gaps.integration` — 欠落しているフェーズ間接続
+- `gaps.flows` — 壊れたE2Eフロー
 
-If no audit file exists or has no gaps, error:
+監査ファイルが存在しないか、ギャップがない場合はエラー：
 ```
-No audit gaps found. Run `/gsd:audit-milestone` first.
+監査ギャップが見つかりません。先に`/gsd:audit-milestone`を実行すること。
 ```
 
-## 2. Prioritize Gaps
+## 2. ギャップの優先順位付け
 
-Group gaps by priority from REQUIREMENTS.md:
+REQUIREMENTS.mdの優先度でギャップをグループ化する：
 
-| Priority | Action |
+| 優先度 | アクション |
 |----------|--------|
-| `must` | Create phase, blocks milestone |
-| `should` | Create phase, recommended |
-| `nice` | Ask user: include or defer? |
+| `must` | フェーズを作成、マイルストーンをブロック |
+| `should` | フェーズを作成、推奨 |
+| `nice` | ユーザーに確認：含めるか延期するか？ |
 
-For integration/flow gaps, infer priority from affected requirements.
+インテグレーション/フローのギャップについては、影響を受ける要件から優先度を推測する。
 
-## 3. Group Gaps into Phases
+## 3. ギャップをフェーズにグループ化
 
-Cluster related gaps into logical phases:
+関連するギャップを論理的なフェーズにまとめる：
 
-**Grouping rules:**
-- Same affected phase → combine into one fix phase
-- Same subsystem (auth, API, UI) → combine
-- Dependency order (fix stubs before wiring)
-- Keep phases focused: 2-4 tasks each
+**グループ化ルール：**
+- 同じ影響フェーズ → 1つの修正フェーズに統合
+- 同じサブシステム（auth、API、UI） → 統合
+- 依存関係の順序（接続の前にスタブを修正）
+- フェーズは集中的に：各2-4タスク
 
-**Example grouping:**
+**グループ化の例：**
 ```
 Gap: DASH-01 unsatisfied (Dashboard doesn't fetch)
 Gap: Integration Phase 1→3 (Auth not passed to API calls)
@@ -60,58 +60,58 @@ Gap: Flow "View dashboard" broken at data fetch
   - Render user data
 ```
 
-## 4. Determine Phase Numbers
+## 4. フェーズ番号の決定
 
-Find highest existing phase:
+最も高い既存フェーズを見つける：
 ```bash
 # Get sorted phase list, extract last one
 PHASES=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phases list)
 HIGHEST=$(printf '%s\n' "$PHASES" | jq -r '.directories[-1]')
 ```
 
-New phases continue from there:
-- If Phase 5 is highest, gaps become Phase 6, 7, 8...
+新しいフェーズはそこから続く：
+- フェーズ5が最高の場合、ギャップはフェーズ6、7、8...になる
 
-## 5. Present Gap Closure Plan
+## 5. ギャップ解消プランの提示
 
 ```markdown
-## Gap Closure Plan
+## ギャップ解消プラン
 
-**Milestone:** {version}
-**Gaps to close:** {N} requirements, {M} integration, {K} flows
+**マイルストーン:** {version}
+**解消するギャップ:** {N} 要件、{M} インテグレーション、{K} フロー
 
-### Proposed Phases
+### 提案フェーズ
 
-**Phase {N}: {Name}**
-Closes:
+**フェーズ {N}: {Name}**
+解消対象:
 - {REQ-ID}: {description}
-- Integration: {from} → {to}
-Tasks: {count}
+- インテグレーション: {from} → {to}
+タスク数: {count}
 
-**Phase {N+1}: {Name}**
-Closes:
+**フェーズ {N+1}: {Name}**
+解消対象:
 - {REQ-ID}: {description}
-- Flow: {flow name}
-Tasks: {count}
+- フロー: {flow name}
+タスク数: {count}
 
-{If nice-to-have gaps exist:}
+{nice-to-haveギャップが存在する場合:}
 
-### Deferred (nice-to-have)
+### 延期（nice-to-have）
 
-These gaps are optional. Include them?
+これらのギャップはオプションです。含めますか？
 - {gap description}
 - {gap description}
 
 ---
 
-Create these {X} phases? (yes / adjust / defer all optional)
+これら{X}個のフェーズを作成しますか？（yes / adjust / defer all optional）
 ```
 
-Wait for user confirmation.
+ユーザーの確認を待つ。
 
-## 6. Update ROADMAP.md
+## 6. ROADMAP.mdの更新
 
-Add new phases to current milestone:
+現在のマイルストーンに新しいフェーズを追加する：
 
 ```markdown
 ### Phase {N}: {Name}
@@ -123,72 +123,72 @@ Add new phases to current milestone:
 ...
 ```
 
-## 7. Update REQUIREMENTS.md Traceability Table (REQUIRED)
+## 7. REQUIREMENTS.mdトレーサビリティテーブルの更新（必須）
 
-For each REQ-ID assigned to a gap closure phase:
-- Update the Phase column to reflect the new gap closure phase
-- Reset Status to `Pending`
+ギャップ解消フェーズに割り当てられた各REQ-IDについて：
+- Phaseカラムを新しいギャップ解消フェーズに更新
+- Statusを`Pending`にリセット
 
-Reset checked-off requirements the audit found unsatisfied:
-- Change `[x]` → `[ ]` for any requirement marked unsatisfied in the audit
-- Update coverage count at top of REQUIREMENTS.md
+監査で未達成と判定されたチェック済み要件をリセットする：
+- 監査で未達成とされた要件の`[x]` → `[ ]`に変更
+- REQUIREMENTS.md上部のカバレッジカウントを更新
 
 ```bash
 # Verify traceability table reflects gap closure assignments
 grep -c "Pending" .planning/REQUIREMENTS.md
 ```
 
-## 8. Create Phase Directories
+## 8. フェーズディレクトリの作成
 
 ```bash
 mkdir -p ".planning/phases/{NN}-{name}"
 ```
 
-## 9. Commit Roadmap and Requirements Update
+## 9. ロードマップと要件更新のコミット
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md .planning/REQUIREMENTS.md
 ```
 
-## 10. Offer Next Steps
+## 10. 次のステップの提案
 
 ```markdown
-## ✓ Gap Closure Phases Created
+## ✓ ギャップ解消フェーズ作成完了
 
-**Phases added:** {N} - {M}
-**Gaps addressed:** {count} requirements, {count} integration, {count} flows
+**追加されたフェーズ:** {N} - {M}
+**対処されたギャップ:** {count} 要件、{count} インテグレーション、{count} フロー
 
 ---
 
-## ▶ Next Up
+## ▶ 次のステップ
 
-**Plan first gap closure phase**
+**最初のギャップ解消フェーズを計画**
 
 `/gsd:plan-phase {N}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>先に`/clear` → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:execute-phase {N}` — if plans already exist
-- `cat .planning/ROADMAP.md` — see updated roadmap
+**その他のオプション:**
+- `/gsd:execute-phase {N}` — プランが既に存在する場合
+- `cat .planning/ROADMAP.md` — 更新されたロードマップを確認
 
 ---
 
-**After all gap phases complete:**
+**すべてのギャップフェーズ完了後:**
 
-`/gsd:audit-milestone` — re-audit to verify gaps closed
-`/gsd:complete-milestone {version}` — archive when audit passes
+`/gsd:audit-milestone` — ギャップが解消されたか再監査
+`/gsd:complete-milestone {version}` — 監査合格後にアーカイブ
 ```
 
 </process>
 
 <gap_to_phase_mapping>
 
-## How Gaps Become Tasks
+## ギャップからタスクへの変換
 
-**Requirement gap → Tasks:**
+**要件ギャップ → タスク：**
 ```yaml
 gap:
   id: DASH-01
@@ -216,7 +216,7 @@ tasks:
     action: "Replace placeholder with userData.map rendering"
 ```
 
-**Integration gap → Tasks:**
+**インテグレーションギャップ → タスク：**
 ```yaml
 gap:
   from_phase: 1
@@ -240,7 +240,7 @@ tasks:
     action: "Add interceptor to refresh token or redirect to login on 401"
 ```
 
-**Flow gap → Tasks:**
+**フローギャップ → タスク：**
 ```yaml
 gap:
   name: "User views dashboard after login"
@@ -253,22 +253,22 @@ gap:
 
 becomes:
 
-# Usually same phase as requirement/integration gap
-# Flow gaps often overlap with other gap types
+# 通常、要件/インテグレーションギャップと同じフェーズ
+# フローギャップは他のギャップタイプと重複することが多い
 ```
 
 </gap_to_phase_mapping>
 
 <success_criteria>
-- [ ] MILESTONE-AUDIT.md loaded and gaps parsed
-- [ ] Gaps prioritized (must/should/nice)
-- [ ] Gaps grouped into logical phases
-- [ ] User confirmed phase plan
-- [ ] ROADMAP.md updated with new phases
-- [ ] REQUIREMENTS.md traceability table updated with gap closure phase assignments
-- [ ] Unsatisfied requirement checkboxes reset (`[x]` → `[ ]`)
-- [ ] Coverage count updated in REQUIREMENTS.md
-- [ ] Phase directories created
-- [ ] Changes committed (includes REQUIREMENTS.md)
-- [ ] User knows to run `/gsd:plan-phase` next
+- [ ] MILESTONE-AUDIT.mdが読み込まれ、ギャップが解析された
+- [ ] ギャップが優先順位付けされた（must/should/nice）
+- [ ] ギャップが論理的なフェーズにグループ化された
+- [ ] ユーザーがフェーズプランを確認した
+- [ ] ROADMAP.mdが新しいフェーズで更新された
+- [ ] REQUIREMENTS.mdトレーサビリティテーブルがギャップ解消フェーズの割り当てで更新された
+- [ ] 未達成要件のチェックボックスがリセットされた（`[x]` → `[ ]`）
+- [ ] REQUIREMENTS.mdのカバレッジカウントが更新された
+- [ ] フェーズディレクトリが作成された
+- [ ] 変更がコミットされた（REQUIREMENTS.mdを含む）
+- [ ] ユーザーが次に`/gsd:plan-phase`を実行することを把握した
 </success_criteria>

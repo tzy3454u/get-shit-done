@@ -1,41 +1,41 @@
-# Continuation Format
+# 継続フォーマット
 
-Standard format for presenting next steps after completing a command or workflow.
+コマンドやワークフローの完了後に次のステップを提示するための標準フォーマット。
 
-## Core Structure
+## 基本構造
 
 ```
 ---
 
 ## ▶ Next Up
 
-**{identifier}: {name}** — {one-line description}
+**{identifier}: {name}** — {一行の説明}
 
-`{command to copy-paste}`
+`{コピー&ペーストするコマンド}`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `{alternative option 1}` — description
-- `{alternative option 2}` — description
+- `{代替オプション1}` — 説明
+- `{代替オプション2}` — 説明
 
 ---
 ```
 
-## Format Rules
+## フォーマットルール
 
-1. **Always show what it is** — name + description, never just a command path
-2. **Pull context from source** — ROADMAP.md for phases, PLAN.md `<objective>` for plans
-3. **Command in inline code** — backticks, easy to copy-paste, renders as clickable link
-4. **`/clear` explanation** — always include, keeps it concise but explains why
-5. **"Also available" not "Other options"** — sounds more app-like
-6. **Visual separators** — `---` above and below to make it stand out
+1. **常に内容を示す** — 名前 + 説明、コマンドパスだけにしない
+2. **ソースからコンテキストを取得する** — フェーズにはROADMAP.md、プランにはPLAN.mdの`<objective>`
+3. **コマンドはインラインコードで** — バッククォート、コピー&ペーストしやすく、クリック可能なリンクとして表示
+4. **`/clear`の説明** — 常に含める、簡潔だが理由を説明
+5. **"Also available"であって"Other options"ではない** — よりアプリらしく聞こえる
+6. **視覚的区切り** — `---`を上下に配置して目立たせる
 
-## Variants
+## バリエーション
 
-### Execute Next Plan
+### 次のプランを実行
 
 ```
 ---
@@ -57,9 +57,9 @@ Standard format for presenting next steps after completing a command or workflow
 ---
 ```
 
-### Execute Final Plan in Phase
+### フェーズの最後のプランを実行
 
-Add note that this is the last plan and what comes after:
+これが最後のプランであることと、その後に何が来るかを記載する:
 
 ```
 ---
@@ -82,7 +82,7 @@ Add note that this is the last plan and what comes after:
 ---
 ```
 
-### Plan a Phase
+### フェーズの計画
 
 ```
 ---
@@ -105,9 +105,9 @@ Add note that this is the last plan and what comes after:
 ---
 ```
 
-### Phase Complete, Ready for Next
+### フェーズ完了、次の準備完了
 
-Show completion status before next action:
+次のアクションの前に完了ステータスを表示する:
 
 ```
 ---
@@ -134,9 +134,9 @@ Show completion status before next action:
 ---
 ```
 
-### Multiple Equal Options
+### 複数の同等オプション
 
-When there's no clear primary action:
+明確な主要アクションがない場合:
 
 ```
 ---
@@ -156,7 +156,7 @@ When there's no clear primary action:
 ---
 ```
 
-### Milestone Complete
+### マイルストーン完了
 
 ```
 ---
@@ -176,25 +176,25 @@ All 4 phases shipped
 ---
 ```
 
-## Pulling Context
+## コンテキストの取得
 
-### For phases (from ROADMAP.md):
+### フェーズの場合（ROADMAP.mdから）:
 
 ```markdown
 ### Phase 2: Authentication
 **Goal**: JWT login flow with refresh tokens
 ```
 
-Extract: `**Phase 2: Authentication** — JWT login flow with refresh tokens`
+抽出: `**Phase 2: Authentication** — JWT login flow with refresh tokens`
 
-### For plans (from ROADMAP.md):
+### プランの場合（ROADMAP.mdから）:
 
 ```markdown
 Plans:
 - [ ] 02-03: Add refresh token rotation
 ```
 
-Or from PLAN.md `<objective>`:
+またはPLAN.mdの`<objective>`から:
 
 ```xml
 <objective>
@@ -204,11 +204,11 @@ Purpose: Extend session lifetime without compromising security.
 </objective>
 ```
 
-Extract: `**02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry`
+抽出: `**02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry`
 
-## Anti-Patterns
+## アンチパターン
 
-### Don't: Command-only (no context)
+### してはいけない: コマンドだけ（コンテキストなし）
 
 ```
 ## To Continue
@@ -217,9 +217,9 @@ Run `/clear`, then paste:
 /gsd:execute-phase 2
 ```
 
-User has no idea what 02-03 is about.
+ユーザーには02-03が何なのかわからない。
 
-### Don't: Missing /clear explanation
+### してはいけない: /clearの説明がない
 
 ```
 `/gsd:plan-phase 3`
@@ -227,18 +227,18 @@ User has no idea what 02-03 is about.
 Run /clear first.
 ```
 
-Doesn't explain why. User might skip it.
+理由を説明していない。ユーザーがスキップするかもしれない。
 
-### Don't: "Other options" language
+### してはいけない: "Other options"という表現
 
 ```
 Other options:
 - Review roadmap
 ```
 
-Sounds like an afterthought. Use "Also available:" instead.
+後付けのように聞こえる。代わりに"Also available:"を使用する。
 
-### Don't: Fenced code blocks for commands
+### してはいけない: コマンドにフェンスコードブロック
 
 ```
 ```
@@ -246,4 +246,4 @@ Sounds like an afterthought. Use "Also available:" instead.
 ```
 ```
 
-Fenced blocks inside templates create nesting ambiguity. Use inline backticks instead.
+テンプレート内のフェンスブロックはネストの曖昧さを生む。代わりにインラインバッククォートを使用する。

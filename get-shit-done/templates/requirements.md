@@ -1,60 +1,60 @@
-# Requirements Template
+# 要件テンプレート
 
-Template for `.planning/REQUIREMENTS.md` — checkable requirements that define "done."
+`.planning/REQUIREMENTS.md` 用テンプレート — 「完了」を定義するチェック可能な要件。
 
 <template>
 
 ```markdown
-# Requirements: [Project Name]
+# Requirements: [プロジェクト名]
 
 **Defined:** [date]
-**Core Value:** [from PROJECT.md]
+**Core Value:** [PROJECT.mdから]
 
-## v1 Requirements
+## v1 要件
 
-Requirements for initial release. Each maps to roadmap phases.
+初回リリースの要件。それぞれがロードマップのフェーズに対応。
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can sign up with email and password
-- [ ] **AUTH-02**: User receives email verification after signup
-- [ ] **AUTH-03**: User can reset password via email link
-- [ ] **AUTH-04**: User session persists across browser refresh
+- [ ] **AUTH-01**: ユーザーがメールとパスワードでサインアップできる
+- [ ] **AUTH-02**: サインアップ後にユーザーがメール認証を受け取る
+- [ ] **AUTH-03**: ユーザーがメールリンクでパスワードをリセットできる
+- [ ] **AUTH-04**: ブラウザ更新後もユーザーセッションが維持される
 
-### [Category 2]
+### [カテゴリ2]
 
-- [ ] **[CAT]-01**: [Requirement description]
-- [ ] **[CAT]-02**: [Requirement description]
-- [ ] **[CAT]-03**: [Requirement description]
+- [ ] **[CAT]-01**: [要件の説明]
+- [ ] **[CAT]-02**: [要件の説明]
+- [ ] **[CAT]-03**: [要件の説明]
 
-### [Category 3]
+### [カテゴリ3]
 
-- [ ] **[CAT]-01**: [Requirement description]
-- [ ] **[CAT]-02**: [Requirement description]
+- [ ] **[CAT]-01**: [要件の説明]
+- [ ] **[CAT]-02**: [要件の説明]
 
-## v2 Requirements
+## v2 要件
 
-Deferred to future release. Tracked but not in current roadmap.
+将来のリリースに先送り。追跡されるが現在のロードマップには含まれない。
 
-### [Category]
+### [カテゴリ]
 
-- **[CAT]-01**: [Requirement description]
-- **[CAT]-02**: [Requirement description]
+- **[CAT]-01**: [要件の説明]
+- **[CAT]-02**: [要件の説明]
 
-## Out of Scope
+## スコープ外
 
-Explicitly excluded. Documented to prevent scope creep.
+明示的に除外。スコープクリープを防ぐために文書化。
 
-| Feature | Reason |
+| 機能 | 理由 |
 |---------|--------|
-| [Feature] | [Why excluded] |
-| [Feature] | [Why excluded] |
+| [機能] | [除外理由] |
+| [機能] | [除外理由] |
 
-## Traceability
+## トレーサビリティ
 
-Which phases cover which requirements. Updated during roadmap creation.
+どのフェーズがどの要件をカバーするか。ロードマップ作成時に更新。
 
-| Requirement | Phase | Status |
+| 要件 | フェーズ | ステータス |
 |-------------|-------|--------|
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |
@@ -62,10 +62,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-04 | Phase 1 | Pending |
 | [REQ-ID] | Phase [N] | Pending |
 
-**Coverage:**
-- v1 requirements: [X] total
-- Mapped to phases: [Y]
-- Unmapped: [Z] ⚠️
+**カバレッジ:**
+- v1要件: 合計[X]
+- フェーズに対応済み: [Y]
+- 未対応: [Z] ⚠️
 
 ---
 *Requirements defined: [date]*
@@ -76,56 +76,56 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 <guidelines>
 
-**Requirement Format:**
-- ID: `[CATEGORY]-[NUMBER]` (AUTH-01, CONTENT-02, SOCIAL-03)
-- Description: User-centric, testable, atomic
-- Checkbox: Only for v1 requirements (v2 are not yet actionable)
+**要件の形式:**
+- ID: `[CATEGORY]-[NUMBER]`（AUTH-01、CONTENT-02、SOCIAL-03）
+- 説明: ユーザー中心、テスト可能、アトミック
+- チェックボックス: v1要件のみ（v2はまだアクション不可）
 
-**Categories:**
-- Derive from research FEATURES.md categories
-- Keep consistent with domain conventions
-- Typical: Authentication, Content, Social, Notifications, Moderation, Payments, Admin
+**カテゴリ:**
+- リサーチのFEATURES.mdカテゴリから導出
+- ドメインの慣例と一貫性を保つ
+- 典型的: Authentication、Content、Social、Notifications、Moderation、Payments、Admin
 
 **v1 vs v2:**
-- v1: Committed scope, will be in roadmap phases
-- v2: Acknowledged but deferred, not in current roadmap
-- Moving v2 → v1 requires roadmap update
+- v1: コミットされたスコープ、ロードマップのフェーズに含まれる
+- v2: 認識されているが先送り、現在のロードマップには含まれない
+- v2 → v1への移動にはロードマップの更新が必要
 
-**Out of Scope:**
-- Explicit exclusions with reasoning
-- Prevents "why didn't you include X?" later
-- Anti-features from research belong here with warnings
+**スコープ外:**
+- 理由付きの明示的な除外
+- 後で「なぜXを含めなかったのか？」を防止
+- リサーチからのアンチフィーチャーは警告付きでここに配置
 
-**Traceability:**
-- Empty initially, populated during roadmap creation
-- Each requirement maps to exactly one phase
-- Unmapped requirements = roadmap gap
+**トレーサビリティ:**
+- 最初は空、ロードマップ作成時に記入
+- 各要件は正確に1つのフェーズに対応
+- 未対応の要件 = ロードマップのギャップ
 
-**Status Values:**
-- Pending: Not started
-- In Progress: Phase is active
-- Complete: Requirement verified
-- Blocked: Waiting on external factor
+**ステータス値:**
+- Pending: 未着手
+- In Progress: フェーズがアクティブ
+- Complete: 要件が検証済み
+- Blocked: 外部要因を待機中
 
 </guidelines>
 
 <evolution>
 
-**After each phase completes:**
-1. Mark covered requirements as Complete
-2. Update traceability status
-3. Note any requirements that changed scope
+**各フェーズ完了後:**
+1. カバーされた要件をCompleteにマーク
+2. トレーサビリティのステータスを更新
+3. スコープが変更された要件をメモ
 
-**After roadmap updates:**
-1. Verify all v1 requirements still mapped
-2. Add new requirements if scope expanded
-3. Move requirements to v2/out of scope if descoped
+**ロードマップ更新後:**
+1. すべてのv1要件がまだ対応されていることを確認
+2. スコープが拡大した場合は新しい要件を追加
+3. スコープから外れた場合はv2/スコープ外に移動
 
-**Requirement completion criteria:**
-- Requirement is "Complete" when:
-  - Feature is implemented
-  - Feature is verified (tests pass, manual check done)
-  - Feature is committed
+**要件完了基準:**
+- 要件が「Complete」となるのは:
+  - 機能が実装されている
+  - 機能が検証されている（テスト通過、手動チェック完了）
+  - 機能がコミットされている
 
 </evolution>
 
@@ -135,69 +135,69 @@ Which phases cover which requirements. Updated during roadmap creation.
 # Requirements: CommunityApp
 
 **Defined:** 2025-01-14
-**Core Value:** Users can share and discuss content with people who share their interests
+**Core Value:** ユーザーが同じ興味を持つ人とコンテンツを共有し議論できる
 
-## v1 Requirements
+## v1 要件
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can sign up with email and password
-- [ ] **AUTH-02**: User receives email verification after signup
-- [ ] **AUTH-03**: User can reset password via email link
-- [ ] **AUTH-04**: User session persists across browser refresh
+- [ ] **AUTH-01**: ユーザーがメールとパスワードでサインアップできる
+- [ ] **AUTH-02**: サインアップ後にユーザーがメール認証を受け取る
+- [ ] **AUTH-03**: ユーザーがメールリンクでパスワードをリセットできる
+- [ ] **AUTH-04**: ブラウザ更新後もユーザーセッションが維持される
 
 ### Profiles
 
-- [ ] **PROF-01**: User can create profile with display name
-- [ ] **PROF-02**: User can upload avatar image
-- [ ] **PROF-03**: User can write bio (max 500 chars)
-- [ ] **PROF-04**: User can view other users' profiles
+- [ ] **PROF-01**: ユーザーが表示名付きプロフィールを作成できる
+- [ ] **PROF-02**: ユーザーがアバター画像をアップロードできる
+- [ ] **PROF-03**: ユーザーが自己紹介を書ける（最大500文字）
+- [ ] **PROF-04**: ユーザーが他のユーザーのプロフィールを閲覧できる
 
 ### Content
 
-- [ ] **CONT-01**: User can create text post
-- [ ] **CONT-02**: User can upload image with post
-- [ ] **CONT-03**: User can edit own posts
-- [ ] **CONT-04**: User can delete own posts
-- [ ] **CONT-05**: User can view feed of posts
+- [ ] **CONT-01**: ユーザーがテキスト投稿を作成できる
+- [ ] **CONT-02**: ユーザーが投稿に画像をアップロードできる
+- [ ] **CONT-03**: ユーザーが自分の投稿を編集できる
+- [ ] **CONT-04**: ユーザーが自分の投稿を削除できる
+- [ ] **CONT-05**: ユーザーが投稿のフィードを閲覧できる
 
 ### Social
 
-- [ ] **SOCL-01**: User can follow other users
-- [ ] **SOCL-02**: User can unfollow users
-- [ ] **SOCL-03**: User can like posts
-- [ ] **SOCL-04**: User can comment on posts
-- [ ] **SOCL-05**: User can view activity feed (followed users' posts)
+- [ ] **SOCL-01**: ユーザーが他のユーザーをフォローできる
+- [ ] **SOCL-02**: ユーザーがフォローを解除できる
+- [ ] **SOCL-03**: ユーザーが投稿にいいねできる
+- [ ] **SOCL-04**: ユーザーが投稿にコメントできる
+- [ ] **SOCL-05**: ユーザーがアクティビティフィード（フォロー中のユーザーの投稿）を閲覧できる
 
-## v2 Requirements
+## v2 要件
 
 ### Notifications
 
-- **NOTF-01**: User receives in-app notifications
-- **NOTF-02**: User receives email for new followers
-- **NOTF-03**: User receives email for comments on own posts
-- **NOTF-04**: User can configure notification preferences
+- **NOTF-01**: ユーザーがアプリ内通知を受け取る
+- **NOTF-02**: ユーザーが新しいフォロワーのメール通知を受け取る
+- **NOTF-03**: ユーザーが自分の投稿へのコメントのメール通知を受け取る
+- **NOTF-04**: ユーザーが通知設定を構成できる
 
 ### Moderation
 
-- **MODR-01**: User can report content
-- **MODR-02**: User can block other users
-- **MODR-03**: Admin can view reported content
-- **MODR-04**: Admin can remove content
-- **MODR-05**: Admin can ban users
+- **MODR-01**: ユーザーがコンテンツを通報できる
+- **MODR-02**: ユーザーが他のユーザーをブロックできる
+- **MODR-03**: 管理者が通報されたコンテンツを閲覧できる
+- **MODR-04**: 管理者がコンテンツを削除できる
+- **MODR-05**: 管理者がユーザーをBANできる
 
-## Out of Scope
+## スコープ外
 
-| Feature | Reason |
+| 機能 | 理由 |
 |---------|--------|
-| Real-time chat | High complexity, not core to community value |
-| Video posts | Storage/bandwidth costs, defer to v2+ |
-| OAuth login | Email/password sufficient for v1 |
-| Mobile app | Web-first, mobile later |
+| リアルタイムチャット | 高い複雑性、コミュニティの核心的価値ではない |
+| 動画投稿 | ストレージ/帯域幅コスト、v2+に先送り |
+| OAuthログイン | v1にはメール/パスワードで十分 |
+| モバイルアプリ | Webファースト、モバイルは後で |
 
-## Traceability
+## トレーサビリティ
 
-| Requirement | Phase | Status |
+| 要件 | フェーズ | ステータス |
 |-------------|-------|--------|
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |
@@ -218,10 +218,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SOCL-04 | Phase 4 | Pending |
 | SOCL-05 | Phase 4 | Pending |
 
-**Coverage:**
-- v1 requirements: 18 total
-- Mapped to phases: 18
-- Unmapped: 0 ✓
+**カバレッジ:**
+- v1要件: 合計18
+- フェーズに対応済み: 18
+- 未対応: 0 ✓
 
 ---
 *Requirements defined: 2025-01-14*
@@ -229,3 +229,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 ```
 
 </example>
+</output>

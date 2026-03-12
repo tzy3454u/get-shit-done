@@ -1,6 +1,6 @@
 ---
 name: gsd:verify-work
-description: Validate built features through conversational UAT
+description: 対話型UATを通じてビルドされた機能を検証する
 argument-hint: "[phase number, e.g., '4']"
 allowed-tools:
   - Read
@@ -12,11 +12,11 @@ allowed-tools:
   - Task
 ---
 <objective>
-Validate built features through conversational testing with persistent state.
+永続的な状態を持つ対話型テストを通じて、ビルドされた機能を検証する。
 
-Purpose: Confirm what Claude built actually works from user's perspective. One test at a time, plain text responses, no interrogation. When issues are found, automatically diagnose, plan fixes, and prepare for execution.
+目的: Claudeがビルドしたものがユーザーの視点から実際に動作することを確認する。一度に1つのテスト、プレーンテキストの応答、尋問なし。問題が見つかった場合、自動的に診断し、修正を計画し、実行の準備をする。
 
-Output: {phase_num}-UAT.md tracking all test results. If issues found: diagnosed gaps, verified fix plans ready for /gsd:execute-phase
+出力: すべてのテスト結果を追跡する{phase_num}-UAT.md。問題が見つかった場合: 診断されたギャップ、/gsd:execute-phase用の検証済み修正計画
 </objective>
 
 <execution_context>
@@ -25,14 +25,15 @@ Output: {phase_num}-UAT.md tracking all test results. If issues found: diagnosed
 </execution_context>
 
 <context>
-Phase: $ARGUMENTS (optional)
-- If provided: Test specific phase (e.g., "4")
-- If not provided: Check for active sessions or prompt for phase
+フェーズ: $ARGUMENTS (省略可)
+- 指定された場合: 特定のフェーズをテスト (例: "4")
+- 指定されない場合: アクティブなセッションを確認するか、フェーズの入力を求める
 
-Context files are resolved inside the workflow (`init verify-work`) and delegated via `<files_to_read>` blocks.
+コンテキストファイルはワークフロー内で解決され (`init verify-work`)、`<files_to_read>` ブロックを通じて委譲される。
 </context>
 
 <process>
-Execute the verify-work workflow from @~/.claude/get-shit-done/workflows/verify-work.md end-to-end.
-Preserve all workflow gates (session management, test presentation, diagnosis, fix planning, routing).
+@~/.claude/get-shit-done/workflows/verify-work.md のverify-workワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲートを保持する（セッション管理、テスト提示、診断、修正計画、ルーティング）。
 </process>
+

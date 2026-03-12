@@ -1,60 +1,60 @@
 <purpose>
 
-Start a new milestone cycle for an existing project. Loads project context, gathers milestone goals (from MILESTONE-CONTEXT.md or conversation), updates PROJECT.md and STATE.md, optionally runs parallel research, defines scoped requirements with REQ-IDs, spawns the roadmapper to create phased execution plan, and commits all artifacts. Brownfield equivalent of new-project.
+既存プロジェクトの新しいマイルストーンサイクルを開始する。プロジェクトコンテキストを読み込み、マイルストーン目標を収集し（MILESTONE-CONTEXT.mdまたは会話から）、PROJECT.mdとSTATE.mdを更新し、オプションで並列リサーチを実行し、REQ-ID付きのスコープ付き要件を定義し、ロードマッパーを生成してフェーズ分けされた実行計画を作成し、すべてのアーティファクトをコミットする。new-projectのブラウンフィールド版。
 
 </purpose>
 
 <required_reading>
 
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出し元プロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 
 </required_reading>
 
 <process>
 
-## 1. Load Context
+## 1. コンテキストの読み込み
 
-- Read PROJECT.md (existing project, validated requirements, decisions)
-- Read MILESTONES.md (what shipped previously)
-- Read STATE.md (pending todos, blockers)
-- Check for MILESTONE-CONTEXT.md (from /gsd:discuss-milestone)
+- PROJECT.md を読み込む（既存プロジェクト、検証済み要件、決定事項）
+- MILESTONES.md を読み込む（以前の出荷内容）
+- STATE.md を読み込む（保留中のTODO、ブロッカー）
+- MILESTONE-CONTEXT.md を確認する（/gsd:discuss-milestone から）
 
-## 2. Gather Milestone Goals
+## 2. マイルストーン目標の収集
 
-**If MILESTONE-CONTEXT.md exists:**
-- Use features and scope from discuss-milestone
-- Present summary for confirmation
+**MILESTONE-CONTEXT.md が存在する場合：**
+- discuss-milestoneからの機能とスコープを使用する
+- サマリーを確認のために表示する
 
-**If no context file:**
-- Present what shipped in last milestone
-- Ask inline (freeform, NOT AskUserQuestion): "What do you want to build next?"
-- Wait for their response, then use AskUserQuestion to probe specifics
-- If user selects "Other" at any point to provide freeform input, ask follow-up as plain text — not another AskUserQuestion
+**コンテキストファイルがない場合：**
+- 前回のマイルストーンで出荷された内容を表示する
+- インラインで確認する（フリーフォーム、AskUserQuestionではなく）："次に何を構築しますか？"
+- 返信を待ち、AskUserQuestionを使って詳細を掘り下げる
+- ユーザーがいずれかの時点で "Other" を選択してフリーフォーム入力した場合、フォローアップはプレーンテキストで質問する — 別のAskUserQuestionではなく
 
-## 3. Determine Milestone Version
+## 3. マイルストーンバージョンの決定
 
-- Parse last version from MILESTONES.md
-- Suggest next version (v1.0 → v1.1, or v2.0 for major)
-- Confirm with user
+- MILESTONES.mdから最新バージョンをパースする
+- 次のバージョンを提案する（v1.0 → v1.1、またはメジャーの場合はv2.0）
+- ユーザーに確認する
 
-## 4. Update PROJECT.md
+## 4. PROJECT.mdの更新
 
-Add/update:
+追加/更新する：
 
 ```markdown
-## Current Milestone: v[X.Y] [Name]
+## Current Milestone: v[X.Y] [名前]
 
-**Goal:** [One sentence describing milestone focus]
+**Goal:** [マイルストーンのフォーカスを1文で記述]
 
 **Target features:**
-- [Feature 1]
-- [Feature 2]
-- [Feature 3]
+- [機能1]
+- [機能2]
+- [機能3]
 ```
 
-Update Active requirements section and "Last updated" footer.
+Active要件セクションと "Last updated" フッターを更新する。
 
-## 5. Update STATE.md
+## 5. STATE.mdの更新
 
 ```markdown
 ## Current Position
@@ -65,49 +65,49 @@ Status: Defining requirements
 Last activity: [today] — Milestone v[X.Y] started
 ```
 
-Keep Accumulated Context section from previous milestone.
+前回のマイルストーンのAccumulated Contextセクションを保持する。
 
-## 6. Cleanup and Commit
+## 6. クリーンアップとコミット
 
-Delete MILESTONE-CONTEXT.md if exists (consumed).
+MILESTONE-CONTEXT.mdが存在する場合は削除する（消費済み）。
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: start milestone v[X.Y] [Name]" --files .planning/PROJECT.md .planning/STATE.md
 ```
 
-## 7. Load Context and Resolve Models
+## 7. コンテキストの読み込みとモデルの解決
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init new-milestone)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `research_enabled`, `current_milestone`, `project_exists`, `roadmap_exists`.
+init JSONから抽出する：`researcher_model`、`synthesizer_model`、`roadmapper_model`、`commit_docs`、`research_enabled`、`current_milestone`、`project_exists`、`roadmap_exists`。
 
-## 8. Research Decision
+## 8. リサーチの判断
 
-AskUserQuestion: "Research the domain ecosystem for new features before defining requirements?"
-- "Research first (Recommended)" — Discover patterns, features, architecture for NEW capabilities
-- "Skip research" — Go straight to requirements
+AskUserQuestion: "要件定義の前に新機能のドメインエコシステムをリサーチしますか？"
+- "先にリサーチ（推奨）" — 新しい機能のパターン、特徴、アーキテクチャを調査する
+- "リサーチをスキップ" — 直接要件に進む
 
-**Persist choice to config** (so future `/gsd:plan-phase` honors it):
+**選択を設定に保存する**（今後の `/gsd:plan-phase` がそれを尊重するように）：
 
 ```bash
-# If "Research first": persist true
+# "先にリサーチ" の場合：trueを保存
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow.research true
 
-# If "Skip research": persist false
+# "リサーチをスキップ" の場合：falseを保存
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow.research false
 ```
 
-**If "Research first":**
+**"先にリサーチ" の場合：**
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► RESEARCHING
+ GSD ► リサーチ中
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning 4 researchers in parallel...
+◆ 4つのリサーチャーを並列で生成中...
   → Stack, Features, Architecture, Pitfalls
 ```
 
@@ -115,23 +115,23 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow.researc
 mkdir -p .planning/research
 ```
 
-Spawn 4 parallel gsd-project-researcher agents. Each uses this template with dimension-specific fields:
+4つの並列gsd-project-researcherエージェントを生成する。各エージェントはディメンション固有のフィールドを持つこのテンプレートを使用する：
 
-**Common structure for all 4 researchers:**
+**4つのリサーチャー共通の構造：**
 ```
 Task(prompt="
-<research_type>Project Research — {DIMENSION} for [new features].</research_type>
+<research_type>プロジェクトリサーチ — [新機能]のための{DIMENSION}。</research_type>
 
 <milestone_context>
-SUBSEQUENT MILESTONE — Adding [target features] to existing app.
+後続マイルストーン — 既存アプリに[対象機能]を追加。
 {EXISTING_CONTEXT}
-Focus ONLY on what's needed for the NEW features.
+新機能に必要なもののみにフォーカス。
 </milestone_context>
 
 <question>{QUESTION}</question>
 
 <files_to_read>
-- .planning/PROJECT.md (Project context)
+- .planning/PROJECT.md (プロジェクトコンテキスト)
 </files_to_read>
 
 <downstream_consumer>{CONSUMER}</downstream_consumer>
@@ -145,21 +145,21 @@ Use template: ~/.claude/get-shit-done/templates/research-project/{FILE}
 ", subagent_type="gsd-project-researcher", model="{researcher_model}", description="{DIMENSION} research")
 ```
 
-**Dimension-specific fields:**
+**ディメンション固有のフィールド：**
 
 | Field | Stack | Features | Architecture | Pitfalls |
 |-------|-------|----------|-------------|----------|
-| EXISTING_CONTEXT | Existing validated capabilities (DO NOT re-research): [from PROJECT.md] | Existing features (already built): [from PROJECT.md] | Existing architecture: [from PROJECT.md or codebase map] | Focus on common mistakes when ADDING these features to existing system |
-| QUESTION | What stack additions/changes are needed for [new features]? | How do [target features] typically work? Expected behavior? | How do [target features] integrate with existing architecture? | Common mistakes when adding [target features] to [domain]? |
-| CONSUMER | Specific libraries with versions for NEW capabilities, integration points, what NOT to add | Table stakes vs differentiators vs anti-features, complexity noted, dependencies on existing | Integration points, new components, data flow changes, suggested build order | Warning signs, prevention strategy, which phase should address it |
-| GATES | Versions current (verify with Context7), rationale explains WHY, integration considered | Categories clear, complexity noted, dependencies identified | Integration points identified, new vs modified explicit, build order considers deps | Pitfalls specific to adding these features, integration pitfalls covered, prevention actionable |
+| EXISTING_CONTEXT | 既存の検証済み機能（再リサーチ不要）：[PROJECT.mdから] | 既存の機能（構築済み）：[PROJECT.mdから] | 既存のアーキテクチャ：[PROJECT.mdまたはコードベースマップから] | 既存システムにこれらの機能を追加する際の一般的なミスにフォーカス |
+| QUESTION | [新機能]にどのようなスタック追加/変更が必要か？ | [対象機能]は通常どのように機能するか？期待される動作は？ | [対象機能]は既存のアーキテクチャとどのように統合するか？ | [ドメイン]に[対象機能]を追加する際の一般的なミスは？ |
+| CONSUMER | 新機能用の具体的なライブラリとバージョン、統合ポイント、追加すべきでないもの | テーブルステークス vs 差別化要因 vs アンチフィーチャー、複雑さの注記、既存への依存関係 | 統合ポイント、新コンポーネント、データフローの変更、推奨ビルド順序 | 警告サイン、防止戦略、どのフェーズで対処すべきか |
+| GATES | バージョンが最新（Context7で検証）、WHYの根拠を説明、統合が考慮されている | カテゴリが明確、複雑さが注記されている、依存関係が識別されている | 統合ポイントが識別されている、新規vs修正が明示的、ビルド順序が依存関係を考慮 | これらの機能追加に固有の落とし穴、統合の落とし穴がカバーされている、防止策が実行可能 |
 | FILE | STACK.md | FEATURES.md | ARCHITECTURE.md | PITFALLS.md |
 
-After all 4 complete, spawn synthesizer:
+4つすべて完了後、シンセサイザーを生成する：
 
 ```
 Task(prompt="
-Synthesize research outputs into SUMMARY.md.
+リサーチ出力をSUMMARY.mdに統合する。
 
 <files_to_read>
 - .planning/research/STACK.md
@@ -170,105 +170,105 @@ Synthesize research outputs into SUMMARY.md.
 
 Write to: .planning/research/SUMMARY.md
 Use template: ~/.claude/get-shit-done/templates/research-project/SUMMARY.md
-Commit after writing.
+書き込み後にコミット。
 ", subagent_type="gsd-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")
 ```
 
-Display key findings from SUMMARY.md:
+SUMMARY.mdから主な発見を表示する：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► RESEARCH COMPLETE ✓
+ GSD ► リサーチ完了 ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Stack additions:** [from SUMMARY.md]
-**Feature table stakes:** [from SUMMARY.md]
-**Watch Out For:** [from SUMMARY.md]
+**スタック追加:** [SUMMARY.mdから]
+**機能のテーブルステークス:** [SUMMARY.mdから]
+**注意すべき点:** [SUMMARY.mdから]
 ```
 
-**If "Skip research":** Continue to Step 9.
+**"リサーチをスキップ" の場合：** ステップ9に進む。
 
-## 9. Define Requirements
+## 9. 要件の定義
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► DEFINING REQUIREMENTS
+ GSD ► 要件を定義中
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-Read PROJECT.md: core value, current milestone goals, validated requirements (what exists).
+PROJECT.mdを読み込む：core value、現在のマイルストーン目標、検証済み要件（既存のもの）。
 
-**If research exists:** Read FEATURES.md, extract feature categories.
+**リサーチが存在する場合：** FEATURES.mdを読み込み、機能カテゴリを抽出する。
 
-Present features by category:
+カテゴリ別に機能を表示する：
 ```
-## [Category 1]
-**Table stakes:** Feature A, Feature B
-**Differentiators:** Feature C, Feature D
-**Research notes:** [any relevant notes]
-```
-
-**If no research:** Gather requirements through conversation. Ask: "What are the main things users need to do with [new features]?" Clarify, probe for related capabilities, group into categories.
-
-**Scope each category** via AskUserQuestion (multiSelect: true, header max 12 chars):
-- "[Feature 1]" — [brief description]
-- "[Feature 2]" — [brief description]
-- "None for this milestone" — Defer entire category
-
-Track: Selected → this milestone. Unselected table stakes → future. Unselected differentiators → out of scope.
-
-**Identify gaps** via AskUserQuestion:
-- "No, research covered it" — Proceed
-- "Yes, let me add some" — Capture additions
-
-**Generate REQUIREMENTS.md:**
-- v1 Requirements grouped by category (checkboxes, REQ-IDs)
-- Future Requirements (deferred)
-- Out of Scope (explicit exclusions with reasoning)
-- Traceability section (empty, filled by roadmap)
-
-**REQ-ID format:** `[CATEGORY]-[NUMBER]` (AUTH-01, NOTIF-02). Continue numbering from existing.
-
-**Requirement quality criteria:**
-
-Good requirements are:
-- **Specific and testable:** "User can reset password via email link" (not "Handle password reset")
-- **User-centric:** "User can X" (not "System does Y")
-- **Atomic:** One capability per requirement (not "User can login and manage profile")
-- **Independent:** Minimal dependencies on other requirements
-
-Present FULL requirements list for confirmation:
-
-```
-## Milestone v[X.Y] Requirements
-
-### [Category 1]
-- [ ] **CAT1-01**: User can do X
-- [ ] **CAT1-02**: User can do Y
-
-### [Category 2]
-- [ ] **CAT2-01**: User can do Z
-
-Does this capture what you're building? (yes / adjust)
+## [カテゴリ1]
+**テーブルステークス:** 機能A、機能B
+**差別化要因:** 機能C、機能D
+**リサーチメモ:** [関連メモ]
 ```
 
-If "adjust": Return to scoping.
+**リサーチがない場合：** 会話で要件を収集する。質問する："[新機能]でユーザーが行う必要がある主なことは何ですか？" 明確化し、関連する機能を調査し、カテゴリにグループ化する。
 
-**Commit requirements:**
+**各カテゴリのスコープを設定する** AskUserQuestion経由（multiSelect: true、ヘッダー最大12文字）：
+- "[機能1]" — [簡潔な説明]
+- "[機能2]" — [簡潔な説明]
+- "このマイルストーンでは含めない" — カテゴリ全体を延期
+
+追跡する：選択済み → このマイルストーン。未選択のテーブルステークス → 将来。未選択の差別化要因 → スコープ外。
+
+**ギャップを識別する** AskUserQuestion経由：
+- "いいえ、リサーチでカバーされています" — 続行
+- "はい、追加します" — 追加分を収集
+
+**REQUIREMENTS.mdを生成する：**
+- カテゴリ別にグループ化されたv1要件（チェックボックス、REQ-ID）
+- 将来の要件（延期）
+- スコープ外（理由付きの明示的な除外）
+- トレーサビリティセクション（空、ロードマップで記入）
+
+**REQ-IDフォーマット：** `[CATEGORY]-[NUMBER]` (AUTH-01, NOTIF-02)。既存の番号から続ける。
+
+**要件の品質基準：**
+
+良い要件の条件：
+- **具体的でテスト可能：** "ユーザーはメールリンクでパスワードをリセットできる" ("パスワードリセットを処理する" ではない)
+- **ユーザー中心：** "ユーザーはXできる" ("システムがYを行う" ではない)
+- **アトミック：** 1要件に1機能 ("ユーザーはログインしてプロフィールを管理できる" ではない)
+- **独立：** 他の要件への依存を最小限に
+
+完全な要件リストを確認のために表示する：
+
+```
+## マイルストーン v[X.Y] 要件
+
+### [カテゴリ1]
+- [ ] **CAT1-01**: ユーザーはXできる
+- [ ] **CAT1-02**: ユーザーはYできる
+
+### [カテゴリ2]
+- [ ] **CAT2-01**: ユーザーはZできる
+
+構築する内容をこれで網羅していますか？ (yes / adjust)
+```
+
+"adjust" の場合：スコープ設定に戻る。
+
+**要件をコミットする：**
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: define milestone v[X.Y] requirements" --files .planning/REQUIREMENTS.md
 ```
 
-## 10. Create Roadmap
+## 10. ロードマップの作成
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► CREATING ROADMAP
+ GSD ► ロードマップを作成中
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning roadmapper...
+◆ ロードマッパーを生成中...
 ```
 
-**Starting phase number:** Read MILESTONES.md for last phase number. Continue from there (v1.0 ended at phase 5 → v1.1 starts at phase 6).
+**開始フェーズ番号：** MILESTONES.mdから最後のフェーズ番号を読み取る。そこから続ける（v1.0がフェーズ5で終了 → v1.1はフェーズ6から開始）。
 
 ```
 Task(prompt="
@@ -283,66 +283,66 @@ Task(prompt="
 </planning_context>
 
 <instructions>
-Create roadmap for milestone v[X.Y]:
-1. Start phase numbering from [N]
-2. Derive phases from THIS MILESTONE's requirements only
-3. Map every requirement to exactly one phase
-4. Derive 2-5 success criteria per phase (observable user behaviors)
-5. Validate 100% coverage
-6. Write files immediately (ROADMAP.md, STATE.md, update REQUIREMENTS.md traceability)
-7. Return ROADMAP CREATED with summary
+マイルストーン v[X.Y] のロードマップを作成する：
+1. フェーズ番号を [N] から開始
+2. このマイルストーンの要件のみからフェーズを導出
+3. すべての要件を正確に1つのフェーズにマッピング
+4. フェーズごとに2-5個の成功基準を導出（観察可能なユーザー行動）
+5. 100%のカバレッジを検証
+6. ファイルを即座に書き込む（ROADMAP.md、STATE.md、REQUIREMENTS.mdのトレーサビリティを更新）
+7. ROADMAP CREATEDをサマリー付きで返す
 
-Write files first, then return.
+先にファイルを書き込み、その後返す。
 </instructions>
 ", subagent_type="gsd-roadmapper", model="{roadmapper_model}", description="Create roadmap")
 ```
 
-**Handle return:**
+**戻り値の処理：**
 
-**If `## ROADMAP BLOCKED`:** Present blocker, work with user, re-spawn.
+**`## ROADMAP BLOCKED` の場合：** ブロッカーを表示し、ユーザーと解決し、再生成する。
 
-**If `## ROADMAP CREATED`:** Read ROADMAP.md, present inline:
+**`## ROADMAP CREATED` の場合：** ROADMAP.mdを読み込み、インラインで表示する：
 
 ```
-## Proposed Roadmap
+## 提案されたロードマップ
 
-**[N] phases** | **[X] requirements mapped** | All covered ✓
+**[N] フェーズ** | **[X] 要件マッピング済み** | すべてカバー ✓
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| [N] | [Name] | [Goal] | [REQ-IDs] | [count] |
+| [N] | [名前] | [目標] | [REQ-ID] | [数] |
 
-### Phase Details
+### フェーズ詳細
 
-**Phase [N]: [Name]**
-Goal: [goal]
-Requirements: [REQ-IDs]
-Success criteria:
-1. [criterion]
-2. [criterion]
+**Phase [N]: [名前]**
+目標: [目標]
+要件: [REQ-ID]
+成功基準:
+1. [基準]
+2. [基準]
 ```
 
-**Ask for approval** via AskUserQuestion:
-- "Approve" — Commit and continue
-- "Adjust phases" — Tell me what to change
-- "Review full file" — Show raw ROADMAP.md
+**承認を求める** AskUserQuestion経由：
+- "承認" — コミットして続行
+- "フェーズを調整" — 変更内容を伝えてください
+- "完全なファイルを確認" — 生のROADMAP.mdを表示
 
-**If "Adjust":** Get notes, re-spawn roadmapper with revision context, loop until approved.
-**If "Review":** Display raw ROADMAP.md, re-ask.
+**"調整" の場合：** メモを取得し、修正コンテキスト付きでロードマッパーを再生成し、承認されるまでループする。
+**"確認" の場合：** 生のROADMAP.mdを表示し、再度質問する。
 
-**Commit roadmap** (after approval):
+**ロードマップをコミットする**（承認後）：
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: create milestone v[X.Y] roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 ```
 
-## 11. Done
+## 11. 完了
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► MILESTONE INITIALIZED ✓
+ GSD ► マイルストーン初期化完了 ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Milestone v[X.Y]: [Name]**
+**マイルストーン v[X.Y]: [名前]**
 
 | Artifact       | Location                    |
 |----------------|-----------------------------|
@@ -351,34 +351,35 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs: create milest
 | Requirements   | `.planning/REQUIREMENTS.md` |
 | Roadmap        | `.planning/ROADMAP.md`      |
 
-**[N] phases** | **[X] requirements** | Ready to build ✓
+**[N] フェーズ** | **[X] 要件** | ビルド準備完了 ✓
 
 ## ▶ Next Up
 
-**Phase [N]: [Phase Name]** — [Goal]
+**Phase [N]: [フェーズ名]** — [目標]
 
-`/gsd:discuss-phase [N]` — gather context and clarify approach
+`/gsd:discuss-phase [N]` — コンテキストを収集しアプローチを明確化
 
 <sub>`/clear` first → fresh context window</sub>
 
-Also: `/gsd:plan-phase [N]` — skip discussion, plan directly
+その他: `/gsd:plan-phase [N]` — ディスカッションをスキップして直接計画
 ```
 
 </process>
 
 <success_criteria>
-- [ ] PROJECT.md updated with Current Milestone section
-- [ ] STATE.md reset for new milestone
-- [ ] MILESTONE-CONTEXT.md consumed and deleted (if existed)
-- [ ] Research completed (if selected) — 4 parallel agents, milestone-aware
-- [ ] Requirements gathered and scoped per category
-- [ ] REQUIREMENTS.md created with REQ-IDs
-- [ ] gsd-roadmapper spawned with phase numbering context
-- [ ] Roadmap files written immediately (not draft)
-- [ ] User feedback incorporated (if any)
-- [ ] ROADMAP.md phases continue from previous milestone
-- [ ] All commits made (if planning docs committed)
-- [ ] User knows next step: `/gsd:discuss-phase [N]`
+- [ ] PROJECT.mdがCurrent Milestoneセクションで更新されている
+- [ ] STATE.mdが新しいマイルストーン用にリセットされている
+- [ ] MILESTONE-CONTEXT.mdが消費されて削除されている（存在した場合）
+- [ ] リサーチが完了している（選択された場合） — 4つの並列エージェント、マイルストーン対応
+- [ ] 要件がカテゴリごとに収集されスコープ設定されている
+- [ ] REQUIREMENTS.mdがREQ-ID付きで作成されている
+- [ ] gsd-roadmapperがフェーズ番号コンテキスト付きで生成されている
+- [ ] ロードマップファイルが即座に書き込まれている（ドラフトではない）
+- [ ] ユーザーのフィードバックが反映されている（ある場合）
+- [ ] ROADMAP.mdのフェーズが前回のマイルストーンから続いている
+- [ ] すべてのコミットが作成されている（計画ドキュメントがコミットされる場合）
+- [ ] ユーザーが次のステップを知っている：`/gsd:discuss-phase [N]`
 
-**Atomic commits:** Each phase commits its artifacts immediately.
+**アトミックコミット：** 各フェーズはアーティファクトを即座にコミットする。
 </success_criteria>
+

@@ -1,10 +1,10 @@
-# Planner Subagent Prompt Template
+# プランナーサブエージェントプロンプトテンプレート
 
-Template for spawning gsd-planner agent. The agent contains all planning expertise - this template provides planning context only.
+gsd-plannerエージェントを起動するためのテンプレート。エージェントにはすべての計画の専門知識が含まれています — このテンプレートは計画コンテキストのみを提供します。
 
 ---
 
-## Template
+## テンプレート
 
 ```markdown
 <planning_context>
@@ -34,41 +34,41 @@ Template for spawning gsd-planner agent. The agent contains all planning experti
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase
-Plans must be executable prompts with:
-- Frontmatter (wave, depends_on, files_modified, autonomous)
-- Tasks in XML format
-- Verification criteria
-- must_haves for goal-backward verification
+出力は/gsd:execute-phaseによって消費される
+プランは以下を含む実行可能なプロンプトでなければならない:
+- フロントマター（wave、depends_on、files_modified、autonomous）
+- XML形式のタスク
+- 検証基準
+- ゴールからの逆算検証のためのmust_haves
 </downstream_consumer>
 
 <quality_gate>
-Before returning PLANNING COMPLETE:
-- [ ] PLAN.md files created in phase directory
-- [ ] Each plan has valid frontmatter
-- [ ] Tasks are specific and actionable
-- [ ] Dependencies correctly identified
-- [ ] Waves assigned for parallel execution
-- [ ] must_haves derived from phase goal
+PLANNING COMPLETEを返す前に:
+- [ ] PLAN.mdファイルがフェーズディレクトリに作成されている
+- [ ] 各プランに有効なフロントマターがある
+- [ ] タスクが具体的で実行可能
+- [ ] 依存関係が正しく特定されている
+- [ ] 並列実行のためのウェーブが割り当てられている
+- [ ] フェーズゴールからmust_havesが導出されている
 </quality_gate>
 ```
 
 ---
 
-## Placeholders
+## プレースホルダー
 
-| Placeholder | Source | Example |
+| プレースホルダー | ソース | 例 |
 |-------------|--------|---------|
-| `{phase_number}` | From roadmap/arguments | `5` or `2.1` |
-| `{phase_dir}` | Phase directory name | `05-user-profiles` |
-| `{phase}` | Phase prefix | `05` |
-| `{standard \| gap_closure}` | Mode flag | `standard` |
+| `{phase_number}` | ロードマップ/引数から | `5`または`2.1` |
+| `{phase_dir}` | フェーズディレクトリ名 | `05-user-profiles` |
+| `{phase}` | フェーズプレフィックス | `05` |
+| `{standard \| gap_closure}` | モードフラグ | `standard` |
 
 ---
 
-## Usage
+## 使用方法
 
-**From /gsd:plan-phase (standard mode):**
+**From /gsd:plan-phase（標準モード）:**
 ```python
 Task(
   prompt=filled_template,
@@ -77,10 +77,10 @@ Task(
 )
 ```
 
-**From /gsd:plan-phase --gaps (gap closure mode):**
+**From /gsd:plan-phase --gaps（ギャップクロージャーモード）:**
 ```python
 Task(
-  prompt=filled_template,  # with mode: gap_closure
+  prompt=filled_template,  # mode: gap_closureで
   subagent_type="gsd-planner",
   description="Plan gaps for Phase {phase}"
 )
@@ -88,9 +88,9 @@ Task(
 
 ---
 
-## Continuation
+## 継続
 
-For checkpoints, spawn fresh agent with:
+チェックポイントの場合、以下の内容で新しいエージェントを起動:
 
 ```markdown
 <objective>
@@ -114,4 +114,5 @@ Continue: {standard | gap_closure}
 
 ---
 
-**Note:** Planning methodology, task breakdown, dependency analysis, wave assignment, TDD detection, and goal-backward derivation are baked into the gsd-planner agent. This template only passes context.
+**注意:** 計画手法、タスク分解、依存関係分析、ウェーブ割り当て、TDD検出、ゴールからの逆算導出はgsd-plannerエージェントに組み込まれています。このテンプレートはコンテキストを渡すだけです。
+</output>

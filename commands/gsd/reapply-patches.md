@@ -1,17 +1,17 @@
 ---
-description: Reapply local modifications after a GSD update
+description: GSD アップデート後にローカル変更を再適用する
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 ---
 
 <purpose>
-After a GSD update wipes and reinstalls files, this command merges user's previously saved local modifications back into the new version. Uses intelligent comparison to handle cases where the upstream file also changed.
+GSD アップデートによりファイルが消去・再インストールされた後、ユーザーが以前保存したローカル変更を新しいバージョンにマージする。上流ファイルも変更されたケースに対応するためインテリジェントな比較を使用する。
 </purpose>
 
 <process>
 
-## Step 1: Detect backed-up patches
+## ステップ 1: バックアップされたパッチの検出
 
-Check for local patches directory:
+ローカルパッチディレクトリを確認する：
 
 ```bash
 # Global install — detect runtime config directory
@@ -35,89 +35,89 @@ if [ ! -d "$PATCHES_DIR" ]; then
 fi
 ```
 
-Read `backup-meta.json` from the patches directory.
+パッチディレクトリから `backup-meta.json` を読み取る。
 
-**If no patches found:**
+**パッチが見つからない場合：**
 ```
-No local patches found. Nothing to reapply.
+ローカルパッチが見つかりません。再適用するものはありません。
 
-Local patches are automatically saved when you run /gsd:update
-after modifying any GSD workflow, command, or agent files.
+ローカルパッチは、GSD のワークフロー、コマンド、またはエージェントファイルを
+変更した後に /gsd:update を実行すると自動的に保存される。
 ```
-Exit.
+終了。
 
-## Step 2: Show patch summary
+## ステップ 2: パッチの概要を表示
 
 ```
-## Local Patches to Reapply
+## 再適用するローカルパッチ
 
-**Backed up from:** v{from_version}
-**Current version:** {read VERSION file}
-**Files modified:** {count}
+**バックアップ元：** v{from_version}
+**現在のバージョン：** {read VERSION file}
+**変更ファイル数：** {count}
 
-| # | File | Status |
-|---|------|--------|
-| 1 | {file_path} | Pending |
-| 2 | {file_path} | Pending |
+| # | ファイル | ステータス |
+|---|----------|------------|
+| 1 | {file_path} | 保留中 |
+| 2 | {file_path} | 保留中 |
 ```
 
-## Step 3: Merge each file
+## ステップ 3: 各ファイルをマージ
 
-For each file in `backup-meta.json`:
+`backup-meta.json` 内の各ファイルについて：
 
-1. **Read the backed-up version** (user's modified copy from `gsd-local-patches/`)
-2. **Read the newly installed version** (current file after update)
-3. **Compare and merge:**
+1. **バックアップされたバージョンを読み取る**（`gsd-local-patches/` からのユーザーの変更済みコピー）
+2. **新しくインストールされたバージョンを読み取る**（アップデート後の現在のファイル）
+3. **比較してマージ：**
 
-   - If the new file is identical to the backed-up file: skip (modification was incorporated upstream)
-   - If the new file differs: identify the user's modifications and apply them to the new version
+   - 新しいファイルがバックアップされたファイルと同一の場合：スキップ（変更は上流に取り込み済み）
+   - 新しいファイルが異なる場合：ユーザーの変更を特定し、新しいバージョンに適用する
 
-   **Merge strategy:**
-   - Read both versions fully
-   - Identify sections the user added or modified (look for additions, not just differences from path replacement)
-   - Apply user's additions/modifications to the new version
-   - If a section the user modified was also changed upstream: flag as conflict, show both versions, ask user which to keep
+   **マージ戦略：**
+   - 両方のバージョンを完全に読み取る
+   - ユーザーが追加または変更したセクションを特定する（パス置換からの差分だけでなく、追加を探す）
+   - ユーザーの追加・変更を新しいバージョンに適用する
+   - ユーザーが変更したセクションが上流でも変更されていた場合：コンフリクトとしてフラグを立て、両方のバージョンを表示し、どちらを残すかユーザーに確認する
 
-4. **Write merged result** to the installed location
-5. **Report status:**
-   - `Merged` — user modifications applied cleanly
-   - `Skipped` — modification already in upstream
-   - `Conflict` — user chose resolution
+4. **マージ結果を書き込む**（インストール先の場所へ）
+5. **ステータスを報告：**
+   - `Merged` — ユーザーの変更がクリーンに適用されました
+  - `Skipped` — 変更は既に上流に含まれている
+   - `Conflict` — ユーザーが解決を選択しました
 
-## Step 4: Update manifest
+## ステップ 4: マニフェストの更新
 
-After reapplying, regenerate the file manifest so future updates correctly detect these as user modifications:
+再適用後、将来のアップデートでこれらをユーザーの変更として正しく検出できるようにファイルマニフェストを再生成する：
 
 ```bash
 # The manifest will be regenerated on next /gsd:update
 # For now, just note which files were modified
 ```
 
-## Step 5: Cleanup option
+## ステップ 5: クリーンアップオプション
 
-Ask user:
-- "Keep patch backups for reference?" → preserve `gsd-local-patches/`
-- "Clean up patch backups?" → remove `gsd-local-patches/` directory
+ユーザーに確認する：
+- 「パッチバックアップを参照用に保持しますか？」 → `gsd-local-patches/` を保持
+- 「パッチバックアップをクリーンアップしますか？」 → `gsd-local-patches/` ディレクトリを削除
 
-## Step 6: Report
+## ステップ 6: レポート
 
 ```
-## Patches Reapplied
+## パッチ再適用完了
 
-| # | File | Status |
-|---|------|--------|
-| 1 | {file_path} | ✓ Merged |
-| 2 | {file_path} | ○ Skipped (already upstream) |
-| 3 | {file_path} | ⚠ Conflict resolved |
+| # | ファイル | ステータス |
+|---|----------|------------|
+| 1 | {file_path} | ✓ マージ済み |
+| 2 | {file_path} | ○ スキップ（上流に取り込み済み） |
+| 3 | {file_path} | ⚠ コンフリクト解決済み |
 
-{count} file(s) updated. Your local modifications are active again.
+{count} ファイルが更新されました。ローカルの変更が再び有効になりました。
 ```
 
 </process>
 
 <success_criteria>
-- [ ] All backed-up patches processed
-- [ ] User modifications merged into new version
-- [ ] Conflicts resolved with user input
-- [ ] Status reported for each file
+- [ ] バックアップされたすべてのパッチが処理された
+- [ ] ユーザーの変更が新しいバージョンにマージされた
+- [ ] コンフリクトがユーザーの入力により解決された
+- [ ] 各ファイルのステータスが報告された
 </success_criteria>

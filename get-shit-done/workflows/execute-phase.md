@@ -1,34 +1,34 @@
 <purpose>
-Execute all plans in a phase using wave-based parallel execution. Orchestrator stays lean — delegates plan execution to subagents.
+ウェーブベースの並列実行を使用して、フェーズ内のすべてのプランを実行する。オーケストレーターは軽量に保つ — プラン実行をサブエージェントに委任する。
 </purpose>
 
 <core_principle>
-Orchestrator coordinates, not executes. Each subagent loads the full execute-plan context. Orchestrator: discover plans → analyze deps → group waves → spawn agents → handle checkpoints → collect results.
+オーケストレーターは調整する、実行しない。各サブエージェントは完全なexecute-planコンテキストを読み込む。オーケストレーター：プランを発見 → 依存関係を分析 → ウェーブにグループ化 → エージェントを生成 → チェックポイントを処理 → 結果を収集。
 </core_principle>
 
 <required_reading>
-Read STATE.md before any operation to load project context.
+操作前にSTATE.mdを読み、プロジェクトコンテキストを読み込むこと。
 </required_reading>
 
 <process>
 
 <step name="initialize" priority="first">
-Load all context in one call:
+1回の呼び出しで全コンテキストを読み込む：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init execute-phase "${PHASE_ARG}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Parse JSON for: `executor_model`, `verifier_model`, `commit_docs`, `parallelization`, `branching_strategy`, `branch_name`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `plans`, `incomplete_plans`, `plan_count`, `incomplete_count`, `state_exists`, `roadmap_exists`, `phase_req_ids`.
+JSONをパース：`executor_model`, `verifier_model`, `commit_docs`, `parallelization`, `branching_strategy`, `branch_name`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `plans`, `incomplete_plans`, `plan_count`, `incomplete_count`, `state_exists`, `roadmap_exists`, `phase_req_ids`。
 
-**If `phase_found` is false:** Error — phase directory not found.
-**If `plan_count` is 0:** Error — no plans found in phase.
-**If `state_exists` is false but `.planning/` exists:** Offer reconstruct or continue.
+**`phase_found`がfalseの場合：** エラー — フェーズディレクトリが見つからない。
+**`plan_count`が0の場合：** エラー — フェーズにプランが見つからない。
+**`state_exists`がfalseだが`.planning/`が存在する場合：** 再構築するか続行するか提案。
 
-When `parallelization` is false, plans within a wave execute sequentially.
+`parallelization`がfalseの場合、ウェーブ内のプランは順次実行される。
 
-**Sync chain flag with intent** — if user invoked manually (no `--auto`), clear the ephemeral chain flag from any previous interrupted `--auto` chain. This does NOT touch `workflow.auto_advance` (the user's persistent settings preference). Must happen before any config reads (checkpoint handling also reads auto-advance flags):
+**チェーンフラグをインテントと同期** — ユーザーが手動で呼び出した場合（`--auto`なし）、以前の中断された`--auto`チェーンからのエフェメラルチェーンフラグをクリアする。これは`workflow.auto_advance`（ユーザーの永続設定）には触れない。設定の読み取り前に実行する必要がある（チェックポイント処理も自動進行フラグを読む）：
 ```bash
 if [[ ! "$ARGUMENTS" =~ --auto ]]; then
   node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_chain_active false 2>/dev/null
@@ -37,75 +37,75 @@ fi
 </step>
 
 <step name="handle_branching">
-Check `branching_strategy` from init:
+initから`branching_strategy`を確認：
 
-**"none":** Skip, continue on current branch.
+**"none"：** スキップし、現在のブランチで続行。
 
-**"phase" or "milestone":** Use pre-computed `branch_name` from init:
+**"phase"または"milestone"：** initから事前計算された`branch_name`を使用：
 ```bash
 git checkout -b "$BRANCH_NAME" 2>/dev/null || git checkout "$BRANCH_NAME"
 ```
 
-All subsequent commits go to this branch. User handles merging.
+以降のすべてのコミットはこのブランチに行われる。マージはユーザーが処理する。
 </step>
 
 <step name="validate_phase">
-From init JSON: `phase_dir`, `plan_count`, `incomplete_count`.
+init JSONから：`phase_dir`, `plan_count`, `incomplete_count`。
 
-Report: "Found {plan_count} plans in {phase_dir} ({incomplete_count} incomplete)"
+報告：「{phase_dir}に{plan_count}個のプランが見つかりました（{incomplete_count}個が未完了）」
 </step>
 
 <step name="discover_and_group_plans">
-Load plan inventory with wave grouping in one call:
+1回の呼び出しでウェーブグループ付きのプランインベントリを読み込む：
 
 ```bash
 PLAN_INDEX=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phase-plan-index "${PHASE_NUMBER}")
 ```
 
-Parse JSON for: `phase`, `plans[]` (each with `id`, `wave`, `autonomous`, `objective`, `files_modified`, `task_count`, `has_summary`), `waves` (map of wave number → plan IDs), `incomplete`, `has_checkpoints`.
+JSONをパース：`phase`, `plans[]`（各々`id`, `wave`, `autonomous`, `objective`, `files_modified`, `task_count`, `has_summary`付き）, `waves`（ウェーブ番号→プランIDのマップ）, `incomplete`, `has_checkpoints`。
 
-**Filtering:** Skip plans where `has_summary: true`. If `--gaps-only`: also skip non-gap_closure plans. If all filtered: "No matching incomplete plans" → exit.
+**フィルタリング：** `has_summary: true`のプランをスキップ。`--gaps-only`の場合：非gap_closureプランもスキップ。すべてフィルタされた場合：「一致する未完了プランなし」→ 終了。
 
-Report:
+報告：
 ```
-## Execution Plan
+## 実行計画
 
-**Phase {X}: {Name}** — {total_plans} plans across {wave_count} waves
+**Phase {X}: {Name}** — {total_plans}プラン、{wave_count}ウェーブ
 
-| Wave | Plans | What it builds |
+| Wave | Plans | 構築内容 |
 |------|-------|----------------|
-| 1 | 01-01, 01-02 | {from plan objectives, 3-8 words} |
+| 1 | 01-01, 01-02 | {プランの目的から、3-8語} |
 | 2 | 01-03 | ... |
 ```
 </step>
 
 <step name="execute_waves">
-Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`, sequential if `false`.
+各ウェーブを順次実行する。ウェーブ内：`PARALLELIZATION=true`なら並列、`false`なら順次。
 
-**For each wave:**
+**各ウェーブについて：**
 
-1. **Describe what's being built (BEFORE spawning):**
+1. **構築内容を説明する（生成前に）：**
 
-   Read each plan's `<objective>`. Extract what's being built and why.
+   各プランの`<objective>`を読む。何を構築し、なぜかを抽出。
 
    ```
    ---
    ## Wave {N}
 
    **{Plan ID}: {Plan Name}**
-   {2-3 sentences: what this builds, technical approach, why it matters}
+   {2-3文：何を構築するか、技術的アプローチ、なぜ重要か}
 
-   Spawning {count} agent(s)...
+   {count}個のエージェントを生成中...
    ---
    ```
 
-   - Bad: "Executing terrain generation plan"
-   - Good: "Procedural terrain generator using Perlin noise — creates height maps, biome zones, and collision meshes. Required before vehicle physics can interact with ground."
+   - 悪い例：「地形生成プランを実行中」
+   - 良い例：「パーリンノイズを使用した手続き的地形ジェネレーター — 高さマップ、バイオームゾーン、衝突メッシュを作成。車両物理が地面とインタラクションする前に必要。」
 
-2. **Spawn executor agents:**
+2. **エグゼキューターエージェントを生成：**
 
-   Pass paths only — executors read files themselves with their fresh 200k context.
-   This keeps orchestrator context lean (~10-15%).
+   パスのみを渡す — エグゼキューターは新しい200kコンテキストで自身でファイルを読む。
+   これによりオーケストレーターのコンテキストが軽量に保たれる（約10-15%）。
 
    ```
    Task(
@@ -113,8 +113,8 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
      model="{executor_model}",
      prompt="
        <objective>
-       Execute plan {plan_number} of phase {phase_number}-{phase_name}.
-       Commit each task atomically. Create SUMMARY.md. Update STATE.md and ROADMAP.md.
+       フェーズ{phase_number}-{phase_name}のプラン{plan_number}を実行する。
+       各タスクをアトミックにコミット。SUMMARY.mdを作成。STATE.mdとROADMAP.mdを更新。
        </objective>
 
        <execution_context>
@@ -125,115 +125,115 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
        </execution_context>
 
        <files_to_read>
-       Read these files at execution start using the Read tool:
-       - {phase_dir}/{plan_file} (Plan)
-       - .planning/STATE.md (State)
-       - .planning/config.json (Config, if exists)
-       - ./CLAUDE.md (Project instructions, if exists — follow project-specific guidelines and coding conventions)
-       - .claude/skills/ or .agents/skills/ (Project skills, if either exists — list skills, read SKILL.md for each, follow relevant rules during implementation)
+       実行開始時にReadツールでこれらのファイルを読むこと：
+       - {phase_dir}/{plan_file} (プラン)
+       - .planning/STATE.md (状態)
+       - .planning/config.json (設定、存在する場合)
+       - ./CLAUDE.md (プロジェクト指示、存在する場合 — プロジェクト固有のガイドラインとコーディング規約に従う)
+       - .claude/skills/ or .agents/skills/ (プロジェクトスキル、いずれかが存在する場合 — スキルをリストし、各SKILL.mdを読み、実装中に関連ルールに従う)
        </files_to_read>
 
        <success_criteria>
-       - [ ] All tasks executed
-       - [ ] Each task committed individually
-       - [ ] SUMMARY.md created in plan directory
-       - [ ] STATE.md updated with position and decisions
-       - [ ] ROADMAP.md updated with plan progress (via `roadmap update-plan-progress`)
+       - [ ] すべてのタスクが実行された
+       - [ ] 各タスクが個別にコミットされた
+       - [ ] SUMMARY.mdがプランディレクトリに作成された
+       - [ ] STATE.mdが位置と決定で更新された
+       - [ ] ROADMAP.mdがプラン進捗で更新された（`roadmap update-plan-progress`経由）
        </success_criteria>
      "
    )
    ```
 
-3. **Wait for all agents in wave to complete.**
+3. **ウェーブ内のすべてのエージェントの完了を待つ。**
 
-4. **Report completion — spot-check claims first:**
+4. **完了を報告 — まず主張をスポットチェック：**
 
-   For each SUMMARY.md:
-   - Verify first 2 files from `key-files.created` exist on disk
-   - Check `git log --oneline --all --grep="{phase}-{plan}"` returns ≥1 commit
-   - Check for `## Self-Check: FAILED` marker
+   各SUMMARY.mdについて：
+   - `key-files.created`の最初の2ファイルがディスク上に存在するか検証
+   - `git log --oneline --all --grep="{phase}-{plan}"`が1つ以上のコミットを返すか確認
+   - `## Self-Check: FAILED`マーカーを確認
 
-   If ANY spot-check fails: report which plan failed, route to failure handler — ask "Retry plan?" or "Continue with remaining waves?"
+   スポットチェックが1つでも失敗した場合：どのプランが失敗したか報告し、失敗ハンドラーにルーティング — 「プランをリトライしますか？」または「残りのウェーブを続行しますか？」
 
-   If pass:
+   合格した場合：
    ```
    ---
    ## Wave {N} Complete
 
    **{Plan ID}: {Plan Name}**
-   {What was built — from SUMMARY.md}
-   {Notable deviations, if any}
+   {何が構築されたか — SUMMARY.mdから}
+   {注目すべき逸脱があれば}
 
-   {If more waves: what this enables for next wave}
+   {さらにウェーブがある場合：これが次のウェーブで何を可能にするか}
    ---
    ```
 
-   - Bad: "Wave 2 complete. Proceeding to Wave 3."
-   - Good: "Terrain system complete — 3 biome types, height-based texturing, physics collision meshes. Vehicle physics (Wave 3) can now reference ground surfaces."
+   - 悪い例：「Wave 2完了。Wave 3に進む。」
+   - 良い例：「地形システム完了 — 3つのバイオームタイプ、高さベースのテクスチャリング、物理衝突メッシュ。車両物理（Wave 3）が地面サーフェスを参照可能に。」
 
-5. **Handle failures:**
+5. **失敗を処理：**
 
-   **Known Claude Code bug (classifyHandoffIfNeeded):** If an agent reports "failed" with error containing `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a GSD or agent issue. The error fires in the completion handler AFTER all tool calls finish. In this case: run the same spot-checks as step 4 (SUMMARY.md exists, git commits present, no Self-Check: FAILED). If spot-checks PASS → treat as **successful**. If spot-checks FAIL → treat as real failure below.
+   **既知のClaude Codeバグ（classifyHandoffIfNeeded）：** エージェントが「failed」と報告し、エラーに`classifyHandoffIfNeeded is not defined`が含まれる場合、これはClaude Codeのランタイムバグであり、GSDやエージェントの問題ではない。エラーは、完了ハンドラーで全ツール呼び出しが終了した後に発生する。この場合：ステップ4と同じスポットチェックを実行（SUMMARY.mdが存在、gitコミットが存在、Self-Check: FAILEDなし）。スポットチェックが合格 → **成功**として扱う。スポットチェックが不合格 → 以下の実際の失敗として扱う。
 
-   For real failures: report which plan failed → ask "Continue?" or "Stop?" → if continue, dependent plans may also fail. If stop, partial completion report.
+   実際の失敗の場合：どのプランが失敗したか報告 → 「続行しますか？」または「停止しますか？」→ 続行の場合、依存プランも失敗する可能性がある。停止の場合、部分的な完了報告。
 
-6. **Execute checkpoint plans between waves** — see `<checkpoint_handling>`.
+6. **ウェーブ間にチェックポイントプランを実行** — `<checkpoint_handling>`を参照。
 
-7. **Proceed to next wave.**
+7. **次のウェーブに進む。**
 </step>
 
 <step name="checkpoint_handling">
-Plans with `autonomous: false` require user interaction.
+`autonomous: false`のプランはユーザーインタラクションが必要。
 
-**Auto-mode checkpoint handling:**
+**自動モードのチェックポイント処理：**
 
-Read auto-advance config (chain flag + user preference):
+自動進行設定を読む（チェーンフラグ＋ユーザー設定）：
 ```bash
 AUTO_CHAIN=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow._auto_chain_active 2>/dev/null || echo "false")
 AUTO_CFG=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow.auto_advance 2>/dev/null || echo "false")
 ```
 
-When executor returns a checkpoint AND (`AUTO_CHAIN` is `"true"` OR `AUTO_CFG` is `"true"`):
-- **human-verify** → Auto-spawn continuation agent with `{user_response}` = `"approved"`. Log `⚡ Auto-approved checkpoint`.
-- **decision** → Auto-spawn continuation agent with `{user_response}` = first option from checkpoint details. Log `⚡ Auto-selected: [option]`.
-- **human-action** → Present to user (existing behavior below). Auth gates cannot be automated.
+エグゼキューターがチェックポイントを返し、かつ（`AUTO_CHAIN`が`"true"` または `AUTO_CFG`が`"true"`）の場合：
+- **human-verify** → `{user_response}` = `"approved"`で継続エージェントを自動生成。ログ `⚡ Auto-approved checkpoint`。
+- **decision** → `{user_response}` = チェックポイント詳細の最初のオプションで継続エージェントを自動生成。ログ `⚡ Auto-selected: [option]`。
+- **human-action** → ユーザーに提示（以下の既存の動作）。認証ゲートは自動化できない。
 
-**Standard flow (not auto-mode, or human-action type):**
+**標準フロー（自動モードでない場合、またはhuman-actionタイプ）：**
 
-1. Spawn agent for checkpoint plan
-2. Agent runs until checkpoint task or auth gate → returns structured state
-3. Agent return includes: completed tasks table, current task + blocker, checkpoint type/details, what's awaited
-4. **Present to user:**
+1. チェックポイントプラン用にエージェントを生成
+2. エージェントがチェックポイントタスクまたは認証ゲートまで実行 → 構造化された状態を返す
+3. エージェントの戻り値に含まれるもの：完了タスクテーブル、現在のタスク＋ブロッカー、チェックポイントタイプ/詳細、待機中の内容
+4. **ユーザーに提示：**
    ```
    ## Checkpoint: [Type]
 
    **Plan:** 03-03 Dashboard Layout
-   **Progress:** 2/3 tasks complete
+   **Progress:** 2/3タスク完了
 
-   [Checkpoint Details from agent return]
-   [Awaiting section from agent return]
+   [エージェントの戻り値からのチェックポイント詳細]
+   [エージェントの戻り値からの待機セクション]
    ```
-5. User responds: "approved"/"done" | issue description | decision selection
-6. **Spawn continuation agent (NOT resume)** using continuation-prompt.md template:
-   - `{completed_tasks_table}`: From checkpoint return
-   - `{resume_task_number}` + `{resume_task_name}`: Current task
-   - `{user_response}`: What user provided
-   - `{resume_instructions}`: Based on checkpoint type
-7. Continuation agent verifies previous commits, continues from resume point
-8. Repeat until plan completes or user stops
+5. ユーザーが応答：「approved」/「done」| 問題の説明 | 決定の選択
+6. **継続エージェントを生成（再開ではない）** continuation-prompt.mdテンプレートを使用：
+   - `{completed_tasks_table}`：チェックポイントの戻り値から
+   - `{resume_task_number}` + `{resume_task_name}`：現在のタスク
+   - `{user_response}`：ユーザーが提供したもの
+   - `{resume_instructions}`：チェックポイントタイプに基づく
+7. 継続エージェントが以前のコミットを検証し、再開ポイントから続行
+8. プランが完了するかユーザーが停止するまで繰り返し
 
-**Why fresh agent, not resume:** Resume relies on internal serialization that breaks with parallel tool calls. Fresh agents with explicit state are more reliable.
+**なぜ再開ではなく新しいエージェントか：** 再開は並列ツール呼び出しで壊れる内部シリアライゼーションに依存する。明示的な状態を持つ新しいエージェントの方が信頼性が高い。
 
-**Checkpoints in parallel waves:** Agent pauses and returns while other parallel agents may complete. Present checkpoint, spawn continuation, wait for all before next wave.
+**並列ウェーブでのチェックポイント：** エージェントが一時停止して返す間、他の並列エージェントが完了する可能性がある。チェックポイントを提示し、継続を生成し、次のウェーブの前にすべてを待つ。
 </step>
 
 <step name="aggregate_results">
-After all waves:
+すべてのウェーブの後：
 
 ```markdown
-## Phase {X}: {Name} Execution Complete
+## Phase {X}: {Name} 実行完了
 
-**Waves:** {N} | **Plans:** {M}/{total} complete
+**ウェーブ:** {N} | **プラン:** {M}/{total} 完了
 
 | Wave | Plans | Status |
 |------|-------|--------|
@@ -241,143 +241,143 @@ After all waves:
 | CP | plan-03 | ✓ Verified |
 | 2 | plan-04 | ✓ Complete |
 
-### Plan Details
-1. **03-01**: [one-liner from SUMMARY.md]
-2. **03-02**: [one-liner from SUMMARY.md]
+### プラン詳細
+1. **03-01**: [SUMMARY.mdからの一行要約]
+2. **03-02**: [SUMMARY.mdからの一行要約]
 
-### Issues Encountered
-[Aggregate from SUMMARYs, or "None"]
+### 発生した問題
+[SUMMARYからの集約、または "None"]
 ```
 </step>
 
 <step name="close_parent_artifacts">
-**For decimal/polish phases only (X.Y pattern):** Close the feedback loop by resolving parent UAT and debug artifacts.
+**小数点/ポリッシュフェーズのみ（X.Yパターン）：** 親のUATとデバッグアーティファクトを解決してフィードバックループを閉じる。
 
-**Skip if** phase number has no decimal (e.g., `3`, `04`) — only applies to gap-closure phases like `4.1`, `03.1`.
+**スキップ条件：** フェーズ番号に小数がない場合（例：`3`, `04`）— `4.1`, `03.1`のようなギャップクロージャーフェーズにのみ適用。
 
-**1. Detect decimal phase and derive parent:**
+**1. 小数フェーズを検出し親を導出：**
 ```bash
-# Check if phase_number contains a decimal
+# phase_numberに小数が含まれるか確認
 if [[ "$PHASE_NUMBER" == *.* ]]; then
   PARENT_PHASE="${PHASE_NUMBER%%.*}"
 fi
 ```
 
-**2. Find parent UAT file:**
+**2. 親のUATファイルを見つける：**
 ```bash
 PARENT_INFO=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" find-phase "${PARENT_PHASE}" --raw)
-# Extract directory from PARENT_INFO JSON, then find UAT file in that directory
+# PARENT_INFO JSONからディレクトリを抽出し、そのディレクトリでUATファイルを検索
 ```
 
-**If no parent UAT found:** Skip this step (gap-closure may have been triggered by VERIFICATION.md instead).
+**親のUATが見つからない場合：** このステップをスキップ（ギャップクロージャーはVERIFICATION.mdによってトリガーされた可能性がある）。
 
-**3. Update UAT gap statuses:**
+**3. UATギャップステータスを更新：**
 
-Read the parent UAT file's `## Gaps` section. For each gap entry with `status: failed`:
-- Update to `status: resolved`
+親のUATファイルの`## Gaps`セクションを読む。`status: failed`の各ギャップエントリについて：
+- `status: resolved`に更新
 
-**4. Update UAT frontmatter:**
+**4. UATフロントマターを更新：**
 
-If all gaps now have `status: resolved`:
-- Update frontmatter `status: diagnosed` → `status: resolved`
-- Update frontmatter `updated:` timestamp
+すべてのギャップが`status: resolved`になった場合：
+- フロントマター`status: diagnosed` → `status: resolved`に更新
+- フロントマター`updated:`タイムスタンプを更新
 
-**5. Resolve referenced debug sessions:**
+**5. 参照されたデバッグセッションを解決：**
 
-For each gap that has a `debug_session:` field:
-- Read the debug session file
-- Update frontmatter `status:` → `resolved`
-- Update frontmatter `updated:` timestamp
-- Move to resolved directory:
+`debug_session:`フィールドを持つ各ギャップについて：
+- デバッグセッションファイルを読む
+- フロントマター`status:` → `resolved`に更新
+- フロントマター`updated:`タイムスタンプを更新
+- resolvedディレクトリに移動：
 ```bash
 mkdir -p .planning/debug/resolved
 mv .planning/debug/{slug}.md .planning/debug/resolved/
 ```
 
-**6. Commit updated artifacts:**
+**6. 更新されたアーティファクトをコミット：**
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(phase-${PARENT_PHASE}): resolve UAT gaps and debug sessions after ${PHASE_NUMBER} gap closure" --files .planning/phases/*${PARENT_PHASE}*/*-UAT.md .planning/debug/resolved/*.md
 ```
 </step>
 
 <step name="verify_phase_goal">
-Verify phase achieved its GOAL, not just completed tasks.
+フェーズがタスクを完了しただけでなく、目標を達成したかを検証する。
 
 ```
 Task(
-  prompt="Verify phase {phase_number} goal achievement.
-Phase directory: {phase_dir}
-Phase goal: {goal from ROADMAP.md}
-Phase requirement IDs: {phase_req_ids}
-Check must_haves against actual codebase.
-Cross-reference requirement IDs from PLAN frontmatter against REQUIREMENTS.md — every ID MUST be accounted for.
-Create VERIFICATION.md.",
+  prompt="フェーズ{phase_number}の目標達成を検証する。
+フェーズディレクトリ: {phase_dir}
+フェーズ目標: {ROADMAPからの目標}
+フェーズ要件ID: {phase_req_ids}
+must_havesを実際のコードベースに対してチェック。
+PLANフロントマターの要件IDをREQUIREMENTS.mdと照合 — すべてのIDが説明されなければならない。
+VERIFICATION.mdを作成。",
   subagent_type="gsd-verifier",
   model="{verifier_model}"
 )
 ```
 
-Read status:
+ステータスを読む：
 ```bash
 grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 ```
 
-| Status | Action |
+| ステータス | アクション |
 |--------|--------|
 | `passed` | → update_roadmap |
-| `human_needed` | Present items for human testing, get approval or feedback |
-| `gaps_found` | Present gap summary, offer `/gsd:plan-phase {phase} --gaps` |
+| `human_needed` | ヒューマンテスト項目を提示し、承認またはフィードバックを取得 |
+| `gaps_found` | ギャップサマリーを提示し、`/gsd:plan-phase {phase} --gaps`を提案 |
 
-**If human_needed:**
+**human_neededの場合：**
 ```
-## ✓ Phase {X}: {Name} — Human Verification Required
+## ✓ Phase {X}: {Name} — ヒューマン検証が必要
 
-All automated checks passed. {N} items need human testing:
+自動チェックはすべて合格。{N}項目がヒューマンテストを必要としている：
 
-{From VERIFICATION.md human_verification section}
+{VERIFICATION.mdのhuman_verificationセクションから}
 
-"approved" → continue | Report issues → gap closure
+「approved」→ 続行 | 問題を報告 → ギャップクロージャー
 ```
 
-**If gaps_found:**
+**gaps_foundの場合：**
 ```
-## ⚠ Phase {X}: {Name} — Gaps Found
+## ⚠ Phase {X}: {Name} — ギャップ検出
 
-**Score:** {N}/{M} must-haves verified
-**Report:** {phase_dir}/{phase_num}-VERIFICATION.md
+**スコア:** {N}/{M} must-havesが検証済み
+**レポート:** {phase_dir}/{phase_num}-VERIFICATION.md
 
-### What's Missing
-{Gap summaries from VERIFICATION.md}
+### 不足しているもの
+{VERIFICATION.mdからのギャップサマリー}
 
 ---
 ## ▶ Next Up
 
 `/gsd:plan-phase {X} --gaps`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
-Also: `cat {phase_dir}/{phase_num}-VERIFICATION.md` — full report
-Also: `/gsd:verify-work {X}` — manual testing first
+Also: `cat {phase_dir}/{phase_num}-VERIFICATION.md` — 完全レポート
+Also: `/gsd:verify-work {X}` — まず手動テスト
 ```
 
-Gap closure cycle: `/gsd:plan-phase {X} --gaps` reads VERIFICATION.md → creates gap plans with `gap_closure: true` → user runs `/gsd:execute-phase {X} --gaps-only` → verifier re-runs.
+ギャップクロージャーサイクル：`/gsd:plan-phase {X} --gaps`がVERIFICATION.mdを読む → `gap_closure: true`のギャッププランを作成 → ユーザーが`/gsd:execute-phase {X} --gaps-only`を実行 → ベリファイアーが再実行。
 </step>
 
 <step name="update_roadmap">
-**Mark phase complete and update all tracking files:**
+**フェーズを完了としてマークし、すべての追跡ファイルを更新：**
 
 ```bash
 COMPLETION=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phase complete "${PHASE_NUMBER}")
 ```
 
-The CLI handles:
-- Marking phase checkbox `[x]` with completion date
-- Updating Progress table (Status → Complete, date)
-- Updating plan count to final
-- Advancing STATE.md to next phase
-- Updating REQUIREMENTS.md traceability
+CLIが処理する内容：
+- フェーズのチェックボックスを`[x]`に完了日付付きでマーク
+- Progressテーブルを更新（Status → Complete、日付）
+- プランカウントを最終値に更新
+- STATE.mdを次のフェーズに進める
+- REQUIREMENTS.mdのトレーサビリティを更新
 
-Extract from result: `next_phase`, `next_phase_name`, `is_last_phase`.
+結果から抽出：`next_phase`, `next_phase_name`, `is_last_phase`。
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md {phase_dir}/*-VERIFICATION.md
@@ -386,16 +386,16 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(phase-{X}): co
 
 <step name="offer_next">
 
-**Exception:** If `gaps_found`, the `verify_phase_goal` step already presents the gap-closure path (`/gsd:plan-phase {X} --gaps`). No additional routing needed — skip auto-advance.
+**例外：** `gaps_found`の場合、`verify_phase_goal`ステップが既にギャップクロージャーパス（`/gsd:plan-phase {X} --gaps`）を提示済み。追加のルーティングは不要 — 自動進行をスキップ。
 
-**No-transition check (spawned by auto-advance chain):**
+**トランジションなしチェック（自動進行チェーンから生成された場合）：**
 
-Parse `--no-transition` flag from $ARGUMENTS.
+$ARGUMENTSから`--no-transition`フラグをパース。
 
-**If `--no-transition` flag present:**
+**`--no-transition`フラグが存在する場合：**
 
-Execute-phase was spawned by plan-phase's auto-advance. Do NOT run transition.md.
-After verification passes and roadmap is updated, return completion status to parent:
+execute-phaseはplan-phaseの自動進行によって生成された。transition.mdを実行しない。
+検証が合格しロードマップが更新された後、親に完了ステータスを返す：
 
 ```
 ## PHASE COMPLETE
@@ -404,23 +404,23 @@ Phase: ${PHASE_NUMBER} - ${PHASE_NAME}
 Plans: ${completed_count}/${total_count}
 Verification: {Passed | Gaps Found}
 
-[Include aggregate_results output]
+[aggregate_resultsの出力を含める]
 ```
 
-STOP. Do not proceed to auto-advance or transition.
+停止。自動進行またはトランジションに進まない。
 
-**If `--no-transition` flag is NOT present:**
+**`--no-transition`フラグが存在しない場合：**
 
-**Auto-advance detection:**
+**自動進行検出：**
 
-1. Parse `--auto` flag from $ARGUMENTS
-2. Read both the chain flag and user preference (chain flag already synced in init step):
+1. $ARGUMENTSから`--auto`フラグをパース
+2. チェーンフラグとユーザー設定の両方を読む（チェーンフラグはinitステップで既に同期済み）：
    ```bash
    AUTO_CHAIN=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow._auto_chain_active 2>/dev/null || echo "false")
    AUTO_CFG=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow.auto_advance 2>/dev/null || echo "false")
    ```
 
-**If `--auto` flag present OR `AUTO_CHAIN` is true OR `AUTO_CFG` is true (AND verification passed with no gaps):**
+**`--auto`フラグが存在する場合 または `AUTO_CHAIN`がtrue または `AUTO_CFG`がtrue（かつ検証がギャップなしで合格）の場合：**
 
 ```
 ╔══════════════════════════════════════════╗
@@ -429,31 +429,31 @@ STOP. Do not proceed to auto-advance or transition.
 ╚══════════════════════════════════════════╝
 ```
 
-Execute the transition workflow inline (do NOT use Task — orchestrator context is ~10-15%, transition needs phase completion data already in context):
+トランジションワークフローをインラインで実行（Taskを使用しない — オーケストレーターのコンテキストは約10-15%で、トランジションには既にコンテキスト内のフェーズ完了データが必要）：
 
-Read and follow `~/.claude/get-shit-done/workflows/transition.md`, passing through the `--auto` flag so it propagates to the next phase invocation.
+`~/.claude/get-shit-done/workflows/transition.md`を読み従う。`--auto`フラグを渡して次のフェーズ呼び出しに伝播させる。
 
-**If neither `--auto` nor `AUTO_CFG` is true:**
+**`--auto`も`AUTO_CFG`もtrueでない場合：**
 
-The workflow ends. The user runs `/gsd:progress` or invokes the transition workflow manually.
+ワークフローは終了する。ユーザーが`/gsd:progress`を実行するか、トランジションワークフローを手動で呼び出す。
 </step>
 
 </process>
 
 <context_efficiency>
-Orchestrator: ~10-15% context. Subagents: fresh 200k each. No polling (Task blocks). No context bleed.
+オーケストレーター：約10-15%コンテキスト。サブエージェント：各200k新規。ポーリングなし（Taskがブロック）。コンテキスト漏洩なし。
 </context_efficiency>
 
 <failure_handling>
-- **classifyHandoffIfNeeded false failure:** Agent reports "failed" but error is `classifyHandoffIfNeeded is not defined` → Claude Code bug, not GSD. Spot-check (SUMMARY exists, commits present) → if pass, treat as success
-- **Agent fails mid-plan:** Missing SUMMARY.md → report, ask user how to proceed
-- **Dependency chain breaks:** Wave 1 fails → Wave 2 dependents likely fail → user chooses attempt or skip
-- **All agents in wave fail:** Systemic issue → stop, report for investigation
-- **Checkpoint unresolvable:** "Skip this plan?" or "Abort phase execution?" → record partial progress in STATE.md
+- **classifyHandoffIfNeededの偽陽性失敗：** エージェントが「failed」と報告するがエラーが`classifyHandoffIfNeeded is not defined` → Claude Codeバグ、GSDではない。スポットチェック（SUMMARY存在、コミット存在）→ 合格なら成功として扱う
+- **エージェントがプラン途中で失敗：** SUMMARY.mdが見つからない → 報告、ユーザーに対応方法を確認
+- **依存チェーンが切断：** Wave 1が失敗 → Wave 2の依存先も失敗の可能性 → ユーザーが試行またはスキップを選択
+- **ウェーブ内の全エージェントが失敗：** システム的な問題 → 停止、調査のために報告
+- **チェックポイントが解決不能：** 「このプランをスキップしますか？」または「フェーズ実行を中止しますか？」→ STATE.mdに部分的な進捗を記録
 </failure_handling>
 
 <resumption>
-Re-run `/gsd:execute-phase {phase}` → discover_plans finds completed SUMMARYs → skips them → resumes from first incomplete plan → continues wave execution.
+`/gsd:execute-phase {phase}`を再実行 → discover_plansが完了したSUMMARYを見つける → スキップ → 最初の未完了プランから再開 → ウェーブ実行を続行。
 
-STATE.md tracks: last completed plan, current wave, pending checkpoints.
+STATE.mdが追跡：最後に完了したプラン、現在のウェーブ、保留中のチェックポイント。
 </resumption>

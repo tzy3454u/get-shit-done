@@ -1,6 +1,6 @@
 ---
 name: gsd:debug
-description: Systematic debugging with persistent state across context resets
+description: コンテキストリセットをまたいで永続的な状態を保持する体系的デバッグ
 argument-hint: [issue description]
 allowed-tools:
   - Read
@@ -10,17 +10,17 @@ allowed-tools:
 ---
 
 <objective>
-Debug issues using scientific method with subagent isolation.
+サブエージェント分離による科学的手法でイシューをデバッグする。
 
-**Orchestrator role:** Gather symptoms, spawn gsd-debugger agent, handle checkpoints, spawn continuations.
+**オーケストレーターの役割:** 症状の収集、gsd-debuggerエージェントの起動、チェックポイントの処理、継続の起動。
 
-**Why subagent:** Investigation burns context fast (reading files, forming hypotheses, testing). Fresh 200k context per investigation. Main context stays lean for user interaction.
+**サブエージェントを使う理由:** 調査はコンテキストを急速に消費する（ファイルの読み取り、仮説の構築、テスト）。調査ごとにフレッシュな200kコンテキストを確保。メインコンテキストはユーザーとのやり取りのためにスリムに保つ。
 </objective>
 
 <context>
-User's issue: $ARGUMENTS
+ユーザーのイシュー: $ARGUMENTS
 
-Check for active sessions:
+アクティブセッションの確認:
 ```bash
 ls .planning/debug/*.md 2>/dev/null | grep -v resolved | head -5
 ```
@@ -28,48 +28,48 @@ ls .planning/debug/*.md 2>/dev/null | grep -v resolved | head -5
 
 <process>
 
-## 0. Initialize Context
+## 0. コンテキストの初期化
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state load)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract `commit_docs` from init JSON. Resolve debugger model:
+init JSONから`commit_docs`を抽出する。debuggerモデルを解決:
 ```bash
 debugger_model=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" resolve-model gsd-debugger --raw)
 ```
 
-## 1. Check Active Sessions
+## 1. アクティブセッションの確認
 
-If active sessions exist AND no $ARGUMENTS:
-- List sessions with status, hypothesis, next action
-- User picks number to resume OR describes new issue
+アクティブセッションが存在し、$ARGUMENTSがない場合:
+- ステータス、仮説、次のアクションとともにセッション一覧を表示
+- ユーザーが再開する番号を選択するか、新しいイシューを説明
 
-If $ARGUMENTS provided OR user describes new issue:
-- Continue to symptom gathering
+$ARGUMENTSが指定されている場合、またはユーザーが新しいイシューを説明した場合:
+- 症状収集に進む
 
-## 2. Gather Symptoms (if new issue)
+## 2. 症状の収集（新しいイシューの場合）
 
-Use AskUserQuestion for each:
+各項目にAskUserQuestionを使用:
 
-1. **Expected behavior** - What should happen?
-2. **Actual behavior** - What happens instead?
-3. **Error messages** - Any errors? (paste or describe)
-4. **Timeline** - When did this start? Ever worked?
-5. **Reproduction** - How do you trigger it?
+1. **期待される動作** - 何が起こるべきか？
+2. **実際の動作** - 代わりに何が起こるか？
+3. **エラーメッセージ** - エラーはあるか？（貼り付けまたは説明）
+4. **タイムライン** - いつから始まったか？以前は動作していたか？
+5. **再現方法** - どうやってトリガーするか？
 
-After all gathered, confirm ready to investigate.
+すべて収集後、調査を開始する準備ができたことを確認する。
 
-## 3. Spawn gsd-debugger Agent
+## 3. gsd-debuggerエージェントの起動
 
-Fill prompt and spawn:
+プロンプトを埋めて起動:
 
 ```markdown
 <objective>
-Investigate issue: {slug}
+イシューの調査: {slug}
 
-**Summary:** {trigger}
+**概要:** {trigger}
 </objective>
 
 <symptoms>
@@ -99,42 +99,42 @@ Task(
 )
 ```
 
-## 4. Handle Agent Return
+## 4. エージェントの返却処理
 
-**If `## ROOT CAUSE FOUND`:**
-- Display root cause and evidence summary
-- Offer options:
-  - "Fix now" - spawn fix subagent
-  - "Plan fix" - suggest /gsd:plan-phase --gaps
-  - "Manual fix" - done
+**`## ROOT CAUSE FOUND`の場合:**
+- 根本原因と証拠の要約を表示
+- オプションを提示:
+  - "今すぐ修正" - 修正サブエージェントを起動
+  - "修正を計画" - /gsd:plan-phase --gaps を提案
+  - "手動で修正" - 完了
 
-**If `## CHECKPOINT REACHED`:**
-- Present checkpoint details to user
-- Get user response
-- If checkpoint type is `human-verify`:
-  - If user confirms fixed: continue so agent can finalize/resolve/archive
-  - If user reports issues: continue so agent returns to investigation/fixing
-- Spawn continuation agent (see step 5)
+**`## CHECKPOINT REACHED`の場合:**
+- チェックポイントの詳細をユーザーに提示
+- ユーザーの応答を取得
+- チェックポイントタイプが`human-verify`の場合:
+  - ユーザーが修正を確認した場合: エージェントがファイナライズ/解決/アーカイブできるように続行
+  - ユーザーが問題を報告した場合: エージェントが調査/修正に戻れるように続行
+- 継続エージェントを起動（ステップ5参照）
 
-**If `## INVESTIGATION INCONCLUSIVE`:**
-- Show what was checked and eliminated
-- Offer options:
-  - "Continue investigating" - spawn new agent with additional context
-  - "Manual investigation" - done
-  - "Add more context" - gather more symptoms, spawn again
+**`## INVESTIGATION INCONCLUSIVE`の場合:**
+- 調査済みの内容と除外されたものを表示
+- オプションを提示:
+  - "調査を継続" - 追加コンテキストで新しいエージェントを起動
+  - "手動で調査" - 完了
+  - "コンテキストを追加" - さらに症状を収集して再起動
 
-## 5. Spawn Continuation Agent (After Checkpoint)
+## 5. 継続エージェントの起動（チェックポイント後）
 
-When user responds to checkpoint, spawn fresh agent:
+ユーザーがチェックポイントに応答したら、フレッシュなエージェントを起動:
 
 ```markdown
 <objective>
-Continue debugging {slug}. Evidence is in the debug file.
+{slug}のデバッグを継続。証拠はデバッグファイルにある。
 </objective>
 
 <prior_state>
 <files_to_read>
-- .planning/debug/{slug}.md (Debug session state)
+- .planning/debug/{slug}.md (デバッグセッション状態)
 </files_to_read>
 </prior_state>
 
@@ -160,9 +160,10 @@ Task(
 </process>
 
 <success_criteria>
-- [ ] Active sessions checked
-- [ ] Symptoms gathered (if new)
-- [ ] gsd-debugger spawned with context
-- [ ] Checkpoints handled correctly
-- [ ] Root cause confirmed before fixing
+- [ ] アクティブセッションを確認済み
+- [ ] 症状を収集済み（新しいイシューの場合）
+- [ ] gsd-debuggerをコンテキスト付きで起動済み
+- [ ] チェックポイントを正しく処理済み
+- [ ] 修正前に根本原因を確認済み
 </success_criteria>
+

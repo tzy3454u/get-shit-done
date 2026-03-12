@@ -1,20 +1,20 @@
 ---
 phase: XX-name
 plan: YY
-subsystem: [primary category]
-tags: [searchable tech]
+subsystem: [主要カテゴリ]
+tags: [検索可能な技術]
 requires:
-  - phase: [prior phase]
-    provides: [what that phase built]
+  - phase: [先行フェーズ]
+    provides: [そのフェーズが構築したもの]
 provides:
-  - [bullet list of what was built/delivered]
-affects: [list of phase names or keywords]
+  - [構築/提供されたもののリスト]
+affects: [フェーズ名やキーワードのリスト]
 tech-stack:
-  added: [libraries/tools]
-  patterns: [architectural/code patterns]
+  added: [ライブラリ/ツール]
+  patterns: [アーキテクチャ/コードパターン]
 key-files:
-  created: [important files created]
-  modified: [important files modified]
+  created: [作成した重要ファイル]
+  modified: [変更した重要ファイル]
 key-decisions:
   - "Decision 1"
 patterns-established:
@@ -23,37 +23,37 @@ duration: Xmin
 completed: YYYY-MM-DD
 ---
 
-# Phase [X]: [Name] Summary (Complex)
+# Phase [X]: [名前] サマリー（複雑）
 
-**[Substantive one-liner describing outcome]**
+**[成果を説明する実質的な一行]**
 
-## Performance
-- **Duration:** [time]
-- **Tasks:** [count completed]
-- **Files modified:** [count]
+## パフォーマンス
+- **所要時間:** [時間]
+- **タスク:** [完了数]
+- **変更ファイル:** [数]
 
-## Accomplishments
-- [Key outcome 1]
-- [Key outcome 2]
+## 成果
+- [主要な成果 1]
+- [主要な成果 2]
 
-## Task Commits
-1. **Task 1: [task name]** - `hash`
-2. **Task 2: [task name]** - `hash`
-3. **Task 3: [task name]** - `hash`
+## タスクコミット
+1. **Task 1: [タスク名]** - `hash`
+2. **Task 2: [タスク名]** - `hash`
+3. **Task 3: [タスク名]** - `hash`
 
-## Files Created/Modified
-- `path/to/file.ts` - What it does
-- `path/to/another.ts` - What it does
+## 作成/変更ファイル
+- `path/to/file.ts` - 役割
+- `path/to/another.ts` - 役割
 
-## Decisions Made
-[Key decisions with brief rationale]
+## 行われた決定
+[重要な決定と簡単な根拠]
 
-## Deviations from Plan (Auto-fixed)
-[Detailed auto-fix records per GSD deviation rules]
+## プランからの逸脱（自動修正）
+[GSD逸脱ルールに従った詳細な自動修正記録]
 
-## Issues Encountered
-[Problems during planned work and resolutions]
+## 発生した問題
+[計画された作業中の問題とその解決方法]
 
-## Next Phase Readiness
-[What's ready for next phase]
-[Blockers or concerns]
+## 次フェーズの準備状況
+[次のフェーズに向けて準備できていること]
+[ブロッカーや懸念事項]

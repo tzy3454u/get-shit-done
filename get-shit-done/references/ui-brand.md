@@ -1,10 +1,10 @@
 <ui_patterns>
 
-Visual patterns for user-facing GSD output. Orchestrators @-reference this file.
+ユーザー向けGSD出力のビジュアルパターン。オーケストレーターはこのファイルを@参照します。
 
-## Stage Banners
+## ステージバナー
 
-Use for major workflow transitions.
+主要なワークフロー遷移に使用します。
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -12,7 +12,7 @@ Use for major workflow transitions.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**Stage names (uppercase):**
+**ステージ名（大文字）:**
 - `QUESTIONING`
 - `RESEARCHING`
 - `DEFINING REQUIREMENTS`
@@ -25,9 +25,9 @@ Use for major workflow transitions.
 
 ---
 
-## Checkpoint Boxes
+## チェックポイントボックス
 
-User action required. 62-character width.
+ユーザーアクションが必要。62文字幅。
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -41,47 +41,47 @@ User action required. 62-character width.
 ──────────────────────────────────────────────────────────────
 ```
 
-**Types:**
+**タイプ:**
 - `CHECKPOINT: Verification Required` → `→ Type "approved" or describe issues`
 - `CHECKPOINT: Decision Required` → `→ Select: option-a / option-b`
 - `CHECKPOINT: Action Required` → `→ Type "done" when complete`
 
 ---
 
-## Status Symbols
+## ステータスシンボル
 
 ```
-✓  Complete / Passed / Verified
-✗  Failed / Missing / Blocked
-◆  In Progress
-○  Pending
-⚡ Auto-approved
-⚠  Warning
-🎉 Milestone complete (only in banner)
+✓  完了 / パス / 検証済み
+✗  失敗 / 不足 / ブロック
+◆  進行中
+○  保留中
+⚡ 自動承認
+⚠  警告
+🎉 マイルストーン完了（バナーのみ）
 ```
 
 ---
 
-## Progress Display
+## 進捗表示
 
-**Phase/milestone level:**
+**フェーズ/マイルストーンレベル:**
 ```
 Progress: ████████░░ 80%
 ```
 
-**Task level:**
+**タスクレベル:**
 ```
 Tasks: 2/4 complete
 ```
 
-**Plan level:**
+**プランレベル:**
 ```
 Plans: 3/5 complete
 ```
 
 ---
 
-## Spawning Indicators
+## スポーンインジケーター
 
 ```
 ◆ Spawning researcher...
@@ -97,18 +97,18 @@ Plans: 3/5 complete
 
 ---
 
-## Next Up Block
+## Next Upブロック
 
-Always at end of major completions.
+主要な完了の最後に常に表示します。
 
 ```
 ───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
-**{Identifier}: {Name}** — {one-line description}
+**{Identifier}: {Name}** — {一行の説明}
 
-`{copy-paste command}`
+`{コピー&ペーストするコマンド}`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -123,21 +123,21 @@ Always at end of major completions.
 
 ---
 
-## Error Box
+## エラーボックス
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║  ERROR                                                       ║
 ╚══════════════════════════════════════════════════════════════╝
 
-{Error description}
+{エラーの説明}
 
-**To fix:** {Resolution steps}
+**To fix:** {解決手順}
 ```
 
 ---
 
-## Tables
+## テーブル
 
 ```
 | Phase | Status | Plans | Progress |
@@ -149,12 +149,12 @@ Always at end of major completions.
 
 ---
 
-## Anti-Patterns
+## アンチパターン
 
-- Varying box/banner widths
-- Mixing banner styles (`===`, `---`, `***`)
-- Skipping `GSD ►` prefix in banners
-- Random emoji (`🚀`, `✨`, `💫`)
-- Missing Next Up block after completions
+- ボックス/バナーの幅が不統一
+- バナースタイルの混在（`===`, `---`, `***`）
+- バナーで`GSD ►`プレフィックスを省略
+- ランダムな絵文字（`🚀`, `✨`, `💫`）
+- 完了後のNext Upブロックの欠落
 
 </ui_patterns>

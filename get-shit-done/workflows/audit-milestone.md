@@ -1,160 +1,160 @@
 <purpose>
-Verify milestone achieved its definition of done by aggregating phase verifications, checking cross-phase integration, and assessing requirements coverage. Reads existing VERIFICATION.md files (phases already verified during execute-phase), aggregates tech debt and deferred gaps, then spawns integration checker for cross-phase wiring.
+フェーズ検証を集約し、クロスフェーズ統合をチェックし、要件カバレッジを評価することで、マイルストーンが完了定義を達成したかを検証する。既存のVERIFICATION.mdファイルを読み取り（フェーズはexecute-phase中に既に検証済み）、技術的負債と延期されたギャップを集約し、クロスフェーズの接続のために統合チェッカーを生成する。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出しプロンプトのexecution_contextで参照されるすべてのファイルを読み取ること。
 </required_reading>
 
 <process>
 
-## 0. Initialize Milestone Context
+## 0. マイルストーンコンテキストの初期化
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init milestone-op)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `milestone_version`, `milestone_name`, `phase_count`, `completed_phases`, `commit_docs`.
+init JSONから抽出: `milestone_version`, `milestone_name`, `phase_count`, `completed_phases`, `commit_docs`。
 
-Resolve integration checker model:
+統合チェッカーモデルの解決:
 ```bash
 integration_checker_model=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" resolve-model gsd-integration-checker --raw)
 ```
 
-## 1. Determine Milestone Scope
+## 1. マイルストーンスコープの決定
 
 ```bash
-# Get phases in milestone (sorted numerically, handles decimals)
+# マイルストーン内のフェーズを取得（数値順にソート、小数対応）
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phases list
 ```
 
-- Parse version from arguments or detect current from ROADMAP.md
-- Identify all phase directories in scope
-- Extract milestone definition of done from ROADMAP.md
-- Extract requirements mapped to this milestone from REQUIREMENTS.md
+- 引数からバージョンをパースするか、ROADMAP.mdから現在のバージョンを検出
+- スコープ内のすべてのフェーズディレクトリを特定
+- ROADMAP.mdからマイルストーンの完了定義を抽出
+- REQUIREMENTS.mdからこのマイルストーンにマッピングされた要件を抽出
 
-## 2. Read All Phase Verifications
+## 2. すべてのフェーズ検証の読み取り
 
-For each phase directory, read the VERIFICATION.md:
+各フェーズディレクトリについて、VERIFICATION.mdを読み取る:
 
 ```bash
-# For each phase, use find-phase to resolve the directory (handles archived phases)
+# 各フェーズについて、find-phaseを使用してディレクトリを解決（アーカイブ済みフェーズ対応）
 PHASE_INFO=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" find-phase 01 --raw)
-# Extract directory from JSON, then read VERIFICATION.md from that directory
-# Repeat for each phase number from ROADMAP.md
+# JSONからディレクトリを抽出し、そのディレクトリからVERIFICATION.mdを読み取る
+# ROADMAP.mdの各フェーズ番号について繰り返す
 ```
 
-From each VERIFICATION.md, extract:
-- **Status:** passed | gaps_found
-- **Critical gaps:** (if any — these are blockers)
-- **Non-critical gaps:** tech debt, deferred items, warnings
-- **Anti-patterns found:** TODOs, stubs, placeholders
-- **Requirements coverage:** which requirements satisfied/blocked
+各VERIFICATION.mdから抽出:
+- **ステータス:** passed | gaps_found
+- **重大なギャップ:** （ある場合 — ブロッカー）
+- **非重大なギャップ:** 技術的負債、延期された項目、警告
+- **検出されたアンチパターン:** TODO、スタブ、プレースホルダー
+- **要件カバレッジ:** どの要件が満たされた/ブロックされた
 
-If a phase is missing VERIFICATION.md, flag it as "unverified phase" — this is a blocker.
+フェーズにVERIFICATION.mdがない場合、「未検証フェーズ」としてフラグ — これはブロッカー。
 
-## 3. Spawn Integration Checker
+## 3. 統合チェッカーの生成
 
-With phase context collected:
+収集されたフェーズコンテキストで:
 
-Extract `MILESTONE_REQ_IDS` from REQUIREMENTS.md traceability table — all REQ-IDs assigned to phases in this milestone.
+REQUIREMENTS.mdのトレーサビリティテーブルから`MILESTONE_REQ_IDS`を抽出 — このマイルストーンのフェーズに割り当てられたすべてのREQ-ID。
 
 ```
 Task(
-  prompt="Check cross-phase integration and E2E flows.
+  prompt="クロスフェーズ統合とE2Eフローを確認。
 
 Phases: {phase_dirs}
-Phase exports: {from SUMMARYs}
-API routes: {routes created}
+Phase exports: {SUMMARYsから}
+API routes: {作成されたルート}
 
-Milestone Requirements:
-{MILESTONE_REQ_IDS — list each REQ-ID with description and assigned phase}
+マイルストーン要件:
+{MILESTONE_REQ_IDS — 各REQ-IDと説明と割り当てフェーズをリスト}
 
-MUST map each integration finding to affected requirement IDs where applicable.
+各統合の発見を該当する要件IDにマッピングすること必須。
 
-Verify cross-phase wiring and E2E user flows.",
+クロスフェーズの接続とE2Eユーザーフローを検証。",
   subagent_type="gsd-integration-checker",
   model="{integration_checker_model}"
 )
 ```
 
-## 4. Collect Results
+## 4. 結果の収集
 
-Combine:
-- Phase-level gaps and tech debt (from step 2)
-- Integration checker's report (wiring gaps, broken flows)
+以下を統合:
+- フェーズレベルのギャップと技術的負債（ステップ2から）
+- 統合チェッカーのレポート（接続ギャップ、壊れたフロー）
 
-## 5. Check Requirements Coverage (3-Source Cross-Reference)
+## 5. 要件カバレッジの確認（3ソースクロスリファレンス）
 
-MUST cross-reference three independent sources for each requirement:
+各要件について、3つの独立したソースをクロスリファレンスすること必須:
 
-### 5a. Parse REQUIREMENTS.md Traceability Table
+### 5a. REQUIREMENTS.mdトレーサビリティテーブルのパース
 
-Extract all REQ-IDs mapped to milestone phases from the traceability table:
-- Requirement ID, description, assigned phase, current status, checked-off state (`[x]` vs `[ ]`)
+トレーサビリティテーブルからマイルストーンのフェーズにマッピングされたすべてのREQ-IDを抽出:
+- 要件ID、説明、割り当てフェーズ、現在のステータス、チェック状態（`[x]` vs `[ ]`）
 
-### 5b. Parse Phase VERIFICATION.md Requirements Tables
+### 5b. フェーズVERIFICATION.md要件テーブルのパース
 
-For each phase's VERIFICATION.md, extract the expanded requirements table:
-- Requirement | Source Plan | Description | Status | Evidence
-- Map each entry back to its REQ-ID
+各フェーズのVERIFICATION.mdから、展開された要件テーブルを抽出:
+- 要件 | ソースプラン | 説明 | ステータス | エビデンス
+- 各エントリをREQ-IDに紐づけ
 
-### 5c. Extract SUMMARY.md Frontmatter Cross-Check
+### 5c. SUMMARY.mdフロントマターのクロスチェック抽出
 
-For each phase's SUMMARY.md, extract `requirements-completed` from YAML frontmatter:
+各フェーズのSUMMARY.mdから、YAMLフロントマターの`requirements-completed`を抽出:
 ```bash
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
   node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" summary-extract "$summary" --fields requirements_completed | jq -r '.requirements_completed'
 done
 ```
 
-### 5d. Status Determination Matrix
+### 5d. ステータス判定マトリックス
 
-For each REQ-ID, determine status using all three sources:
+各REQ-IDについて、3つのソースすべてを使用してステータスを判定:
 
-| VERIFICATION.md Status | SUMMARY Frontmatter | REQUIREMENTS.md | → Final Status |
+| VERIFICATION.mdステータス | SUMMARYフロントマター | REQUIREMENTS.md | → 最終ステータス |
 |------------------------|---------------------|-----------------|----------------|
-| passed                 | listed              | `[x]`           | **satisfied**  |
-| passed                 | listed              | `[ ]`           | **satisfied** (update checkbox) |
-| passed                 | missing             | any             | **partial** (verify manually) |
-| gaps_found             | any                 | any             | **unsatisfied** |
-| missing                | listed              | any             | **partial** (verification gap) |
-| missing                | missing             | any             | **unsatisfied** |
+| passed                 | 記載あり             | `[x]`           | **satisfied**  |
+| passed                 | 記載あり             | `[ ]`           | **satisfied** (チェックボックスを更新) |
+| passed                 | 記載なし             | いずれか          | **partial** (手動で検証) |
+| gaps_found             | いずれか             | いずれか          | **unsatisfied** |
+| missing                | 記載あり             | いずれか          | **partial** (検証ギャップ) |
+| missing                | 記載なし             | いずれか          | **unsatisfied** |
 
-### 5e. FAIL Gate and Orphan Detection
+### 5e. FAILゲートとオーファン検出
 
-**REQUIRED:** Any `unsatisfied` requirement MUST force `gaps_found` status on the milestone audit.
+**必須:** `unsatisfied`の要件があれば、マイルストーン監査のステータスを`gaps_found`に強制すること。
 
-**Orphan detection:** Requirements present in REQUIREMENTS.md traceability table but absent from ALL phase VERIFICATION.md files MUST be flagged as orphaned. Orphaned requirements are treated as `unsatisfied` — they were assigned but never verified by any phase.
+**オーファン検出:** REQUIREMENTS.mdのトレーサビリティテーブルに存在するがすべてのフェーズVERIFICATION.mdファイルに存在しない要件は、オーファンとしてフラグすること。オーファンの要件は`unsatisfied`として扱う — 割り当てられたがどのフェーズでも検証されなかった。
 
-## 5.5. Nyquist Compliance Discovery
+## 5.5. Nyquistコンプライアンスのディスカバリー
 
-Skip if `workflow.nyquist_validation` is explicitly `false` (absent = enabled).
+`workflow.nyquist_validation`が明示的に`false`の場合はスキップ（未設定 = 有効）。
 
 ```bash
 NYQUIST_CONFIG=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config get workflow.nyquist_validation --raw 2>/dev/null)
 ```
 
-If `false`: skip entirely.
+`false`の場合: 完全にスキップ。
 
-For each phase directory, check `*-VALIDATION.md`. If exists, parse frontmatter (`nyquist_compliant`, `wave_0_complete`).
+各フェーズディレクトリについて、`*-VALIDATION.md`を確認。存在する場合、フロントマターをパース（`nyquist_compliant`, `wave_0_complete`）。
 
-Classify per phase:
+フェーズごとに分類:
 
-| Status | Condition |
+| ステータス | 条件 |
 |--------|-----------|
-| COMPLIANT | `nyquist_compliant: true` and all tasks green |
-| PARTIAL | VALIDATION.md exists, `nyquist_compliant: false` or red/pending |
-| MISSING | No VALIDATION.md |
+| COMPLIANT | `nyquist_compliant: true`かつすべてのタスクがグリーン |
+| PARTIAL | VALIDATION.mdが存在、`nyquist_compliant: false`またはred/pending |
+| MISSING | VALIDATION.mdなし |
 
-Add to audit YAML: `nyquist: { compliant_phases, partial_phases, missing_phases, overall }`
+監査YAMLに追加: `nyquist: { compliant_phases, partial_phases, missing_phases, overall }`
 
-Discovery only — never auto-calls `/gsd:validate-phase`.
+ディスカバリーのみ — `/gsd:validate-phase`を自動呼び出ししない。
 
-## 6. Aggregate into v{version}-MILESTONE-AUDIT.md
+## 6. v{version}-MILESTONE-AUDIT.mdに集約
 
-Create `.planning/v{version}-v{version}-MILESTONE-AUDIT.md` with:
+`.planning/v{version}-v{version}-MILESTONE-AUDIT.md`を以下で作成:
 
 ```yaml
 ---
@@ -166,18 +166,18 @@ scores:
   phases: N/M
   integration: N/M
   flows: N/M
-gaps:  # Critical blockers
+gaps:  # 重大なブロッカー
   requirements:
     - id: "{REQ-ID}"
       status: "unsatisfied | partial | orphaned"
-      phase: "{assigned phase}"
-      claimed_by_plans: ["{plan files that reference this requirement}"]
-      completed_by_plans: ["{plan files whose SUMMARY marks it complete}"]
+      phase: "{割り当てフェーズ}"
+      claimed_by_plans: ["{この要件を参照する計画ファイル}"]
+      completed_by_plans: ["{SUMMARYで完了とマークされた計画ファイル}"]
       verification_status: "passed | gaps_found | missing | orphaned"
-      evidence: "{specific evidence or lack thereof}"
+      evidence: "{具体的なエビデンスまたはその欠如}"
   integration: [...]
   flows: [...]
-tech_debt:  # Non-critical, deferred
+tech_debt:  # 非重大、延期
   - phase: 01-auth
     items:
       - "TODO: add rate limiting"
@@ -188,145 +188,145 @@ tech_debt:  # Non-critical, deferred
 ---
 ```
 
-Plus full markdown report with tables for requirements, phases, integration, tech debt.
+要件、フェーズ、統合、技術的負債のテーブルを含む完全なマークダウンレポートを付加。
 
-**Status values:**
-- `passed` — all requirements met, no critical gaps, minimal tech debt
-- `gaps_found` — critical blockers exist
-- `tech_debt` — no blockers but accumulated deferred items need review
+**ステータス値:**
+- `passed` — すべての要件が満たされ、重大なギャップなし、技術的負債は最小限
+- `gaps_found` — 重大なブロッカーが存在
+- `tech_debt` — ブロッカーはないが、蓄積された延期項目のレビューが必要
 
-## 7. Present Results
+## 7. 結果の提示
 
-Route by status (see `<offer_next>`).
+ステータスに基づいてルーティング（`<offer_next>`を参照）。
 
 </process>
 
 <offer_next>
-Output this markdown directly (not as a code block). Route based on status:
+このマークダウンを直接出力する（コードブロックとしてではない）。ステータスに基づいてルーティング:
 
 ---
 
-**If passed:**
+**passedの場合:**
 
-## ✓ Milestone {version} — Audit Passed
+## ✓ マイルストーン {version} — 監査合格
 
-**Score:** {N}/{M} requirements satisfied
-**Report:** .planning/v{version}-MILESTONE-AUDIT.md
+**スコア:** {N}/{M}の要件が満たされた
+**レポート:** .planning/v{version}-MILESTONE-AUDIT.md
 
-All requirements covered. Cross-phase integration verified. E2E flows complete.
+すべての要件がカバーされました。クロスフェーズ統合が検証されました。E2Eフローが完了しました。
 
 ───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
-**Complete milestone** — archive and tag
+**マイルストーンを完了** — アーカイブしてタグ付け
 
 /gsd:complete-milestone {version}
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear first → 新しいコンテキストウィンドウ</sub>
 
 ───────────────────────────────────────────────────────────────
 
 ---
 
-**If gaps_found:**
+**gaps_foundの場合:**
 
-## ⚠ Milestone {version} — Gaps Found
+## ⚠ マイルストーン {version} — ギャップが見つかりました
 
-**Score:** {N}/{M} requirements satisfied
-**Report:** .planning/v{version}-MILESTONE-AUDIT.md
+**スコア:** {N}/{M}の要件が満たされた
+**レポート:** .planning/v{version}-MILESTONE-AUDIT.md
 
-### Unsatisfied Requirements
+### 未達成の要件
 
-{For each unsatisfied requirement:}
-- **{REQ-ID}: {description}** (Phase {X})
-  - {reason}
+{未達成の各要件について:}
+- **{REQ-ID}: {description}** (フェーズ {X})
+  - {理由}
 
-### Cross-Phase Issues
+### クロスフェーズの問題
 
-{For each integration gap:}
-- **{from} → {to}:** {issue}
+{各統合ギャップについて:}
+- **{from} → {to}:** {問題}
 
-### Broken Flows
+### 壊れたフロー
 
-{For each flow gap:}
-- **{flow name}:** breaks at {step}
+{各フローギャップについて:}
+- **{フロー名}:** {ステップ}で中断
 
-### Nyquist Coverage
+### Nyquistカバレッジ
 
-| Phase | VALIDATION.md | Compliant | Action |
+| フェーズ | VALIDATION.md | コンプライアント | アクション |
 |-------|---------------|-----------|--------|
 | {phase} | exists/missing | true/false/partial | `/gsd:validate-phase {N}` |
 
-Phases needing validation: run `/gsd:validate-phase {N}` for each flagged phase.
+検証が必要なフェーズ: フラグが付いた各フェーズに対して`/gsd:validate-phase {N}`を実行。
 
 ───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
-**Plan gap closure** — create phases to complete milestone
+**ギャップクロージャーを計画** — マイルストーン完了のためのフェーズを作成
 
 /gsd:plan-milestone-gaps
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear first → 新しいコンテキストウィンドウ</sub>
 
 ───────────────────────────────────────────────────────────────
 
-**Also available:**
-- cat .planning/v{version}-MILESTONE-AUDIT.md — see full report
-- /gsd:complete-milestone {version} — proceed anyway (accept tech debt)
+**その他のオプション:**
+- cat .planning/v{version}-MILESTONE-AUDIT.md — 完全なレポートを確認
+- /gsd:complete-milestone {version} — そのまま続行（技術的負債を受け入れ）
 
 ───────────────────────────────────────────────────────────────
 
 ---
 
-**If tech_debt (no blockers but accumulated debt):**
+**tech_debtの場合（ブロッカーはないが蓄積された負債あり）:**
 
-## ⚡ Milestone {version} — Tech Debt Review
+## ⚡ マイルストーン {version} — 技術的負債レビュー
 
-**Score:** {N}/{M} requirements satisfied
-**Report:** .planning/v{version}-MILESTONE-AUDIT.md
+**スコア:** {N}/{M}の要件が満たされた
+**レポート:** .planning/v{version}-MILESTONE-AUDIT.md
 
-All requirements met. No critical blockers. Accumulated tech debt needs review.
+すべての要件が満たされた。重大なブロッカーなし。蓄積された技術的負債のレビューが必要。
 
-### Tech Debt by Phase
+### フェーズ別の技術的負債
 
-{For each phase with debt:}
-**Phase {X}: {name}**
+{負債のある各フェーズについて:}
+**フェーズ {X}: {name}**
 - {item 1}
 - {item 2}
 
-### Total: {N} items across {M} phases
+### 合計: {M}フェーズにわたる{N}項目
 
 ───────────────────────────────────────────────────────────────
 
-## ▶ Options
+## ▶ オプション
 
-**A. Complete milestone** — accept debt, track in backlog
+**A. マイルストーンを完了** — 負債を受け入れ、バックログで追跡
 
 /gsd:complete-milestone {version}
 
-**B. Plan cleanup phase** — address debt before completing
+**B. クリーンアップフェーズを計画** — 完了前に負債を対処
 
 /gsd:plan-milestone-gaps
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear first → 新しいコンテキストウィンドウ</sub>
 
 ───────────────────────────────────────────────────────────────
 </offer_next>
 
 <success_criteria>
-- [ ] Milestone scope identified
-- [ ] All phase VERIFICATION.md files read
-- [ ] SUMMARY.md `requirements-completed` frontmatter extracted for each phase
-- [ ] REQUIREMENTS.md traceability table parsed for all milestone REQ-IDs
-- [ ] 3-source cross-reference completed (VERIFICATION + SUMMARY + traceability)
-- [ ] Orphaned requirements detected (in traceability but absent from all VERIFICATIONs)
-- [ ] Tech debt and deferred gaps aggregated
-- [ ] Integration checker spawned with milestone requirement IDs
-- [ ] v{version}-MILESTONE-AUDIT.md created with structured requirement gap objects
-- [ ] FAIL gate enforced — any unsatisfied requirement forces gaps_found status
-- [ ] Nyquist compliance scanned for all milestone phases (if enabled)
-- [ ] Missing VALIDATION.md phases flagged with validate-phase suggestion
-- [ ] Results presented with actionable next steps
+- [ ] マイルストーンスコープを特定
+- [ ] すべてのフェーズVERIFICATION.mdファイルを読み取り
+- [ ] 各フェーズのSUMMARY.md `requirements-completed`フロントマターを抽出
+- [ ] マイルストーンのすべてのREQ-IDについてREQUIREMENTS.mdトレーサビリティテーブルをパース
+- [ ] 3ソースクロスリファレンスを完了（VERIFICATION + SUMMARY + トレーサビリティ）
+- [ ] オーファン要件を検出（トレーサビリティにあるがすべてのVERIFICATIONに存在しない）
+- [ ] 技術的負債と延期されたギャップを集約
+- [ ] マイルストーン要件IDで統合チェッカーを生成
+- [ ] 構造化された要件ギャップオブジェクトを含むv{version}-MILESTONE-AUDIT.mdを作成
+- [ ] FAILゲートを適用 — 未達成の要件があればgaps_foundステータスを強制
+- [ ] すべてのマイルストーンフェーズのNyquistコンプライアンスをスキャン（有効な場合）
+- [ ] VALIDATION.mdが欠落しているフェーズをvalidate-phaseの提案付きでフラグ
+- [ ] アクション可能な次のステップ付きで結果を提示
 </success_criteria>

@@ -1,48 +1,48 @@
 ---
 phase: XX-name
 plan: YY
-subsystem: [primary category]
-tags: [searchable tech]
+subsystem: [主要カテゴリ]
+tags: [検索可能な技術]
 provides:
-  - [bullet list of what was built/delivered]
-affects: [list of phase names or keywords]
+  - [構築/提供されたもののリスト]
+affects: [フェーズ名やキーワードのリスト]
 tech-stack:
-  added: [libraries/tools]
-  patterns: [architectural/code patterns]
+  added: [ライブラリ/ツール]
+  patterns: [アーキテクチャ/コードパターン]
 key-files:
-  created: [important files created]
-  modified: [important files modified]
+  created: [作成した重要ファイル]
+  modified: [変更した重要ファイル]
 key-decisions:
   - "Decision 1"
 duration: Xmin
 completed: YYYY-MM-DD
 ---
 
-# Phase [X]: [Name] Summary
+# Phase [X]: [名前] サマリー
 
-**[Substantive one-liner describing outcome]**
+**[成果を説明する実質的な一行]**
 
-## Performance
-- **Duration:** [time]
-- **Tasks:** [count completed]
-- **Files modified:** [count]
+## パフォーマンス
+- **所要時間:** [時間]
+- **タスク:** [完了数]
+- **変更ファイル:** [数]
 
-## Accomplishments
-- [Key outcome 1]
-- [Key outcome 2]
+## 成果
+- [主要な成果 1]
+- [主要な成果 2]
 
-## Task Commits
-1. **Task 1: [task name]** - `hash`
-2. **Task 2: [task name]** - `hash`
-3. **Task 3: [task name]** - `hash`
+## タスクコミット
+1. **Task 1: [タスク名]** - `hash`
+2. **Task 2: [タスク名]** - `hash`
+3. **Task 3: [タスク名]** - `hash`
 
-## Files Created/Modified
-- `path/to/file.ts` - What it does
-- `path/to/another.ts` - What it does
+## 作成/変更ファイル
+- `path/to/file.ts` - 役割
+- `path/to/another.ts` - 役割
 
-## Decisions & Deviations
-[Key decisions or "None - followed plan as specified"]
-[Minor deviations if any, or "None"]
+## 決定事項と逸脱
+[重要な決定、または "None - followed plan as specified"]
+[軽微な逸脱がある場合、または "None"]
 
-## Next Phase Readiness
-[What's ready for next phase]
+## 次フェーズの準備状況
+[次のフェーズに向けて準備できていること]

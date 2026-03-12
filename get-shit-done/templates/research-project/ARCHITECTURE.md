@@ -1,112 +1,112 @@
-# Architecture Research Template
+# アーキテクチャリサーチテンプレート
 
-Template for `.planning/research/ARCHITECTURE.md` — system structure patterns for the project domain.
+`.planning/research/ARCHITECTURE.md` 用テンプレート — プロジェクトドメインのシステム構造パターン。
 
 <template>
 
 ```markdown
-# Architecture Research
+# アーキテクチャリサーチ
 
-**Domain:** [domain type]
-**Researched:** [date]
+**Domain:** [ドメインの種類]
+**Researched:** [日付]
 **Confidence:** [HIGH/MEDIUM/LOW]
 
-## Standard Architecture
+## 標準アーキテクチャ
 
-### System Overview
+### システム概要
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        [Layer Name]                          │
+│                        [レイヤー名]                          │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐        │
 │  │ [Comp]  │  │ [Comp]  │  │ [Comp]  │  │ [Comp]  │        │
 │  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘        │
 │       │            │            │            │              │
 ├───────┴────────────┴────────────┴────────────┴──────────────┤
-│                        [Layer Name]                          │
+│                        [レイヤー名]                          │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │                    [Component]                       │    │
+│  │                    [コンポーネント]                   │    │
 │  └─────────────────────────────────────────────────────┘    │
 ├─────────────────────────────────────────────────────────────┤
-│                        [Layer Name]                          │
+│                        [レイヤー名]                          │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐                   │
 │  │ [Store]  │  │ [Store]  │  │ [Store]  │                   │
 │  └──────────┘  └──────────┘  └──────────┘                   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Component Responsibilities
+### コンポーネントの責務
 
-| Component | Responsibility | Typical Implementation |
+| コンポーネント | 責務 | 典型的な実装 |
 |-----------|----------------|------------------------|
-| [name] | [what it owns] | [how it's usually built] |
-| [name] | [what it owns] | [how it's usually built] |
-| [name] | [what it owns] | [how it's usually built] |
+| [名前] | [何を担当するか] | [通常どのように構築されるか] |
+| [名前] | [何を担当するか] | [通常どのように構築されるか] |
+| [名前] | [何を担当するか] | [通常どのように構築されるか] |
 
-## Recommended Project Structure
+## 推奨プロジェクト構造
 
 ```
 src/
-├── [folder]/           # [purpose]
-│   ├── [subfolder]/    # [purpose]
-│   └── [file].ts       # [purpose]
-├── [folder]/           # [purpose]
-│   ├── [subfolder]/    # [purpose]
-│   └── [file].ts       # [purpose]
-├── [folder]/           # [purpose]
-└── [folder]/           # [purpose]
+├── [folder]/           # [目的]
+│   ├── [subfolder]/    # [目的]
+│   └── [file].ts       # [目的]
+├── [folder]/           # [目的]
+│   ├── [subfolder]/    # [目的]
+│   └── [file].ts       # [目的]
+├── [folder]/           # [目的]
+└── [folder]/           # [目的]
 ```
 
-### Structure Rationale
+### 構造の根拠
 
-- **[folder]/:** [why organized this way]
-- **[folder]/:** [why organized this way]
+- **[folder]/:** [なぜこのように構成されているか]
+- **[folder]/:** [なぜこのように構成されているか]
 
-## Architectural Patterns
+## アーキテクチャパターン
 
-### Pattern 1: [Pattern Name]
+### パターン1: [パターン名]
 
-**What:** [description]
-**When to use:** [conditions]
-**Trade-offs:** [pros and cons]
+**What:** [説明]
+**When to use:** [条件]
+**Trade-offs:** [メリットとデメリット]
 
-**Example:**
+**例:**
 ```typescript
-// [Brief code example showing the pattern]
+// [パターンを示す簡潔なコード例]
 ```
 
-### Pattern 2: [Pattern Name]
+### パターン2: [パターン名]
 
-**What:** [description]
-**When to use:** [conditions]
-**Trade-offs:** [pros and cons]
+**What:** [説明]
+**When to use:** [条件]
+**Trade-offs:** [メリットとデメリット]
 
-**Example:**
+**例:**
 ```typescript
-// [Brief code example showing the pattern]
+// [パターンを示す簡潔なコード例]
 ```
 
-### Pattern 3: [Pattern Name]
+### パターン3: [パターン名]
 
-**What:** [description]
-**When to use:** [conditions]
-**Trade-offs:** [pros and cons]
+**What:** [説明]
+**When to use:** [条件]
+**Trade-offs:** [メリットとデメリット]
 
-## Data Flow
+## データフロー
 
-### Request Flow
+### リクエストフロー
 
 ```
-[User Action]
+[ユーザーアクション]
     ↓
 [Component] → [Handler] → [Service] → [Data Store]
     ↓              ↓           ↓            ↓
 [Response] ← [Transform] ← [Query] ← [Database]
 ```
 
-### State Management
+### 状態管理
 
 ```
 [State Store]
@@ -114,91 +114,91 @@ src/
 [Components] ←→ [Actions] → [Reducers/Mutations] → [State Store]
 ```
 
-### Key Data Flows
+### 主要なデータフロー
 
-1. **[Flow name]:** [description of how data moves]
-2. **[Flow name]:** [description of how data moves]
+1. **[フロー名]:** [データの流れの説明]
+2. **[フロー名]:** [データの流れの説明]
 
-## Scaling Considerations
+## スケーリングの考慮事項
 
-| Scale | Architecture Adjustments |
+| スケール | アーキテクチャの調整 |
 |-------|--------------------------|
-| 0-1k users | [approach — usually monolith is fine] |
-| 1k-100k users | [approach — what to optimize first] |
-| 100k+ users | [approach — when to consider splitting] |
+| 0-1kユーザー | [アプローチ — 通常モノリスで十分] |
+| 1k-100kユーザー | [アプローチ — 最初に最適化すべきもの] |
+| 100k+ユーザー | [アプローチ — 分割を検討すべきタイミング] |
 
-### Scaling Priorities
+### スケーリングの優先順位
 
-1. **First bottleneck:** [what breaks first, how to fix]
-2. **Second bottleneck:** [what breaks next, how to fix]
+1. **最初のボトルネック:** [最初に何が壊れるか、修正方法]
+2. **次のボトルネック:** [次に何が壊れるか、修正方法]
 
-## Anti-Patterns
+## アンチパターン
 
-### Anti-Pattern 1: [Name]
+### アンチパターン1: [名前]
 
-**What people do:** [the mistake]
-**Why it's wrong:** [the problem it causes]
-**Do this instead:** [the correct approach]
+**やりがちなこと:** [よくある間違い]
+**なぜ問題か:** [引き起こす問題]
+**代わりにすべきこと:** [正しいアプローチ]
 
-### Anti-Pattern 2: [Name]
+### アンチパターン2: [名前]
 
-**What people do:** [the mistake]
-**Why it's wrong:** [the problem it causes]
-**Do this instead:** [the correct approach]
+**やりがちなこと:** [よくある間違い]
+**なぜ問題か:** [引き起こす問題]
+**代わりにすべきこと:** [正しいアプローチ]
 
-## Integration Points
+## インテグレーションポイント
 
-### External Services
+### 外部サービス
 
-| Service | Integration Pattern | Notes |
+| サービス | インテグレーションパターン | 注意点 |
 |---------|---------------------|-------|
-| [service] | [how to connect] | [gotchas] |
-| [service] | [how to connect] | [gotchas] |
+| [サービス] | [接続方法] | [落とし穴] |
+| [サービス] | [接続方法] | [落とし穴] |
 
-### Internal Boundaries
+### 内部境界
 
-| Boundary | Communication | Notes |
+| 境界 | 通信方法 | 注意点 |
 |----------|---------------|-------|
-| [module A ↔ module B] | [API/events/direct] | [considerations] |
+| [モジュールA ↔ モジュールB] | [API/イベント/直接] | [考慮事項] |
 
-## Sources
+## 情報源
 
-- [Architecture references]
-- [Official documentation]
-- [Case studies]
+- [アーキテクチャ参考文献]
+- [公式ドキュメント]
+- [ケーススタディ]
 
 ---
-*Architecture research for: [domain]*
-*Researched: [date]*
+*アーキテクチャリサーチ対象: [ドメイン]*
+*リサーチ日: [日付]*
 ```
 
 </template>
 
 <guidelines>
 
-**System Overview:**
-- Use ASCII box-drawing diagrams for clarity (├── └── │ ─ for structure visualization only)
-- Show major components and their relationships
-- Don't over-detail — this is conceptual, not implementation
+**システム概要:**
+- 明確さのためにASCIIボックスドローイング図を使用（構造の視覚化にのみ ├── └── │ ─ を使用）
+- 主要なコンポーネントとその関係を表示
+- 過度に詳細にしない — これは概念的であり、実装ではない
 
-**Project Structure:**
-- Be specific about folder organization
-- Explain the rationale for grouping
-- Match conventions of the chosen stack
+**プロジェクト構造:**
+- フォルダ構成を具体的に
+- グループ分けの根拠を説明
+- 選択したスタックの規約に合わせる
 
-**Patterns:**
-- Include code examples where helpful
-- Explain trade-offs honestly
-- Note when patterns are overkill for small projects
+**パターン:**
+- 役立つ場合はコード例を含める
+- トレードオフを正直に説明
+- 小規模プロジェクトではパターンが過剰な場合を注記
 
-**Scaling Considerations:**
-- Be realistic — most projects don't need to scale to millions
-- Focus on "what breaks first" not theoretical limits
-- Avoid premature optimization recommendations
+**スケーリングの考慮事項:**
+- 現実的に — ほとんどのプロジェクトは数百万規模にスケールする必要はない
+- 理論的な限界ではなく「最初に何が壊れるか」に焦点
+- 時期尚早な最適化の推奨を避ける
 
-**Anti-Patterns:**
-- Specific to this domain
-- Include what to do instead
-- Helps prevent common mistakes during implementation
+**アンチパターン:**
+- このドメインに固有のもの
+- 代わりにすべきことを含める
+- 実装中のよくある間違いを防ぐのに役立つ
 
 </guidelines>

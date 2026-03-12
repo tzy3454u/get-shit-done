@@ -1,379 +1,379 @@
 <purpose>
-Display the complete GSD command reference. Output ONLY the reference content. Do NOT add project-specific analysis, git status, next-step suggestions, or any commentary beyond the reference.
+完全なGSDコマンドリファレンスを表示する。リファレンスの内容のみを出力する。プロジェクト固有の分析、gitステータス、次ステップの提案、リファレンス以外のコメントは追加しないこと。
 </purpose>
 
 <reference>
-# GSD Command Reference
+# GSD コマンドリファレンス
 
-**GSD** (Get Shit Done) creates hierarchical project plans optimized for solo agentic development with Claude Code.
+**GSD**（Get Shit Done）は、Claude Codeによるソロエージェント開発に最適化された階層的プロジェクトプランを作成する。
 
-## Quick Start
+## クイックスタート
 
-1. `/gsd:new-project` - Initialize project (includes research, requirements, roadmap)
-2. `/gsd:plan-phase 1` - Create detailed plan for first phase
-3. `/gsd:execute-phase 1` - Execute the phase
+1. `/gsd:new-project` - プロジェクトを初期化（リサーチ、要件、ロードマップを含む）
+2. `/gsd:plan-phase 1` - 最初のフェーズの詳細プランを作成
+3. `/gsd:execute-phase 1` - フェーズを実行
 
-## Staying Updated
+## 最新の状態を保つ
 
-GSD evolves fast. Update periodically:
+GSDは急速に進化している。定期的に更新すること：
 
 ```bash
 npx get-shit-done-cc@latest
 ```
 
-## Core Workflow
+## コアワークフロー
 
 ```
 /gsd:new-project → /gsd:plan-phase → /gsd:execute-phase → repeat
 ```
 
-### Project Initialization
+### プロジェクト初期化
 
 **`/gsd:new-project`**
-Initialize new project through unified flow.
+統合フローで新しいプロジェクトを初期化する。
 
-One command takes you from idea to ready-for-planning:
-- Deep questioning to understand what you're building
-- Optional domain research (spawns 4 parallel researcher agents)
-- Requirements definition with v1/v2/out-of-scope scoping
-- Roadmap creation with phase breakdown and success criteria
+1つのコマンドでアイデアから計画準備完了まで導く：
+- 何を構築するかを理解するための深い質問
+- 任意のドメインリサーチ（4つの並列リサーチャーエージェントを生成）
+- v1/v2/スコープ外のスコーピングを含む要件定義
+- 成功基準付きのフェーズ分割によるロードマップ作成
 
-Creates all `.planning/` artifacts:
-- `PROJECT.md` — vision and requirements
-- `config.json` — workflow mode (interactive/yolo)
-- `research/` — domain research (if selected)
-- `REQUIREMENTS.md` — scoped requirements with REQ-IDs
-- `ROADMAP.md` — phases mapped to requirements
-- `STATE.md` — project memory
+すべての`.planning/`アーティファクトを作成：
+- `PROJECT.md` — ビジョンと要件
+- `config.json` — ワークフローモード（interactive/yolo）
+- `research/` — ドメインリサーチ（選択した場合）
+- `REQUIREMENTS.md` — REQ-ID付きのスコープ済み要件
+- `ROADMAP.md` — 要件にマッピングされたフェーズ
+- `STATE.md` — プロジェクトメモリ
 
-Usage: `/gsd:new-project`
+使い方: `/gsd:new-project`
 
 **`/gsd:map-codebase`**
-Map an existing codebase for brownfield projects.
+ブラウンフィールドプロジェクト用に既存のコードベースをマッピングする。
 
-- Analyzes codebase with parallel Explore agents
-- Creates `.planning/codebase/` with 7 focused documents
-- Covers stack, architecture, structure, conventions, testing, integrations, concerns
-- Use before `/gsd:new-project` on existing codebases
+- 並列Exploreエージェントでコードベースを分析
+- `.planning/codebase/`に7つの焦点を絞ったドキュメントを作成
+- スタック、アーキテクチャ、構造、規約、テスト、統合、懸念事項をカバー
+- 既存コードベースでは`/gsd:new-project`の前に使用
 
-Usage: `/gsd:map-codebase`
+使い方: `/gsd:map-codebase`
 
-### Phase Planning
+### フェーズ計画
 
 **`/gsd:discuss-phase <number>`**
-Help articulate your vision for a phase before planning.
+計画前にフェーズのビジョンを明確にする手助けをする。
 
-- Captures how you imagine this phase working
-- Creates CONTEXT.md with your vision, essentials, and boundaries
-- Use when you have ideas about how something should look/feel
+- このフェーズがどのように動作するか想像しているかを収集
+- ビジョン、必須事項、境界を含むCONTEXT.mdを作成
+- 見た目/感触についてアイデアがある場合に使用
 
-Usage: `/gsd:discuss-phase 2`
+使い方: `/gsd:discuss-phase 2`
 
 **`/gsd:research-phase <number>`**
-Comprehensive ecosystem research for niche/complex domains.
+ニッチ/複雑なドメインのための包括的なエコシステムリサーチ。
 
-- Discovers standard stack, architecture patterns, pitfalls
-- Creates RESEARCH.md with "how experts build this" knowledge
-- Use for 3D, games, audio, shaders, ML, and other specialized domains
-- Goes beyond "which library" to ecosystem knowledge
+- 標準スタック、アーキテクチャパターン、落とし穴を発見
+- 「専門家がこれをどう構築するか」の知識を含むRESEARCH.mdを作成
+- 3D、ゲーム、オーディオ、シェーダー、ML、その他の専門ドメインに使用
+- 「どのライブラリ」を超えてエコシステムの知識に踏み込む
 
-Usage: `/gsd:research-phase 3`
+使い方: `/gsd:research-phase 3`
 
 **`/gsd:list-phase-assumptions <number>`**
-See what Claude is planning to do before it starts.
+Claudeが開始前に何を計画しているかを確認する。
 
-- Shows Claude's intended approach for a phase
-- Lets you course-correct if Claude misunderstood your vision
-- No files created - conversational output only
+- フェーズに対するClaudeの意図するアプローチを表示
+- Claudeがビジョンを誤解している場合に軌道修正が可能
+- ファイルは作成されない - 会話出力のみ
 
-Usage: `/gsd:list-phase-assumptions 3`
+使い方: `/gsd:list-phase-assumptions 3`
 
 **`/gsd:plan-phase <number>`**
-Create detailed execution plan for a specific phase.
+特定のフェーズの詳細な実行プランを作成する。
 
-- Generates `.planning/phases/XX-phase-name/XX-YY-PLAN.md`
-- Breaks phase into concrete, actionable tasks
-- Includes verification criteria and success measures
-- Multiple plans per phase supported (XX-01, XX-02, etc.)
+- `.planning/phases/XX-phase-name/XX-YY-PLAN.md`を生成
+- フェーズを具体的で実行可能なタスクに分解
+- 検証基準と成功指標を含む
+- フェーズごとに複数プラン対応（XX-01、XX-02など）
 
-Usage: `/gsd:plan-phase 1`
-Result: Creates `.planning/phases/01-foundation/01-01-PLAN.md`
+使い方: `/gsd:plan-phase 1`
+結果: `.planning/phases/01-foundation/01-01-PLAN.md`を作成
 
-**PRD Express Path:** Pass `--prd path/to/requirements.md` to skip discuss-phase entirely. Your PRD becomes locked decisions in CONTEXT.md. Useful when you already have clear acceptance criteria.
+**PRDエクスプレスパス：** `--prd path/to/requirements.md`を渡すとdiscuss-phaseを完全にスキップ。PRDがCONTEXT.mdのロックされた決定になる。明確な受け入れ基準が既にある場合に便利。
 
-### Execution
+### 実行
 
 **`/gsd:execute-phase <phase-number>`**
-Execute all plans in a phase.
+フェーズ内のすべてのプランを実行する。
 
-- Groups plans by wave (from frontmatter), executes waves sequentially
-- Plans within each wave run in parallel via Task tool
-- Verifies phase goal after all plans complete
-- Updates REQUIREMENTS.md, ROADMAP.md, STATE.md
+- プランをウェーブ（フロントマターから）でグループ化し、ウェーブを順次実行
+- 各ウェーブ内のプランはTaskツールで並列実行
+- すべてのプラン完了後にフェーズ目標を検証
+- REQUIREMENTS.md、ROADMAP.md、STATE.mdを更新
 
-Usage: `/gsd:execute-phase 5`
+使い方: `/gsd:execute-phase 5`
 
-### Quick Mode
+### クイックモード
 
 **`/gsd:quick`**
-Execute small, ad-hoc tasks with GSD guarantees but skip optional agents.
+GSDの保証付きで小規模なアドホックタスクを実行し、オプションのエージェントをスキップする。
 
-Quick mode uses the same system with a shorter path:
-- Spawns planner + executor (skips researcher, checker, verifier)
-- Quick tasks live in `.planning/quick/` separate from planned phases
-- Updates STATE.md tracking (not ROADMAP.md)
+クイックモードは同じシステムでより短いパスを使用：
+- プランナー＋エグゼキューターを生成（リサーチャー、チェッカー、ベリファイアーをスキップ）
+- クイックタスクは計画済みフェーズとは別の`.planning/quick/`に格納
+- STATE.md追跡を更新（ROADMAP.mdではない）
 
-Use when you know exactly what to do and the task is small enough to not need research or verification.
+何をすべきか正確にわかっていて、リサーチや検証が不要な小さなタスクの場合に使用。
 
-Usage: `/gsd:quick`
-Result: Creates `.planning/quick/NNN-slug/PLAN.md`, `.planning/quick/NNN-slug/SUMMARY.md`
+使い方: `/gsd:quick`
+結果: `.planning/quick/NNN-slug/PLAN.md`、`.planning/quick/NNN-slug/SUMMARY.md`を作成
 
-### Roadmap Management
+### ロードマップ管理
 
 **`/gsd:add-phase <description>`**
-Add new phase to end of current milestone.
+現在のマイルストーンの末尾に新しいフェーズを追加する。
 
-- Appends to ROADMAP.md
-- Uses next sequential number
-- Updates phase directory structure
+- ROADMAP.mdに追記
+- 次の連番を使用
+- フェーズディレクトリ構造を更新
 
-Usage: `/gsd:add-phase "Add admin dashboard"`
+使い方: `/gsd:add-phase "Add admin dashboard"`
 
 **`/gsd:insert-phase <after> <description>`**
-Insert urgent work as decimal phase between existing phases.
+既存フェーズの間に小数フェーズとして緊急作業を挿入する。
 
-- Creates intermediate phase (e.g., 7.1 between 7 and 8)
-- Useful for discovered work that must happen mid-milestone
-- Maintains phase ordering
+- 中間フェーズを作成（例：7と8の間に7.1）
+- マイルストーン途中で発見された作業に便利
+- フェーズの順序を維持
 
-Usage: `/gsd:insert-phase 7 "Fix critical auth bug"`
-Result: Creates Phase 7.1
+使い方: `/gsd:insert-phase 7 "Fix critical auth bug"`
+結果: Phase 7.1を作成
 
 **`/gsd:remove-phase <number>`**
-Remove a future phase and renumber subsequent phases.
+将来のフェーズを削除し、後続フェーズの番号を振り直す。
 
-- Deletes phase directory and all references
-- Renumbers all subsequent phases to close the gap
-- Only works on future (unstarted) phases
-- Git commit preserves historical record
+- フェーズディレクトリとすべての参照を削除
+- すべての後続フェーズの番号を振り直してギャップを埋める
+- 将来の（未開始の）フェーズにのみ有効
+- Gitコミットが履歴記録を保持
 
-Usage: `/gsd:remove-phase 17`
-Result: Phase 17 deleted, phases 18-20 become 17-19
+使い方: `/gsd:remove-phase 17`
+結果: Phase 17が削除され、フェーズ18-20が17-19になる
 
-### Milestone Management
+### マイルストーン管理
 
 **`/gsd:new-milestone <name>`**
-Start a new milestone through unified flow.
+統合フローで新しいマイルストーンを開始する。
 
-- Deep questioning to understand what you're building next
-- Optional domain research (spawns 4 parallel researcher agents)
-- Requirements definition with scoping
-- Roadmap creation with phase breakdown
+- 次に構築するものを理解するための深い質問
+- 任意のドメインリサーチ（4つの並列リサーチャーエージェントを生成）
+- スコーピング付きの要件定義
+- フェーズ分割によるロードマップ作成
 
-Mirrors `/gsd:new-project` flow for brownfield projects (existing PROJECT.md).
+ブラウンフィールドプロジェクト（既存のPROJECT.md）向けに`/gsd:new-project`フローを反映。
 
-Usage: `/gsd:new-milestone "v2.0 Features"`
+使い方: `/gsd:new-milestone "v2.0 Features"`
 
 **`/gsd:complete-milestone <version>`**
-Archive completed milestone and prepare for next version.
+完了したマイルストーンをアーカイブし、次のバージョンの準備をする。
 
-- Creates MILESTONES.md entry with stats
-- Archives full details to milestones/ directory
-- Creates git tag for the release
-- Prepares workspace for next version
+- 統計付きのMILESTONES.mdエントリを作成
+- milestones/ディレクトリに完全な詳細をアーカイブ
+- リリース用のgitタグを作成
+- 次のバージョン用にワークスペースを準備
 
-Usage: `/gsd:complete-milestone 1.0.0`
+使い方: `/gsd:complete-milestone 1.0.0`
 
-### Progress Tracking
+### 進捗追跡
 
 **`/gsd:progress`**
-Check project status and intelligently route to next action.
+プロジェクトステータスを確認し、次のアクションにインテリジェントにルーティングする。
 
-- Shows visual progress bar and completion percentage
-- Summarizes recent work from SUMMARY files
-- Displays current position and what's next
-- Lists key decisions and open issues
-- Offers to execute next plan or create it if missing
-- Detects 100% milestone completion
+- ビジュアルなプログレスバーと完了率を表示
+- SUMMARYファイルからの最近の作業を要約
+- 現在の位置と次の内容を表示
+- 主要な決定とオープンな問題をリスト
+- 次のプランの実行を提案、または不足している場合は作成を提案
+- 100%マイルストーン完了を検出
 
-Usage: `/gsd:progress`
+使い方: `/gsd:progress`
 
-### Session Management
+### セッション管理
 
 **`/gsd:resume-work`**
-Resume work from previous session with full context restoration.
+完全なコンテキスト復元で前回のセッションから作業を再開する。
 
-- Reads STATE.md for project context
-- Shows current position and recent progress
-- Offers next actions based on project state
+- STATE.mdを読みプロジェクトコンテキストを取得
+- 現在の位置と最近の進捗を表示
+- プロジェクト状態に基づいて次のアクションを提案
 
-Usage: `/gsd:resume-work`
+使い方: `/gsd:resume-work`
 
 **`/gsd:pause-work`**
-Create context handoff when pausing work mid-phase.
+フェーズ途中で作業を一時停止する際にコンテキストハンドオフを作成する。
 
-- Creates .continue-here file with current state
-- Updates STATE.md session continuity section
-- Captures in-progress work context
+- 現在の状態を含む.continue-hereファイルを作成
+- STATE.mdのセッション継続セクションを更新
+- 進行中の作業コンテキストを記録
 
-Usage: `/gsd:pause-work`
+使い方: `/gsd:pause-work`
 
-### Debugging
+### デバッグ
 
 **`/gsd:debug [issue description]`**
-Systematic debugging with persistent state across context resets.
+コンテキストリセット間で持続的な状態を持つ体系的なデバッグ。
 
-- Gathers symptoms through adaptive questioning
-- Creates `.planning/debug/[slug].md` to track investigation
-- Investigates using scientific method (evidence → hypothesis → test)
-- Survives `/clear` — run `/gsd:debug` with no args to resume
-- Archives resolved issues to `.planning/debug/resolved/`
+- 適応的な質問を通じて症状を収集
+- 調査を追跡する`.planning/debug/[slug].md`を作成
+- 科学的手法（証拠 → 仮説 → テスト）を使用して調査
+- `/clear`後も存続 — 引数なしで`/gsd:debug`を実行して再開
+- 解決済みの問題を`.planning/debug/resolved/`にアーカイブ
 
-Usage: `/gsd:debug "login button doesn't work"`
-Usage: `/gsd:debug` (resume active session)
+使い方: `/gsd:debug "login button doesn't work"`
+使い方: `/gsd:debug` (アクティブなセッションを再開)
 
-### Todo Management
+### Todo管理
 
 **`/gsd:add-todo [description]`**
-Capture idea or task as todo from current conversation.
+現在の会話からアイデアやタスクをtodoとして記録する。
 
-- Extracts context from conversation (or uses provided description)
-- Creates structured todo file in `.planning/todos/pending/`
-- Infers area from file paths for grouping
-- Checks for duplicates before creating
-- Updates STATE.md todo count
+- 会話からコンテキストを抽出（または提供された説明を使用）
+- `.planning/todos/pending/`に構造化されたtodoファイルを作成
+- グループ化のためにファイルパスからエリアを推論
+- 作成前に重複をチェック
+- STATE.mdのtodoカウントを更新
 
-Usage: `/gsd:add-todo` (infers from conversation)
-Usage: `/gsd:add-todo Add auth token refresh`
+使い方: `/gsd:add-todo` (会話から推論)
+使い方: `/gsd:add-todo Add auth token refresh`
 
 **`/gsd:check-todos [area]`**
-List pending todos and select one to work on.
+保留中のtodoをリストし、作業するものを選択する。
 
-- Lists all pending todos with title, area, age
-- Optional area filter (e.g., `/gsd:check-todos api`)
-- Loads full context for selected todo
-- Routes to appropriate action (work now, add to phase, brainstorm)
-- Moves todo to done/ when work begins
+- すべての保留中のtodoをタイトル、エリア、経過時間付きでリスト
+- オプションのエリアフィルター（例：`/gsd:check-todos api`）
+- 選択したtodoの完全なコンテキストを読み込み
+- 適切なアクション（今すぐ作業、フェーズに追加、ブレインストーム）にルーティング
+- 作業開始時にtodoをdone/に移動
 
-Usage: `/gsd:check-todos`
-Usage: `/gsd:check-todos api`
+使い方: `/gsd:check-todos`
+使い方: `/gsd:check-todos api`
 
-### User Acceptance Testing
+### ユーザー受け入れテスト
 
 **`/gsd:verify-work [phase]`**
-Validate built features through conversational UAT.
+会話型UATを通じて構築された機能を検証する。
 
-- Extracts testable deliverables from SUMMARY.md files
-- Presents tests one at a time (yes/no responses)
-- Automatically diagnoses failures and creates fix plans
-- Ready for re-execution if issues found
+- SUMMARYファイルからテスト可能な成果物を抽出
+- テストを1つずつ提示（yes/no応答）
+- 失敗を自動診断し修正プランを作成
+- 問題が見つかった場合は再実行の準備が完了
 
-Usage: `/gsd:verify-work 3`
+使い方: `/gsd:verify-work 3`
 
-### Milestone Auditing
+### マイルストーン監査
 
 **`/gsd:audit-milestone [version]`**
-Audit milestone completion against original intent.
+元の意図に対するマイルストーンの完了を監査する。
 
-- Reads all phase VERIFICATION.md files
-- Checks requirements coverage
-- Spawns integration checker for cross-phase wiring
-- Creates MILESTONE-AUDIT.md with gaps and tech debt
+- すべてのフェーズのVERIFICATION.mdファイルを読む
+- 要件カバレッジを確認
+- クロスフェーズの接続のための統合チェッカーを生成
+- ギャップと技術的負債を含むMILESTONE-AUDIT.mdを作成
 
-Usage: `/gsd:audit-milestone`
+使い方: `/gsd:audit-milestone`
 
 **`/gsd:plan-milestone-gaps`**
-Create phases to close gaps identified by audit.
+監査で特定されたギャップを埋めるフェーズを作成する。
 
-- Reads MILESTONE-AUDIT.md and groups gaps into phases
-- Prioritizes by requirement priority (must/should/nice)
-- Adds gap closure phases to ROADMAP.md
-- Ready for `/gsd:plan-phase` on new phases
+- MILESTONE-AUDIT.mdを読み、ギャップをフェーズにグループ化
+- 要件の優先度（must/should/nice）で優先順位付け
+- ROADMAP.mdにギャップクロージャーフェーズを追加
+- 新しいフェーズに対する`/gsd:plan-phase`の準備が完了
 
-Usage: `/gsd:plan-milestone-gaps`
+使い方: `/gsd:plan-milestone-gaps`
 
-### Configuration
+### 設定
 
 **`/gsd:settings`**
-Configure workflow toggles and model profile interactively.
+ワークフロートグルとモデルプロファイルをインタラクティブに設定する。
 
-- Toggle researcher, plan checker, verifier agents
-- Select model profile (quality/balanced/budget)
-- Updates `.planning/config.json`
+- リサーチャー、プランチェッカー、ベリファイアーエージェントのトグル
+- モデルプロファイルの選択（quality/balanced/budget）
+- `.planning/config.json`を更新
 
-Usage: `/gsd:settings`
+使い方: `/gsd:settings`
 
 **`/gsd:set-profile <profile>`**
-Quick switch model profile for GSD agents.
+GSDエージェントのモデルプロファイルをクイック切り替え。
 
-- `quality` — Opus everywhere except verification
-- `balanced` — Opus for planning, Sonnet for execution (default)
-- `budget` — Sonnet for writing, Haiku for research/verification
+- `quality` — 検証以外すべてにOpus
+- `balanced` — 計画にOpus、実行にSonnet（デフォルト）
+- `budget` — 執筆にSonnet、リサーチ/検証にHaiku
 
-Usage: `/gsd:set-profile budget`
+使い方: `/gsd:set-profile budget`
 
-### Utility Commands
+### ユーティリティコマンド
 
 **`/gsd:cleanup`**
-Archive accumulated phase directories from completed milestones.
+完了したマイルストーンから蓄積されたフェーズディレクトリをアーカイブする。
 
-- Identifies phases from completed milestones still in `.planning/phases/`
-- Shows dry-run summary before moving anything
-- Moves phase dirs to `.planning/milestones/v{X.Y}-phases/`
-- Use after multiple milestones to reduce `.planning/phases/` clutter
+- `.planning/phases/`にまだ残っている完了マイルストーンのフェーズを特定
+- 移動前にドライランサマリーを表示
+- フェーズディレクトリを`.planning/milestones/v{X.Y}-phases/`に移動
+- 複数のマイルストーン後に`.planning/phases/`の散らかりを減らすために使用
 
-Usage: `/gsd:cleanup`
+使い方: `/gsd:cleanup`
 
 **`/gsd:help`**
-Show this command reference.
+このコマンドリファレンスを表示する。
 
 **`/gsd:update`**
-Update GSD to latest version with changelog preview.
+変更ログプレビュー付きでGSDを最新バージョンに更新する。
 
-- Shows installed vs latest version comparison
-- Displays changelog entries for versions you've missed
-- Highlights breaking changes
-- Confirms before running install
-- Better than raw `npx get-shit-done-cc`
+- インストール済みと最新バージョンの比較を表示
+- 見逃したバージョンの変更ログエントリを表示
+- 破壊的変更をハイライト
+- インストール前に確認
+- 生の`npx get-shit-done-cc`より優れている
 
-Usage: `/gsd:update`
+使い方: `/gsd:update`
 
 **`/gsd:join-discord`**
-Join the GSD Discord community.
+GSD Discordコミュニティに参加する。
 
-- Get help, share what you're building, stay updated
-- Connect with other GSD users
+- ヘルプを得る、構築しているものを共有、最新情報を入手
+- 他のGSDユーザーとつながる
 
-Usage: `/gsd:join-discord`
+使い方: `/gsd:join-discord`
 
-## Files & Structure
+## ファイルと構造
 
 ```
 .planning/
-├── PROJECT.md            # Project vision
-├── ROADMAP.md            # Current phase breakdown
-├── STATE.md              # Project memory & context
-├── RETROSPECTIVE.md      # Living retrospective (updated per milestone)
-├── config.json           # Workflow mode & gates
-├── todos/                # Captured ideas and tasks
-│   ├── pending/          # Todos waiting to be worked on
-│   └── done/             # Completed todos
-├── debug/                # Active debug sessions
-│   └── resolved/         # Archived resolved issues
+├── PROJECT.md            # プロジェクトビジョン
+├── ROADMAP.md            # 現在のフェーズ分割
+├── STATE.md              # プロジェクトメモリとコンテキスト
+├── RETROSPECTIVE.md      # リビングレトロスペクティブ（マイルストーンごとに更新）
+├── config.json           # ワークフローモードとゲート
+├── todos/                # 記録されたアイデアとタスク
+│   ├── pending/          # 作業待ちのTodo
+│   └── done/             # 完了したTodo
+├── debug/                # アクティブなデバッグセッション
+│   └── resolved/         # アーカイブされた解決済み問題
 ├── milestones/
-│   ├── v1.0-ROADMAP.md       # Archived roadmap snapshot
-│   ├── v1.0-REQUIREMENTS.md  # Archived requirements
-│   └── v1.0-phases/          # Archived phase dirs (via /gsd:cleanup or --archive-phases)
+│   ├── v1.0-ROADMAP.md       # アーカイブされたロードマップスナップショット
+│   ├── v1.0-REQUIREMENTS.md  # アーカイブされた要件
+│   └── v1.0-phases/          # アーカイブされたフェーズディレクトリ（/gsd:cleanupまたは--archive-phases経由）
 │       ├── 01-foundation/
 │       └── 02-core-features/
-├── codebase/             # Codebase map (brownfield projects)
-│   ├── STACK.md          # Languages, frameworks, dependencies
-│   ├── ARCHITECTURE.md   # Patterns, layers, data flow
-│   ├── STRUCTURE.md      # Directory layout, key files
-│   ├── CONVENTIONS.md    # Coding standards, naming
-│   ├── TESTING.md        # Test setup, patterns
-│   ├── INTEGRATIONS.md   # External services, APIs
-│   └── CONCERNS.md       # Tech debt, known issues
+├── codebase/             # コードベースマップ（ブラウンフィールドプロジェクト）
+│   ├── STACK.md          # 言語、フレームワーク、依存関係
+│   ├── ARCHITECTURE.md   # パターン、レイヤー、データフロー
+│   ├── STRUCTURE.md      # ディレクトリレイアウト、キーファイル
+│   ├── CONVENTIONS.md    # コーディング規約、命名
+│   ├── TESTING.md        # テストセットアップ、パターン
+│   ├── INTEGRATIONS.md   # 外部サービス、API
+│   └── CONCERNS.md       # 技術的負債、既知の問題
 └── phases/
     ├── 01-foundation/
     │   ├── 01-01-PLAN.md
@@ -383,42 +383,42 @@ Usage: `/gsd:join-discord`
         └── 02-01-SUMMARY.md
 ```
 
-## Workflow Modes
+## ワークフローモード
 
-Set during `/gsd:new-project`:
+`/gsd:new-project`で設定：
 
 **Interactive Mode**
 
-- Confirms each major decision
-- Pauses at checkpoints for approval
-- More guidance throughout
+- 各主要な決定を確認
+- 承認のためにチェックポイントで一時停止
+- 全体を通じてより多くのガイダンス
 
 **YOLO Mode**
 
-- Auto-approves most decisions
-- Executes plans without confirmation
-- Only stops for critical checkpoints
+- ほとんどの決定を自動承認
+- 確認なしでプランを実行
+- クリティカルなチェックポイントでのみ停止
 
-Change anytime by editing `.planning/config.json`
+`.planning/config.json`を編集していつでも変更可能
 
-## Planning Configuration
+## 計画設定
 
-Configure how planning artifacts are managed in `.planning/config.json`:
+`.planning/config.json`で計画アーティファクトの管理方法を設定：
 
-**`planning.commit_docs`** (default: `true`)
-- `true`: Planning artifacts committed to git (standard workflow)
-- `false`: Planning artifacts kept local-only, not committed
+**`planning.commit_docs`** (デフォルト: `true`)
+- `true`: 計画アーティファクトをgitにコミット（標準ワークフロー）
+- `false`: 計画アーティファクトをローカル専用に保持、コミットしない
 
-When `commit_docs: false`:
-- Add `.planning/` to your `.gitignore`
-- Useful for OSS contributions, client projects, or keeping planning private
-- All planning files still work normally, just not tracked in git
+`commit_docs: false`の場合：
+- `.planning/`を`.gitignore`に追加
+- OSSコントリビューション、クライアントプロジェクト、計画をプライベートに保ちたい場合に便利
+- すべての計画ファイルは通常通り動作するが、gitで追跡されない
 
-**`planning.search_gitignored`** (default: `false`)
-- `true`: Add `--no-ignore` to broad ripgrep searches
-- Only needed when `.planning/` is gitignored and you want project-wide searches to include it
+**`planning.search_gitignored`** (デフォルト: `false`)
+- `true`: 広範なripgrep検索に`--no-ignore`を追加
+- `.planning/`がgitignoreされていて、プロジェクト全体の検索に含めたい場合にのみ必要
 
-Example config:
+設定例：
 ```json
 {
   "planning": {
@@ -428,25 +428,25 @@ Example config:
 }
 ```
 
-## Common Workflows
+## 一般的なワークフロー
 
-**Starting a new project:**
+**新しいプロジェクトを開始する：**
 
 ```
-/gsd:new-project        # Unified flow: questioning → research → requirements → roadmap
+/gsd:new-project        # 統合フロー：質問 → リサーチ → 要件 → ロードマップ
 /clear
-/gsd:plan-phase 1       # Create plans for first phase
+/gsd:plan-phase 1       # 最初のフェーズのプランを作成
 /clear
-/gsd:execute-phase 1    # Execute all plans in phase
+/gsd:execute-phase 1    # フェーズ内のすべてのプランを実行
 ```
 
-**Resuming work after a break:**
+**休憩後に作業を再開する：**
 
 ```
-/gsd:progress  # See where you left off and continue
+/gsd:progress  # 中断した場所を確認して続行
 ```
 
-**Adding urgent mid-milestone work:**
+**マイルストーン途中で緊急作業を追加する：**
 
 ```
 /gsd:insert-phase 5 "Critical security fix"
@@ -454,36 +454,36 @@ Example config:
 /gsd:execute-phase 5.1
 ```
 
-**Completing a milestone:**
+**マイルストーンを完了する：**
 
 ```
 /gsd:complete-milestone 1.0.0
 /clear
-/gsd:new-milestone  # Start next milestone (questioning → research → requirements → roadmap)
+/gsd:new-milestone  # 次のマイルストーンを開始（質問 → リサーチ → 要件 → ロードマップ）
 ```
 
-**Capturing ideas during work:**
+**作業中にアイデアを記録する：**
 
 ```
-/gsd:add-todo                    # Capture from conversation context
-/gsd:add-todo Fix modal z-index  # Capture with explicit description
-/gsd:check-todos                 # Review and work on todos
-/gsd:check-todos api             # Filter by area
+/gsd:add-todo                    # 会話コンテキストから記録
+/gsd:add-todo Fix modal z-index  # 明示的な説明で記録
+/gsd:check-todos                 # Todoを確認して作業
+/gsd:check-todos api             # エリアでフィルター
 ```
 
-**Debugging an issue:**
+**問題をデバッグする：**
 
 ```
-/gsd:debug "form submission fails silently"  # Start debug session
-# ... investigation happens, context fills up ...
+/gsd:debug "form submission fails silently"  # デバッグセッションを開始
+# ... 調査が行われ、コンテキストがいっぱいになる ...
 /clear
-/gsd:debug                                    # Resume from where you left off
+/gsd:debug                                    # 中断した場所から再開
 ```
 
-## Getting Help
+## ヘルプを得る
 
-- Read `.planning/PROJECT.md` for project vision
-- Read `.planning/STATE.md` for current context
-- Check `.planning/ROADMAP.md` for phase status
-- Run `/gsd:progress` to check where you're up to
+- `.planning/PROJECT.md`を読んでプロジェクトビジョンを確認
+- `.planning/STATE.md`を読んで現在のコンテキストを確認
+- `.planning/ROADMAP.md`を確認してフェーズステータスを確認
+- `/gsd:progress`を実行して現在の進捗を確認
 </reference>

@@ -1,20 +1,20 @@
-# Model Profile Resolution
+# モデルプロファイルの解決
 
-Resolve model profile once at the start of orchestration, then use it for all Task spawns.
+オーケストレーション開始時にモデルプロファイルを一度解決し、すべてのTaskスポーンに使用します。
 
-## Resolution Pattern
+## 解決パターン
 
 ```bash
 MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
 ```
 
-Default: `balanced` if not set or config missing.
+デフォルト: 設定されていないかconfigが見つからない場合は`balanced`。
 
-## Lookup Table
+## ルックアップテーブル
 
 @~/.claude/get-shit-done/references/model-profiles.md
 
-Look up the agent in the table for the resolved profile. Pass the model parameter to Task calls:
+解決されたプロファイルのテーブルでエージェントを検索します。Task呼び出しにmodelパラメータを渡します:
 
 ```
 Task(
@@ -24,11 +24,11 @@ Task(
 )
 ```
 
-**Note:** Opus-tier agents resolve to `"inherit"` (not `"opus"`). This causes the agent to use the parent session's model, avoiding conflicts with organization policies that may block specific opus versions.
+**注意:** Opusティアのエージェントは`"opus"`ではなく`"inherit"`に解決されます。これにより、エージェントは親セッションのモデルを使用し、特定のopusバージョンをブロックする可能性のある組織ポリシーとの競合を回避します。
 
-## Usage
+## 使い方
 
-1. Resolve once at orchestration start
-2. Store the profile value
-3. Look up each agent's model from the table when spawning
-4. Pass model parameter to each Task call (values: `"inherit"`, `"sonnet"`, `"haiku"`)
+1. オーケストレーション開始時に一度解決する
+2. プロファイル値を保存する
+3. スポーン時に各エージェントのモデルをテーブルから検索する
+4. 各Task呼び出しにmodelパラメータを渡す（値: `"inherit"`, `"sonnet"`, `"haiku"`）

@@ -1,6 +1,6 @@
 ---
 name: gsd:execute-phase
-description: Execute all plans in a phase with wave-based parallelization
+description: ウェーブベースの並列化によるフェーズ内全計画の実行
 argument-hint: "<phase-number> [--gaps-only]"
 allowed-tools:
   - Read
@@ -14,11 +14,11 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Execute all plans in a phase using wave-based parallel execution.
+ウェーブベースの並列実行を使用して、フェーズ内のすべての計画を実行する。
 
-Orchestrator stays lean: discover plans, analyze dependencies, group into waves, spawn subagents, collect results. Each subagent loads the full execute-plan context and handles its own plan.
+オーケストレーターはスリムに保つ: 計画の検出、依存関係の分析、ウェーブへのグループ化、サブエージェントの起動、結果の収集。各サブエージェントは完全なexecute-planコンテキストをロードし、自身の計画を処理する。
 
-Context budget: ~15% orchestrator, 100% fresh per subagent.
+コンテキスト予算: オーケストレーター約15%、サブエージェントごとに100%フレッシュ。
 </objective>
 
 <execution_context>
@@ -27,15 +27,16 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 </execution_context>
 
 <context>
-Phase: $ARGUMENTS
+フェーズ: $ARGUMENTS
 
-**Flags:**
-- `--gaps-only` — Execute only gap closure plans (plans with `gap_closure: true` in frontmatter). Use after verify-work creates fix plans.
+**フラグ:**
+- `--gaps-only` — ギャップ解消計画のみを実行（frontmatterに`gap_closure: true`がある計画）。verify-workが修正計画を作成した後に使用する。
 
-Context files are resolved inside the workflow via `gsd-tools init execute-phase` and per-subagent `<files_to_read>` blocks.
+コンテキストファイルはワークフロー内で`gsd-tools init execute-phase`およびサブエージェントごとの`<files_to_read>`ブロックを通じて解決される。
 </context>
 
 <process>
-Execute the execute-phase workflow from @~/.claude/get-shit-done/workflows/execute-phase.md end-to-end.
-Preserve all workflow gates (wave execution, checkpoint handling, verification, state updates, routing).
+@~/.claude/get-shit-done/workflows/execute-phase.md のexecute-phaseワークフローをエンドツーエンドで実行する。
+すべてのワークフローゲート（ウェーブ実行、チェックポイント処理、検証、状態更新、ルーティング）を維持すること。
 </process>
+

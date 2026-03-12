@@ -1,141 +1,141 @@
 <purpose>
-Check project progress, summarize recent work and what's ahead, then intelligently route to the next action — either executing an existing plan or creating the next one. Provides situational awareness before continuing work.
+プロジェクトの進捗を確認し、最近の作業と今後の内容を要約し、次のアクションにインテリジェントにルーティングする — 既存のプランの実行か、次のプランの作成のいずれか。作業を続行する前に状況認識を提供する。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出し元プロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 </required_reading>
 
 <process>
 
 <step name="init_context">
-**Load progress context (paths only):**
+**進捗コンテキストを読み込む（パスのみ）：**
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init progress)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`, `state_path`, `roadmap_path`, `project_path`, `config_path`.
+init JSONから抽出：`project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`, `state_path`, `roadmap_path`, `project_path`, `config_path`。
 
-If `project_exists` is false (no `.planning/` directory):
+`project_exists`がfalseの場合（`.planning/`ディレクトリがない）：
 
 ```
-No planning structure found.
+計画構造が見つかりません。
 
-Run /gsd:new-project to start a new project.
+/gsd:new-projectを実行して新しいプロジェクトを開始すること。
 ```
 
-Exit.
+終了。
 
-If missing STATE.md: suggest `/gsd:new-project`.
+STATE.mdが見つからない場合：`/gsd:new-project`を提案。
 
-**If ROADMAP.md missing but PROJECT.md exists:**
+**ROADMAP.mdが見つからないがPROJECT.mdが存在する場合：**
 
-This means a milestone was completed and archived. Go to **Route F** (between milestones).
+マイルストーンが完了してアーカイブされたことを意味する。**Route F**（マイルストーン間）に移動。
 
-If missing both ROADMAP.md and PROJECT.md: suggest `/gsd:new-project`.
+ROADMAP.mdとPROJECT.mdの両方が見つからない場合：`/gsd:new-project`を提案。
 </step>
 
 <step name="load">
-**Use structured extraction from gsd-tools:**
+**gsd-toolsからの構造化抽出を使用：**
 
-Instead of reading full files, use targeted tools to get only the data needed for the report:
+完全なファイルを読む代わりに、レポートに必要なデータのみを取得するためにターゲットツールを使用：
 - `ROADMAP=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap analyze)`
 - `STATE=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state-snapshot)`
 
-This minimizes orchestrator context usage.
+これによりオーケストレーターのコンテキスト使用量が最小化される。
 </step>
 
 <step name="analyze_roadmap">
-**Get comprehensive roadmap analysis (replaces manual parsing):**
+**包括的なロードマップ分析を取得（手動パースを置き換え）：**
 
 ```bash
 ROADMAP=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap analyze)
 ```
 
-This returns structured JSON with:
-- All phases with disk status (complete/partial/planned/empty/no_directory)
-- Goal and dependencies per phase
-- Plan and summary counts per phase
-- Aggregated stats: total plans, summaries, progress percent
-- Current and next phase identification
+構造化JSONで以下が返される：
+- ディスクステータス付きの全フェーズ（complete/partial/planned/empty/no_directory）
+- フェーズごとの目標と依存関係
+- フェーズごとのプランとサマリー数
+- 集計統計：総プラン、サマリー、進捗率
+- 現在のフェーズと次のフェーズの特定
 
-Use this instead of manually reading/parsing ROADMAP.md.
+ROADMAP.mdを手動で読み込み/パースする代わりにこれを使用する。
 </step>
 
 <step name="recent">
-**Gather recent work context:**
+**最近の作業コンテキストを収集：**
 
-- Find the 2-3 most recent SUMMARY.md files
-- Use `summary-extract` for efficient parsing:
+- 最新の2-3個のSUMMARY.mdファイルを見つける
+- 効率的なパースに`summary-extract`を使用：
   ```bash
   node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" summary-extract <path> --fields one_liner
   ```
-- This shows "what we've been working on"
+- これにより「何に取り組んでいたか」が表示される
   </step>
 
 <step name="position">
-**Parse current position from init context and roadmap analysis:**
+**initコンテキストとロードマップ分析から現在の位置をパース：**
 
-- Use `current_phase` and `next_phase` from `$ROADMAP`
-- Note `paused_at` if work was paused (from `$STATE`)
-- Count pending todos: use `init todos` or `list-todos`
-- Check for active debug sessions: `ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`
+- `$ROADMAP`から`current_phase`と`next_phase`を使用
+- 作業が一時停止されている場合は`paused_at`を記録（`$STATE`から）
+- 保留中のtodoを数える：`init todos`または`list-todos`を使用
+- アクティブなデバッグセッションを確認：`ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`
   </step>
 
 <step name="report">
-**Generate progress bar from gsd-tools, then present rich status report:**
+**gsd-toolsからプログレスバーを生成し、リッチなステータスレポートを提示：**
 
 ```bash
-# Get formatted progress bar
+# フォーマット済みプログレスバーを取得
 PROGRESS_BAR=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" progress bar --raw)
 ```
 
-Present:
+提示：
 
 ```
 # [Project Name]
 
-**Progress:** {PROGRESS_BAR}
-**Profile:** [quality/balanced/budget]
+**進捗:** {PROGRESS_BAR}
+**プロファイル:** [quality/balanced/budget]
 
-## Recent Work
-- [Phase X, Plan Y]: [what was accomplished - 1 line from summary-extract]
-- [Phase X, Plan Z]: [what was accomplished - 1 line from summary-extract]
+## 最近の作業
+- [Phase X, Plan Y]: [達成されたこと - summary-extractからの1行]
+- [Phase X, Plan Z]: [達成されたこと - summary-extractからの1行]
 
-## Current Position
+## 現在の位置
 Phase [N] of [total]: [phase-name]
 Plan [M] of [phase-total]: [status]
-CONTEXT: [✓ if has_context | - if not]
+CONTEXT: [✓ has_contextの場合 | - そうでない場合]
 
-## Key Decisions Made
-- [extract from $STATE.decisions[]]
-- [e.g. jq -r '.decisions[].decision' from state-snapshot]
+## 主要な決定事項
+- [$STATE.decisions[]から抽出]
+- [例：state-snapshotからjq -r '.decisions[].decision']
 
-## Blockers/Concerns
-- [extract from $STATE.blockers[]]
-- [e.g. jq -r '.blockers[].text' from state-snapshot]
+## ブロッカー/懸念事項
+- [$STATE.blockers[]から抽出]
+- [例：state-snapshotからjq -r '.blockers[].text']
 
-## Pending Todos
-- [count] pending — /gsd:check-todos to review
+## 保留中のTodo
+- [count]個の保留 — /gsd:check-todosで確認
 
-## Active Debug Sessions
-- [count] active — /gsd:debug to continue
-(Only show this section if count > 0)
+## アクティブなデバッグセッション
+- [count]個のアクティブ — /gsd:debugで続行
+(このセクションはcount > 0の場合のみ表示)
 
-## What's Next
-[Next phase/plan objective from roadmap analyze]
+## 次にやること
+[ロードマップ分析からの次のフェーズ/プラン目標]
 ```
 
 </step>
 
 <step name="route">
-**Determine next action based on verified counts.**
+**検証済みカウントに基づいて次のアクションを決定する。**
 
-**Step 1: Count plans, summaries, and issues in current phase**
+**ステップ1：現在のフェーズのプラン、サマリー、問題を数える**
 
-List files in the current phase directory:
+現在のフェーズディレクトリのファイルをリスト：
 
 ```bash
 ls -1 .planning/phases/[current-phase-dir]/*-PLAN.md 2>/dev/null | wc -l
@@ -143,145 +143,145 @@ ls -1 .planning/phases/[current-phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
 ls -1 .planning/phases/[current-phase-dir]/*-UAT.md 2>/dev/null | wc -l
 ```
 
-State: "This phase has {X} plans, {Y} summaries."
+状態：「このフェーズには{X}個のプラン、{Y}個のサマリーがある。」
 
-**Step 1.5: Check for unaddressed UAT gaps**
+**ステップ1.5：未対処のUATギャップを確認**
 
-Check for UAT.md files with status "diagnosed" (has gaps needing fixes).
+ステータスが「diagnosed」のUAT.mdファイル（修正が必要なギャップあり）を確認。
 
 ```bash
-# Check for diagnosed UAT with gaps
+# ギャップ付きのdiagnosedされたUATを確認
 grep -l "status: diagnosed" .planning/phases/[current-phase-dir]/*-UAT.md 2>/dev/null
 ```
 
-Track:
-- `uat_with_gaps`: UAT.md files with status "diagnosed" (gaps need fixing)
+追跡：
+- `uat_with_gaps`: ステータスが「diagnosed」のUAT.mdファイル（ギャップの修正が必要）
 
-**Step 2: Route based on counts**
+**ステップ2：カウントに基づいてルーティング**
 
-| Condition | Meaning | Action |
+| 条件 | 意味 | アクション |
 |-----------|---------|--------|
-| uat_with_gaps > 0 | UAT gaps need fix plans | Go to **Route E** |
-| summaries < plans | Unexecuted plans exist | Go to **Route A** |
-| summaries = plans AND plans > 0 | Phase complete | Go to Step 3 |
-| plans = 0 | Phase not yet planned | Go to **Route B** |
+| uat_with_gaps > 0 | UATギャップの修正プランが必要 | **Route E**へ |
+| summaries < plans | 未実行のプランが存在 | **Route A**へ |
+| summaries = plans かつ plans > 0 | フェーズ完了 | ステップ3へ |
+| plans = 0 | フェーズ未計画 | **Route B**へ |
 
 ---
 
-**Route A: Unexecuted plan exists**
+**Route A: 未実行のプランが存在**
 
-Find the first PLAN.md without matching SUMMARY.md.
-Read its `<objective>` section.
+対応するSUMMARY.mdがない最初のPLAN.mdを見つける。
+その`<objective>`セクションを読む。
 
 ```
 ---
 
 ## ▶ Next Up
 
-**{phase}-{plan}: [Plan Name]** — [objective summary from PLAN.md]
+**{phase}-{plan}: [Plan Name]** — [PLAN.mdからの目標サマリー]
 
 `/gsd:execute-phase {phase}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 ```
 
 ---
 
-**Route B: Phase needs planning**
+**Route B: フェーズの計画が必要**
 
-Check if `{phase_num}-CONTEXT.md` exists in phase directory.
+`{phase_num}-CONTEXT.md`がフェーズディレクトリに存在するか確認。
 
-**If CONTEXT.md exists:**
+**CONTEXT.mdが存在する場合：**
 
 ```
 ---
 
 ## ▶ Next Up
 
-**Phase {N}: {Name}** — {Goal from ROADMAP.md}
-<sub>✓ Context gathered, ready to plan</sub>
+**Phase {N}: {Name}** — {ROADMAP.mdからの目標}
+<sub>✓ コンテキスト収集済み、計画準備完了</sub>
 
 `/gsd:plan-phase {phase-number}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 ```
 
-**If CONTEXT.md does NOT exist:**
+**CONTEXT.mdが存在しない場合：**
 
 ```
 ---
 
 ## ▶ Next Up
 
-**Phase {N}: {Name}** — {Goal from ROADMAP.md}
+**Phase {N}: {Name}** — {ROADMAP.mdからの目標}
 
-`/gsd:discuss-phase {phase}` — gather context and clarify approach
+`/gsd:discuss-phase {phase}` — コンテキストを収集しアプローチを明確にする
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:plan-phase {phase}` — skip discussion, plan directly
-- `/gsd:list-phase-assumptions {phase}` — see Claude's assumptions
+**その他のオプション：**
+- `/gsd:plan-phase {phase}` — ディスカッションをスキップして直接計画
+- `/gsd:list-phase-assumptions {phase}` — Claudeの前提を確認
 
 ---
 ```
 
 ---
 
-**Route E: UAT gaps need fix plans**
+**Route E: UATギャップの修正プランが必要**
 
-UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
+ギャップ付きのUAT.mdが存在（diagnosed済みの問題）。ユーザーは修正を計画する必要がある。
 
 ```
 ---
 
-## ⚠ UAT Gaps Found
+## ⚠ UATギャップ検出
 
-**{phase_num}-UAT.md** has {N} gaps requiring fixes.
+**{phase_num}-UAT.md**に修正が必要な{N}個のギャップがある。
 
 `/gsd:plan-phase {phase} --gaps`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:execute-phase {phase}` — execute phase plans
-- `/gsd:verify-work {phase}` — run more UAT testing
+**その他のオプション：**
+- `/gsd:execute-phase {phase}` — フェーズプランを実行
+- `/gsd:verify-work {phase}` — さらにUATテストを実行
 
 ---
 ```
 
 ---
 
-**Step 3: Check milestone status (only when phase complete)**
+**ステップ3：マイルストーンステータスを確認（フェーズ完了時のみ）**
 
-Read ROADMAP.md and identify:
-1. Current phase number
-2. All phase numbers in the current milestone section
+ROADMAP.mdを読み、以下を特定：
+1. 現在のフェーズ番号
+2. 現在のマイルストーンセクションのすべてのフェーズ番号
 
-Count total phases and identify the highest phase number.
+総フェーズ数を数え、最大フェーズ番号を特定。
 
-State: "Current phase is {X}. Milestone has {N} phases (highest: {Y})."
+状態：「現在のフェーズは{X}。マイルストーンには{N}フェーズあり（最大：{Y}）。」
 
-**Route based on milestone status:**
+**マイルストーンステータスに基づくルーティング：**
 
-| Condition | Meaning | Action |
+| 条件 | 意味 | アクション |
 |-----------|---------|--------|
-| current phase < highest phase | More phases remain | Go to **Route C** |
-| current phase = highest phase | Milestone complete | Go to **Route D** |
+| 現在のフェーズ < 最大フェーズ | さらにフェーズが残っている | **Route C**へ |
+| 現在のフェーズ = 最大フェーズ | マイルストーン完了 | **Route D**へ |
 
 ---
 
-**Route C: Phase complete, more phases remain**
+**Route C: フェーズ完了、さらにフェーズが残っている**
 
-Read ROADMAP.md to get the next phase's name and goal.
+ROADMAP.mdを読んで次のフェーズの名前と目標を取得。
 
 ```
 ---
@@ -290,70 +290,70 @@ Read ROADMAP.md to get the next phase's name and goal.
 
 ## ▶ Next Up
 
-**Phase {Z+1}: {Name}** — {Goal from ROADMAP.md}
+**Phase {Z+1}: {Name}** — {ROADMAP.mdからの目標}
 
-`/gsd:discuss-phase {Z+1}` — gather context and clarify approach
+`/gsd:discuss-phase {Z+1}` — コンテキストを収集しアプローチを明確にする
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:plan-phase {Z+1}` — skip discussion, plan directly
-- `/gsd:verify-work {Z}` — user acceptance test before continuing
+**その他のオプション：**
+- `/gsd:plan-phase {Z+1}` — ディスカッションをスキップして直接計画
+- `/gsd:verify-work {Z}` — 続行前にユーザー受け入れテスト
 
 ---
 ```
 
 ---
 
-**Route D: Milestone complete**
+**Route D: マイルストーン完了**
 
 ```
 ---
 
-## 🎉 Milestone Complete
+## 🎉 マイルストーン完了
 
-All {N} phases finished!
+全{N}フェーズが完了しました！
 
 ## ▶ Next Up
 
-**Complete Milestone** — archive and prepare for next
+**マイルストーンを完了** — アーカイブして次の準備
 
 `/gsd:complete-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 
-**Also available:**
-- `/gsd:verify-work` — user acceptance test before completing milestone
+**その他のオプション：**
+- `/gsd:verify-work` — マイルストーン完了前にユーザー受け入れテスト
 
 ---
 ```
 
 ---
 
-**Route F: Between milestones (ROADMAP.md missing, PROJECT.md exists)**
+**Route F: マイルストーン間（ROADMAP.mdがないがPROJECT.mdが存在）**
 
-A milestone was completed and archived. Ready to start the next milestone cycle.
+マイルストーンが完了してアーカイブされた。次のマイルストーンサイクルを開始する準備が完了。
 
-Read MILESTONES.md to find the last completed milestone version.
+MILESTONES.mdを読んで最後に完了したマイルストーンバージョンを見つける。
 
 ```
 ---
 
 ## ✓ Milestone v{X.Y} Complete
 
-Ready to plan the next milestone.
+次のマイルストーンの計画準備が完了しました。
 
 ## ▶ Next Up
 
-**Start Next Milestone** — questioning → research → requirements → roadmap
+**次のマイルストーンを開始** — 質問 → リサーチ → 要件 → ロードマップ
 
 `/gsd:new-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first → 新しいコンテキストウィンドウ</sub>
 
 ---
 ```
@@ -361,22 +361,22 @@ Ready to plan the next milestone.
 </step>
 
 <step name="edge_cases">
-**Handle edge cases:**
+**エッジケースの処理：**
 
-- Phase complete but next phase not planned → offer `/gsd:plan-phase [next]`
-- All work complete → offer milestone completion
-- Blockers present → highlight before offering to continue
-- Handoff file exists → mention it, offer `/gsd:resume-work`
+- フェーズ完了だが次のフェーズが未計画 → `/gsd:plan-phase [next]`を提案
+- すべての作業完了 → マイルストーン完了を提案
+- ブロッカーが存在 → 続行の提案前にハイライト
+- ハンドオフファイルが存在 → 言及し、`/gsd:resume-work`を提案
   </step>
 
 </process>
 
 <success_criteria>
 
-- [ ] Rich context provided (recent work, decisions, issues)
-- [ ] Current position clear with visual progress
-- [ ] What's next clearly explained
-- [ ] Smart routing: /gsd:execute-phase if plans exist, /gsd:plan-phase if not
-- [ ] User confirms before any action
-- [ ] Seamless handoff to appropriate gsd command
+- [ ] リッチなコンテキストが提供された（最近の作業、決定、問題）
+- [ ] ビジュアルな進捗付きで現在の位置が明確
+- [ ] 次にやることが明確に説明されている
+- [ ] スマートルーティング：プランが存在すれば/gsd:execute-phase、なければ/gsd:plan-phase
+- [ ] アクション前にユーザーが確認
+- [ ] 適切なgsdコマンドへのシームレスなハンドオフ
       </success_criteria>

@@ -1,13 +1,13 @@
 <trigger>
-Use this workflow when:
-- Starting a new session on an existing project
-- User says "continue", "what's next", "where were we", "resume"
-- Any planning operation when .planning/ already exists
-- User returns after time away from project
+このワークフローは以下の場合に使用する：
+- 既存プロジェクトで新しいセッションを開始する時
+- ユーザーが「続き」「次は何」「どこまでやった」「再開」と言った時
+- .planning/が既に存在する状態でのプランニング操作
+- ユーザーがプロジェクトから離れていた後に戻った時
 </trigger>
 
 <purpose>
-Instantly restore full project context so "Where were we?" has an immediate, complete answer.
+プロジェクトの完全なコンテキストを即座に復元し、「どこまでやった？」にすぐに完全な回答ができるようにする。
 </purpose>
 
 <required_reading>
@@ -17,50 +17,50 @@ Instantly restore full project context so "Where were we?" has an immediate, com
 <process>
 
 <step name="initialize">
-Load all context in one call:
+1回の呼び出しで全コンテキストを読み込む：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init resume)
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Parse JSON for: `state_exists`, `roadmap_exists`, `project_exists`, `planning_exists`, `has_interrupted_agent`, `interrupted_agent_id`, `commit_docs`.
+JSONを解析: `state_exists`、`roadmap_exists`、`project_exists`、`planning_exists`、`has_interrupted_agent`、`interrupted_agent_id`、`commit_docs`。
 
-**If `state_exists` is true:** Proceed to load_state
-**If `state_exists` is false but `roadmap_exists` or `project_exists` is true:** Offer to reconstruct STATE.md
-**If `planning_exists` is false:** This is a new project - route to /gsd:new-project
+**`state_exists`がtrueの場合:** load_stateに進む
+**`state_exists`がfalseだが`roadmap_exists`または`project_exists`がtrueの場合:** STATE.mdの再構築を提案
+**`planning_exists`がfalseの場合:** 新規プロジェクト - /gsd:new-projectにルーティング
 </step>
 
 <step name="load_state">
 
-Read and parse STATE.md, then PROJECT.md:
+STATE.mdを読み込んで解析し、次にPROJECT.mdを読み込む：
 
 ```bash
 cat .planning/STATE.md
 cat .planning/PROJECT.md
 ```
 
-**From STATE.md extract:**
+**STATE.mdから抽出：**
 
-- **Project Reference**: Core value and current focus
-- **Current Position**: Phase X of Y, Plan A of B, Status
-- **Progress**: Visual progress bar
-- **Recent Decisions**: Key decisions affecting current work
-- **Pending Todos**: Ideas captured during sessions
-- **Blockers/Concerns**: Issues carried forward
-- **Session Continuity**: Where we left off, any resume files
+- **プロジェクト参照**: コアバリューと現在のフォーカス
+- **現在の位置**: フェーズ X / Y、プラン A / B、ステータス
+- **進捗**: ビジュアルプログレスバー
+- **最近の決定**: 現在の作業に影響する重要な決定
+- **保留中のTodo**: セッション中にキャプチャされたアイデア
+- **ブロッカー/懸念事項**: 持ち越された問題
+- **セッション継続性**: 中断した場所、再開ファイル
 
-**From PROJECT.md extract:**
+**PROJECT.mdから抽出：**
 
-- **What This Is**: Current accurate description
-- **Requirements**: Validated, Active, Out of Scope
-- **Key Decisions**: Full decision log with outcomes
-- **Constraints**: Hard limits on implementation
+- **これは何か**: 現在の正確な説明
+- **要件**: 検証済み、アクティブ、スコープ外
+- **重要な決定**: 結果を含む完全な決定ログ
+- **制約**: 実装のハードリミット
 
 </step>
 
 <step name="check_incomplete_work">
-Look for incomplete work that needs attention:
+注意が必要な未完了作業を探す：
 
 ```bash
 # Check for continue-here files (mid-plan resumption)
@@ -78,137 +78,137 @@ if [ "$has_interrupted_agent" = "true" ]; then
 fi
 ```
 
-**If .continue-here file exists:**
+**.continue-hereファイルが存在する場合：**
 
-- This is a mid-plan resumption point
-- Read the file for specific resumption context
-- Flag: "Found mid-plan checkpoint"
+- プラン途中の再開ポイント
+- 具体的な再開コンテキストのためにファイルを読み込む
+- フラグ: 「プラン途中のチェックポイントを発見」
 
-**If PLAN without SUMMARY exists:**
+**SUMMARYのないPLANが存在する場合：**
 
-- Execution was started but not completed
-- Flag: "Found incomplete plan execution"
+- 実行は開始されたが完了していません
+- フラグ: 「未完了のプラン実行を発見」
 
-**If interrupted agent found:**
+**中断されたエージェントが見つかった場合：**
 
-- Subagent was spawned but session ended before completion
-- Read agent-history.json for task details
-- Flag: "Found interrupted agent"
+- サブエージェントが生成されたがセッション終了前に完了しませんでした
+- タスクの詳細についてagent-history.jsonを読み込む
+- フラグ: 「中断されたエージェントを発見」
   </step>
 
 <step name="present_status">
-Present complete project status to user:
+ユーザーに完全なプロジェクトステータスを提示する：
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  PROJECT STATUS                                               ║
+║  プロジェクトステータス                                         ║
 ╠══════════════════════════════════════════════════════════════╣
-║  Building: [one-liner from PROJECT.md "What This Is"]         ║
+║  構築中: [PROJECT.md "What This Is"からの一行説明]              ║
 ║                                                               ║
-║  Phase: [X] of [Y] - [Phase name]                            ║
-║  Plan:  [A] of [B] - [Status]                                ║
-║  Progress: [██████░░░░] XX%                                  ║
+║  フェーズ: [X] / [Y] - [フェーズ名]                            ║
+║  プラン:  [A] / [B] - [ステータス]                             ║
+║  進捗: [██████░░░░] XX%                                      ║
 ║                                                               ║
-║  Last activity: [date] - [what happened]                     ║
+║  最終活動: [日付] - [実施内容]                                  ║
 ╚══════════════════════════════════════════════════════════════╝
 
-[If incomplete work found:]
-⚠️  Incomplete work detected:
-    - [.continue-here file or incomplete plan]
+[未完了作業が見つかった場合:]
+⚠️  未完了の作業を検出:
+    - [.continue-hereファイルまたは未完了のプラン]
 
-[If interrupted agent found:]
-⚠️  Interrupted agent detected:
-    Agent ID: [id]
-    Task: [task description from agent-history.json]
-    Interrupted: [timestamp]
+[中断されたエージェントが見つかった場合:]
+⚠️  中断されたエージェントを検出:
+    エージェントID: [id]
+    タスク: [agent-history.jsonからのタスク説明]
+    中断日時: [timestamp]
 
-    Resume with: Task tool (resume parameter with agent ID)
+    再開方法: Taskツール（エージェントIDでresumeパラメータ）
 
-[If pending todos exist:]
-📋 [N] pending todos — /gsd:check-todos to review
+[保留中のtodoがある場合:]
+📋 [N] 件の保留中todo — /gsd:check-todos で確認
 
-[If blockers exist:]
-⚠️  Carried concerns:
-    - [blocker 1]
-    - [blocker 2]
+[ブロッカーがある場合:]
+⚠️  持ち越しの懸念事項:
+    - [ブロッカー 1]
+    - [ブロッカー 2]
 
-[If alignment is not ✓:]
-⚠️  Brief alignment: [status] - [assessment]
+[アラインメントが✓でない場合:]
+⚠️  ブリーフアラインメント: [ステータス] - [評価]
 ```
 
 </step>
 
 <step name="determine_next_action">
-Based on project state, determine the most logical next action:
+プロジェクトの状態に基づいて、最も論理的な次のアクションを決定する：
 
-**If interrupted agent exists:**
-→ Primary: Resume interrupted agent (Task tool with resume parameter)
-→ Option: Start fresh (abandon agent work)
+**中断されたエージェントが存在する場合：**
+→ 主要: 中断されたエージェントを再開（Taskツールでresumeパラメータ）
+→ オプション: 最初からやり直す（エージェント作業を放棄）
 
-**If .continue-here file exists:**
-→ Primary: Resume from checkpoint
-→ Option: Start fresh on current plan
+**.continue-hereファイルが存在する場合：**
+→ 主要: チェックポイントから再開
+→ オプション: 現在のプランを最初からやり直す
 
-**If incomplete plan (PLAN without SUMMARY):**
-→ Primary: Complete the incomplete plan
-→ Option: Abandon and move on
+**未完了のプラン（SUMMARYのないPLAN）がある場合：**
+→ 主要: 未完了のプランを完了する
+→ オプション: 放棄して次に進む
 
-**If phase in progress, all plans complete:**
-→ Primary: Transition to next phase
-→ Option: Review completed work
+**フェーズが進行中で、すべてのプランが完了している場合：**
+→ 主要: 次のフェーズに移行
+→ オプション: 完了した作業を確認
 
-**If phase ready to plan:**
-→ Check if CONTEXT.md exists for this phase:
+**フェーズがプラン準備完了の場合：**
+→ このフェーズにCONTEXT.mdが存在するか確認：
 
-- If CONTEXT.md missing:
-  → Primary: Discuss phase vision (how user imagines it working)
-  → Secondary: Plan directly (skip context gathering)
-- If CONTEXT.md exists:
-  → Primary: Plan the phase
-  → Option: Review roadmap
+- CONTEXT.mdが存在しない場合：
+  → 主要: フェーズのビジョンを議論（ユーザーがどう動作させたいか）
+  → 副次: 直接プランニング（コンテキスト収集をスキップ）
+- CONTEXT.mdが存在する場合：
+  → 主要: フェーズを計画する
+  → オプション: ロードマップを確認
 
-**If phase ready to execute:**
-→ Primary: Execute next plan
-→ Option: Review the plan first
+**フェーズが実行準備完了の場合：**
+→ 主要: 次のプランを実行
+→ オプション: 先にプランを確認
 </step>
 
 <step name="offer_options">
-Present contextual options based on project state:
+プロジェクトの状態に基づいたコンテキストに応じたオプションを提示する：
 
 ```
-What would you like to do?
+何をしますか？
 
-[Primary action based on state - e.g.:]
-1. Resume interrupted agent [if interrupted agent found]
-   OR
-1. Execute phase (/gsd:execute-phase {phase})
-   OR
-1. Discuss Phase 3 context (/gsd:discuss-phase 3) [if CONTEXT.md missing]
-   OR
-1. Plan Phase 3 (/gsd:plan-phase 3) [if CONTEXT.md exists or discuss option declined]
+[状態に基づく主要アクション - 例:]
+1. 中断されたエージェントを再開 [中断されたエージェントが見つかった場合]
+   または
+1. フェーズを実行 (/gsd:execute-phase {phase})
+   または
+1. フェーズ3のコンテキストを議論 (/gsd:discuss-phase 3) [CONTEXT.mdが存在しない場合]
+   または
+1. フェーズ3を計画 (/gsd:plan-phase 3) [CONTEXT.mdが存在するか、議論オプションが辞退された場合]
 
-[Secondary options:]
-2. Review current phase status
-3. Check pending todos ([N] pending)
-4. Review brief alignment
-5. Something else
+[副次オプション:]
+2. 現在のフェーズステータスを確認
+3. 保留中のtodoを確認（[N] 件保留中）
+4. ブリーフアラインメントを確認
+5. その他
 ```
 
-**Note:** When offering phase planning, check for CONTEXT.md existence first:
+**注意:** フェーズプランニングを提案する際は、まずCONTEXT.mdの存在を確認すること：
 
 ```bash
 ls .planning/phases/XX-name/*-CONTEXT.md 2>/dev/null
 ```
 
-If missing, suggest discuss-phase before plan. If exists, offer plan directly.
+存在しない場合は、プランの前にdiscuss-phaseを提案する。存在する場合は、直接プランを提案する。
 
-Wait for user selection.
+ユーザーの選択を待つ。
 </step>
 
 <step name="route_to_workflow">
-Based on user selection, route to appropriate workflow:
+ユーザーの選択に基づいて、適切なワークフローにルーティングする：
 
-- **Execute plan** → Show command for user to run after clearing:
+- **プランを実行** → クリア後にユーザーが実行するコマンドを表示：
   ```
   ---
 
@@ -222,7 +222,7 @@ Based on user selection, route to appropriate workflow:
 
   ---
   ```
-- **Plan phase** → Show command for user to run after clearing:
+- **フェーズを計画** → クリア後にユーザーが実行するコマンドを表示：
   ```
   ---
 
@@ -242,16 +242,16 @@ Based on user selection, route to appropriate workflow:
 
   ---
   ```
-- **Transition** → ./transition.md
-- **Check todos** → Read .planning/todos/pending/, present summary
-- **Review alignment** → Read PROJECT.md, compare to current state
-- **Something else** → Ask what they need
+- **移行** → ./transition.md
+- **todoを確認** → .planning/todos/pending/を読み込み、サマリーを提示
+- **アラインメントを確認** → PROJECT.mdを読み込み、現在の状態と比較
+- **その他** → 何が必要か確認
 </step>
 
 <step name="update_session">
-Before proceeding to routed workflow, update session continuity:
+ルーティングされたワークフローに進む前に、セッション継続性を更新する：
 
-Update STATE.md:
+STATE.mdを更新：
 
 ```markdown
 ## Session Continuity
@@ -261,47 +261,47 @@ Stopped at: Session resumed, proceeding to [action]
 Resume file: [updated if applicable]
 ```
 
-This ensures if session ends unexpectedly, next resume knows the state.
+セッションが予期せず終了した場合に、次の再開時に状態を把握できるようにする。
 </step>
 
 </process>
 
 <reconstruction>
-If STATE.md is missing but other artifacts exist:
+STATE.mdがないが他のアーティファクトが存在する場合：
 
-"STATE.md missing. Reconstructing from artifacts..."
+「STATE.mdがありません。アーティファクトから再構築中...」
 
-1. Read PROJECT.md → Extract "What This Is" and Core Value
-2. Read ROADMAP.md → Determine phases, find current position
-3. Scan \*-SUMMARY.md files → Extract decisions, concerns
-4. Count pending todos in .planning/todos/pending/
-5. Check for .continue-here files → Session continuity
+1. PROJECT.mdを読み込み → 「What This Is」とCore Valueを抽出
+2. ROADMAP.mdを読み込み → フェーズを特定し、現在の位置を見つける
+3. \*-SUMMARY.mdファイルをスキャン → 決定事項、懸念事項を抽出
+4. .planning/todos/pending/内の保留中todoをカウント
+5. .continue-hereファイルを確認 → セッション継続性
 
-Reconstruct and write STATE.md, then proceed normally.
+STATE.mdを再構築して書き込み、その後通常通り進める。
 
-This handles cases where:
+以下のケースに対応する：
 
-- Project predates STATE.md introduction
-- File was accidentally deleted
-- Cloning repo without full .planning/ state
+- STATE.md導入前のプロジェクト
+- ファイルが誤って削除された
+- 完全な.planning/状態なしでリポジトリをクローン
   </reconstruction>
 
 <quick_resume>
-If user says "continue" or "go":
-- Load state silently
-- Determine primary action
-- Execute immediately without presenting options
+ユーザーが「続き」や「行こう」と言った場合：
+- 状態をサイレントに読み込み
+- 主要アクションを決定
+- オプションを提示せずに即座に実行
 
-"Continuing from [state]... [action]"
+「[状態]から続行中... [アクション]」
 </quick_resume>
 
 <success_criteria>
-Resume is complete when:
+再開は以下の条件を満たした時に完了：
 
-- [ ] STATE.md loaded (or reconstructed)
-- [ ] Incomplete work detected and flagged
-- [ ] Clear status presented to user
-- [ ] Contextual next actions offered
-- [ ] User knows exactly where project stands
-- [ ] Session continuity updated
+- [ ] STATE.mdが読み込まれた（または再構築された）
+- [ ] 未完了の作業が検出されフラグが立てられた
+- [ ] 明確なステータスがユーザーに提示された
+- [ ] コンテキストに応じた次のアクションが提案された
+- [ ] ユーザーがプロジェクトの現状を正確に把握した
+- [ ] セッション継続性が更新された
       </success_criteria>

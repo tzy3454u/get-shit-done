@@ -1,10 +1,10 @@
 <purpose>
-Execute a phase prompt (PLAN.md) and create the outcome summary (SUMMARY.md).
+フェーズプロンプト（PLAN.md）を実行し、結果サマリー（SUMMARY.md）を作成する。
 </purpose>
 
 <required_reading>
-Read STATE.md before any operation to load project context.
-Read config.json for planning behavior settings.
+操作前にSTATE.mdを読み、プロジェクトコンテキストを読み込むこと。
+計画動作の設定についてconfig.jsonを読むこと。
 
 @~/.claude/get-shit-done/references/git-integration.md
 </required_reading>
@@ -12,38 +12,38 @@ Read config.json for planning behavior settings.
 <process>
 
 <step name="init_context" priority="first">
-Load execution context (paths only to minimize orchestrator context):
+実行コンテキストを読み込む（オーケストレーターのコンテキストを最小化するためパスのみ）：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init execute-phase "${PHASE}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Extract from init JSON: `executor_model`, `commit_docs`, `phase_dir`, `phase_number`, `plans`, `summaries`, `incomplete_plans`, `state_path`, `config_path`.
+init JSONから抽出：`executor_model`, `commit_docs`, `phase_dir`, `phase_number`, `plans`, `summaries`, `incomplete_plans`, `state_path`, `config_path`。
 
-If `.planning/` missing: error.
+`.planning/`がない場合：エラー。
 </step>
 
 <step name="identify_plan">
 ```bash
-# Use plans/summaries from INIT JSON, or list files
+# INIT JSONからのplans/summariesを使用するか、ファイルをリスト
 ls .planning/phases/XX-name/*-PLAN.md 2>/dev/null | sort
 ls .planning/phases/XX-name/*-SUMMARY.md 2>/dev/null | sort
 ```
 
-Find first PLAN without matching SUMMARY. Decimal phases supported (`01.1-hotfix/`):
+対応するSUMMARYがない最初のPLANを見つける。小数フェーズ対応（`01.1-hotfix/`）：
 
 ```bash
 PHASE=$(echo "$PLAN_PATH" | grep -oE '[0-9]+(\.[0-9]+)?-[0-9]+')
-# config settings can be fetched via gsd-tools config-get if needed
+# 必要に応じてgsd-tools config-getで設定を取得可能
 ```
 
 <if mode="yolo">
-Auto-approve: `⚡ Execute {phase}-{plan}-PLAN.md [Plan X of Y for Phase Z]` → parse_segments.
+自動承認：`⚡ Execute {phase}-{plan}-PLAN.md [Plan X of Y for Phase Z]` → parse_segments。
 </if>
 
 <if mode="interactive" OR="custom with gates.execute_next_plan true">
-Present plan identification, wait for confirmation.
+プラン識別を提示し、確認を待つ。
 </if>
 </step>
 
@@ -59,21 +59,28 @@ PLAN_START_EPOCH=$(date +%s)
 grep -n "type=\"checkpoint" .planning/phases/XX-name/{phase}-{plan}-PLAN.md
 ```
 
-**Routing by checkpoint type:**
+**チェックポイントタイプ別のルーティング：**
 
-| Checkpoints | Pattern | Execution |
+| チェックポイント | パターン | 実行方法 |
 |-------------|---------|-----------|
-| None | A (autonomous) | Single subagent: full plan + SUMMARY + commit |
-| Verify-only | B (segmented) | Segments between checkpoints. After none/human-verify → SUBAGENT. After decision/human-action → MAIN |
-| Decision | C (main) | Execute entirely in main context |
+| なし | A（自律） | 単一サブエージェント：完全なプラン + SUMMARY + コミット |
+| 検証のみ | B（セグメント化） | チェックポイント間のセグメント。none/human-verifyの後 → サブエージェント。decision/human-actionの後 → メイン |
+| 判断 | C（メイン） | 完全にメインコンテキストで実行 |
 
-**Pattern A:** init_agent_tracking → spawn Task(subagent_type="gsd-executor", model=executor_model) with prompt: execute plan at [path], autonomous, all tasks + SUMMARY + commit, follow deviation/auth rules, report: plan name, tasks, SUMMARY path, commit hash → track agent_id → wait → update tracking → report.
+**パターンA：** init_agent_tracking → Task(subagent_type="gsd-executor", model=executor_model)を生成、プロンプト：[path]でプランを実行、自律、全タスク + SUMMARY + コミット、deviation/authルールに従う、報告：プラン名、タスク、SUMMARYパス、コミットハッシュ → agent_idを追跡 → 待機 → トラッキング更新 → 報告。
 
-**Pattern B:** Execute segment-by-segment. Autonomous segments: spawn subagent for assigned tasks only (no SUMMARY/commit). Checkpoints: main context. After all segments: aggregate, create SUMMARY, commit. See segment_execution.
+**パターンB：** セグメントごとに実行。自律セグメント：割り当てられたタスクのみのサブエージェントを生成（SUMMARY/コミットなし）。チェックポイント：メインコンテキスト。全セグメント後：ファイル/逸脱/決定を集約 → SUMMARY作成 → コミット → セルフチェック：
+   - key-files.createdがディスク上に存在するか`[ -f ]`で検証
+   - `git log --oneline --all --grep="{phase}-{plan}"`が1つ以上のコミットを返すか確認
+   - SUMMARYに`## Self-Check: PASSED`または`## Self-Check: FAILED`を追記
 
-**Pattern C:** Execute in main using standard flow (step name="execute").
+   **既知のClaude Codeバグ（classifyHandoffIfNeeded）：** セグメントエージェントが`classifyHandoffIfNeeded is not defined`で「failed」と報告した場合、これはClaude Codeのランタイムバグ — 実際の失敗ではない。スポットチェックを実行、合格なら成功として扱う。
 
-Fresh context per subagent preserves peak quality. Main context stays lean.
+segment_executionを参照。
+
+**パターンC：** 標準フロー（step name="execute"）を使用してメインで実行。
+
+サブエージェントごとの新鮮なコンテキストがピーク品質を維持する。メインコンテキストは軽量に保たれる。
 </step>
 
 <step name="init_agent_tracking">
@@ -88,26 +95,26 @@ if [ -f .planning/current-agent-id.txt ]; then
 fi
 ```
 
-If interrupted: ask user to resume (Task `resume` parameter) or start fresh.
+中断された場合：再開（Taskの`resume`パラメーター）するか、新規開始するかユーザーに確認。
 
-**Tracking protocol:** On spawn: write agent_id to `current-agent-id.txt`, append to agent-history.json: `{"agent_id":"[id]","task_description":"[desc]","phase":"[phase]","plan":"[plan]","segment":[num|null],"timestamp":"[ISO]","status":"spawned","completion_timestamp":null}`. On completion: status → "completed", set completion_timestamp, delete current-agent-id.txt. Prune: if entries > max_entries, remove oldest "completed" (never "spawned").
+**トラッキングプロトコル：** 生成時：`current-agent-id.txt`にagent_idを書き込み、agent-history.jsonに追加：`{"agent_id":"[id]","task_description":"[desc]","phase":"[phase]","plan":"[plan]","segment":[num|null],"timestamp":"[ISO]","status":"spawned","completion_timestamp":null}`。完了時：status → "completed"、completion_timestampを設定、current-agent-id.txtを削除。プルーニング：entriesがmax_entriesを超えた場合、最も古い"completed"を削除（"spawned"は削除しない）。
 
-Run for Pattern A/B before spawning. Pattern C: skip.
+パターンA/Bでは生成前に実行。パターンC：スキップ。
 </step>
 
 <step name="segment_execution">
-Pattern B only (verify-only checkpoints). Skip for A/C.
+パターンBのみ（検証のみチェックポイント）。A/Cではスキップ。
 
-1. Parse segment map: checkpoint locations and types
-2. Per segment:
-   - Subagent route: spawn gsd-executor for assigned tasks only. Prompt: task range, plan path, read full plan for context, execute assigned tasks, track deviations, NO SUMMARY/commit. Track via agent protocol.
-   - Main route: execute tasks using standard flow (step name="execute")
-3. After ALL segments: aggregate files/deviations/decisions → create SUMMARY.md → commit → self-check:
-   - Verify key-files.created exist on disk with `[ -f ]`
-   - Check `git log --oneline --all --grep="{phase}-{plan}"` returns ≥1 commit
-   - Append `## Self-Check: PASSED` or `## Self-Check: FAILED` to SUMMARY
+1. セグメントマップをパース：チェックポイントの場所とタイプ
+2. セグメントごと：
+   - サブエージェントルート：割り当てられたタスクのみのgsd-executorを生成。プロンプト：タスク範囲、プランパス、コンテキスト用に完全なプランを読む、割り当てられたタスクを実行、逸脱を追跡、SUMMARY/コミットなし。エージェントプロトコルで追跡。
+   - メインルート：標準フロー（step name="execute"）でタスクを実行
+3. 全セグメント後：ファイル/逸脱/決定を集約 → SUMMARY.md作成 → コミット → セルフチェック：
+   - key-files.createdがディスク上に存在するか`[ -f ]`で検証
+   - `git log --oneline --all --grep="{phase}-{plan}"`が1つ以上のコミットを返すか確認
+   - SUMMARYに`## Self-Check: PASSED`または`## Self-Check: FAILED`を追記
 
-   **Known Claude Code bug (classifyHandoffIfNeeded):** If any segment agent reports "failed" with `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a real failure. Run spot-checks; if they pass, treat as successful.
+   **既知のClaude Codeバグ（classifyHandoffIfNeeded）：** セグメントエージェントが`classifyHandoffIfNeeded is not defined`で「failed」と報告した場合、これはClaude Codeのランタイムバグ — 実際の失敗ではない。スポットチェックを実行、合格なら成功として扱う。
 
 
 
@@ -118,143 +125,143 @@ Pattern B only (verify-only checkpoints). Skip for A/C.
 ```bash
 cat .planning/phases/XX-name/{phase}-{plan}-PLAN.md
 ```
-This IS the execution instructions. Follow exactly. If plan references CONTEXT.md: honor user's vision throughout.
+これが実行指示そのものである。正確に従うこと。プランがCONTEXT.mdを参照する場合：全体を通じてユーザーのビジョンを尊重すること。
 
-**If plan contains `<interfaces>` block:** These are pre-extracted type definitions and contracts. Use them directly — do NOT re-read the source files to discover types. The planner already extracted what you need.
+**プランに`<interfaces>`ブロックが含まれる場合：** これらは事前抽出された型定義とコントラクト。直接使用すること — 型を発見するためにソースファイルを再度読まないこと。プランナーが必要なものを既に抽出している。
 </step>
 
 <step name="previous_phase_check">
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phases list --type summaries --raw
-# Extract the second-to-last summary from the JSON result
+# JSON結果から最後から2番目のサマリーを抽出
 ```
-If previous SUMMARY has unresolved "Issues Encountered" or "Next Phase Readiness" blockers: AskUserQuestion(header="Previous Issues", options: "Proceed anyway" | "Address first" | "Review previous").
+以前のSUMMARYに未解決の「Issues Encountered」または「Next Phase Readiness」ブロッカーがある場合：AskUserQuestion(header="Previous Issues", options: "Proceed anyway" | "Address first" | "Review previous")。
 </step>
 
 <step name="execute">
-Deviations are normal — handle via rules below.
+逸脱は正常 — 以下のルールで処理する。
 
-1. Read @context files from prompt
-2. Per task:
-   - `type="auto"`: if `tdd="true"` → TDD execution. Implement with deviation rules + auth gates. Verify done criteria. Commit (see task_commit). Track hash for Summary.
-   - `type="checkpoint:*"`: STOP → checkpoint_protocol → wait for user → continue only after confirmation.
-3. Run `<verification>` checks
-4. Confirm `<success_criteria>` met
-5. Document deviations in Summary
+1. プロンプトから@contextファイルを読む
+2. タスクごと：
+   - `type="auto"`: `tdd="true"`の場合 → TDD実行。逸脱ルール + 認証ゲート付きで実装。完了基準を検証。コミット（task_commitを参照）。サマリー用にハッシュを追跡。
+   - `type="checkpoint:*"`: 停止 → checkpoint_protocol → ユーザーを待つ → 確認後のみ続行。
+3. `<verification>`チェックを実行
+4. `<success_criteria>`が満たされていることを確認
+5. サマリーに逸脱を文書化
 </step>
 
 <authentication_gates>
 
-## Authentication Gates
+## 認証ゲート
 
-Auth errors during execution are NOT failures — they're expected interaction points.
+実行中の認証エラーは失敗ではない — 予想されるインタラクションポイントである。
 
-**Indicators:** "Not authenticated", "Unauthorized", 401/403, "Please run {tool} login", "Set {ENV_VAR}"
+**指標：** "Not authenticated"、"Unauthorized"、401/403、"Please run {tool} login"、"Set {ENV_VAR}"
 
-**Protocol:**
-1. Recognize auth gate (not a bug)
-2. STOP task execution
-3. Create dynamic checkpoint:human-action with exact auth steps
-4. Wait for user to authenticate
-5. Verify credentials work
-6. Retry original task
-7. Continue normally
+**プロトコル：**
+1. 認証ゲートを認識する（バグではない）
+2. タスク実行を停止
+3. 正確な認証ステップ付きの動的checkpoint:human-actionを作成
+4. ユーザーの認証を待つ
+5. 認証情報が機能するか検証
+6. 元のタスクをリトライ
+7. 通常通り続行
 
-**Example:** `vercel --yes` → "Not authenticated" → checkpoint asking user to `vercel login` → verify with `vercel whoami` → retry deploy → continue
+**例：** `vercel --yes` → "Not authenticated" → ユーザーに`vercel login`を求めるチェックポイント → `vercel whoami`で検証 → デプロイをリトライ → 続行
 
-**In Summary:** Document as normal flow under "## Authentication Gates", not as deviations.
+**サマリー内：** 逸脱としてではなく、「## Authentication Gates」の下の通常フローとして文書化。
 
 </authentication_gates>
 
 <deviation_rules>
 
-## Deviation Rules
+## 逸脱ルール
 
-You WILL discover unplanned work. Apply automatically, track all for Summary.
+計画外の作業を発見する場合がある。自動的に適用し、サマリーのためにすべて追跡する。
 
-| Rule | Trigger | Action | Permission |
+| ルール | トリガー | アクション | 許可 |
 |------|---------|--------|------------|
-| **1: Bug** | Broken behavior, errors, wrong queries, type errors, security vulns, race conditions, leaks | Fix → test → verify → track `[Rule 1 - Bug]` | Auto |
-| **2: Missing Critical** | Missing essentials: error handling, validation, auth, CSRF/CORS, rate limiting, indexes, logging | Add → test → verify → track `[Rule 2 - Missing Critical]` | Auto |
-| **3: Blocking** | Prevents completion: missing deps, wrong types, broken imports, missing env/config/files, circular deps | Fix blocker → verify proceeds → track `[Rule 3 - Blocking]` | Auto |
-| **4: Architectural** | Structural change: new DB table, schema change, new service, switching libs, breaking API, new infra | STOP → present decision (below) → track `[Rule 4 - Architectural]` | Ask user |
+| **1: バグ** | 壊れた動作、エラー、間違ったクエリ、型エラー、セキュリティ脆弱性、レースコンディション、リーク | 修正 → テスト → 検証 → `[Rule 1 - Bug]`として追跡 | 自動 |
+| **2: 不足するクリティカル** | 不足している必須項目：エラー処理、バリデーション、認証、CSRF/CORS、レート制限、インデックス、ロギング | 追加 → テスト → 検証 → `[Rule 2 - Missing Critical]`として追跡 | 自動 |
+| **3: ブロッキング** | 完了を妨げる：不足する依存関係、間違った型、壊れたインポート、不足するenv/config/ファイル、循環依存 | ブロッカーを修正 → 進行を検証 → `[Rule 3 - Blocking]`として追跡 | 自動 |
+| **4: アーキテクチャ** | 構造的変更：新しいDBテーブル、スキーマ変更、新しいサービス、ライブラリ切り替え、API破壊、新しいインフラ | 停止 → 決定を提示（以下）→ `[Rule 4 - Architectural]`として追跡 | ユーザーに確認 |
 
-**Rule 4 format:**
+**ルール4のフォーマット：**
 ```
-⚠️ Architectural Decision Needed
+⚠️ アーキテクチャ上の決定が必要
 
-Current task: [task name]
-Discovery: [what prompted this]
-Proposed change: [modification]
-Why needed: [rationale]
-Impact: [what this affects]
-Alternatives: [other approaches]
+現在のタスク: [task name]
+発見: [これを引き起こしたもの]
+提案する変更: [修正内容]
+理由: [根拠]
+影響: [これが影響するもの]
+代替案: [他のアプローチ]
 
-Proceed with proposed change? (yes / different approach / defer)
+提案された変更で進めますか？ (yes / different approach / defer)
 ```
 
-**Priority:** Rule 4 (STOP) > Rules 1-3 (auto) > unsure → Rule 4
-**Edge cases:** missing validation → R2 | null crash → R1 | new table → R4 | new column → R1/2
-**Heuristic:** Affects correctness/security/completion? → R1-3. Maybe? → R4.
+**優先順位：** ルール4（停止）> ルール1-3（自動）> 不明 → ルール4
+**エッジケース：** 不足するバリデーション → R2 | nullクラッシュ → R1 | 新しいテーブル → R4 | 新しいカラム → R1/2
+**ヒューリスティック：** 正確性/セキュリティ/完了に影響？ → R1-3。かも？ → R4。
 
 </deviation_rules>
 
 <deviation_documentation>
 
-## Documenting Deviations
+## 逸脱の文書化
 
-Summary MUST include deviations section. None? → `## Deviations from Plan\n\nNone - plan executed exactly as written.`
+サマリーには逸脱セクションを含める必要がある。なし？ → `## Deviations from Plan\n\nNone - plan executed exactly as written.`
 
-Per deviation: **[Rule N - Category] Title** — Found during: Task X | Issue | Fix | Files modified | Verification | Commit hash
+逸脱ごと：**[Rule N - Category] Title** — 発見場所：Task X | 問題 | 修正 | 修正されたファイル | 検証 | コミットハッシュ
 
-End with: **Total deviations:** N auto-fixed (breakdown). **Impact:** assessment.
+最後に：**逸脱合計：** N件の自動修正（内訳）。**影響：** 評価。
 
 </deviation_documentation>
 
 <tdd_plan_execution>
-## TDD Execution
+## TDD実行
 
-For `type: tdd` plans — RED-GREEN-REFACTOR:
+`type: tdd`プランの場合 — RED-GREEN-REFACTOR：
 
-1. **Infrastructure** (first TDD plan only): detect project, install framework, config, verify empty suite
-2. **RED:** Read `<behavior>` → failing test(s) → run (MUST fail) → commit: `test({phase}-{plan}): add failing test for [feature]`
-3. **GREEN:** Read `<implementation>` → minimal code → run (MUST pass) → commit: `feat({phase}-{plan}): implement [feature]`
-4. **REFACTOR:** Clean up → tests MUST pass → commit: `refactor({phase}-{plan}): clean up [feature]`
+1. **インフラストラクチャ**（最初のTDDプランのみ）：プロジェクトを検出、フレームワークをインストール、設定、空のスイートを検証
+2. **RED:** `<behavior>`を読む → 失敗するテスト → 実行（必ず失敗すること）→ コミット：`test({phase}-{plan}): add failing test for [feature]`
+3. **GREEN:** `<implementation>`を読む → 最小限のコード → 実行（必ず合格すること）→ コミット：`feat({phase}-{plan}): implement [feature]`
+4. **REFACTOR:** クリーンアップ → テストが合格すること → コミット：`refactor({phase}-{plan}): clean up [feature]`
 
-Errors: RED doesn't fail → investigate test/existing feature. GREEN doesn't pass → debug, iterate. REFACTOR breaks → undo.
+エラー：REDが失敗しない → テスト/既存機能を調査。GREENが合格しない → デバッグ、反復。REFACTORが壊れる → 元に戻す。
 
-See `~/.claude/get-shit-done/references/tdd.md` for structure.
+構造については`~/.claude/get-shit-done/references/tdd.md`を参照。
 </tdd_plan_execution>
 
 <task_commit>
-## Task Commit Protocol
+## タスクコミットプロトコル
 
-After each task (verification passed, done criteria met), commit immediately.
+各タスク（検証合格、完了基準達成）の後、直ちにコミットする。
 
-**1. Check:** `git status --short`
+**1. 確認：** `git status --short`
 
-**2. Stage individually** (NEVER `git add .` or `git add -A`):
+**2. 個別にステージ**（絶対に`git add .`や`git add -A`を使わない）：
 ```bash
 git add src/api/auth.ts
 git add src/types/user.ts
 ```
 
-**3. Commit type:**
+**3. コミットタイプ：**
 
-| Type | When | Example |
+| タイプ | 使用場面 | 例 |
 |------|------|---------|
-| `feat` | New functionality | feat(08-02): create user registration endpoint |
-| `fix` | Bug fix | fix(08-02): correct email validation regex |
-| `test` | Test-only (TDD RED) | test(08-02): add failing test for password hashing |
-| `refactor` | No behavior change (TDD REFACTOR) | refactor(08-02): extract validation to helper |
-| `perf` | Performance | perf(08-02): add database index |
-| `docs` | Documentation | docs(08-02): add API docs |
-| `style` | Formatting | style(08-02): format auth module |
-| `chore` | Config/deps | chore(08-02): add bcrypt dependency |
+| `feat` | 新機能 | feat(08-02): create user registration endpoint |
+| `fix` | バグ修正 | fix(08-02): correct email validation regex |
+| `test` | テストのみ（TDD RED） | test(08-02): add failing test for password hashing |
+| `refactor` | 動作変更なし（TDD REFACTOR） | refactor(08-02): extract validation to helper |
+| `perf` | パフォーマンス | perf(08-02): add database index |
+| `docs` | ドキュメント | docs(08-02): add API docs |
+| `style` | フォーマット | style(08-02): format auth module |
+| `chore` | 設定/依存関係 | chore(08-02): add bcrypt dependency |
 
-**4. Format:** `{type}({phase}-{plan}): {description}` with bullet points for key changes.
+**4. フォーマット：** `{type}({phase}-{plan}): {description}`、主要な変更をバレットポイントで。
 
-**5. Record hash:**
+**5. ハッシュを記録：**
 ```bash
 TASK_COMMIT=$(git rev-parse --short HEAD)
 TASK_COMMITS+=("Task ${TASK_NUM}: ${TASK_COMMIT}")
@@ -263,31 +270,31 @@ TASK_COMMITS+=("Task ${TASK_NUM}: ${TASK_COMMIT}")
 </task_commit>
 
 <step name="checkpoint_protocol">
-On `type="checkpoint:*"`: automate everything possible first. Checkpoints are for verification/decisions only.
+`type="checkpoint:*"`の場合：可能な限りすべてを先に自動化する。チェックポイントは検証/判断のみのため。
 
-Display: `CHECKPOINT: [Type]` box → Progress {X}/{Y} → Task name → type-specific content → `YOUR ACTION: [signal]`
+表示：`CHECKPOINT: [Type]`ボックス → 進捗 {X}/{Y} → タスク名 → タイプ固有のコンテンツ → `YOUR ACTION: [signal]`
 
-| Type | Content | Resume signal |
+| タイプ | コンテンツ | 再開シグナル |
 |------|---------|---------------|
-| human-verify (90%) | What was built + verification steps (commands/URLs) | "approved" or describe issues |
-| decision (9%) | Decision needed + context + options with pros/cons | "Select: option-id" |
-| human-action (1%) | What was automated + ONE manual step + verification plan | "done" |
+| human-verify (90%) | 構築されたもの + 検証手順（コマンド/URL） | 「approved」または問題を説明 |
+| decision (9%) | 必要な決定 + コンテキスト + 長所/短所付きのオプション | 「Select: option-id」 |
+| human-action (1%) | 自動化されたもの + 1つの手動ステップ + 検証計画 | 「done」 |
 
-After response: verify if specified. Pass → continue. Fail → inform, wait. WAIT for user — do NOT hallucinate completion.
+応答後：指定されている場合は検証。合格 → 続行。不合格 → 通知、待機。ユーザーを待つ — 完了をハルシネートしないこと。
 
-See ~/.claude/get-shit-done/references/checkpoints.md for details.
+詳細は~/.claude/get-shit-done/references/checkpoints.mdを参照。
 </step>
 
 <step name="checkpoint_return_for_orchestrator">
-When spawned via Task and hitting checkpoint: return structured state (cannot interact with user directly).
+Task経由で生成されチェックポイントに到達した場合：構造化された状態を返す（ユーザーと直接やり取りできない）。
 
-**Required return:** 1) Completed Tasks table (hashes + files) 2) Current Task (what's blocking) 3) Checkpoint Details (user-facing content) 4) Awaiting (what's needed from user)
+**必要な戻り値：** 1) 完了タスクテーブル（ハッシュ + ファイル） 2) 現在のタスク（ブロッキング内容） 3) チェックポイント詳細（ユーザー向けコンテンツ） 4) 待機中（ユーザーから必要なもの）
 
-Orchestrator parses → presents to user → spawns fresh continuation with your completed tasks state. You will NOT be resumed. In main context: use checkpoint_protocol above.
+オーケストレーターがパース → ユーザーに提示 → 完了タスク状態付きで新しい継続を生成。あなたは再開されない。メインコンテキスト内：上記のcheckpoint_protocolを使用。
 </step>
 
 <step name="verification_failure_gate">
-If verification fails: STOP. Present: "Verification failed for Task [X]: [name]. Expected: [criteria]. Actual: [result]." Options: Retry | Skip (mark incomplete) | Stop (investigate). If skipped → SUMMARY "Issues Encountered".
+検証が失敗した場合：停止。提示：「タスク[X]の検証に失敗：[name]。期待：[criteria]。実際：[result]。」オプション：リトライ | スキップ（未完了としてマーク）| 停止（調査）。スキップされた場合 → SUMMARY「Issues Encountered」。
 </step>
 
 <step name="record_completion_time">
@@ -313,34 +320,34 @@ fi
 grep -A 50 "^user_setup:" .planning/phases/XX-name/{phase}-{plan}-PLAN.md | head -50
 ```
 
-If user_setup exists: create `{phase}-USER-SETUP.md` using template `~/.claude/get-shit-done/templates/user-setup.md`. Per service: env vars table, account setup checklist, dashboard config, local dev notes, verification commands. Status "Incomplete". Set `USER_SETUP_CREATED=true`. If empty/missing: skip.
+user_setupが存在する場合：テンプレート`~/.claude/get-shit-done/templates/user-setup.md`を使用して`{phase}-USER-SETUP.md`を作成。サービスごと：環境変数テーブル、アカウントセットアップチェックリスト、ダッシュボード設定、ローカル開発メモ、検証コマンド。ステータス「Incomplete」。`USER_SETUP_CREATED=true`を設定。空/見つからない場合：スキップ。
 </step>
 
 <step name="create_summary">
-Create `{phase}-{plan}-SUMMARY.md` at `.planning/phases/XX-name/`. Use `~/.claude/get-shit-done/templates/summary.md`.
+`.planning/phases/XX-name/`に`{phase}-{plan}-SUMMARY.md`を作成。`~/.claude/get-shit-done/templates/summary.md`を使用。
 
-**Frontmatter:** phase, plan, subsystem, tags | requires/provides/affects | tech-stack.added/patterns | key-files.created/modified | key-decisions | requirements-completed (**MUST** copy `requirements` array from PLAN.md frontmatter verbatim) | duration ($DURATION), completed ($PLAN_END_TIME date).
+**フロントマター：** phase, plan, subsystem, tags | requires/provides/affects | tech-stack.added/patterns | key-files.created/modified | key-decisions | requirements-completed（PLAN.mdフロントマターの`requirements`配列をそのままコピー**しなければならない**） | duration ($DURATION), completed ($PLAN_END_TIME date)。
 
-Title: `# Phase [X] Plan [Y]: [Name] Summary`
+タイトル：`# Phase [X] Plan [Y]: [Name] Summary`
 
-One-liner SUBSTANTIVE: "JWT auth with refresh rotation using jose library" not "Authentication implemented"
+一行サマリーは実質的に：「jose libraryを使用したJWT authとリフレッシュローテーション」、「Authentication implemented」ではない
 
-Include: duration, start/end times, task count, file count.
+含める内容：所要時間、開始/終了時間、タスク数、ファイル数。
 
-Next: more plans → "Ready for {next-plan}" | last → "Phase complete, ready for transition".
+次：さらにプランがある → "Ready for {next-plan}" | 最後 → "Phase complete, ready for transition"。
 </step>
 
 <step name="update_current_position">
-Update STATE.md using gsd-tools:
+gsd-toolsを使用してSTATE.mdを更新：
 
 ```bash
-# Advance plan counter (handles last-plan edge case)
+# プランカウンターを進める（最終プランのエッジケースを処理）
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state advance-plan
 
-# Recalculate progress bar from disk state
+# ディスク状態からプログレスバーを再計算
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state update-progress
 
-# Record execution metrics
+# 実行メトリクスを記録
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state record-metric \
   --phase "${PHASE}" --plan "${PLAN}" --duration "${DURATION}" \
   --tasks "${TASK_COUNT}" --files "${FILE_COUNT}"
@@ -348,21 +355,21 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state record-metric \
 </step>
 
 <step name="extract_decisions_and_issues">
-From SUMMARY: Extract decisions and add to STATE.md:
+SUMMARYから：決定を抽出しSTATE.mdに追加：
 
 ```bash
-# Add each decision from SUMMARY key-decisions
-# Prefer file inputs for shell-safe text (preserves `$`, `*`, etc. exactly)
+# SUMMARYのkey-decisionsから各決定を追加
+# シェルセーフなテキスト（`$`、`*`などを正確に保持）のためにファイル入力を優先
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state add-decision \
   --phase "${PHASE}" --summary-file "${DECISION_TEXT_FILE}" --rationale-file "${RATIONALE_FILE}"
 
-# Add blockers if any found
+# ブロッカーが見つかった場合は追加
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state add-blocker --text-file "${BLOCKER_TEXT_FILE}"
 ```
 </step>
 
 <step name="update_session_continuity">
-Update session info using gsd-tools:
+gsd-toolsを使用してセッション情報を更新：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state record-session \
@@ -370,32 +377,32 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" state record-session \
   --resume-file "None"
 ```
 
-Keep STATE.md under 150 lines.
+STATE.mdを150行以下に保つ。
 </step>
 
 <step name="issues_review_gate">
-If SUMMARY "Issues Encountered" ≠ "None": yolo → log and continue. Interactive → present issues, wait for acknowledgment.
+SUMMARYの「Issues Encountered」が「None」でない場合：yolo → ログして続行。Interactive → 問題を提示し、確認を待つ。
 </step>
 
 <step name="update_roadmap">
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap update-plan-progress "${PHASE}"
 ```
-Counts PLAN vs SUMMARY files on disk. Updates progress table row with correct count and status (`In Progress` or `Complete` with date).
+ディスク上のPLAN vs SUMMARYファイルを数える。正しいカウントとステータス（`In Progress`または完了日付付きの`Complete`）でprogressテーブル行を更新。
 </step>
 
 <step name="update_requirements">
-Mark completed requirements from the PLAN.md frontmatter `requirements:` field:
+PLAN.mdフロントマターの`requirements:`フィールドから完了した要件をマーク：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" requirements mark-complete ${REQ_IDS}
 ```
 
-Extract requirement IDs from the plan's frontmatter (e.g., `requirements: [AUTH-01, AUTH-02]`). If no requirements field, skip.
+プランのフロントマターから要件IDを抽出（例：`requirements: [AUTH-01, AUTH-02]`）。requirementsフィールドがない場合、スキップ。
 </step>
 
 <step name="git_commit_metadata">
-Task code already committed per-task. Commit plan metadata:
+タスクコードはタスクごとに既にコミット済み。プランメタデータをコミット：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs({phase}-{plan}): complete [plan-name] plan" --files .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md .planning/STATE.md .planning/ROADMAP.md .planning/REQUIREMENTS.md
@@ -403,14 +410,14 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs({phase}-{plan}
 </step>
 
 <step name="update_codebase_map">
-If .planning/codebase/ doesn't exist: skip.
+.planning/codebase/が存在しない場合：スキップ。
 
 ```bash
 FIRST_TASK=$(git log --oneline --grep="feat({phase}-{plan}):" --grep="fix({phase}-{plan}):" --grep="test({phase}-{plan}):" --reverse | head -1 | cut -d' ' -f1)
 git diff --name-only ${FIRST_TASK}^..HEAD 2>/dev/null
 ```
 
-Update only structural changes: new src/ dir → STRUCTURE.md | deps → STACK.md | file pattern → CONVENTIONS.md | API client → INTEGRATIONS.md | config → STACK.md | renamed → update paths. Skip code-only/bugfix/content changes.
+構造的変更のみ更新：新しいsrc/ディレクトリ → STRUCTURE.md | 依存関係 → STACK.md | ファイルパターン → CONVENTIONS.md | APIクライアント → INTEGRATIONS.md | 設定 → STACK.md | リネーム → パスを更新。コードのみ/バグ修正/コンテンツ変更はスキップ。
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "" --files .planning/codebase/*.md --amend
@@ -418,32 +425,32 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "" --files .planning
 </step>
 
 <step name="offer_next">
-If `USER_SETUP_CREATED=true`: display `⚠️ USER SETUP REQUIRED` with path + env/config tasks at TOP.
+`USER_SETUP_CREATED=true`の場合：`⚠️ USER SETUP REQUIRED`をパス + env/configタスク付きで最上部に表示。
 
 ```bash
 ls -1 .planning/phases/[current-phase-dir]/*-PLAN.md 2>/dev/null | wc -l
 ls -1 .planning/phases/[current-phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
 ```
 
-| Condition | Route | Action |
+| 条件 | ルート | アクション |
 |-----------|-------|--------|
-| summaries < plans | **A: More plans** | Find next PLAN without SUMMARY. Yolo: auto-continue. Interactive: show next plan, suggest `/gsd:execute-phase {phase}` + `/gsd:verify-work`. STOP here. |
-| summaries = plans, current < highest phase | **B: Phase done** | Show completion, suggest `/gsd:plan-phase {Z+1}` + `/gsd:verify-work {Z}` + `/gsd:discuss-phase {Z+1}` |
-| summaries = plans, current = highest phase | **C: Milestone done** | Show banner, suggest `/gsd:complete-milestone` + `/gsd:verify-work` + `/gsd:add-phase` |
+| summaries < plans | **A: さらにプラン** | SUMMARYのない次のPLANを見つける。Yolo：自動続行。Interactive：次のプランを表示、`/gsd:execute-phase {phase}` + `/gsd:verify-work`を提案。ここで停止。 |
+| summaries = plans、現在 < 最大フェーズ | **B: フェーズ完了** | 完了を表示、`/gsd:plan-phase {Z+1}` + `/gsd:verify-work {Z}` + `/gsd:discuss-phase {Z+1}`を提案 |
+| summaries = plans、現在 = 最大フェーズ | **C: マイルストーン完了** | バナーを表示、`/gsd:complete-milestone` + `/gsd:verify-work` + `/gsd:add-phase`を提案 |
 
-All routes: `/clear` first for fresh context.
+すべてのルート：新しいコンテキストのためにまず`/clear`。
 </step>
 
 </process>
 
 <success_criteria>
 
-- All tasks from PLAN.md completed
-- All verifications pass
-- USER-SETUP.md generated if user_setup in frontmatter
-- SUMMARY.md created with substantive content
-- STATE.md updated (position, decisions, issues, session)
-- ROADMAP.md updated
-- If codebase map exists: map updated with execution changes (or skipped if no significant changes)
-- If USER-SETUP.md created: prominently surfaced in completion output
+- PLAN.mdのすべてのタスクが完了
+- すべての検証に合格
+- フロントマターにuser_setupがある場合はUSER-SETUP.mdが生成された
+- 実質的な内容のSUMMARY.mdが作成された
+- STATE.mdが更新された（位置、決定、問題、セッション）
+- ROADMAP.mdが更新された
+- コードベースマップが存在する場合：実行の変更でマップが更新された（または重要な変更がない場合はスキップ）
+- USER-SETUP.mdが作成された場合：完了出力で目立つように表示された
 </success_criteria>

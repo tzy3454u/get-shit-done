@@ -1,85 +1,81 @@
 <purpose>
-Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification. Default flow: Research (if needed) -> Plan -> Verify -> Done. Orchestrates gsd-phase-researcher, gsd-planner, and gsd-plan-checker agents with a revision loop (max 3 iterations).
+ロードマップフェーズの実行可能なフェーズプロンプト（PLAN.mdファイル）を、統合されたリサーチと検証とともに作成する。デフォルトフロー：リサーチ（必要な場合）→ 計画 → 検証 → 完了。gsd-phase-researcher、gsd-planner、gsd-plan-checkerエージェントをリビジョンループ（最大3回）でオーケストレーションする。
 </purpose>
 
 <required_reading>
-Read all files referenced by the invoking prompt's execution_context before starting.
+開始前に、呼び出し元プロンプトのexecution_contextで参照されているすべてのファイルを読み込むこと。
 
 @~/.claude/get-shit-done/references/ui-brand.md
 </required_reading>
 
 <process>
 
-## 1. Initialize
+## 1. 初期化
 
-Load all context in one call (paths only to minimize orchestrator context):
+1回の呼び出しで全コンテキストを読み込む（オーケストレーターのコンテキストを最小化するためパスのみ）：
 
 ```bash
 INIT=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" init plan-phase "$PHASE")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
-Parse JSON for: `researcher_model`, `planner_model`, `checker_model`, `research_enabled`, `plan_checker_enabled`, `nyquist_validation_enabled`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `plan_count`, `planning_exists`, `roadmap_exists`, `phase_req_ids`.
+JSONをパース：`researcher_model`, `planner_model`, `checker_model`, `research_enabled`, `plan_checker_enabled`, `nyquist_validation_enabled`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `plan_count`, `planning_exists`, `roadmap_exists`, `phase_req_ids`。
 
-**File paths (for <files_to_read> blocks):** `state_path`, `roadmap_path`, `requirements_path`, `context_path`, `research_path`, `verification_path`, `uat_path`. These are null if files don't exist.
+**`planning_exists`がfalseの場合：** エラー — まず`/gsd:new-project`を実行すること。
+**`phase_found`がfalseの場合：** ROADMAP.mdでフェーズが存在するか検証。有効な場合、initから`phase_slug`と`padded_phase`を使用してディレクトリを作成する：
 
-**If `planning_exists` is false:** Error — run `/gsd:new-project` first.
+## 2. 引数のパースと正規化
 
-## 2. Parse and Normalize Arguments
+$ARGUMENTSから抽出：フェーズ番号（整数または`2.1`のような小数）、フラグ（`--research`, `--skip-research`, `--gaps`, `--skip-verify`, `--prd <filepath>`）。
 
-Extract from $ARGUMENTS: phase number (integer or decimal like `2.1`), flags (`--research`, `--skip-research`, `--gaps`, `--skip-verify`, `--prd <filepath>`).
+$ARGUMENTSから`--prd <filepath>`を抽出。存在する場合、PRD_FILEにファイルパスを設定。
 
-Extract `--prd <filepath>` from $ARGUMENTS. If present, set PRD_FILE to the filepath.
+**フェーズ番号がない場合：** ロードマップから次の未計画フェーズを検出。
 
-**If no phase number:** Detect next unplanned phase from roadmap.
-
-**If `phase_found` is false:** Validate phase exists in ROADMAP.md. If valid, create the directory using `phase_slug` and `padded_phase` from init:
+**`phase_found`がfalseの場合：** ROADMAP.mdでフェーズが存在するか検証。有効な場合、initから`phase_slug`と`padded_phase`を使用してディレクトリを作成：
 ```bash
 mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 ```
+## 3. フェーズの検証
 
-**Existing artifacts from init:** `has_research`, `has_plans`, `plan_count`.
-
-## 3. Validate Phase
-
-```bash
+AskUserQuestionを使用する：
 PHASE_INFO=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap get-phase "${PHASE}")
 ```
+**`has_research`がtrue（initから）かつ`--research`フラグがない場合：** 既存のものを使用し、ステップ6にスキップする。
+**`found`がfalseの場合：** 利用可能なフェーズとともにエラー。**`found`がtrueの場合：** JSONから`phase_number`, `phase_name`, `goal`を抽出。
 
-**If `found` is false:** Error with available phases. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
+## 3.5. PRDエクスプレスパスの処理
 
-## 3.5. Handle PRD Express Path
+**スキップ条件：** 引数に`--prd`フラグがない場合。
 
-**Skip if:** No `--prd` flag in arguments.
+**`--prd <filepath>`が提供された場合：**
 
-**If `--prd <filepath>` provided:**
-
-1. Read the PRD file:
+1. PRDファイルを読み込む：
 ```bash
 PRD_CONTENT=$(cat "$PRD_FILE" 2>/dev/null)
-if [ -z "$PRD_CONTENT" ]; then
+**`## VERIFICATION PASSED`：** 確認を表示し、ステップ13に進む。
   echo "Error: PRD file not found: $PRD_FILE"
   exit 1
-fi
+提案：1) 強制続行、2) ガイダンスを提供してリトライ、3) 中止する。
 ```
 
-2. Display banner:
+2. バナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► PRD EXPRESS PATH
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Using PRD: {PRD_FILE}
-Generating CONTEXT.md from requirements...
+使用中のPRD: {PRD_FILE}
+要件からCONTEXT.mdを生成中...
 ```
 
-3. Parse the PRD content and generate CONTEXT.md. The orchestrator should:
-   - Extract all requirements, user stories, acceptance criteria, and constraints from the PRD
-   - Map each to a locked decision (everything in the PRD is treated as a locked decision)
-   - Identify any areas the PRD doesn't cover and mark as "Claude's Discretion"
-   - Create CONTEXT.md in the phase directory
+3. PRDコンテンツをパースしてCONTEXT.mdを生成する。オーケストレーターは以下を行う：
+   - PRDからすべての要件、ユーザーストーリー、受け入れ基準、制約を抽出
+   - 各項目をロックされた決定にマッピング（PRD内のすべてはロックされた決定として扱う）
+   - PRDがカバーしていない領域を特定し「Claude's Discretion」としてマーク
+   - フェーズディレクトリにCONTEXT.mdを作成
 
-4. Write CONTEXT.md:
+4. CONTEXT.mdを書き込む：
 ```markdown
 # Phase [X]: [Name] - Context
 
@@ -90,34 +86,34 @@ Generating CONTEXT.md from requirements...
 <domain>
 ## Phase Boundary
 
-[Extracted from PRD — what this phase delivers]
+[PRDから抽出 — このフェーズが提供するもの]
 
 </domain>
 
 <decisions>
 ## Implementation Decisions
 
-{For each requirement/story/criterion in the PRD:}
-### [Category derived from content]
-- [Requirement as locked decision]
+{PRD内の各要件/ストーリー/基準について：}
+### [コンテンツから導出されたカテゴリ]
+- [ロックされた決定としての要件]
 
 ### Claude's Discretion
-[Areas not covered by PRD — implementation details, technical choices]
+[PRDでカバーされていない領域 — 実装の詳細、技術的選択]
 
 </decisions>
 
 <specifics>
 ## Specific Ideas
 
-[Any specific references, examples, or concrete requirements from PRD]
+[PRDからの特定の参照、例、具体的な要件]
 
 </specifics>
 
 <deferred>
 ## Deferred Ideas
 
-[Items in PRD explicitly marked as future/v2/out-of-scope]
-[If none: "None — PRD covers phase scope"]
+[PRDで明示的に将来/v2/スコープ外とマークされた項目]
+[該当なしの場合: "None — PRD covers phase scope"]
 
 </deferred>
 
@@ -127,78 +123,78 @@ Generating CONTEXT.md from requirements...
 *Context gathered: [date] via PRD Express Path*
 ```
 
-5. Commit:
+5. コミット：
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" commit "docs(${padded_phase}): generate context from PRD" --files "${phase_dir}/${padded_phase}-CONTEXT.md"
 ```
 
-6. Set `context_content` to the generated CONTEXT.md content and continue to step 5 (Handle Research).
+6. `context_content`に生成されたCONTEXT.mdの内容を設定し、ステップ5（リサーチの処理）に続行。
 
-**Effect:** This completely bypasses step 4 (Load CONTEXT.md) since we just created it. The rest of the workflow (research, planning, verification) proceeds normally with the PRD-derived context.
+**効果：** これはステップ4（CONTEXT.mdの読み込み）を完全にバイパスする（既に作成済みのため）。残りのワークフロー（リサーチ、計画、検証）はPRD由来のコンテキストで通常通り進行する。
 
-## 4. Load CONTEXT.md
+## 4. CONTEXT.mdの読み込み
 
-**Skip if:** PRD express path was used (CONTEXT.md already created in step 3.5).
+**スキップ条件：** PRDエクスプレスパスが使用された場合（CONTEXT.mdはステップ3.5で既に作成済み）。
 
-Check `context_path` from init JSON.
+initのJSONから`context_path`を確認。
 
-If `context_path` is not null, display: `Using phase context from: ${context_path}`
+`context_path`がnullでない場合、表示：`Using phase context from: ${context_path}`
 
-**If `context_path` is null (no CONTEXT.md exists):**
+**`context_path`がnullの場合（CONTEXT.mdが存在しない）：**
 
-Use AskUserQuestion:
+AskUserQuestionを使用：
 - header: "No context"
-- question: "No CONTEXT.md found for Phase {X}. Plans will use research and requirements only — your design preferences won't be included. Continue or capture context first?"
+- question: "フェーズ{X}のCONTEXT.mdが見つかりません。プランはリサーチと要件のみを使用します — あなたの設計上の好みは含まれません。続行しますか、それとも先にコンテキストを収集しますか？"
 - options:
-  - "Continue without context" — Plan using research + requirements only
-  - "Run discuss-phase first" — Capture design decisions before planning
+  - "Continue without context" — リサーチ＋要件のみで計画
+  - "Run discuss-phase first" — 計画前に設計上の決定を収集
 
-If "Continue without context": Proceed to step 5.
-If "Run discuss-phase first": Display `/gsd:discuss-phase {X}` and exit workflow.
+"Continue without context"の場合：ステップ5に進む。
+"Run discuss-phase first"の場合：`/gsd:discuss-phase {X}`を表示してワークフローを終了。
 
-## 5. Handle Research
+## 5. リサーチの処理
 
-**Skip if:** `--gaps` flag, `--skip-research` flag, or `research_enabled` is false (from init) without `--research` override.
+**スキップ条件：** `--gaps`フラグ、`--skip-research`フラグ、または`--research`オーバーライドなしで`research_enabled`がfalse（initから）。
 
-**If `has_research` is true (from init) AND no `--research` flag:** Use existing, skip to step 6.
+**`has_research`がtrue（initから）かつ`--research`フラグがない場合：** 既存のものを使用し、ステップ6にスキップ。
 
-**If RESEARCH.md missing OR `--research` flag:**
+**RESEARCH.mdが見つからない場合 または `--research`フラグがある場合：**
 
-Display banner:
+バナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► RESEARCHING PHASE {X}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning researcher...
+◆ リサーチャーを生成中...
 ```
 
-### Spawn gsd-phase-researcher
+### gsd-phase-researcherを生成
 
 ```bash
 PHASE_DESC=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" roadmap get-phase "${PHASE}" | jq -r '.section')
 ```
 
-Research prompt:
+リサーチプロンプト：
 
 ```markdown
 <objective>
-Research how to implement Phase {phase_number}: {phase_name}
-Answer: "What do I need to know to PLAN this phase well?"
+フェーズ{phase_number}: {phase_name}の実装方法をリサーチ
+回答すべき問い：「このフェーズを適切に計画するために知っておくべきことは何か？」
 </objective>
 
 <files_to_read>
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
-- {requirements_path} (Project requirements)
-- {state_path} (Project decisions and history)
+- {context_path} (/gsd:discuss-phaseからのユーザー決定)
+- {requirements_path} (プロジェクト要件)
+- {state_path} (プロジェクトの決定と履歴)
 </files_to_read>
 
 <additional_context>
-**Phase description:** {phase_description}
-**Phase requirement IDs (MUST address):** {phase_req_ids}
+**フェーズ説明:** {phase_description}
+**フェーズ要件ID（必ず対処すること）:** {phase_req_ids}
 
-**Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
-**Project skills:** Check .claude/skills/ or .agents/skills/ directory (if either exists) — read SKILL.md files, research should account for project skill patterns
+**プロジェクト指示:** ./CLAUDE.mdが存在する場合読み込む — プロジェクト固有のガイドラインに従う
+**プロジェクトスキル:** .claude/skills/または.agents/skills/ディレクトリ（いずれかが存在する場合）を確認 — SKILL.mdファイルを読み、リサーチはプロジェクトスキルパターンを考慮すべき
 </additional_context>
 
 <output>
@@ -215,43 +211,43 @@ Task(
 )
 ```
 
-### Handle Researcher Return
+### リサーチャーの戻り値を処理
 
-- **`## RESEARCH COMPLETE`:** Display confirmation, continue to step 6
-- **`## RESEARCH BLOCKED`:** Display blocker, offer: 1) Provide context, 2) Skip research, 3) Abort
+- **`## RESEARCH COMPLETE`：** 確認を表示し、ステップ6に続行
+- **`## RESEARCH BLOCKED`：** ブロッカーを表示し、提案：1) コンテキストを提供、2) リサーチをスキップ、3) 中止
 
-## 5.5. Create Validation Strategy
+## 5.5. バリデーション戦略の作成
 
-MANDATORY unless `nyquist_validation_enabled` is false.
+`nyquist_validation_enabled`がfalseでない限り必須。
 
 ```bash
 grep -l "## Validation Architecture" "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
 ```
 
-**If found:**
-1. Read template: `~/.claude/get-shit-done/templates/VALIDATION.md`
-2. Write to `${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md` (use Write tool)
-3. Fill frontmatter: `{N}` → phase number, `{phase-slug}` → slug, `{date}` → current date
-4. Verify:
+**見つかった場合：**
+1. テンプレートを読む：`~/.claude/get-shit-done/templates/VALIDATION.md`
+2. `${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md`に書き込む（Writeツールを使用）
+3. フロントマターを記入：`{N}` → フェーズ番号、`{phase-slug}` → スラグ、`{date}` → 現在の日付
+4. 検証：
 ```bash
 test -f "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md" && echo "VALIDATION_CREATED=true" || echo "VALIDATION_CREATED=false"
 ```
-5. If `VALIDATION_CREATED=false`: STOP — do not proceed to Step 6
-6. If `commit_docs`: `commit-docs "docs(phase-${PHASE}): add validation strategy"`
+5. `VALIDATION_CREATED=false`の場合：停止 — ステップ6に進まない
+6. `commit_docs`の場合：`commit-docs "docs(phase-${PHASE}): add validation strategy"`
 
-**If not found:** Warn and continue — plans may fail Dimension 8.
+**見つからなかった場合：** 警告して続行 — プランはDimension 8で失敗する可能性がある。
 
-## 6. Check Existing Plans
+## 6. 既存プランの確認
 
 ```bash
 ls "${PHASE_DIR}"/*-PLAN.md 2>/dev/null
 ```
 
-**If exists:** Offer: 1) Add more plans, 2) View existing, 3) Replan from scratch.
+**存在する場合：** 提案：1) プランを追加、2) 既存を表示、3) ゼロから再計画。
 
-## 7. Use Context Paths from INIT
+## 7. INITからのコンテキストパスの使用
 
-Extract from INIT JSON:
+INIT JSONから抽出：
 
 ```bash
 STATE_PATH=$(printf '%s\n' "$INIT" | jq -r '.state_path // empty')
@@ -263,33 +259,33 @@ UAT_PATH=$(printf '%s\n' "$INIT" | jq -r '.uat_path // empty')
 CONTEXT_PATH=$(printf '%s\n' "$INIT" | jq -r '.context_path // empty')
 ```
 
-## 7.5. Verify Nyquist Artifacts
+## 7.5. Nyquistアーティファクトの検証
 
-Skip if `nyquist_validation_enabled` is false.
+`nyquist_validation_enabled`がfalseの場合スキップ。
 
 ```bash
 VALIDATION_EXISTS=$(ls "${PHASE_DIR}"/*-VALIDATION.md 2>/dev/null | head -1)
 ```
 
-If missing and Nyquist enabled — ask user:
-1. Re-run: `/gsd:plan-phase {PHASE} --research`
-2. Disable Nyquist in config
-3. Continue anyway (plans fail Dimension 8)
+見つからずNyquistが有効な場合 — ユーザーに質問：
+1. 再実行：`/gsd:plan-phase {PHASE} --research`
+2. 設定でNyquistを無効化
+3. そのまま続行（プランはDimension 8で失敗する）
 
-Proceed to Step 8 only if user selects 2 or 3.
+ユーザーが2または3を選択した場合のみステップ8に進む。
 
-## 8. Spawn gsd-planner Agent
+## 8. gsd-plannerエージェントを生成
 
-Display banner:
+バナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► PLANNING PHASE {X}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning planner...
+◆ プランナーを生成中...
 ```
 
-Planner prompt:
+プランナープロンプト：
 
 ```markdown
 <planning_context>
@@ -297,36 +293,36 @@ Planner prompt:
 **Mode:** {standard | gap_closure}
 
 <files_to_read>
-- {state_path} (Project State)
-- {roadmap_path} (Roadmap)
-- {requirements_path} (Requirements)
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
-- {research_path} (Technical Research)
-- {verification_path} (Verification Gaps - if --gaps)
-- {uat_path} (UAT Gaps - if --gaps)
+- {state_path} (プロジェクト状態)
+- {roadmap_path} (ロードマップ)
+- {requirements_path} (要件)
+- {context_path} (/gsd:discuss-phaseからのユーザー決定)
+- {research_path} (技術リサーチ)
+- {verification_path} (検証ギャップ - --gapsの場合)
+- {uat_path} (UATギャップ - --gapsの場合)
 </files_to_read>
 
-**Phase requirement IDs (every ID MUST appear in a plan's `requirements` field):** {phase_req_ids}
+**フェーズ要件ID（すべてのIDがプランの`requirements`フィールドに含まれなければならない）:** {phase_req_ids}
 
-**Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
-**Project skills:** Check .claude/skills/ or .agents/skills/ directory (if either exists) — read SKILL.md files, plans should account for project skill rules
+**プロジェクト指示:** ./CLAUDE.mdが存在する場合読み込む — プロジェクト固有のガイドラインに従う
+**プロジェクトスキル:** .claude/skills/または.agents/skills/ディレクトリ（いずれかが存在する場合）を確認 — SKILL.mdファイルを読み、プランはプロジェクトスキルルールを考慮すべき
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase. Plans need:
-- Frontmatter (wave, depends_on, files_modified, autonomous)
-- Tasks in XML format
-- Verification criteria
-- must_haves for goal-backward verification
+出力は/gsd:execute-phaseによって消費される。プランに必要なもの：
+- フロントマター（wave、depends_on、files_modified、autonomous）
+- XML形式のタスク
+- 検証基準
+- ゴール逆算検証用のmust_haves
 </downstream_consumer>
 
 <quality_gate>
-- [ ] PLAN.md files created in phase directory
-- [ ] Each plan has valid frontmatter
-- [ ] Tasks are specific and actionable
-- [ ] Dependencies correctly identified
-- [ ] Waves assigned for parallel execution
-- [ ] must_haves derived from phase goal
+- [ ] PLAN.mdファイルがフェーズディレクトリに作成された
+- [ ] 各プランに有効なフロントマターがある
+- [ ] タスクが具体的で実行可能
+- [ ] 依存関係が正しく特定されている
+- [ ] 並列実行用のWaveが割り当てられている
+- [ ] フェーズ目標から導出されたmust_haves
 </quality_gate>
 ```
 
@@ -339,47 +335,47 @@ Task(
 )
 ```
 
-## 9. Handle Planner Return
+## 9. プランナーの戻り値を処理
 
-- **`## PLANNING COMPLETE`:** Display plan count. If `--skip-verify` or `plan_checker_enabled` is false (from init): skip to step 13. Otherwise: step 10.
-- **`## CHECKPOINT REACHED`:** Present to user, get response, spawn continuation (step 12)
-- **`## PLANNING INCONCLUSIVE`:** Show attempts, offer: Add context / Retry / Manual
+- **`## PLANNING COMPLETE`：** プラン数を表示。`--skip-verify`または`plan_checker_enabled`がfalse（initから）の場合：ステップ13にスキップ。それ以外：ステップ10。
+- **`## CHECKPOINT REACHED`：** ユーザーに提示し、応答を取得し、継続を生成（ステップ12）
+- **`## PLANNING INCONCLUSIVE`：** 試行回数を表示し、提案：コンテキストを追加 / リトライ / 手動
 
-## 10. Spawn gsd-plan-checker Agent
+## 10. gsd-plan-checkerエージェントを生成
 
-Display banner:
+バナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► VERIFYING PLANS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-◆ Spawning plan checker...
+◆ プランチェッカーを生成中...
 ```
 
-Checker prompt:
+チェッカープロンプト：
 
 ```markdown
 <verification_context>
 **Phase:** {phase_number}
-**Phase Goal:** {goal from ROADMAP}
+**Phase Goal:** {ROADMAPからの目標}
 
 <files_to_read>
-- {PHASE_DIR}/*-PLAN.md (Plans to verify)
-- {roadmap_path} (Roadmap)
-- {requirements_path} (Requirements)
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
-- {research_path} (Technical Research — includes Validation Architecture)
+- {PHASE_DIR}/*-PLAN.md (検証するプラン)
+- {roadmap_path} (ロードマップ)
+- {requirements_path} (要件)
+- {context_path} (/gsd:discuss-phaseからのユーザー決定)
+- {research_path} (技術リサーチ — バリデーションアーキテクチャを含む)
 </files_to_read>
 
-**Phase requirement IDs (MUST ALL be covered):** {phase_req_ids}
+**フェーズ要件ID（すべてカバーされなければならない）:** {phase_req_ids}
 
-**Project instructions:** Read ./CLAUDE.md if exists — verify plans honor project guidelines
-**Project skills:** Check .claude/skills/ or .agents/skills/ directory (if either exists) — verify plans account for project skill rules
+**プロジェクト指示:** ./CLAUDE.mdが存在する場合読み込む — プランがプロジェクトガイドラインに準拠しているか検証
+**プロジェクトスキル:** .claude/skills/または.agents/skills/ディレクトリ（いずれかが存在する場合）を確認 — プランがプロジェクトスキルルールを考慮しているか検証
 </verification_context>
 
 <expected_output>
-- ## VERIFICATION PASSED — all checks pass
-- ## ISSUES FOUND — structured issue list
+- ## VERIFICATION PASSED — すべてのチェックに合格
+- ## ISSUES FOUND — 構造化された問題リスト
 </expected_output>
 ```
 
@@ -392,20 +388,20 @@ Task(
 )
 ```
 
-## 11. Handle Checker Return
+## 11. チェッカーの戻り値を処理
 
-- **`## VERIFICATION PASSED`:** Display confirmation, proceed to step 13.
-- **`## ISSUES FOUND`:** Display issues, check iteration count, proceed to step 12.
+- **`## VERIFICATION PASSED`：** 確認を表示し、ステップ13に進む。
+- **`## ISSUES FOUND`：** 問題を表示し、イテレーション数を確認し、ステップ12に進む。
 
-## 12. Revision Loop (Max 3 Iterations)
+## 12. リビジョンループ（最大3回）
 
-Track `iteration_count` (starts at 1 after initial plan + check).
+`iteration_count`を追跡（初期プラン＋チェック後に1から開始）。
 
-**If iteration_count < 3:**
+**iteration_count < 3の場合：**
 
-Display: `Sending back to planner for revision... (iteration {N}/3)`
+表示：`修正のためプランナーに返送中...（イテレーション {N}/3）`
 
-Revision prompt:
+リビジョンプロンプト：
 
 ```markdown
 <revision_context>
@@ -413,17 +409,17 @@ Revision prompt:
 **Mode:** revision
 
 <files_to_read>
-- {PHASE_DIR}/*-PLAN.md (Existing plans)
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
+- {PHASE_DIR}/*-PLAN.md (既存プラン)
+- {context_path} (/gsd:discuss-phaseからのユーザー決定)
 </files_to_read>
 
-**Checker issues:** {structured_issues_from_checker}
+**チェッカーの問題点:** {structured_issues_from_checker}
 </revision_context>
 
 <instructions>
-Make targeted updates to address checker issues.
-Do NOT replan from scratch unless issues are fundamental.
-Return what changed.
+チェッカーの問題に対処するための的確な更新を行う。
+問題が根本的でない限り、ゼロから再計画しないこと。
+変更内容を返す。
 </instructions>
 ```
 
@@ -436,125 +432,125 @@ Task(
 )
 ```
 
-After planner returns -> spawn checker again (step 10), increment iteration_count.
+プランナーが返した後 → チェッカーを再度生成（ステップ10）、iteration_countをインクリメント。
 
-**If iteration_count >= 3:**
+**iteration_count >= 3の場合：**
 
-Display: `Max iterations reached. {N} issues remain:` + issue list
+表示：`最大イテレーション数に達した。{N}個の問題が残っている：` ＋ 問題リスト
 
-Offer: 1) Force proceed, 2) Provide guidance and retry, 3) Abandon
+提案：1) 強制続行、2) ガイダンスを提供してリトライ、3) 中止
 
-## 13. Present Final Status
+## 13. 最終ステータスの提示
 
-Route to `<offer_next>` OR `auto_advance` depending on flags/config.
+フラグ/設定に応じて`<offer_next>`または`auto_advance`にルーティング。
 
-## 14. Auto-Advance Check
+## 14. 自動進行チェック
 
-Check for auto-advance trigger:
+自動進行トリガーを確認：
 
-1. Parse `--auto` flag from $ARGUMENTS
-2. **Sync chain flag with intent** — if user invoked manually (no `--auto`), clear the ephemeral chain flag from any previous interrupted `--auto` chain. This does NOT touch `workflow.auto_advance` (the user's persistent settings preference):
+1. $ARGUMENTSから`--auto`フラグをパース
+2. **チェーンフラグをインテントと同期** — ユーザーが手動で呼び出した場合（`--auto`なし）、以前の中断された`--auto`チェーンからのエフェメラルチェーンフラグをクリアする。これは`workflow.auto_advance`（ユーザーの永続設定）には触れない：
    ```bash
    if [[ ! "$ARGUMENTS" =~ --auto ]]; then
      node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow._auto_chain_active false 2>/dev/null
    fi
    ```
-3. Read both the chain flag and user preference:
+3. チェーンフラグとユーザー設定の両方を読む：
    ```bash
    AUTO_CHAIN=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow._auto_chain_active 2>/dev/null || echo "false")
    AUTO_CFG=$(node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-get workflow.auto_advance 2>/dev/null || echo "false")
    ```
 
-**If `--auto` flag present OR `AUTO_CHAIN` is true OR `AUTO_CFG` is true:**
+**`--auto`フラグが存在する場合 または `AUTO_CHAIN`がtrue または `AUTO_CFG`がtrueの場合：**
 
-Display banner:
+バナーを表示：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► AUTO-ADVANCING TO EXECUTE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Plans ready. Launching execute-phase...
+プラン準備完了。execute-phaseを起動中...
 ```
 
-Launch execute-phase using the Skill tool to avoid nested Task sessions (which cause runtime freezes due to deep agent nesting):
+ネストされたTaskセッション（深いエージェントネスティングによるランタイムフリーズを引き起こす）を避けるため、Skillツールを使用してexecute-phaseを起動：
 ```
 Skill(skill="gsd:execute-phase", args="${PHASE} --auto --no-transition")
 ```
 
-The `--no-transition` flag tells execute-phase to return status after verification instead of chaining further. This keeps the auto-advance chain flat — each phase runs at the same nesting level rather than spawning deeper Task agents.
+`--no-transition`フラグは、execute-phaseに検証後にさらにチェーンせずステータスを返すよう指示する。これにより自動進行チェーンがフラット化される — 各フェーズが深いTaskエージェントを生成するのではなく、同じネスティングレベルで実行される。
 
-**Handle execute-phase return:**
-- **PHASE COMPLETE** → Display final summary:
+**execute-phaseの戻り値を処理：**
+- **PHASE COMPLETE** → 最終サマリーを表示：
   ```
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    GSD ► PHASE ${PHASE} COMPLETE ✓
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  Auto-advance pipeline finished.
+  自動進行パイプライン完了。
 
-  Next: /gsd:discuss-phase ${NEXT_PHASE} --auto
+  次: /gsd:discuss-phase ${NEXT_PHASE} --auto
   ```
-- **GAPS FOUND / VERIFICATION FAILED** → Display result, stop chain:
+- **GAPS FOUND / VERIFICATION FAILED** → 結果を表示し、チェーンを停止：
   ```
-  Auto-advance stopped: Execution needs review.
+  自動進行停止：実行にはレビューが必要。
 
-  Review the output above and continue manually:
+  上記の出力を確認し、手動で続行すること：
   /gsd:execute-phase ${PHASE}
   ```
 
-**If neither `--auto` nor config enabled:**
-Route to `<offer_next>` (existing behavior).
+**`--auto`も設定も有効でない場合：**
+`<offer_next>`にルーティング（既存の動作）。
 
 </process>
 
 <offer_next>
-Output this markdown directly (not as a code block):
+このmarkdownを直接出力する（コードブロックとしてではない）：
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  GSD ► PHASE {X} PLANNED ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Phase {X}: {Name}** — {N} plan(s) in {M} wave(s)
+**Phase {X}: {Name}** — {N}プラン、{M}ウェーブ
 
-| Wave | Plans | What it builds |
+| Wave | Plans | 構築内容 |
 |------|-------|----------------|
 | 1    | 01, 02 | [objectives] |
 | 2    | 03     | [objective]  |
 
-Research: {Completed | Used existing | Skipped}
-Verification: {Passed | Passed with override | Skipped}
+リサーチ: {完了 | 既存を使用 | スキップ}
+検証: {合格 | オーバーライドで合格 | スキップ}
 
 ───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
-**Execute Phase {X}** — run all {N} plans
+**Execute Phase {X}** — 全{N}プランを実行
 
 /gsd:execute-phase {X}
 
-<sub>/clear first → fresh context window</sub>
+<sub>/clear first → 新しいコンテキストウィンドウ</sub>
 
 ───────────────────────────────────────────────────────────────
 
-**Also available:**
-- cat .planning/phases/{phase-dir}/*-PLAN.md — review plans
-- /gsd:plan-phase {X} --research — re-research first
+**その他のオプション：**
+- cat .planning/phases/{phase-dir}/*-PLAN.md — プランを確認
+- /gsd:plan-phase {X} --research — 先にリサーチを再実行
 
 ───────────────────────────────────────────────────────────────
 </offer_next>
 
 <success_criteria>
-- [ ] .planning/ directory validated
-- [ ] Phase validated against roadmap
-- [ ] Phase directory created if needed
-- [ ] CONTEXT.md loaded early (step 4) and passed to ALL agents
-- [ ] Research completed (unless --skip-research or --gaps or exists)
-- [ ] gsd-phase-researcher spawned with CONTEXT.md
-- [ ] Existing plans checked
-- [ ] gsd-planner spawned with CONTEXT.md + RESEARCH.md
-- [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
-- [ ] gsd-plan-checker spawned with CONTEXT.md
-- [ ] Verification passed OR user override OR max iterations with user decision
-- [ ] User sees status between agent spawns
-- [ ] User knows next steps
+- [ ] .planning/ディレクトリが検証された
+- [ ] フェーズがロードマップに対して検証された
+- [ ] 必要に応じてフェーズディレクトリが作成された
+- [ ] CONTEXT.mdが早期（ステップ4）に読み込まれ、すべてのエージェントに渡された
+- [ ] リサーチが完了した（--skip-researchまたは--gapsまたは既存でない限り）
+- [ ] CONTEXT.md付きでgsd-phase-researcherが生成された
+- [ ] 既存プランが確認された
+- [ ] CONTEXT.md + RESEARCH.md付きでgsd-plannerが生成された
+- [ ] プランが作成された（PLANNING COMPLETEまたはCHECKPOINTを処理）
+- [ ] CONTEXT.md付きでgsd-plan-checkerが生成された
+- [ ] 検証に合格 または ユーザーオーバーライド または 最大イテレーションでユーザー判断
+- [ ] エージェント生成間にユーザーにステータスが表示される
+- [ ] ユーザーが次のステップを認識している
 </success_criteria>

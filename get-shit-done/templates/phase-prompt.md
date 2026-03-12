@@ -1,46 +1,46 @@
-# Phase Prompt Template
+# フェーズプロンプトテンプレート
 
-> **Note:** Planning methodology is in `agents/gsd-planner.md`.
-> This template defines the PLAN.md output format that the agent produces.
+> **注意:** 計画手法は`agents/gsd-planner.md`にあります。
+> このテンプレートはエージェントが生成するPLAN.mdの出力形式を定義します。
 
-Template for `.planning/phases/XX-name/{phase}-{plan}-PLAN.md` - executable phase plans optimized for parallel execution.
+`.planning/phases/XX-name/{phase}-{plan}-PLAN.md` 用テンプレート - 並列実行に最適化された実行可能なフェーズプラン。
 
-**Naming:** Use `{phase}-{plan}-PLAN.md` format (e.g., `01-02-PLAN.md` for Phase 1, Plan 2)
+**命名規則:** `{phase}-{plan}-PLAN.md`形式を使用（例: Phase 1のPlan 2の場合`01-02-PLAN.md`）
 
 ---
 
-## File Template
+## ファイルテンプレート
 
 ```markdown
 ---
 phase: XX-name
 plan: NN
 type: execute
-wave: N                     # Execution wave (1, 2, 3...). Pre-computed at plan time.
-depends_on: []              # Plan IDs this plan requires (e.g., ["01-01"]).
-files_modified: []          # Files this plan modifies.
-autonomous: true            # false if plan has checkpoints requiring user interaction
-requirements: []            # REQUIRED — Requirement IDs from ROADMAP this plan addresses. MUST NOT be empty.
-user_setup: []              # Human-required setup Claude cannot automate (see below)
+wave: N                     # 実行ウェーブ（1, 2, 3...）。プラン時に事前計算。
+depends_on: []              # このプランが必要とするプランID（例: ["01-01"]）。
+files_modified: []          # このプランが変更するファイル。
+autonomous: true            # プランにユーザーインタラクションを必要とするチェックポイントがある場合はfalse
+requirements: []            # 必須 — このプランが対処するROADMAPの要件ID。空であってはならない。
+user_setup: []              # Claudeが自動化できない人間が必要なセットアップ（下記参照）
 
-# Goal-backward verification (derived during planning, verified after execution)
+# ゴールからの逆算検証（計画中に導出、実行後に検証）
 must_haves:
-  truths: []                # Observable behaviors that must be true for goal achievement
-  artifacts: []             # Files that must exist with real implementation
-  key_links: []             # Critical connections between artifacts
+  truths: []                # ゴール達成のために真でなければならない観察可能な動作
+  artifacts: []             # 実際の実装で存在しなければならないファイル
+  key_links: []             # アーティファクト間の重要な接続
 ---
 
 <objective>
-[What this plan accomplishes]
+[このプランが達成すること]
 
-Purpose: [Why this matters for the project]
-Output: [What artifacts will be created]
+Purpose: [プロジェクトにとってなぜこれが重要か]
+Output: [作成されるアーティファクト]
 </objective>
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/execute-plan.md
 @~/.claude/get-shit-done/templates/summary.md
-[If plan contains checkpoint tasks (type="checkpoint:*"), add:]
+[プランにチェックポイントタスク（type="checkpoint:*"）が含まれる場合、追加:]
 @~/.claude/get-shit-done/references/checkpoints.md
 </execution_context>
 
@@ -49,162 +49,162 @@ Output: [What artifacts will be created]
 @.planning/ROADMAP.md
 @.planning/STATE.md
 
-# Only reference prior plan SUMMARYs if genuinely needed:
-# - This plan uses types/exports from prior plan
-# - Prior plan made decision that affects this plan
-# Do NOT reflexively chain: Plan 02 refs 01, Plan 03 refs 02...
+# 本当に必要な場合のみ、前のプランのSUMMARYを参照:
+# - このプランが前のプランの型/エクスポートを使用する
+# - 前のプランがこのプランに影響する判断をした
+# 反射的にチェーンしない: Plan 02がPlan 01を参照、Plan 03がPlan 02を参照...
 
-[Relevant source files:]
+[関連するソースファイル:]
 @src/path/to/relevant.ts
 </context>
 
 <tasks>
 
 <task type="auto">
-  <name>Task 1: [Action-oriented name]</name>
+  <name>Task 1: [アクション指向の名前]</name>
   <files>path/to/file.ext, another/file.ext</files>
-  <action>[Specific implementation - what to do, how to do it, what to avoid and WHY]</action>
-  <verify>[Command or check to prove it worked]</verify>
-  <done>[Measurable acceptance criteria]</done>
+  <action>[具体的な実装 - 何をするか、どのようにするか、何を避けるべきか、その理由]</action>
+  <verify>[動作を証明するコマンドまたはチェック]</verify>
+  <done>[測定可能な受け入れ基準]</done>
 </task>
 
 <task type="auto">
-  <name>Task 2: [Action-oriented name]</name>
+  <name>Task 2: [アクション指向の名前]</name>
   <files>path/to/file.ext</files>
-  <action>[Specific implementation]</action>
-  <verify>[Command or check]</verify>
-  <done>[Acceptance criteria]</done>
+  <action>[具体的な実装]</action>
+  <verify>[コマンドまたはチェック]</verify>
+  <done>[受け入れ基準]</done>
 </task>
 
-<!-- For checkpoint task examples and patterns, see @~/.claude/get-shit-done/references/checkpoints.md -->
-<!-- Key rule: Claude starts dev server BEFORE human-verify checkpoints. User only visits URLs. -->
+<!-- チェックポイントタスクの例とパターンについては、@~/.claude/get-shit-done/references/checkpoints.md を参照 -->
+<!-- 重要なルール: Claudeはhuman-verifyチェックポイントの前に開発サーバーを起動します。ユーザーはURLにアクセスするだけです。 -->
 
 <task type="checkpoint:decision" gate="blocking">
-  <decision>[What needs deciding]</decision>
-  <context>[Why this decision matters]</context>
+  <decision>[決定が必要なこと]</decision>
+  <context>[この決定がなぜ重要か]</context>
   <options>
-    <option id="option-a"><name>[Name]</name><pros>[Benefits]</pros><cons>[Tradeoffs]</cons></option>
-    <option id="option-b"><name>[Name]</name><pros>[Benefits]</pros><cons>[Tradeoffs]</cons></option>
+    <option id="option-a"><name>[名前]</name><pros>[メリット]</pros><cons>[トレードオフ]</cons></option>
+    <option id="option-b"><name>[名前]</name><pros>[メリット]</pros><cons>[トレードオフ]</cons></option>
   </options>
   <resume-signal>Select: option-a or option-b</resume-signal>
 </task>
 
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>[What Claude built] - server running at [URL]</what-built>
-  <how-to-verify>Visit [URL] and verify: [visual checks only, NO CLI commands]</how-to-verify>
-  <resume-signal>Type "approved" or describe issues</resume-signal>
+  <what-built>[Claudeが構築したもの] - サーバーが[URL]で稼働中</what-built>
+  <how-to-verify>[URL]にアクセスして確認: [視覚的なチェックのみ、CLIコマンドなし]</how-to-verify>
+  <resume-signal>「approved」と入力するか、問題を説明してください</resume-signal>
 </task>
 
 </tasks>
 
 <verification>
-Before declaring plan complete:
-- [ ] [Specific test command]
-- [ ] [Build/type check passes]
-- [ ] [Behavior verification]
+プラン完了を宣言する前に:
+- [ ] [具体的なテストコマンド]
+- [ ] [ビルド/型チェックの通過]
+- [ ] [動作の検証]
 </verification>
 
 <success_criteria>
 
-- All tasks completed
-- All verification checks pass
-- No errors or warnings introduced
-- [Plan-specific criteria]
+- すべてのタスクが完了
+- すべての検証チェックが通過
+- エラーや警告が新たに発生していない
+- [プラン固有の基準]
   </success_criteria>
 
 <output>
-After completion, create `.planning/phases/XX-name/{phase}-{plan}-SUMMARY.md`
+完了後、`.planning/phases/XX-name/{phase}-{plan}-SUMMARY.md`を作成
 </output>
 ```
 
 ---
 
-## Frontmatter Fields
+## フロントマターフィールド
 
-| Field | Required | Purpose |
+| フィールド | 必須 | 目的 |
 |-------|----------|---------|
-| `phase` | Yes | Phase identifier (e.g., `01-foundation`) |
-| `plan` | Yes | Plan number within phase (e.g., `01`, `02`) |
-| `type` | Yes | Always `execute` for standard plans, `tdd` for TDD plans |
-| `wave` | Yes | Execution wave number (1, 2, 3...). Pre-computed at plan time. |
-| `depends_on` | Yes | Array of plan IDs this plan requires. |
-| `files_modified` | Yes | Files this plan touches. |
-| `autonomous` | Yes | `true` if no checkpoints, `false` if has checkpoints |
-| `requirements` | Yes | **MUST** list requirement IDs from ROADMAP. Every roadmap requirement MUST appear in at least one plan. |
-| `user_setup` | No | Array of human-required setup items (external services) |
-| `must_haves` | Yes | Goal-backward verification criteria (see below) |
+| `phase` | はい | フェーズ識別子（例: `01-foundation`） |
+| `plan` | はい | フェーズ内のプラン番号（例: `01`、`02`） |
+| `type` | はい | 標準プランは常に`execute`、TDDプランは`tdd` |
+| `wave` | はい | 実行ウェーブ番号（1, 2, 3...）。プラン時に事前計算。 |
+| `depends_on` | はい | このプランが必要とするプランIDの配列。 |
+| `files_modified` | はい | このプランが変更するファイル。 |
+| `autonomous` | はい | チェックポイントがなければ`true`、あれば`false` |
+| `requirements` | はい | ROADMAPの要件IDを**必ず**リストする。すべてのロードマップ要件は少なくとも1つのプランに含まれる必要がある。 |
+| `user_setup` | いいえ | 人間が必要なセットアップ項目の配列（外部サービス） |
+| `must_haves` | はい | ゴールからの逆算検証基準（下記参照） |
 
-**Wave is pre-computed:** Wave numbers are assigned during `/gsd:plan-phase`. Execute-phase reads `wave` directly from frontmatter and groups plans by wave number. No runtime dependency analysis needed.
+**ウェーブは事前計算:** ウェーブ番号は`/gsd:plan-phase`中に割り当てられます。execute-phaseはフロントマターから`wave`を直接読み取り、ウェーブ番号でプランをグループ化します。ランタイムの依存関係分析は不要です。
 
-**Must-haves enable verification:** The `must_haves` field carries goal-backward requirements from planning to execution. After all plans complete, execute-phase spawns a verification subagent that checks these criteria against the actual codebase.
+**must_havesが検証を可能にする:** `must_haves`フィールドは計画から実行へのゴールからの逆算要件を伝達します。すべてのプランが完了した後、execute-phaseはこれらの基準を実際のコードベースに対してチェックする検証サブエージェントを起動します。
 
 ---
 
-## Parallel vs Sequential
+## 並列 vs 順次
 
 <parallel_examples>
 
-**Wave 1 candidates (parallel):**
+**ウェーブ1候補（並列）:**
 
 ```yaml
-# Plan 01 - User feature
+# Plan 01 - ユーザー機能
 wave: 1
 depends_on: []
 files_modified: [src/models/user.ts, src/api/users.ts]
 autonomous: true
 
-# Plan 02 - Product feature (no overlap with Plan 01)
+# Plan 02 - 製品機能（Plan 01と重複なし）
 wave: 1
 depends_on: []
 files_modified: [src/models/product.ts, src/api/products.ts]
 autonomous: true
 
-# Plan 03 - Order feature (no overlap)
+# Plan 03 - 注文機能（重複なし）
 wave: 1
 depends_on: []
 files_modified: [src/models/order.ts, src/api/orders.ts]
 autonomous: true
 ```
 
-All three run in parallel (Wave 1) - no dependencies, no file conflicts.
+3つすべてが並列で実行（ウェーブ1）- 依存関係なし、ファイルの競合なし。
 
-**Sequential (genuine dependency):**
+**順次（本当の依存関係）:**
 
 ```yaml
-# Plan 01 - Auth foundation
+# Plan 01 - 認証基盤
 wave: 1
 depends_on: []
 files_modified: [src/lib/auth.ts, src/middleware/auth.ts]
 autonomous: true
 
-# Plan 02 - Protected features (needs auth)
+# Plan 02 - 保護された機能（認証が必要）
 wave: 2
 depends_on: ["01"]
 files_modified: [src/features/dashboard.ts]
 autonomous: true
 ```
 
-Plan 02 in Wave 2 waits for Plan 01 in Wave 1 - genuine dependency on auth types/middleware.
+Plan 02はウェーブ2でウェーブ1のPlan 01を待つ - 認証の型/ミドルウェアへの本当の依存関係。
 
-**Checkpoint plan:**
+**チェックポイントプラン:**
 
 ```yaml
-# Plan 03 - UI with verification
+# Plan 03 - 検証付きUI
 wave: 3
 depends_on: ["01", "02"]
 files_modified: [src/components/Dashboard.tsx]
-autonomous: false  # Has checkpoint:human-verify
+autonomous: false  # checkpoint:human-verifyあり
 ```
 
-Wave 3 runs after Waves 1 and 2. Pauses at checkpoint, orchestrator presents to user, resumes on approval.
+ウェーブ3はウェーブ1と2の後に実行。チェックポイントで一時停止し、オーケストレーターがユーザーに提示、承認後に再開。
 
 </parallel_examples>
 
 ---
 
-## Context Section
+## コンテキストセクション
 
-**Parallel-aware context:**
+**並列対応のコンテキスト:**
 
 ```markdown
 <context>
@@ -212,89 +212,89 @@ Wave 3 runs after Waves 1 and 2. Pauses at checkpoint, orchestrator presents to 
 @.planning/ROADMAP.md
 @.planning/STATE.md
 
-# Only include SUMMARY refs if genuinely needed:
-# - This plan imports types from prior plan
-# - Prior plan made decision affecting this plan
-# - Prior plan's output is input to this plan
+# 本当に必要な場合のみSUMMARY参照を含める:
+# - このプランが前のプランの型をインポートする
+# - 前のプランがこのプランに影響する判断をした
+# - 前のプランの出力がこのプランの入力になる
 #
-# Independent plans need NO prior SUMMARY references.
-# Do NOT reflexively chain: 02 refs 01, 03 refs 02...
+# 独立したプランは前のSUMMARY参照を必要としない。
+# 反射的にチェーンしない: 02が01を参照、03が02を参照...
 
 @src/relevant/source.ts
 </context>
 ```
 
-**Bad pattern (creates false dependencies):**
+**悪いパターン（偽の依存関係を作る）:**
 ```markdown
 <context>
-@.planning/phases/03-features/03-01-SUMMARY.md  # Just because it's earlier
-@.planning/phases/03-features/03-02-SUMMARY.md  # Reflexive chaining
+@.planning/phases/03-features/03-01-SUMMARY.md  # 単に先に来るから
+@.planning/phases/03-features/03-02-SUMMARY.md  # 反射的なチェーン
 </context>
 ```
 
 ---
 
-## Scope Guidance
+## スコープのガイダンス
 
-**Plan sizing:**
+**プランのサイズ:**
 
-- 2-3 tasks per plan
-- ~50% context usage maximum
-- Complex phases: Multiple focused plans, not one large plan
+- プランごとに2〜3タスク
+- 最大約50%のコンテキスト使用量
+- 複雑なフェーズ: 1つの大きなプランではなく、複数の焦点を絞ったプラン
 
-**When to split:**
+**分割するタイミング:**
 
-- Different subsystems (auth vs API vs UI)
-- >3 tasks
-- Risk of context overflow
-- TDD candidates - separate plans
+- 異なるサブシステム（認証 vs API vs UI）
+- 3タスク以上
+- コンテキストオーバーフローのリスク
+- TDD候補 - 別のプラン
 
-**Vertical slices preferred:**
+**垂直スライスが望ましい:**
 
 ```
-PREFER: Plan 01 = User (model + API + UI)
-        Plan 02 = Product (model + API + UI)
+推奨: Plan 01 = User（モデル + API + UI）
+      Plan 02 = Product（モデル + API + UI）
 
-AVOID:  Plan 01 = All models
-        Plan 02 = All APIs
-        Plan 03 = All UIs
+避ける: Plan 01 = すべてのモデル
+        Plan 02 = すべてのAPI
+        Plan 03 = すべてのUI
 ```
 
 ---
 
-## TDD Plans
+## TDDプラン
 
-TDD features get dedicated plans with `type: tdd`.
+TDD機能は`type: tdd`の専用プランを得ます。
 
-**Heuristic:** Can you write `expect(fn(input)).toBe(output)` before writing `fn`?
-→ Yes: Create a TDD plan
-→ No: Standard task in standard plan
+**ヒューリスティック:** 実装前に`expect(fn(input)).toBe(output)`を書けますか？
+→ はい: TDDプランを作成
+→ いいえ: 標準プランの標準タスク
 
-See `~/.claude/get-shit-done/references/tdd.md` for TDD plan structure.
+詳細は`~/.claude/get-shit-done/references/tdd.md`のTDDプラン構造を参照。
 
 ---
 
-## Task Types
+## タスクタイプ
 
-| Type | Use For | Autonomy |
+| タイプ | 用途 | 自律性 |
 |------|---------|----------|
-| `auto` | Everything Claude can do independently | Fully autonomous |
-| `checkpoint:human-verify` | Visual/functional verification | Pauses, returns to orchestrator |
-| `checkpoint:decision` | Implementation choices | Pauses, returns to orchestrator |
-| `checkpoint:human-action` | Truly unavoidable manual steps (rare) | Pauses, returns to orchestrator |
+| `auto` | Claudeが独立して実行できるすべて | 完全自律 |
+| `checkpoint:human-verify` | 視覚的/機能的な検証 | 一時停止、オーケストレーターに返す |
+| `checkpoint:decision` | 実装の選択 | 一時停止、オーケストレーターに返す |
+| `checkpoint:human-action` | 本当に避けられない手動ステップ（まれ） | 一時停止、オーケストレーターに返す |
 
-**Checkpoint behavior in parallel execution:**
-- Plan runs until checkpoint
-- Agent returns with checkpoint details + agent_id
-- Orchestrator presents to user
-- User responds
-- Orchestrator resumes agent with `resume: agent_id`
+**並列実行でのチェックポイント動作:**
+- プランはチェックポイントまで実行
+- エージェントがチェックポイントの詳細 + agent_idを返す
+- オーケストレーターがユーザーに提示
+- ユーザーが応答
+- オーケストレーターが`resume: agent_id`でエージェントを再開
 
 ---
 
-## Examples
+## 例
 
-**Autonomous parallel plan:**
+**自律的な並列プラン:**
 
 ```markdown
 ---
@@ -308,10 +308,10 @@ autonomous: true
 ---
 
 <objective>
-Implement complete User feature as vertical slice.
+完全なUser機能を垂直スライスとして実装。
 
-Purpose: Self-contained user management that can run parallel to other features.
-Output: User model, API endpoints, and UI components.
+Purpose: 他の機能と並列で実行できる自己完結型のユーザー管理。
+Output: Userモデル、APIエンドポイント、UIコンポーネント。
 </objective>
 
 <context>
@@ -322,38 +322,38 @@ Output: User model, API endpoints, and UI components.
 
 <tasks>
 <task type="auto">
-  <name>Task 1: Create User model</name>
+  <name>Task 1: Userモデルの作成</name>
   <files>src/features/user/model.ts</files>
-  <action>Define User type with id, email, name, createdAt. Export TypeScript interface.</action>
+  <action>id、email、name、createdAtを持つUser型を定義。TypeScriptインターフェースをエクスポート。</action>
   <verify>tsc --noEmit passes</verify>
-  <done>User type exported and usable</done>
+  <done>User型がエクスポートされ使用可能</done>
 </task>
 
 <task type="auto">
-  <name>Task 2: Create User API endpoints</name>
+  <name>Task 2: User APIエンドポイントの作成</name>
   <files>src/features/user/api.ts</files>
-  <action>GET /users (list), GET /users/:id (single), POST /users (create). Use User type from model.</action>
-  <verify>curl tests pass for all endpoints</verify>
-  <done>All CRUD operations work</done>
+  <action>GET /users（一覧）、GET /users/:id（単体）、POST /users（作成）。モデルのUser型を使用。</action>
+  <verify>すべてのエンドポイントのcurlテストが通過</verify>
+  <done>すべてのCRUD操作が動作</done>
 </task>
 </tasks>
 
 <verification>
-- [ ] npm run build succeeds
-- [ ] API endpoints respond correctly
+- [ ] npm run buildが成功
+- [ ] APIエンドポイントが正しく応答
 </verification>
 
 <success_criteria>
-- All tasks completed
-- User feature works end-to-end
+- すべてのタスクが完了
+- User機能がエンドツーエンドで動作
 </success_criteria>
 
 <output>
-After completion, create `.planning/phases/03-features/03-01-SUMMARY.md`
+完了後、`.planning/phases/03-features/03-01-SUMMARY.md`を作成
 </output>
 ```
 
-**Plan with checkpoint (non-autonomous):**
+**チェックポイント付きプラン（非自律的）:**
 
 ```markdown
 ---
@@ -367,10 +367,10 @@ autonomous: false
 ---
 
 <objective>
-Build dashboard with visual verification.
+視覚的検証付きダッシュボードの構築。
 
-Purpose: Integrate user and product features into unified view.
-Output: Working dashboard component.
+Purpose: ユーザーと製品機能を統合ビューに統合。
+Output: 動作するダッシュボードコンポーネント。
 </objective>
 
 <execution_context>
@@ -388,126 +388,126 @@ Output: Working dashboard component.
 
 <tasks>
 <task type="auto">
-  <name>Task 1: Build Dashboard layout</name>
+  <name>Task 1: ダッシュボードレイアウトの構築</name>
   <files>src/components/Dashboard.tsx</files>
-  <action>Create responsive grid with UserList and ProductList components. Use Tailwind for styling.</action>
-  <verify>npm run build succeeds</verify>
-  <done>Dashboard renders without errors</done>
+  <action>UserListとProductListコンポーネントを使用したレスポンシブグリッドを作成。スタイリングにTailwindを使用。</action>
+  <verify>npm run buildが成功</verify>
+  <done>ダッシュボードがエラーなしでレンダリング</done>
 </task>
 
-<!-- Checkpoint pattern: Claude starts server, user visits URL. See checkpoints.md for full patterns. -->
+<!-- チェックポイントパターン: Claudeがサーバーを起動、ユーザーがURLにアクセス。完全なパターンはcheckpoints.mdを参照。 -->
 <task type="auto">
-  <name>Start dev server</name>
-  <action>Run `npm run dev` in background, wait for ready</action>
-  <verify>curl localhost:3000 returns 200</verify>
+  <name>開発サーバーの起動</name>
+  <action>バックグラウンドで`npm run dev`を実行、準備完了を待つ</action>
+  <verify>curl localhost:3000が200を返す</verify>
 </task>
 
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>Dashboard - server at http://localhost:3000</what-built>
-  <how-to-verify>Visit localhost:3000/dashboard. Check: desktop grid, mobile stack, no scroll issues.</how-to-verify>
-  <resume-signal>Type "approved" or describe issues</resume-signal>
+  <what-built>ダッシュボード - サーバーがhttp://localhost:3000で稼働中</what-built>
+  <how-to-verify>localhost:3000/dashboardにアクセス。確認: デスクトップグリッド、モバイルスタック、スクロールの問題なし。</how-to-verify>
+  <resume-signal>「approved」と入力するか、問題を説明してください</resume-signal>
 </task>
 </tasks>
 
 <verification>
-- [ ] npm run build succeeds
-- [ ] Visual verification passed
+- [ ] npm run buildが成功
+- [ ] 視覚的検証が通過
 </verification>
 
 <success_criteria>
-- All tasks completed
-- User approved visual layout
+- すべてのタスクが完了
+- ユーザーが視覚的レイアウトを承認
 </success_criteria>
 
 <output>
-After completion, create `.planning/phases/03-features/03-03-SUMMARY.md`
+完了後、`.planning/phases/03-features/03-03-SUMMARY.md`を作成
 </output>
 ```
 
 ---
 
-## Anti-Patterns
+## アンチパターン
 
-**Bad: Reflexive dependency chaining**
+**悪い例: 反射的な依存関係チェーン**
 ```yaml
-depends_on: ["03-01"]  # Just because 01 comes before 02
+depends_on: ["03-01"]  # 単に01が02の前に来るから
 ```
 
-**Bad: Horizontal layer grouping**
+**悪い例: 水平レイヤーグループ化**
 ```
-Plan 01: All models
-Plan 02: All APIs (depends on 01)
-Plan 03: All UIs (depends on 02)
+Plan 01: すべてのモデル
+Plan 02: すべてのAPI（01に依存）
+Plan 03: すべてのUI（02に依存）
 ```
 
-**Bad: Missing autonomy flag**
+**悪い例: 自律フラグの欠落**
 ```yaml
-# Has checkpoint but no autonomous: false
+# チェックポイントがあるのにautonomous: falseがない
 depends_on: []
 files_modified: [...]
-# autonomous: ???  <- Missing!
+# autonomous: ???  <- 欠落！
 ```
 
-**Bad: Vague tasks**
+**悪い例: 曖昧なタスク**
 ```xml
 <task type="auto">
-  <name>Set up authentication</name>
-  <action>Add auth to the app</action>
+  <name>認証のセットアップ</name>
+  <action>アプリに認証を追加</action>
 </task>
 ```
 
 ---
 
-## Guidelines
+## ガイドライン
 
-- Always use XML structure for Claude parsing
-- Include `wave`, `depends_on`, `files_modified`, `autonomous` in every plan
-- Prefer vertical slices over horizontal layers
-- Only reference prior SUMMARYs when genuinely needed
-- Group checkpoints with related auto tasks in same plan
-- 2-3 tasks per plan, ~50% context max
+- Claudeのパース用に常にXML構造を使用
+- すべてのプランに`wave`、`depends_on`、`files_modified`、`autonomous`を含める
+- 水平レイヤーより垂直スライスを優先
+- 本当に必要な場合のみ前のSUMMARYを参照
+- 関連するautoタスクと同じプランにチェックポイントをグループ化
+- プランごとに2〜3タスク、最大約50%のコンテキスト
 
 ---
 
-## User Setup (External Services)
+## ユーザーセットアップ（外部サービス）
 
-When a plan introduces external services requiring human configuration, declare in frontmatter:
+プランが人間の設定を必要とする外部サービスを導入する場合、フロントマターに宣言:
 
 ```yaml
 user_setup:
   - service: stripe
-    why: "Payment processing requires API keys"
+    why: "決済処理にはAPIキーが必要"
     env_vars:
       - name: STRIPE_SECRET_KEY
         source: "Stripe Dashboard → Developers → API keys → Secret key"
       - name: STRIPE_WEBHOOK_SECRET
         source: "Stripe Dashboard → Developers → Webhooks → Signing secret"
     dashboard_config:
-      - task: "Create webhook endpoint"
+      - task: "Webhookエンドポイントの作成"
         location: "Stripe Dashboard → Developers → Webhooks → Add endpoint"
         details: "URL: https://[your-domain]/api/webhooks/stripe"
     local_dev:
       - "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
 ```
 
-**The automation-first rule:** `user_setup` contains ONLY what Claude literally cannot do:
-- Account creation (requires human signup)
-- Secret retrieval (requires dashboard access)
-- Dashboard configuration (requires human in browser)
+**自動化優先ルール:** `user_setup`にはClaudeが文字通りできないことだけを含める:
+- アカウント作成（人間のサインアップが必要）
+- シークレット取得（ダッシュボードアクセスが必要）
+- ダッシュボード設定（ブラウザでの人間の操作が必要）
 
-**NOT included:** Package installs, code changes, file creation, CLI commands Claude can run.
+**含めないもの:** パッケージインストール、コード変更、ファイル作成、Claudeが実行できるCLIコマンド。
 
-**Result:** Execute-plan generates `{phase}-USER-SETUP.md` with checklist for the user.
+**結果:** execute-planがユーザー向けチェックリスト付きの`{phase}-USER-SETUP.md`を生成。
 
-See `~/.claude/get-shit-done/templates/user-setup.md` for full schema and examples
+完全なスキーマと例については`~/.claude/get-shit-done/templates/user-setup.md`を参照
 
 ---
 
-## Must-Haves (Goal-Backward Verification)
+## Must-Haves（ゴールからの逆算検証）
 
-The `must_haves` field defines what must be TRUE for the phase goal to be achieved. Derived during planning, verified after execution.
+`must_haves`フィールドはフェーズゴールの達成のために真でなければならないことを定義します。計画中に導出され、実行後に検証されます。
 
-**Structure:**
+**構造:**
 
 ```yaml
 must_haves:
@@ -536,34 +536,35 @@ must_haves:
       pattern: "prisma\\.message\\.(find|create)"
 ```
 
-**Field descriptions:**
+**フィールドの説明:**
 
-| Field | Purpose |
+| フィールド | 目的 |
 |-------|---------|
-| `truths` | Observable behaviors from user perspective. Each must be testable. |
-| `artifacts` | Files that must exist with real implementation. |
-| `artifacts[].path` | File path relative to project root. |
-| `artifacts[].provides` | What this artifact delivers. |
-| `artifacts[].min_lines` | Optional. Minimum lines to be considered substantive. |
-| `artifacts[].exports` | Optional. Expected exports to verify. |
-| `artifacts[].contains` | Optional. Pattern that must exist in file. |
-| `key_links` | Critical connections between artifacts. |
-| `key_links[].from` | Source artifact. |
-| `key_links[].to` | Target artifact or endpoint. |
-| `key_links[].via` | How they connect (description). |
-| `key_links[].pattern` | Optional. Regex to verify connection exists. |
+| `truths` | ユーザー視点からの観察可能な動作。それぞれテスト可能でなければならない。 |
+| `artifacts` | 実際の実装で存在しなければならないファイル。 |
+| `artifacts[].path` | プロジェクトルートからの相対ファイルパス。 |
+| `artifacts[].provides` | このアーティファクトが提供するもの。 |
+| `artifacts[].min_lines` | オプション。実質的とみなされるための最小行数。 |
+| `artifacts[].exports` | オプション。検証する期待されるエクスポート。 |
+| `artifacts[].contains` | オプション。ファイル内に存在しなければならないパターン。 |
+| `key_links` | アーティファクト間の重要な接続。 |
+| `key_links[].from` | ソースアーティファクト。 |
+| `key_links[].to` | ターゲットアーティファクトまたはエンドポイント。 |
+| `key_links[].via` | 接続方法（説明）。 |
+| `key_links[].pattern` | オプション。接続の存在を検証する正規表現。 |
 
-**Why this matters:**
+**なぜこれが重要か:**
 
-Task completion ≠ Goal achievement. A task "create chat component" can complete by creating a placeholder. The `must_haves` field captures what must actually work, enabling verification to catch gaps before they compound.
+タスク完了 ≠ ゴール達成。タスク「チャットコンポーネントの作成」はプレースホルダーを作成することで完了できます。`must_haves`フィールドは実際に動作しなければならないものを記録し、検証がギャップが複合する前にそれを捕捉できるようにします。
 
-**Verification flow:**
+**検証フロー:**
 
-1. Plan-phase derives must_haves from phase goal (goal-backward)
-2. Must_haves written to PLAN.md frontmatter
-3. Execute-phase runs all plans
-4. Verification subagent checks must_haves against codebase
-5. Gaps found → fix plans created → execute → re-verify
-6. All must_haves pass → phase complete
+1. plan-phaseがフェーズゴールからmust_havesを導出（ゴールからの逆算）
+2. must_havesがPLAN.mdフロントマターに記述される
+3. execute-phaseがすべてのプランを実行
+4. 検証サブエージェントがmust_havesをコードベースに対してチェック
+5. ギャップ発見 → 修正プランの作成 → 実行 → 再検証
+6. すべてのmust_havesが通過 → フェーズ完了
 
-See `~/.claude/get-shit-done/workflows/verify-phase.md` for verification logic.
+検証ロジックについては`~/.claude/get-shit-done/workflows/verify-phase.md`を参照。
+</output>
