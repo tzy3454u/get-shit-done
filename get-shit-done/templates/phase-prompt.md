@@ -465,35 +465,35 @@ files_modified: [...]
 </task>
 ```
 
-**Bad: Missing read_first (executor modifies files it hasn't read)**
+**悪い例: read_firstの欠落（エグゼキューターが読んでいないファイルを変更）**
 ```xml
 <task type="auto">
-  <name>Update database config</name>
+  <name>データベース設定の更新</name>
   <files>src/config/database.ts</files>
-  <!-- No read_first! Executor doesn't know current state or conventions -->
-  <action>Update the database config to match production settings</action>
+  <!-- read_firstがない！エグゼキューターは現在の状態や規約を把握できない -->
+  <action>データベース設定を本番環境に合わせて更新</action>
 </task>
 ```
 
-**Bad: Vague acceptance criteria (not verifiable)**
+**悪い例: 曖昧なacceptance_criteria（検証不可能）**
 ```xml
 <acceptance_criteria>
-  - Config is properly set up
-  - Database connection works correctly
+  - 設定が適切にセットアップされている
+  - データベース接続が正しく動作する
 </acceptance_criteria>
 ```
 
-**Good: Concrete with read_first + verifiable criteria**
+**良い例: read_first + 検証可能な基準が具体的**
 ```xml
 <task type="auto">
-  <name>Update database config for connection pooling</name>
+  <name>コネクションプーリング用のデータベース設定更新</name>
   <files>src/config/database.ts</files>
   <read_first>src/config/database.ts, .env.example, docker-compose.yml</read_first>
-  <action>Add pool configuration: min=2, max=20, idleTimeoutMs=30000. Add SSL config: rejectUnauthorized=true when NODE_ENV=production. Add .env.example entry: DATABASE_POOL_MAX=20.</action>
+  <action>プール設定を追加: min=2, max=20, idleTimeoutMs=30000。SSL設定を追加: NODE_ENV=production時にrejectUnauthorized=true。.env.exampleエントリを追加: DATABASE_POOL_MAX=20。</action>
   <acceptance_criteria>
-    - database.ts contains "max: 20" and "idleTimeoutMillis: 30000"
-    - database.ts contains SSL conditional on NODE_ENV
-    - .env.example contains DATABASE_POOL_MAX
+    - database.tsに"max: 20"と"idleTimeoutMillis: 30000"が含まれる
+    - database.tsにNODE_ENV条件付きSSLが含まれる
+    - .env.exampleにDATABASE_POOL_MAXが含まれる
   </acceptance_criteria>
 </task>
 ```

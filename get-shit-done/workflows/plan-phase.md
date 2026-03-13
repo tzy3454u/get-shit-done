@@ -104,17 +104,17 @@ PRD_CONTENT=$(cat "$PRD_FILE" 2>/dev/null)
 </decisions>
 
 <canonical_refs>
-## Canonical References
+## 正規参照
 
-**Downstream agents MUST read these before planning or implementing.**
+**下流エージェントはプランニングや実装の前にこれらを必ず読むこと。**
 
-[MANDATORY. Extract from ROADMAP.md and any docs referenced in the PRD.
-Use full relative paths. Group by topic area.]
+[必須。ROADMAP.mdおよびPRDで参照されているドキュメントから抽出する。
+完全な相対パスを使用する。トピック別にグループ化する。]
 
-### [Topic area]
-- `path/to/spec-or-adr.md` — [What it decides/defines]
+### [トピック領域]
+- `path/to/spec-or-adr.md` — [このドキュメントが決定/定義する内容]
 
-[If no external specs: "No external specs — requirements fully captured in decisions above"]
+[外部仕様がない場合: "外部仕様なし — 要件は上記の決定で完全にカバー"]
 
 </canonical_refs>
 
@@ -335,32 +335,32 @@ VALIDATION_EXISTS=$(ls "${PHASE_DIR}"/*-VALIDATION.md 2>/dev/null | head -1)
 </downstream_consumer>
 
 <deep_work_rules>
-## Anti-Shallow Execution Rules (MANDATORY)
+## 浅い実行防止ルール（必須）
 
-Every task MUST include these fields — they are NOT optional:
+すべてのタスクにこれらのフィールドを含めなければならない — オプションではない：
 
-1. **`<read_first>`** — Files the executor MUST read before touching anything. Always include:
-   - The file being modified (so executor sees current state, not assumptions)
-   - Any "source of truth" file referenced in CONTEXT.md (reference implementations, existing patterns, config files, schemas)
-   - Any file whose patterns, signatures, types, or conventions must be replicated or respected
+1. **`<read_first>`** — エグゼキューターが何かに手を付ける前に必ず読むファイル。常に以下を含める：
+   - 変更対象のファイル（エグゼキューターが想定ではなく現在の状態を把握するため）
+   - CONTEXT.mdで参照されている「正規の情報源」ファイル（リファレンス実装、既存パターン、設定ファイル、スキーマ）
+   - パターン、シグネチャ、型、規約を再現または遵守する必要があるファイル
 
-2. **`<acceptance_criteria>`** — Verifiable conditions that prove the task was done correctly. Rules:
-   - Every criterion must be checkable with grep, file read, test command, or CLI output
-   - NEVER use subjective language ("looks correct", "properly configured", "consistent with")
-   - ALWAYS include exact strings, patterns, values, or command outputs that must be present
-   - Examples:
-     - Code: `auth.py contains def verify_token(` / `test_auth.py exits 0`
-     - Config: `.env.example contains DATABASE_URL=` / `Dockerfile contains HEALTHCHECK`
-     - Docs: `README.md contains '## Installation'` / `API.md lists all endpoints`
-     - Infra: `deploy.yml has rollback step` / `docker-compose.yml has healthcheck for db`
+2. **`<acceptance_criteria>`** — タスクが正しく完了したことを証明する検証可能な条件。ルール：
+   - すべての基準はgrep、ファイル読み取り、テストコマンド、またはCLI出力で確認可能でなければならない
+   - 主観的な表現（「正しく見える」「適切に設定されている」「整合性がある」）を決して使わない
+   - 必ず正確な文字列、パターン、値、またはコマンド出力を含める
+   - 例：
+     - コード: `auth.py contains def verify_token(` / `test_auth.py exits 0`
+     - 設定: `.env.example contains DATABASE_URL=` / `Dockerfile contains HEALTHCHECK`
+     - ドキュメント: `README.md contains '## Installation'` / `API.md lists all endpoints`
+     - インフラ: `deploy.yml has rollback step` / `docker-compose.yml has healthcheck for db`
 
-3. **`<action>`** — Must include CONCRETE values, not references. Rules:
-   - NEVER say "align X with Y", "match X to Y", "update to be consistent" without specifying the exact target state
-   - ALWAYS include the actual values: config keys, function signatures, SQL statements, class names, import paths, env vars, etc.
-   - If CONTEXT.md has a comparison table or expected values, copy them into the action verbatim
-   - The executor should be able to complete the task from the action text alone, without needing to read CONTEXT.md or reference files (read_first is for verification, not discovery)
+3. **`<action>`** — 参照ではなく具体的な値を含めなければならない。ルール：
+   - 正確なターゲット状態を指定せずに「XをYに合わせる」「XをYに一致させる」「整合性を持たせる」と言わない
+   - 必ず実際の値を含める：設定キー、関数シグネチャ、SQL文、クラス名、インポートパス、環境変数など
+   - CONTEXT.mdに比較表や期待値がある場合、アクションにそのまま転記する
+   - エグゼキューターはCONTEXT.mdやリファレンスファイルを読まなくても、アクションテキストだけでタスクを完了できるべき（read_firstは発見ではなく検証のため）
 
-**Why this matters:** Executor agents work from the plan text. Vague instructions like "update the config to match production" produce shallow one-line changes. Concrete instructions like "add DATABASE_URL=postgresql://... , set POOL_SIZE=20, add REDIS_URL=redis://..." produce complete work. The cost of verbose plans is far less than the cost of re-doing shallow execution.
+**なぜ重要か：** エグゼキューターエージェントはプランテキストから作業する。「本番環境に合わせて設定を更新」のような曖昧な指示は浅い1行の変更を生む。「DATABASE_URL=postgresql://... を追加、POOL_SIZE=20を設定、REDIS_URL=redis://... を追加」のような具体的な指示は完全な作業を生む。冗長なプランのコストは、浅い実行をやり直すコストよりはるかに低い。
 </deep_work_rules>
 
 <quality_gate>

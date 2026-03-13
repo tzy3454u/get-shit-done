@@ -55,20 +55,20 @@
 </specifics>
 
 <canonical_refs>
-## Canonical References
+## 正規参照
 
-**Downstream agents MUST read these before planning or implementing.**
+**下流エージェントはプランニングや実装の前にこれらを必ず読むこと。**
 
-[List every spec, ADR, feature doc, or design doc that defines requirements or constraints for this phase. Use full relative paths so agents can read them directly. Group by topic area when the phase has multiple concerns.]
+[このフェーズの要件や制約を定義するすべての仕様、ADR、機能ドキュメント、設計ドキュメントをリストする。エージェントが直接読み込めるよう完全な相対パスを使用する。フェーズに複数の関心事がある場合はトピック別にグループ化する。]
 
-### [Topic area 1]
-- `path/to/spec-or-adr.md` — [What this doc decides/defines that's relevant]
-- `path/to/doc.md` §N — [Specific section and what it covers]
+### [トピック領域 1]
+- `path/to/spec-or-adr.md` — [このドキュメントが決定/定義する関連事項]
+- `path/to/doc.md` §N — [特定のセクションとその内容]
 
-### [Topic area 2]
-- `path/to/feature-doc.md` — [What capability this defines]
+### [トピック領域 2]
+- `path/to/feature-doc.md` — [このドキュメントが定義する機能]
 
-[If the project has no external specs: "No external specs — requirements are fully captured in decisions above"]
+[外部仕様がない場合: "外部仕様なし — 要件は上記の決定で完全にカバー"]
 
 </canonical_refs>
 
@@ -143,14 +143,14 @@
 </decisions>
 
 <canonical_refs>
-## Canonical References
+## 正規参照
 
-### Feed display
-- `docs/features/social-feed.md` — Feed requirements, post card fields, engagement display rules
-- `docs/decisions/adr-012-infinite-scroll.md` — Scroll strategy decision, virtualization requirements
+### フィード表示
+- `docs/features/social-feed.md` — フィード要件、投稿カードのフィールド、エンゲージメント表示ルール
+- `docs/decisions/adr-012-infinite-scroll.md` — スクロール戦略の決定、仮想化要件
 
-### Empty states
-- `docs/design/empty-states.md` — Empty state patterns, illustration guidelines
+### 空の状態
+- `docs/design/empty-states.md` — 空の状態パターン、イラストガイドライン
 
 </canonical_refs>
 
@@ -217,11 +217,11 @@
 </decisions>
 
 <canonical_refs>
-## Canonical References
+## 正規参照
 
-### Backup CLI
-- `docs/features/backup-restore.md` — Backup requirements, supported backends, encryption spec
-- `docs/decisions/adr-007-cli-conventions.md` — Flag naming, exit codes, output format standards
+### バックアップCLI
+- `docs/features/backup-restore.md` — バックアップ要件、サポートされるバックエンド、暗号化仕様
+- `docs/decisions/adr-007-cli-conventions.md` — フラグ命名規則、終了コード、出力形式標準
 
 </canonical_refs>
 
@@ -288,11 +288,11 @@
 </decisions>
 
 <canonical_refs>
-## Canonical References
+## 正規参照
 
-### Organization rules
-- `docs/features/photo-organization.md` — Grouping rules, duplicate policy, naming spec
-- `docs/decisions/adr-003-exif-handling.md` — EXIF extraction strategy, fallback for missing metadata
+### 整理ルール
+- `docs/features/photo-organization.md` — グループ化ルール、重複ポリシー、命名仕様
+- `docs/decisions/adr-003-exif-handling.md` — EXIF抽出戦略、メタデータ欠落時のフォールバック
 
 </canonical_refs>
 

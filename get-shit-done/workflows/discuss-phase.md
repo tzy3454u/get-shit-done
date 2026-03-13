@@ -518,21 +518,20 @@ mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 <canonical_refs>
 ## Canonical References
 
-**Downstream agents MUST read these before planning or implementing.**
+**下流エージェントはプランニングや実装の前にこれらを必ず読むこと。**
 
-[MANDATORY section. Write the FULL accumulated canonical refs list here.
-Sources: ROADMAP.md refs + REQUIREMENTS.md refs + user-referenced docs during
-discussion + any docs discovered during codebase scout. Group by topic area.
-Every entry needs a full relative path — not just a name.]
+[必須セクション。蓄積した正規参照の完全なリストをここに記載する。
+ソース: ROADMAP.mdの参照 + REQUIREMENTS.mdの参照 + ディスカッション中にユーザーが参照したドキュメント + コードベーススカウト中に発見したドキュメント。トピック別にグループ化する。
+各エントリには完全な相対パスが必要 — 名前だけでは不十分。]
 
-### [Topic area 1]
-- `path/to/adr-or-spec.md` — [What it decides/defines that's relevant]
-- `path/to/doc.md` §N — [Specific section reference]
+### [トピック領域 1]
+- `path/to/adr-or-spec.md` — [このドキュメントが決定/定義する関連事項]
+- `path/to/doc.md` §N — [特定のセクション参照]
 
-### [Topic area 2]
-- `path/to/feature-doc.md` — [What this doc defines]
+### [トピック領域 2]
+- `path/to/feature-doc.md` — [このドキュメントが定義する内容]
 
-[If no external specs: "No external specs — requirements fully captured in decisions above"]
+[外部仕様がない場合: "外部仕様なし — 要件は上記の決定で完全にカバー"]
 
 </canonical_refs>
 

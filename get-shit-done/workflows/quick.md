@@ -219,11 +219,11 @@ ${ディスカッションからの具体的な参照や例}
 </specifics>
 
 <canonical_refs>
-## Canonical References
+## 正規参照
 
-${any_specs_adrs_or_docs_referenced_during_discussion}
+${ディスカッション中に参照された仕様・ADR・ドキュメント}
 
-[If none: "No external specs — requirements fully captured in decisions above"]
+[該当なしの場合: "外部仕様なし — 要件は上記の決定で完全にカバー"]
 
 </canonical_refs>
 ```

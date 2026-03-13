@@ -236,20 +236,20 @@ node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" phases list --type summarie
 </tdd_plan_execution>
 
 <precommit_failure_handling>
-## Pre-commit Hook Failure Handling
+## Pre-commitフック失敗時の対応
 
-Your commits may trigger pre-commit hooks. Auto-fix hooks handle themselves transparently — files get fixed and re-staged automatically.
+コミット時にpre-commitフックがトリガーされることがある。自動修正フックは透過的に処理される — ファイルが修正され自動的に再ステージングされる。
 
-If a commit is BLOCKED by a hook:
+フックによりコミットがブロックされた場合：
 
-1. The `git commit` command fails with hook error output
-2. Read the error — it tells you exactly which hook and what failed
-3. Fix the issue (type error, lint violation, secret leak, etc.)
-4. `git add` the fixed files
-5. Retry the commit
-6. Do NOT use `--no-verify`
+1. `git commit`コマンドがフックエラー出力とともに失敗する
+2. エラーを読む — どのフックが何で失敗したか正確に示される
+3. 問題を修正する（型エラー、lint違反、シークレットリークなど）
+4. 修正したファイルを`git add`する
+5. コミットをリトライする
+6. `--no-verify`は使用しないこと
 
-This is normal and expected. Budget 1-2 retry cycles per commit.
+これは正常で想定される動作。コミットごとに1-2回のリトライサイクルを見込むこと。
 </precommit_failure_handling>
 
 <task_commit>
