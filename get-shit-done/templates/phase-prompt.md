@@ -63,16 +63,25 @@ Output: [作成されるアーティファクト]
 <task type="auto">
   <name>Task 1: [アクション指向の名前]</name>
   <files>path/to/file.ext, another/file.ext</files>
-  <action>[具体的な実装 - 何をするか、どのようにするか、何を避けるべきか、その理由]</action>
+  <read_first>path/to/reference.ext, path/to/source-of-truth.ext</read_first>
+  <action>[具体的な実装 - 何をするか、どのようにするか、何を避けるべきか、その理由。具体的な値を含める: 正確な識別子、パラメータ、期待される出力、ファイルパス、コマンド引数。正確なターゲット状態を指定せずに「XをYに合わせる」と言わないこと。]</action>
   <verify>[動作を証明するコマンドまたはチェック]</verify>
+  <acceptance_criteria>
+    - [grep検証可能な条件: "file.extに'exact string'が含まれる"]
+    - [測定可能な条件: "output.extが'expected-value'を使用し、'wrong-value'ではない"]
+  </acceptance_criteria>
   <done>[測定可能な受け入れ基準]</done>
 </task>
 
 <task type="auto">
   <name>Task 2: [アクション指向の名前]</name>
   <files>path/to/file.ext</files>
-  <action>[具体的な実装]</action>
+  <read_first>path/to/reference.ext</read_first>
+  <action>[具体的な値を含む具体的な実装]</action>
   <verify>[コマンドまたはチェック]</verify>
+  <acceptance_criteria>
+    - [grep検証可能な条件]
+  </acceptance_criteria>
   <done>[受け入れ基準]</done>
 </task>
 
@@ -453,6 +462,39 @@ files_modified: [...]
 <task type="auto">
   <name>認証のセットアップ</name>
   <action>アプリに認証を追加</action>
+</task>
+```
+
+**悪い例: read_firstの欠落（エグゼキューターが読んでいないファイルを変更）**
+```xml
+<task type="auto">
+  <name>データベース設定の更新</name>
+  <files>src/config/database.ts</files>
+  <!-- read_firstがない！エグゼキューターは現在の状態や規約を把握できない -->
+  <action>データベース設定を本番環境に合わせて更新</action>
+</task>
+```
+
+**悪い例: 曖昧なacceptance_criteria（検証不可能）**
+```xml
+<acceptance_criteria>
+  - 設定が適切にセットアップされている
+  - データベース接続が正しく動作する
+</acceptance_criteria>
+```
+
+**良い例: read_first + 検証可能な基準が具体的**
+```xml
+<task type="auto">
+  <name>コネクションプーリング用のデータベース設定更新</name>
+  <files>src/config/database.ts</files>
+  <read_first>src/config/database.ts, .env.example, docker-compose.yml</read_first>
+  <action>プール設定を追加: min=2, max=20, idleTimeoutMs=30000。SSL設定を追加: NODE_ENV=production時にrejectUnauthorized=true。.env.exampleエントリを追加: DATABASE_POOL_MAX=20。</action>
+  <acceptance_criteria>
+    - database.tsに"max: 20"と"idleTimeoutMillis: 30000"が含まれる
+    - database.tsにNODE_ENV条件付きSSLが含まれる
+    - .env.exampleにDATABASE_POOL_MAXが含まれる
+  </acceptance_criteria>
 </task>
 ```
 

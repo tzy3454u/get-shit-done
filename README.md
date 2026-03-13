@@ -344,6 +344,8 @@ claude --dangerously-skip-permissions
 
 **discuss -> plan -> execute -> verify** をマイルストーン完了まで繰り返します。
 
+ディスカッション時に一問一答ではなく複数の質問をまとめて回答したい場合は、`/gsd:discuss-phase <n> --batch` を使用してください。
+
 各フェーズで、意思決定（discuss）、調査（plan）、実装（execute）、人間確認（verify）を揃えることで、コンテキストを新鮮に保ちながら品質を維持します。
 
 全フェーズ完了後、`/gsd:complete-milestone` でアーカイブとリリースタグ付けを実施。

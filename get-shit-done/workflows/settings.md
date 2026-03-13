@@ -94,6 +94,8 @@ AskUserQuestion([
       { label: "いいえ", description: "バリデーション調査をスキップ。ラピッドプロトタイピングやテストなしフェーズに適しています。" }
     ]
   },
+  // 注: Nyquistバリデーションはリサーチ出力に依存する。リサーチが無効の場合、
+  // plan-phaseは自動的にNyquistステップをスキップする（抽出元のRESEARCH.mdがないため）。
   {
     question: "Gitブランチ戦略は？",
     header: "Branching",

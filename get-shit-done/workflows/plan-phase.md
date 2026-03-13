@@ -73,6 +73,7 @@ PRD_CONTENT=$(cat "$PRD_FILE" 2>/dev/null)
    - PRDからすべての要件、ユーザーストーリー、受け入れ基準、制約を抽出
    - 各項目をロックされた決定にマッピング（PRD内のすべてはロックされた決定として扱う）
    - PRDがカバーしていない領域を特定し「Claude's Discretion」としてマーク
+   - **正規参照を抽出** — このフェーズのROADMAP.mdから、およびPRDで参照されている仕様/ADRを完全なファイルパスに展開（**必須**）
    - フェーズディレクトリにCONTEXT.mdを作成
 
 4. CONTEXT.mdを書き込む：
@@ -101,6 +102,21 @@ PRD_CONTENT=$(cat "$PRD_FILE" 2>/dev/null)
 [PRDでカバーされていない領域 — 実装の詳細、技術的選択]
 
 </decisions>
+
+<canonical_refs>
+## 正規参照
+
+**下流エージェントはプランニングや実装の前にこれらを必ず読むこと。**
+
+[必須。ROADMAP.mdおよびPRDで参照されているドキュメントから抽出する。
+完全な相対パスを使用する。トピック別にグループ化する。]
+
+### [トピック領域]
+- `path/to/spec-or-adr.md` — [このドキュメントが決定/定義する内容]
+
+[外部仕様がない場合: "外部仕様なし — 要件は上記の決定で完全にカバー"]
+
+</canonical_refs>
 
 <specifics>
 ## Specific Ideas
@@ -218,7 +234,9 @@ Task(
 
 ## 5.5. バリデーション戦略の作成
 
-`nyquist_validation_enabled`がfalseでない限り必須。
+`nyquist_validation_enabled`がfalseの場合、または`research_enabled`がfalseの場合スキップ。
+
+`research_enabled`がfalseかつ`nyquist_validation_enabled`がtrueの場合：警告「Nyquist検証は有効ですがリサーチが無効です — RESEARCH.mdなしではVALIDATION.mdを作成できません。プランはバリデーション要件（Dimension 8）を欠きます。」ステップ6に続行。
 
 ```bash
 grep -l "## Validation Architecture" "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
@@ -261,15 +279,15 @@ CONTEXT_PATH=$(printf '%s\n' "$INIT" | jq -r '.context_path // empty')
 
 ## 7.5. Nyquistアーティファクトの検証
 
-`nyquist_validation_enabled`がfalseの場合スキップ。
+`nyquist_validation_enabled`がfalseの場合、または`research_enabled`がfalseの場合スキップ。
 
 ```bash
 VALIDATION_EXISTS=$(ls "${PHASE_DIR}"/*-VALIDATION.md 2>/dev/null | head -1)
 ```
 
 見つからずNyquistが有効な場合 — ユーザーに質問：
-1. 再実行：`/gsd:plan-phase {PHASE} --research`
-2. 設定でNyquistを無効化
+1. リサーチ付きで再実行：`/gsd:plan-phase {PHASE} --research`
+2. Nyquistを無効化：`node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow.nyquist_validation false`
 3. そのまま続行（プランはDimension 8で失敗する）
 
 ユーザーが2または3を選択した場合のみステップ8に進む。
@@ -311,15 +329,47 @@ VALIDATION_EXISTS=$(ls "${PHASE_DIR}"/*-VALIDATION.md 2>/dev/null | head -1)
 <downstream_consumer>
 出力は/gsd:execute-phaseによって消費される。プランに必要なもの：
 - フロントマター（wave、depends_on、files_modified、autonomous）
-- XML形式のタスク
+- `read_first`と`acceptance_criteria`フィールドを含むXML形式のタスク（すべてのタスクで**必須**）
 - 検証基準
 - ゴール逆算検証用のmust_haves
 </downstream_consumer>
+
+<deep_work_rules>
+## 浅い実行防止ルール（必須）
+
+すべてのタスクにこれらのフィールドを含めなければならない — オプションではない：
+
+1. **`<read_first>`** — エグゼキューターが何かに手を付ける前に必ず読むファイル。常に以下を含める：
+   - 変更対象のファイル（エグゼキューターが想定ではなく現在の状態を把握するため）
+   - CONTEXT.mdで参照されている「正規の情報源」ファイル（リファレンス実装、既存パターン、設定ファイル、スキーマ）
+   - パターン、シグネチャ、型、規約を再現または遵守する必要があるファイル
+
+2. **`<acceptance_criteria>`** — タスクが正しく完了したことを証明する検証可能な条件。ルール：
+   - すべての基準はgrep、ファイル読み取り、テストコマンド、またはCLI出力で確認可能でなければならない
+   - 主観的な表現（「正しく見える」「適切に設定されている」「整合性がある」）を決して使わない
+   - 必ず正確な文字列、パターン、値、またはコマンド出力を含める
+   - 例：
+     - コード: `auth.py contains def verify_token(` / `test_auth.py exits 0`
+     - 設定: `.env.example contains DATABASE_URL=` / `Dockerfile contains HEALTHCHECK`
+     - ドキュメント: `README.md contains '## Installation'` / `API.md lists all endpoints`
+     - インフラ: `deploy.yml has rollback step` / `docker-compose.yml has healthcheck for db`
+
+3. **`<action>`** — 参照ではなく具体的な値を含めなければならない。ルール：
+   - 正確なターゲット状態を指定せずに「XをYに合わせる」「XをYに一致させる」「整合性を持たせる」と言わない
+   - 必ず実際の値を含める：設定キー、関数シグネチャ、SQL文、クラス名、インポートパス、環境変数など
+   - CONTEXT.mdに比較表や期待値がある場合、アクションにそのまま転記する
+   - エグゼキューターはCONTEXT.mdやリファレンスファイルを読まなくても、アクションテキストだけでタスクを完了できるべき（read_firstは発見ではなく検証のため）
+
+**なぜ重要か：** エグゼキューターエージェントはプランテキストから作業する。「本番環境に合わせて設定を更新」のような曖昧な指示は浅い1行の変更を生む。「DATABASE_URL=postgresql://... を追加、POOL_SIZE=20を設定、REDIS_URL=redis://... を追加」のような具体的な指示は完全な作業を生む。冗長なプランのコストは、浅い実行をやり直すコストよりはるかに低い。
+</deep_work_rules>
 
 <quality_gate>
 - [ ] PLAN.mdファイルがフェーズディレクトリに作成された
 - [ ] 各プランに有効なフロントマターがある
 - [ ] タスクが具体的で実行可能
+- [ ] すべてのタスクに少なくとも変更対象ファイルを含む`<read_first>`がある
+- [ ] すべてのタスクにgrep検証可能な条件を含む`<acceptance_criteria>`がある
+- [ ] すべての`<action>`に具体的な値が含まれる（対象を指定せずに「XをYに合わせる」としない）
 - [ ] 依存関係が正しく特定されている
 - [ ] 並列実行用のWaveが割り当てられている
 - [ ] フェーズ目標から導出されたmust_haves

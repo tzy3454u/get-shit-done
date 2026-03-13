@@ -66,8 +66,11 @@ npx get-shit-done-cc@latest
 - このフェーズがどのように動作するか想像しているかを収集
 - ビジョン、必須事項、境界を含むCONTEXT.mdを作成
 - 見た目/感触についてアイデアがある場合に使用
+- オプションの`--batch`で一問一答ではなく2-5の関連質問をまとめて提示
 
 使い方: `/gsd:discuss-phase 2`
+使い方: `/gsd:discuss-phase 2 --batch`
+使い方: `/gsd:discuss-phase 2 --batch=3`
 
 **`/gsd:research-phase <number>`**
 ニッチ/複雑なドメインのための包括的なエコシステムリサーチ。

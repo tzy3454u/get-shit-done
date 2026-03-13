@@ -54,6 +54,24 @@
 
 </specifics>
 
+<canonical_refs>
+## 正規参照
+
+**下流エージェントはプランニングや実装の前にこれらを必ず読むこと。**
+
+[このフェーズの要件や制約を定義するすべての仕様、ADR、機能ドキュメント、設計ドキュメントをリストする。エージェントが直接読み込めるよう完全な相対パスを使用する。フェーズに複数の関心事がある場合はトピック別にグループ化する。]
+
+### [トピック領域 1]
+- `path/to/spec-or-adr.md` — [このドキュメントが決定/定義する関連事項]
+- `path/to/doc.md` §N — [特定のセクションとその内容]
+
+### [トピック領域 2]
+- `path/to/feature-doc.md` — [このドキュメントが定義する機能]
+
+[外部仕様がない場合: "外部仕様なし — 要件は上記の決定で完全にカバー"]
+
+</canonical_refs>
+
 <code_context>
 ## 既存コードの知見
 
@@ -124,6 +142,18 @@
 
 </decisions>
 
+<canonical_refs>
+## 正規参照
+
+### フィード表示
+- `docs/features/social-feed.md` — フィード要件、投稿カードのフィールド、エンゲージメント表示ルール
+- `docs/decisions/adr-012-infinite-scroll.md` — スクロール戦略の決定、仮想化要件
+
+### 空の状態
+- `docs/design/empty-states.md` — 空の状態パターン、イラストガイドライン
+
+</canonical_refs>
+
 <specifics>
 ## 具体的なアイデア
 
@@ -185,6 +215,15 @@
 - 一時ファイルの処理
 
 </decisions>
+
+<canonical_refs>
+## 正規参照
+
+### バックアップCLI
+- `docs/features/backup-restore.md` — バックアップ要件、サポートされるバックエンド、暗号化仕様
+- `docs/decisions/adr-007-cli-conventions.md` — フラグ命名規則、終了コード、出力形式標準
+
+</canonical_refs>
 
 <specifics>
 ## 具体的なアイデア
@@ -248,6 +287,15 @@
 
 </decisions>
 
+<canonical_refs>
+## 正規参照
+
+### 整理ルール
+- `docs/features/photo-organization.md` — グループ化ルール、重複ポリシー、命名仕様
+- `docs/decisions/adr-003-exif-handling.md` — EXIF抽出戦略、メタデータ欠落時のフォールバック
+
+</canonical_refs>
+
 <specifics>
 ## 具体的なアイデア
 
@@ -291,8 +339,15 @@
 
 **作成後:**
 - ファイルはフェーズディレクトリに配置: `.planning/phases/XX-name/{phase_num}-CONTEXT.md`
-- `gsd-phase-researcher`が判断を使って調査の焦点を絞ります
-- `gsd-planner`が判断 + リサーチを使って実行可能なタスクを作成します
+- `gsd-phase-researcher`が判断を使って調査の焦点を絞り、canonical_refsを読んでどのドキュメントを調査すべきかを把握します
+- `gsd-planner`が判断 + リサーチを使って実行可能なタスクを作成し、canonical_refsを読んで整合性を検証します
 - 下流エージェントは記録された判断についてユーザーに再度質問する必要があるべきではありません
+
+**重要 — 正規参照（Canonical references）:**
+- `<canonical_refs>`セクションは**必須**です。すべてのCONTEXT.mdに含めなければなりません。
+- プロジェクトに外部仕様、ADR、設計ドキュメントがある場合、完全な相対パスでトピック別にグループ化してリストしてください
+- ROADMAP.mdがフェーズごとに`Canonical refs:`をリストしている場合、それらを抽出して展開してください
+- 決定内に散在する「ADR-019参照」のようなインライン言及は下流エージェントにとって無意味です — 専用セクションに完全パスとセクション参照が必要です
+- 外部仕様が存在しない場合、明示的にその旨を記載してください — セクションを暗黙的に省略しないでください
 </guidelines>
 </output>
