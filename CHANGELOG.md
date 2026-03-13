@@ -6,6 +6,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **ノードリペアオペレーター** (`workflows/node-repair.md`) — タスク検証失敗時の自律的リカバリー。ユーザーに即座に確認する代わりに、エグゼキューターが構造化されたリペアを試行する: RETRY（別のアプローチ）、DECOMPOSE（サブタスクに分割）、PRUNE（正当化理由付きでスキップ）。リペア予算が使い切られた場合、またはアーキテクチャ上の決定が必要な場合のみユーザーにエスカレーション。リペア予算のデフォルトはタスクごとに2回; `workflow.node_repair_budget`で設定可能。`workflow.node_repair: false`で完全に無効化し元の動作を復元。
+
 ## [1.22.4] - 2026-03-03
 
 ### Added

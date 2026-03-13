@@ -54,6 +54,24 @@
 
 </specifics>
 
+<canonical_refs>
+## Canonical References
+
+**Downstream agents MUST read these before planning or implementing.**
+
+[List every spec, ADR, feature doc, or design doc that defines requirements or constraints for this phase. Use full relative paths so agents can read them directly. Group by topic area when the phase has multiple concerns.]
+
+### [Topic area 1]
+- `path/to/spec-or-adr.md` — [What this doc decides/defines that's relevant]
+- `path/to/doc.md` §N — [Specific section and what it covers]
+
+### [Topic area 2]
+- `path/to/feature-doc.md` — [What capability this defines]
+
+[If the project has no external specs: "No external specs — requirements are fully captured in decisions above"]
+
+</canonical_refs>
+
 <code_context>
 ## 既存コードの知見
 
@@ -124,6 +142,18 @@
 
 </decisions>
 
+<canonical_refs>
+## Canonical References
+
+### Feed display
+- `docs/features/social-feed.md` — Feed requirements, post card fields, engagement display rules
+- `docs/decisions/adr-012-infinite-scroll.md` — Scroll strategy decision, virtualization requirements
+
+### Empty states
+- `docs/design/empty-states.md` — Empty state patterns, illustration guidelines
+
+</canonical_refs>
+
 <specifics>
 ## 具体的なアイデア
 
@@ -185,6 +215,15 @@
 - 一時ファイルの処理
 
 </decisions>
+
+<canonical_refs>
+## Canonical References
+
+### Backup CLI
+- `docs/features/backup-restore.md` — Backup requirements, supported backends, encryption spec
+- `docs/decisions/adr-007-cli-conventions.md` — Flag naming, exit codes, output format standards
+
+</canonical_refs>
 
 <specifics>
 ## 具体的なアイデア
@@ -248,6 +287,15 @@
 
 </decisions>
 
+<canonical_refs>
+## Canonical References
+
+### Organization rules
+- `docs/features/photo-organization.md` — Grouping rules, duplicate policy, naming spec
+- `docs/decisions/adr-003-exif-handling.md` — EXIF extraction strategy, fallback for missing metadata
+
+</canonical_refs>
+
 <specifics>
 ## 具体的なアイデア
 
@@ -291,8 +339,15 @@
 
 **作成後:**
 - ファイルはフェーズディレクトリに配置: `.planning/phases/XX-name/{phase_num}-CONTEXT.md`
-- `gsd-phase-researcher`が判断を使って調査の焦点を絞ります
-- `gsd-planner`が判断 + リサーチを使って実行可能なタスクを作成します
+- `gsd-phase-researcher`が判断を使って調査の焦点を絞り、canonical_refsを読んでどのドキュメントを調査すべきかを把握します
+- `gsd-planner`が判断 + リサーチを使って実行可能なタスクを作成し、canonical_refsを読んで整合性を検証します
 - 下流エージェントは記録された判断についてユーザーに再度質問する必要があるべきではありません
+
+**重要 — 正規参照（Canonical references）:**
+- `<canonical_refs>`セクションは**必須**です。すべてのCONTEXT.mdに含めなければなりません。
+- プロジェクトに外部仕様、ADR、設計ドキュメントがある場合、完全な相対パスでトピック別にグループ化してリストしてください
+- ROADMAP.mdがフェーズごとに`Canonical refs:`をリストしている場合、それらを抽出して展開してください
+- 決定内に散在する「ADR-019参照」のようなインライン言及は下流エージェントにとって無意味です — 専用セクションに完全パスとセクション参照が必要です
+- 外部仕様が存在しない場合、明示的にその旨を記載してください — セクションを暗黙的に省略しないでください
 </guidelines>
 </output>

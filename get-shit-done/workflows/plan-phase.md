@@ -73,6 +73,7 @@ PRD_CONTENT=$(cat "$PRD_FILE" 2>/dev/null)
    - PRDからすべての要件、ユーザーストーリー、受け入れ基準、制約を抽出
    - 各項目をロックされた決定にマッピング（PRD内のすべてはロックされた決定として扱う）
    - PRDがカバーしていない領域を特定し「Claude's Discretion」としてマーク
+   - **正規参照を抽出** — このフェーズのROADMAP.mdから、およびPRDで参照されている仕様/ADRを完全なファイルパスに展開（**必須**）
    - フェーズディレクトリにCONTEXT.mdを作成
 
 4. CONTEXT.mdを書き込む：
@@ -101,6 +102,21 @@ PRD_CONTENT=$(cat "$PRD_FILE" 2>/dev/null)
 [PRDでカバーされていない領域 — 実装の詳細、技術的選択]
 
 </decisions>
+
+<canonical_refs>
+## Canonical References
+
+**Downstream agents MUST read these before planning or implementing.**
+
+[MANDATORY. Extract from ROADMAP.md and any docs referenced in the PRD.
+Use full relative paths. Group by topic area.]
+
+### [Topic area]
+- `path/to/spec-or-adr.md` — [What it decides/defines]
+
+[If no external specs: "No external specs — requirements fully captured in decisions above"]
+
+</canonical_refs>
 
 <specifics>
 ## Specific Ideas
@@ -218,7 +234,9 @@ Task(
 
 ## 5.5. バリデーション戦略の作成
 
-`nyquist_validation_enabled`がfalseでない限り必須。
+`nyquist_validation_enabled`がfalseの場合、または`research_enabled`がfalseの場合スキップ。
+
+`research_enabled`がfalseかつ`nyquist_validation_enabled`がtrueの場合：警告「Nyquist検証は有効ですがリサーチが無効です — RESEARCH.mdなしではVALIDATION.mdを作成できません。プランはバリデーション要件（Dimension 8）を欠きます。」ステップ6に続行。
 
 ```bash
 grep -l "## Validation Architecture" "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
@@ -261,15 +279,15 @@ CONTEXT_PATH=$(printf '%s\n' "$INIT" | jq -r '.context_path // empty')
 
 ## 7.5. Nyquistアーティファクトの検証
 
-`nyquist_validation_enabled`がfalseの場合スキップ。
+`nyquist_validation_enabled`がfalseの場合、または`research_enabled`がfalseの場合スキップ。
 
 ```bash
 VALIDATION_EXISTS=$(ls "${PHASE_DIR}"/*-VALIDATION.md 2>/dev/null | head -1)
 ```
 
 見つからずNyquistが有効な場合 — ユーザーに質問：
-1. 再実行：`/gsd:plan-phase {PHASE} --research`
-2. 設定でNyquistを無効化
+1. リサーチ付きで再実行：`/gsd:plan-phase {PHASE} --research`
+2. Nyquistを無効化：`node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set workflow.nyquist_validation false`
 3. そのまま続行（プランはDimension 8で失敗する）
 
 ユーザーが2または3を選択した場合のみステップ8に進む。
@@ -311,15 +329,47 @@ VALIDATION_EXISTS=$(ls "${PHASE_DIR}"/*-VALIDATION.md 2>/dev/null | head -1)
 <downstream_consumer>
 出力は/gsd:execute-phaseによって消費される。プランに必要なもの：
 - フロントマター（wave、depends_on、files_modified、autonomous）
-- XML形式のタスク
+- `read_first`と`acceptance_criteria`フィールドを含むXML形式のタスク（すべてのタスクで**必須**）
 - 検証基準
 - ゴール逆算検証用のmust_haves
 </downstream_consumer>
+
+<deep_work_rules>
+## Anti-Shallow Execution Rules (MANDATORY)
+
+Every task MUST include these fields — they are NOT optional:
+
+1. **`<read_first>`** — Files the executor MUST read before touching anything. Always include:
+   - The file being modified (so executor sees current state, not assumptions)
+   - Any "source of truth" file referenced in CONTEXT.md (reference implementations, existing patterns, config files, schemas)
+   - Any file whose patterns, signatures, types, or conventions must be replicated or respected
+
+2. **`<acceptance_criteria>`** — Verifiable conditions that prove the task was done correctly. Rules:
+   - Every criterion must be checkable with grep, file read, test command, or CLI output
+   - NEVER use subjective language ("looks correct", "properly configured", "consistent with")
+   - ALWAYS include exact strings, patterns, values, or command outputs that must be present
+   - Examples:
+     - Code: `auth.py contains def verify_token(` / `test_auth.py exits 0`
+     - Config: `.env.example contains DATABASE_URL=` / `Dockerfile contains HEALTHCHECK`
+     - Docs: `README.md contains '## Installation'` / `API.md lists all endpoints`
+     - Infra: `deploy.yml has rollback step` / `docker-compose.yml has healthcheck for db`
+
+3. **`<action>`** — Must include CONCRETE values, not references. Rules:
+   - NEVER say "align X with Y", "match X to Y", "update to be consistent" without specifying the exact target state
+   - ALWAYS include the actual values: config keys, function signatures, SQL statements, class names, import paths, env vars, etc.
+   - If CONTEXT.md has a comparison table or expected values, copy them into the action verbatim
+   - The executor should be able to complete the task from the action text alone, without needing to read CONTEXT.md or reference files (read_first is for verification, not discovery)
+
+**Why this matters:** Executor agents work from the plan text. Vague instructions like "update the config to match production" produce shallow one-line changes. Concrete instructions like "add DATABASE_URL=postgresql://... , set POOL_SIZE=20, add REDIS_URL=redis://..." produce complete work. The cost of verbose plans is far less than the cost of re-doing shallow execution.
+</deep_work_rules>
 
 <quality_gate>
 - [ ] PLAN.mdファイルがフェーズディレクトリに作成された
 - [ ] 各プランに有効なフロントマターがある
 - [ ] タスクが具体的で実行可能
+- [ ] すべてのタスクに少なくとも変更対象ファイルを含む`<read_first>`がある
+- [ ] すべてのタスクにgrep検証可能な条件を含む`<acceptance_criteria>`がある
+- [ ] すべての`<action>`に具体的な値が含まれる（対象を指定せずに「XをYに合わせる」としない）
 - [ ] 依存関係が正しく特定されている
 - [ ] 並列実行用のWaveが割り当てられている
 - [ ] フェーズ目標から導出されたmust_haves

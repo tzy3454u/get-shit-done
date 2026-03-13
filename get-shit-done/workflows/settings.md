@@ -94,6 +94,8 @@ AskUserQuestion([
       { label: "いいえ", description: "バリデーション調査をスキップ。ラピッドプロトタイピングやテストなしフェーズに適しています。" }
     ]
   },
+  // Note: Nyquist validation depends on research output. If research is disabled,
+  // plan-phase automatically skips Nyquist steps (no RESEARCH.md to extract from).
   {
     question: "Gitブランチ戦略は？",
     header: "Branching",

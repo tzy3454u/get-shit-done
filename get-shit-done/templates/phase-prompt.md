@@ -63,16 +63,25 @@ Output: [作成されるアーティファクト]
 <task type="auto">
   <name>Task 1: [アクション指向の名前]</name>
   <files>path/to/file.ext, another/file.ext</files>
-  <action>[具体的な実装 - 何をするか、どのようにするか、何を避けるべきか、その理由]</action>
+  <read_first>path/to/reference.ext, path/to/source-of-truth.ext</read_first>
+  <action>[具体的な実装 - 何をするか、どのようにするか、何を避けるべきか、その理由。具体的な値を含める: 正確な識別子、パラメータ、期待される出力、ファイルパス、コマンド引数。正確なターゲット状態を指定せずに「XをYに合わせる」と言わないこと。]</action>
   <verify>[動作を証明するコマンドまたはチェック]</verify>
+  <acceptance_criteria>
+    - [grep検証可能な条件: "file.extに'exact string'が含まれる"]
+    - [測定可能な条件: "output.extが'expected-value'を使用し、'wrong-value'ではない"]
+  </acceptance_criteria>
   <done>[測定可能な受け入れ基準]</done>
 </task>
 
 <task type="auto">
   <name>Task 2: [アクション指向の名前]</name>
   <files>path/to/file.ext</files>
-  <action>[具体的な実装]</action>
+  <read_first>path/to/reference.ext</read_first>
+  <action>[具体的な値を含む具体的な実装]</action>
   <verify>[コマンドまたはチェック]</verify>
+  <acceptance_criteria>
+    - [grep検証可能な条件]
+  </acceptance_criteria>
   <done>[受け入れ基準]</done>
 </task>
 
@@ -453,6 +462,39 @@ files_modified: [...]
 <task type="auto">
   <name>認証のセットアップ</name>
   <action>アプリに認証を追加</action>
+</task>
+```
+
+**Bad: Missing read_first (executor modifies files it hasn't read)**
+```xml
+<task type="auto">
+  <name>Update database config</name>
+  <files>src/config/database.ts</files>
+  <!-- No read_first! Executor doesn't know current state or conventions -->
+  <action>Update the database config to match production settings</action>
+</task>
+```
+
+**Bad: Vague acceptance criteria (not verifiable)**
+```xml
+<acceptance_criteria>
+  - Config is properly set up
+  - Database connection works correctly
+</acceptance_criteria>
+```
+
+**Good: Concrete with read_first + verifiable criteria**
+```xml
+<task type="auto">
+  <name>Update database config for connection pooling</name>
+  <files>src/config/database.ts</files>
+  <read_first>src/config/database.ts, .env.example, docker-compose.yml</read_first>
+  <action>Add pool configuration: min=2, max=20, idleTimeoutMs=30000. Add SSL config: rejectUnauthorized=true when NODE_ENV=production. Add .env.example entry: DATABASE_POOL_MAX=20.</action>
+  <acceptance_criteria>
+    - database.ts contains "max: 20" and "idleTimeoutMillis: 30000"
+    - database.ts contains SSL conditional on NODE_ENV
+    - .env.example contains DATABASE_POOL_MAX
+  </acceptance_criteria>
 </task>
 ```
 
